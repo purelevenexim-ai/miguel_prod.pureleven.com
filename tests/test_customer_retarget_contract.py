@@ -63,6 +63,8 @@ class CustomerRetargetContractTests(unittest.TestCase):
         for marker in [
             "Customer Retarget",
             "To Contact",
+            "Premium Customers",
+            "High Value Purchase",
             "Follow-up / Overdue",
             "Risk Customers",
             "Unlinked Orders",
@@ -88,6 +90,18 @@ class CustomerRetargetContractTests(unittest.TestCase):
             "queue_manual_retarget_template",
             "current_user.id",
             "db.commit()",
+        ]:
+            self.assertIn(marker, source)
+
+    def test_premium_and_high_value_queue_filters_are_present(self):
+        source = SERVICE.read_text()
+        for marker in [
+            '"premium"',
+            '"high_value"',
+            'view == "premium"',
+            "aggregate.c.order_count > 1",
+            'view == "high_value"',
+            'aggregate.c.lifetime_value > Decimal("1500")',
         ]:
             self.assertIn(marker, source)
 

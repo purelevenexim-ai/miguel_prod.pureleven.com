@@ -47,6 +47,8 @@ CLOSED_OUTCOMES = (
 )
 VALID_VIEWS = {
     "to_contact",
+    "premium",
+    "high_value",
     "follow_up",
     "interested",
     "purchased_again",
@@ -959,8 +961,10 @@ def get_queue(
             )
         query = query.filter(or_(*search_clauses))
 
-    if repeat_only:
+    if repeat_only or view == "premium":
         query = query.filter(aggregate.c.order_count > 1)
+    if view == "high_value":
+        query = query.filter(aggregate.c.lifetime_value > Decimal("1500"))
 
     if view == "to_contact":
         pending_ordered = (
