@@ -23,6 +23,39 @@ body { background: var(--bg-page); }
 .retarget-order-banner strong { display:block; font-size:13px; margin-bottom:3px; }
 .retarget-order-banner span { font-size:11px; color:#52657d; line-height:1.45; }
 .retarget-order-banner a { white-space:nowrap; font-size:11px; font-weight:700; color:#1d4ed8; text-decoration:none; }
+body.retarget-order-mode .drawer-overlay { display:none !important; }
+body.retarget-order-mode .new-order-drawer {
+  top:48px;
+  left:240px;
+  right:0;
+  bottom:0;
+  width:auto !important;
+  max-width:none !important;
+  border-left:0;
+  box-shadow:none;
+}
+body.retarget-order-mode .new-order-drawer .drawer-header {
+  padding-left:24px;
+  padding-right:24px;
+  background:#fff;
+  border-bottom:1px solid #e4e9f1;
+}
+body.retarget-order-mode .new-order-drawer .form-scroll {
+  padding:18px clamp(22px,4vw,64px) 44px;
+  background:#f7f9fc;
+}
+body.retarget-order-mode .new-order-drawer .form-scroll > * {
+  max-width:1120px;
+  margin-left:auto;
+  margin-right:auto;
+}
+body.retarget-order-mode .retarget-order-banner {
+  margin:16px clamp(22px,4vw,64px) 0;
+  padding:15px 18px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#eef5ff,#f7fbff);
+  box-shadow:0 5px 18px rgba(37,99,235,.08);
+}
 .form-scroll { flex:1; overflow-y:auto; padding:12px 20px; }
 .section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--g-600); margin:16px 0 6px; }
 .section-title:first-child { margin-top:4px; }
@@ -362,6 +395,12 @@ body { background: var(--bg-page); }
   .stat-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
   .drawer { width:80vw !important; max-width:480px; }
   .new-order-drawer { width:80vw !important; max-width:480px; }
+  body.retarget-order-mode .new-order-drawer { left:72px; width:auto !important; max-width:none; }
+}
+@media (max-width:599px) {
+  body.retarget-order-mode .new-order-drawer { top:0; left:0; width:100vw !important; height:100vh !important; max-height:100vh !important; }
+  body.retarget-order-mode .new-order-drawer .form-scroll { padding:12px 14px 32px; }
+  body.retarget-order-mode .retarget-order-banner { margin:10px 12px 0; flex-direction:column; }
 }
 </style>
 </head>
@@ -1502,6 +1541,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       const rp = JSON.parse(retargetPrefill);
       localStorage.removeItem('retarget_order_prefill');
       if (!rp.created_at || Date.now() - Number(rp.created_at) < 30 * 60 * 1000) {
+        document.body.classList.add('retarget-order-mode');
         matchedCustomerId = rp.customer_id || null;
         matchedCustomerType = 'customer';
         document.getElementById('custPhone').value = rp.phone || '';
@@ -1525,7 +1565,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           handoffBanner.className = 'retarget-order-banner';
           document.getElementById('formPanel').before(handoffBanner);
         }
-        handoffBanner.innerHTML = `<div><strong>Customer Retarget handoff</strong><span>Customer and saved address are loaded. Review every field, add or confirm products, then create the order using the complete form below.</span></div><a href="/customer-retarget.html">← Back to retarget</a>`;
+        handoffBanner.innerHTML = `<div><strong>Complete order workspace for ${escapeHtml(rp.name||'this customer')}</strong><span>Customer and saved address are loaded. All order fields are available below: products, pricing, payment, courier, status and final confirmation.</span></div><a href="/customer-retarget.html">← Back to Customer Retarget</a>`;
         if (Array.isArray(rp.items) && rp.items.length) {
           document.getElementById('itemsArea').innerHTML = '';
           rp.items.forEach(item => addItemRow({
@@ -1846,6 +1886,7 @@ function openNewOrderDrawer() {
 function closeNewOrderDrawer() {
   document.getElementById('newOrderOverlay').classList.remove('open');
   document.getElementById('newOrderDrawer').classList.remove('open');
+  document.body.classList.remove('retarget-order-mode');
 }
 
 function handleShortcut(e) {
@@ -2615,6 +2656,7 @@ function resetForm() {
   document.getElementById('itemsArea').innerHTML = '';
   const handoffBanner = document.getElementById('retargetOrderBanner');
   if (handoffBanner) handoffBanner.remove();
+  document.body.classList.remove('retarget-order-mode');
   const drawerTitle = document.querySelector('#newOrderDrawer .drawer-header h3');
   if (drawerTitle) drawerTitle.textContent = 'New Order';
   addItemRow(); setIntent('confirmed'); setPayment('cod'); setShipService('speed_post');

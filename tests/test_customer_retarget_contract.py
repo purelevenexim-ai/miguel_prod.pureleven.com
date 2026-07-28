@@ -8,6 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGE = ROOT / "frontend" / "customer-retarget.html"
+ORDERS_PAGE = ROOT / "frontend" / "orders.html"
 SERVICE = ROOT / "backend" / "app" / "modules" / "customer_retarget" / "service.py"
 IMPORTER = ROOT / "backend" / "scripts" / "import_old_whatsapp_customers.py"
 ROUTER = ROOT / "backend" / "app" / "modules" / "customer_retarget" / "router.py"
@@ -76,6 +77,8 @@ class CustomerRetargetContractTests(unittest.TestCase):
         html = PAGE.read_text()
         self.assertNotIn("['old_customers','Old Customers']", html)
         for marker in [
+            'class="sidebar retarget-sidebar"',
+            'aria-current="page"',
             "Saved delivery address",
             "View full customer",
             "Open full order form",
@@ -85,6 +88,14 @@ class CustomerRetargetContractTests(unittest.TestCase):
             "OLD CUSTOMER",
         ]:
             self.assertIn(marker, html)
+
+        orders_html = ORDERS_PAGE.read_text()
+        for marker in [
+            "retarget-order-mode",
+            "Complete order workspace for",
+            "products, pricing, payment, courier, status and final confirmation",
+        ]:
+            self.assertIn(marker, orders_html)
 
         for relative_path in [
             "frontend/tenant-admin.html",

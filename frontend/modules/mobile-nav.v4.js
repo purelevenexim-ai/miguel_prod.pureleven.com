@@ -66,6 +66,7 @@
     { label: 'Invoices',  href: '/invoices.html',     icon: '📄', key: 'invoices' },
     { label: 'Products',  href: '/products.html',     icon: '🛒', key: 'products' },
     { label: 'Marketing', href: '/marketing.html',    icon: '📣', key: 'marketing' },
+    { label: 'Retarget',  href: '/customer-retarget.html', icon: '📞', key: 'customer-retarget' },
     { label: 'WhatsApp',  href: '/whatsapp.html',     icon: '💬', key: 'whatsapp' },
   ];
 

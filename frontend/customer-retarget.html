@@ -84,6 +84,17 @@ tbody tr{cursor:pointer}tbody tr:hover td{background:#f8faff}
 <style id="retarget-redesign">
 :root{--rt-ink:#172033;--rt-sub:#667085;--rt-line:#e6eaf0;--rt-soft:#f7f9fc;--rt-brand:#2563eb;--rt-brand-dark:#1748b5;--rt-success:#16835a;--rt-warning:#b45f06;--rt-danger:#c4322b;--rt-radius:16px}
 body{background:#f4f7fb;color:var(--rt-ink)}
+.retarget-sidebar{box-shadow:8px 0 28px rgba(23,32,51,.035)}
+.retarget-sidebar .brand{height:68px;padding:0 18px;background:linear-gradient(135deg,#fff,#f6f9ff)}
+.retarget-sidebar .brand-icon img{width:34px!important;height:34px!important}
+.retarget-sidebar nav{padding:10px 12px 18px}
+.retarget-sidebar nav a{height:38px;border-radius:10px;font-size:13px}
+.retarget-sidebar nav a.active{background:linear-gradient(135deg,#eaf2ff,#dce9ff);color:#1748b5;box-shadow:inset 3px 0 0 #2563eb}
+.retarget-sidebar .nav-label{padding:14px 12px 6px;font-size:9px}
+.retarget-sidebar .sidebar-footer{background:#fafbfd}
+.retarget-sidebar .user-info strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.retarget-sidebar .user-info span:not(.role-badge){display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.retarget-has-nav{padding-left:240px}
 .topbar{height:68px;padding:0 28px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-color:var(--rt-line);z-index:80}
 .topbar .brand img{width:32px;height:32px}.title{font-size:16px;font-weight:800;letter-spacing:-.01em}.subtitle{color:var(--rt-sub)}
 .top-actions{gap:10px}.tenant{background:#eef4ff;color:#244fa1;border:1px solid #dbe7ff}.btn{border-radius:10px;min-height:38px;padding:8px 14px;transition:transform .14s ease,box-shadow .14s ease,background .14s ease}.btn:hover{transform:translateY(-1px)}.btn-primary{background:var(--rt-brand);border-color:var(--rt-brand);box-shadow:0 5px 14px rgba(37,99,235,.18)}.btn-primary:hover{background:var(--rt-brand-dark)}
@@ -105,11 +116,43 @@ body{background:#f4f7fb;color:var(--rt-ink)}
 .order-list{display:flex;flex-direction:column;gap:10px}.order-item{border:1px solid #e4e8ef;border-radius:12px;padding:13px 14px;background:#fff}.order-item:last-child{border-bottom:1px solid #e4e8ef}.order-title{font-size:13px}.order-amount{font-size:14px}.order-products{color:#4e5969;line-height:1.6}.order-actions{margin-top:10px}.history-item{background:#f8fafc;border-left-color:#8fb2f5;border-radius:0 10px 10px 0;padding:10px 12px}
 .empty-inline{padding:20px;text-align:center;background:#f8fafc;border:1px dashed #d8dee8;border-radius:10px;color:var(--rt-sub);font-size:12px}
 @media(max-width:1180px){.page-intro{grid-template-columns:1fr 260px}.summary{grid-template-columns:repeat(2,1fr)}.workspace-grid{grid-template-columns:1fr 320px}}
-@media(max-width:839px){.topbar{padding:0 16px}.shell{padding:18px 16px 90px}.page-intro{grid-template-columns:1fr}.coverage-card{max-width:420px}.drawer{width:calc(100vw - 72px)}.workspace-grid{grid-template-columns:1fr}.workspace-side{position:static}.summary{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:599px){.topbar{height:56px}.topbar .subtitle,.topbar .tenant,.topbar .secondary-action{display:none}.shell{padding:12px 10px 90px}.page-intro{padding:20px;border-radius:16px}.page-intro h1{font-size:23px}.coverage-card{display:none}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:12px;min-height:84px}.metric-value{font-size:20px}.queue-head{align-items:flex-start;padding:15px 14px 9px}.queue-head-actions{display:none}.toolbar{padding:8px 14px 12px}.search{min-width:100%}.check{width:100%;justify-content:center}.tabs{padding:9px 12px}.table-meta{padding:10px 14px}.drawer{width:100vw!important;height:94vh!important;max-height:94vh!important}.drawer-body{padding:12px}.hero{padding:16px}.hero-name{font-size:18px}.profile-grid{grid-template-columns:1fr}.outcomes{grid-template-columns:1fr 1fr}.top-actions .btn-primary{padding:8px 10px;font-size:11px}}
+@media(max-width:839px){body.retarget-has-nav{padding-left:72px}.topbar{padding:0 16px}.shell{padding:18px 16px 90px}.page-intro{grid-template-columns:1fr}.coverage-card{max-width:420px}.drawer{width:calc(100vw - 72px)}.workspace-grid{grid-template-columns:1fr}.workspace-side{position:static}.summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:599px){body.retarget-has-nav{padding-left:0}.topbar{height:56px}.topbar .subtitle,.topbar .tenant,.topbar .secondary-action{display:none}.shell{padding:12px 10px 90px}.page-intro{padding:20px;border-radius:16px}.page-intro h1{font-size:23px}.coverage-card{display:none}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:12px;min-height:84px}.metric-value{font-size:20px}.queue-head{align-items:flex-start;padding:15px 14px 9px}.queue-head-actions{display:none}.toolbar{padding:8px 14px 12px}.search{min-width:100%}.check{width:100%;justify-content:center}.tabs{padding:9px 12px}.table-meta{padding:10px 14px}.drawer{width:100vw!important;height:94vh!important;max-height:94vh!important}.drawer-body{padding:12px}.hero{padding:16px}.hero-name{font-size:18px}.profile-grid{grid-template-columns:1fr}.outcomes{grid-template-columns:1fr 1fr}.top-actions .btn-primary{padding:8px 10px;font-size:11px}}
 </style>
 </head>
-<body>
+<body class="retarget-has-nav">
+<aside class="sidebar retarget-sidebar" aria-label="Application navigation">
+  <div class="brand">
+    <div class="brand-icon" style="background:none;padding:0;overflow:hidden"><img src="/miguel_favicon.png" alt="Miguel"></div>
+    <div><div class="brand-name">Miguel CRM</div><div class="brand-slug" id="sidebarSlug">Customer Retarget</div></div>
+  </div>
+  <nav>
+    <div class="nav-label">Overview</div>
+    <a href="/tenant-admin.html">📊 Dashboard</a>
+    <div class="nav-label">Business</div>
+    <a href="/leads.html">🎯 Leads</a>
+    <a href="/customers.html">🧑‍💼 Customers</a>
+    <a href="/orders.html">📦 Orders</a>
+    <a href="/invoices.html">📄 Invoices &amp; Labels</a>
+    <a href="/products.html">🛒 Products</a>
+    <a href="/vendors.html">🏭 Vendors</a>
+    <a href="/gst.html">🧮 GST &amp; Accounting</a>
+    <div class="nav-label">Outreach</div>
+    <a href="/marketing.html">📣 Marketing</a>
+    <a class="active" href="/customer-retarget.html" aria-current="page">📞 Customer Retarget</a>
+    <a href="/whatsapp.html">💬 WhatsApp</a>
+    <div class="nav-label admin-nav">Administration</div>
+    <a class="admin-nav" href="/label-editor.html">🎨 Company Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <strong id="nav-empName">—</strong>
+      <span id="nav-empEmail"></span>
+      <span class="role-badge" id="nav-empRole"></span>
+    </div>
+    <button class="btn-logout" onclick="logout()">⬅ Sign out</button>
+  </div>
+</aside>
 <header class="topbar">
   <div class="brand">
     <img src="/miguel_favicon.png" alt="Miguel">
@@ -167,6 +210,11 @@ const CAN_CREATE_ORDER = ['admin','sales'].includes(ROLE);
 if (!TOKEN || TYPE !== 'tenant') window.location.replace('/tenant-login.html');
 const H = {'Authorization':`Bearer ${TOKEN}`,'Content-Type':'application/json'};
 document.getElementById('tenantBadge').textContent = SLUG.toUpperCase();
+document.getElementById('sidebarSlug').textContent = SLUG ? SLUG.toUpperCase() : 'CUSTOMER RETARGET';
+document.getElementById('nav-empName').textContent = localStorage.getItem('full_name') || localStorage.getItem('name') || SLUG || 'Team member';
+document.getElementById('nav-empEmail').textContent = localStorage.getItem('email') || '';
+document.getElementById('nav-empRole').textContent = ROLE.toUpperCase();
+document.querySelectorAll('.admin-nav').forEach(el => { el.style.display = ROLE === 'admin' ? '' : 'none'; });
 
 const VIEWS = [
   ['to_contact','To Contact','☎'],['follow_up','Follow-up / Overdue','↻'],['interested','Interested','★'],
