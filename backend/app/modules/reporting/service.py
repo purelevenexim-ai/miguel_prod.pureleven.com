@@ -127,6 +127,55 @@ def _apply_status_filter(query, status: Optional[str]):
     return query
 
 
+_OPERATIONAL_ORDER_STATUSES = (
+    OrderStatus.confirmed,
+    OrderStatus.processing,
+    OrderStatus.packed,
+    OrderStatus.shipped,
+    OrderStatus.out_for_delivery,
+    OrderStatus.delivered,
+)
+
+_OPEN_ORDER_STATUSES = (
+    OrderStatus.confirmed,
+    OrderStatus.processing,
+    OrderStatus.packed,
+    OrderStatus.shipped,
+    OrderStatus.out_for_delivery,
+)
+
+
+def _order_scope_conditions(
+    tenant_id,
+    status: Optional[str] = None,
+    state: Optional[str] = None,
+) -> list:
+    """Shared dashboard/reporting scope so KPIs and charts reconcile."""
+    conditions = [
+        Order.tenant_id == tenant_id,
+        Order.is_active == True,
+    ]
+    selected_status = None
+    if status:
+        try:
+            selected_status = OrderStatus(status)
+        except ValueError:
+            selected_status = None
+    if selected_status is not None:
+        conditions.append(Order.status == selected_status)
+    else:
+        conditions.append(Order.status.in_(_OPERATIONAL_ORDER_STATUSES))
+    if state:
+        state_pattern = f"%{state.strip()}%"
+        conditions.append(
+            or_(
+                Order.delivery_state.ilike(state_pattern),
+                Order.customer.has(Customer.state.ilike(state_pattern)),
+            )
+        )
+    return conditions
+
+
 def _month_key(dt: datetime) -> str:
     return f"{dt.year:04d}-{dt.month:02d}"
 
@@ -183,6 +232,7 @@ def get_dashboard(
     from_date: Optional[date] = None,
     to_date: Optional[date] = None,
     status: Optional[str] = None,
+    state: Optional[str] = None,
 ) -> DashboardStats:
     tid = current_user.tenant_id
     now = datetime.now(timezone.utc)
@@ -194,6 +244,8 @@ def get_dashboard(
         lead_base = lead_base.filter(Lead.created_at >= datetime.combine(from_date, datetime.min.time()))
     if to_date:
         lead_base = lead_base.filter(Lead.created_at < datetime.combine(to_date + timedelta(days=1), datetime.min.time()))
+    if state:
+        lead_base = lead_base.filter(Lead.state.ilike(f"%{state.strip()}%"))
     total_leads         = lead_base.count()
     leads_this_month    = lead_base.filter(Lead.created_at >= ms).count()
     leads_won           = lead_base.filter(Lead.status == LeadPipelineStatus.success_won).count()
@@ -206,50 +258,48 @@ def get_dashboard(
         cust_base = cust_base.filter(Customer.created_at >= datetime.combine(from_date, datetime.min.time()))
     if to_date:
         cust_base = cust_base.filter(Customer.created_at < datetime.combine(to_date + timedelta(days=1), datetime.min.time()))
+    if state:
+        cust_base = cust_base.filter(Customer.state.ilike(f"%{state.strip()}%"))
     total_customers     = cust_base.filter(Customer.is_active == True).count()
-    new_customers_month = cust_base.filter(Customer.is_active == True, Customer.created_at >= ms).count()
+    if from_date or to_date:
+        new_customers_month = total_customers
+    else:
+        new_customers_month = cust_base.filter(Customer.is_active == True, Customer.created_at >= ms).count()
     active_customers    = cust_base.filter(Customer.is_active == True).count()
 
     # ── Orders ───────────────────────────────────────────────
-    # Orders are hard-deleted so no is_active filter needed — all rows in DB are real orders
-    ord_base = db.query(Order).filter(Order.tenant_id == tid)
+    ord_base = db.query(Order).filter(*_order_scope_conditions(tid, status=status, state=state))
     ord_base = _apply_date_filters(ord_base, from_date, to_date)
-    ord_base = _apply_status_filter(ord_base, status)
 
     total_orders        = ord_base.count()
     orders_this_month   = ord_base.filter(Order.created_at >= ms).count()
     orders_delivered    = ord_base.filter(Order.status == OrderStatus.delivered).count()
-    pending_statuses    = [
-        OrderStatus.confirmed, OrderStatus.processing,
-        OrderStatus.packed, OrderStatus.shipped, OrderStatus.out_for_delivery,
-    ]
-    orders_pending      = ord_base.filter(Order.status.in_(pending_statuses)).count()
+    orders_pending      = ord_base.filter(Order.status.in_(_OPEN_ORDER_STATUSES)).count()
 
     # ── Revenue ──────────────────────────────────────────────
-    # Total revenue = sum of ALL non-cancelled order values (order book value)
+    # Order-book revenue: active operational orders only by default.
     total_revenue = _zero(
-        ord_base.filter(Order.status.notin_([OrderStatus.cancelled]))
-        .with_entities(func.sum(Order.total_amount)).scalar()
+        ord_base.with_entities(func.sum(Order.total_amount)).scalar()
     )
     # Revenue this month (within the already-filtered set)
     revenue_this_month = _zero(
-        ord_base.filter(
-            Order.status.notin_([OrderStatus.cancelled]),
-            Order.created_at >= ms,
-        ).with_entities(func.sum(Order.total_amount)).scalar()
+        ord_base.filter(Order.created_at >= ms)
+        .with_entities(func.sum(Order.total_amount)).scalar()
     )
     # Delivered revenue = only orders that reached delivered status
     delivered_revenue = _zero(
         ord_base.filter(Order.status == OrderStatus.delivered)
         .with_entities(func.sum(Order.total_amount)).scalar()
     )
+    collected_revenue = _zero(
+        ord_base.with_entities(func.sum(Order.amount_paid)).scalar()
+    )
     total_outstanding = _zero(
-        ord_base.filter(Order.status.notin_([OrderStatus.cancelled, OrderStatus.returned]))
+        ord_base.filter(Order.status.in_(_OPEN_ORDER_STATUSES))
         .with_entities(func.sum(Order.amount_due)).scalar()
     )
     total_shipping_cost = _zero(
-        ord_base.filter(Order.status.notin_([OrderStatus.cancelled]))
-        .with_entities(func.sum(Order.shipping_charge)).scalar()
+        ord_base.with_entities(func.sum(Order.actual_shipping_cost)).scalar()
     )
 
     # ── Products ─────────────────────────────────────────────
@@ -273,6 +323,7 @@ def get_dashboard(
         total_revenue=total_revenue,
         revenue_this_month=revenue_this_month,
         delivered_revenue=delivered_revenue,
+        collected_revenue=collected_revenue,
         total_outstanding=total_outstanding,
         total_shipping_cost=total_shipping_cost,
         total_products=total_products,
@@ -290,14 +341,12 @@ def get_revenue_report(
     months: int = 12,
     from_date: Optional[date] = None,
     to_date: Optional[date] = None,
+    status: Optional[str] = None,
+    state: Optional[str] = None,
 ) -> RevenueReport:
     tid = current_user.tenant_id
 
-    base_filter = [
-        Order.tenant_id == tid,
-        Order.is_active == True,
-        Order.status.notin_([OrderStatus.cancelled]),
-    ]
+    base_filter = _order_scope_conditions(tid, status=status, state=state)
     if from_date:
         base_filter.append(Order.created_at >= datetime.combine(from_date, datetime.min.time()))
     if to_date:
@@ -310,7 +359,11 @@ def get_revenue_report(
             extract("month", Order.created_at).label("mo"),
             func.count(Order.id).label("cnt"),
             func.coalesce(func.sum(Order.total_amount), 0).label("rev"),
-            func.coalesce(func.sum(Order.amount_due), 0).label("due"),
+            func.coalesce(func.sum(Order.amount_paid), 0).label("collected"),
+            func.coalesce(
+                func.sum(case((Order.status.in_(_OPEN_ORDER_STATUSES), Order.amount_due), else_=0)),
+                0,
+            ).label("due"),
         )
         .filter(*base_filter)
         .group_by("yr", "mo")
@@ -323,6 +376,7 @@ def get_revenue_report(
             month=f"{int(r.yr):04d}-{int(r.mo):02d}",
             order_count=r.cnt,
             revenue=_zero(r.rev),
+            collected=_zero(r.collected),
             outstanding=_zero(r.due),
         )
         for r in rows[-months:]
@@ -420,6 +474,7 @@ def get_lead_funnel(
     current_user: Employee,
     from_date: Optional[date] = None,
     to_date: Optional[date] = None,
+    state: Optional[str] = None,
 ) -> LeadFunnelReport:
     tid = current_user.tenant_id
 
@@ -428,6 +483,8 @@ def get_lead_funnel(
         lead_filters.append(Lead.created_at >= datetime.combine(from_date, datetime.min.time()))
     if to_date:
         lead_filters.append(Lead.created_at < datetime.combine(to_date + timedelta(days=1), datetime.min.time()))
+    if state:
+        lead_filters.append(Lead.state.ilike(f"%{state.strip()}%"))
 
     lead_base = db.query(Lead).filter(*lead_filters)
     total = lead_base.count()
@@ -636,15 +693,13 @@ def get_product_report(
     current_user: Employee,
     from_date: Optional[date] = None,
     to_date: Optional[date] = None,
+    status: Optional[str] = None,
+    state: Optional[str] = None,
 ) -> ProductReport:
     tid = current_user.tenant_id
 
     # Build order filters (with optional date filters)
-    order_filters = [
-        Order.tenant_id == tid,
-        Order.is_active == True,
-        Order.status.notin_([OrderStatus.cancelled]),
-    ]
+    order_filters = _order_scope_conditions(tid, status=status, state=state)
     if from_date:
         order_filters.append(Order.created_at >= datetime.combine(from_date, datetime.min.time()))
     if to_date:
@@ -855,15 +910,13 @@ def get_state_sales_report(
     limit: int = 20,
     from_date: Optional[date] = None,
     to_date: Optional[date] = None,
+    status: Optional[str] = None,
+    state: Optional[str] = None,
 ) -> StateSalesReport:
     tid = current_user.tenant_id
     state_expr = func.coalesce(func.nullif(Order.delivery_state, ""), func.nullif(Customer.state, ""), "Unknown")
 
-    order_base = [
-        Order.tenant_id == tid,
-        Order.is_active == True,
-        Order.status.notin_([OrderStatus.cancelled]),
-    ]
+    order_base = _order_scope_conditions(tid, status=status, state=state)
     if from_date:
         order_base.append(Order.created_at >= datetime.combine(from_date, datetime.min.time()))
     if to_date:
@@ -874,7 +927,10 @@ def get_state_sales_report(
             state_expr.label("state"),
             func.count(Order.id).label("order_count"),
             func.coalesce(func.sum(Order.total_amount), 0).label("revenue"),
-            func.coalesce(func.sum(Order.amount_due), 0).label("outstanding"),
+            func.coalesce(
+                func.sum(case((Order.status.in_(_OPEN_ORDER_STATUSES), Order.amount_due), else_=0)),
+                0,
+            ).label("outstanding"),
         )
         .outerjoin(Customer, Customer.id == Order.customer_id)
         .filter(*order_base)
@@ -923,17 +979,22 @@ def get_product_usage_insight(
     months: int = 6,
     from_date: Optional[date] = None,
     to_date: Optional[date] = None,
+    status: Optional[str] = None,
+    state: Optional[str] = None,
 ) -> ProductUsageInsight:
     tid = current_user.tenant_id
     months = max(1, min(months, 24))
 
-    top = get_product_report(db, current_user, from_date=from_date, to_date=to_date).results[:8]
+    top = get_product_report(
+        db,
+        current_user,
+        from_date=from_date,
+        to_date=to_date,
+        status=status,
+        state=state,
+    ).results[:8]
 
-    filters = [
-        Order.tenant_id == tid,
-        Order.is_active == True,
-        Order.status.notin_([OrderStatus.cancelled]),
-    ]
+    filters = _order_scope_conditions(tid, status=status, state=state)
     if from_date:
         filters.append(Order.created_at >= datetime.combine(from_date, datetime.min.time()))
     if to_date:
@@ -984,16 +1045,14 @@ def get_forecast_report(
     horizon: int = 3,
     from_date: Optional[date] = None,
     to_date: Optional[date] = None,
+    status: Optional[str] = None,
+    state: Optional[str] = None,
 ) -> ForecastReport:
     tid = current_user.tenant_id
     months = max(3, min(months, 24))
     horizon = max(1, min(horizon, 6))
 
-    order_filters = [
-        Order.tenant_id == tid,
-        Order.is_active == True,
-        Order.status.notin_([OrderStatus.cancelled]),
-    ]
+    order_filters = _order_scope_conditions(tid, status=status, state=state)
     if from_date:
         order_filters.append(Order.created_at >= datetime.combine(from_date, datetime.min.time()))
     if to_date:
@@ -1032,6 +1091,8 @@ def get_forecast_report(
         current_user,
         from_date=from_date,
         to_date=to_date,
+        status=status,
+        state=state,
     ).results[:5]
     product_demand_forecast = []
     for p in top_products:

@@ -68,6 +68,7 @@ def dashboard(
     from_date: Optional[date] = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: Optional[date] = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
     status: Optional[str] = Query(None, description="Filter by order status"),
+    state: Optional[str] = Query(None, description="Filter by delivery/customer state"),
     db: Session = Depends(get_db),
     current_user=Depends(_all_roles),
 ):
@@ -76,7 +77,14 @@ def dashboard(
     Leads | Customers | Orders | Revenue | Products.
     Supports optional date-range and status filters.
     """
-    return service.get_dashboard(db, current_user, from_date=from_date, to_date=to_date, status=status)
+    return service.get_dashboard(
+        db,
+        current_user,
+        from_date=from_date,
+        to_date=to_date,
+        status=status,
+        state=state,
+    )
 
 
 # ─────────────────────────────────────────────────────────────
@@ -87,6 +95,8 @@ def revenue_report(
     months: int = Query(12, ge=1, le=36, description="How many months of history"),
     from_date: Optional[date] = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: Optional[date] = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
+    status: Optional[str] = Query(None, description="Filter by order status"),
+    state: Optional[str] = Query(None, description="Filter by delivery/customer state"),
     db: Session = Depends(get_db),
     current_user=Depends(_all_roles),
 ):
@@ -94,7 +104,15 @@ def revenue_report(
     Monthly revenue breakdown — order count, revenue, outstanding per month.
     Supports optional date-range filters.
     """
-    return service.get_revenue_report(db, current_user, months=months, from_date=from_date, to_date=to_date)
+    return service.get_revenue_report(
+        db,
+        current_user,
+        months=months,
+        from_date=from_date,
+        to_date=to_date,
+        status=status,
+        state=state,
+    )
 
 
 # ─────────────────────────────────────────────────────────────
@@ -119,6 +137,7 @@ def employee_report(
 def lead_funnel(
     from_date: Optional[date] = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: Optional[date] = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
+    state: Optional[str] = Query(None, description="Filter by lead state"),
     db: Session = Depends(get_db),
     current_user=Depends(_all_roles),
 ):
@@ -126,7 +145,13 @@ def lead_funnel(
     Lead pipeline funnel: count + % at each stage.
     Also breaks down by source and priority.
     """
-    return service.get_lead_funnel(db, current_user, from_date=from_date, to_date=to_date)
+    return service.get_lead_funnel(
+        db,
+        current_user,
+        from_date=from_date,
+        to_date=to_date,
+        state=state,
+    )
 
 
 # ─────────────────────────────────────────────────────────────
@@ -172,6 +197,8 @@ def customers_profit_ltv(
 def product_report(
     from_date: Optional[date] = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: Optional[date] = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
+    status: Optional[str] = Query(None, description="Filter by order status"),
+    state: Optional[str] = Query(None, description="Filter by delivery/customer state"),
     db: Session = Depends(get_db),
     current_user=Depends(_all_roles),
 ):
@@ -179,7 +206,14 @@ def product_report(
     Product catalog performance: times ordered, units sold, revenue per product.
     Supports optional date-range filters.
     """
-    return service.get_product_report(db, current_user, from_date=from_date, to_date=to_date)
+    return service.get_product_report(
+        db,
+        current_user,
+        from_date=from_date,
+        to_date=to_date,
+        status=status,
+        state=state,
+    )
 
 
 # ─────────────────────────────────────────────────────────────
@@ -205,6 +239,8 @@ def sales_by_state(
     limit: int = Query(20, ge=1, le=100),
     from_date: Optional[date] = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: Optional[date] = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
+    status: Optional[str] = Query(None, description="Filter by order status"),
+    state: Optional[str] = Query(None, description="Filter by delivery/customer state"),
     db: Session = Depends(get_db),
     current_user=Depends(_all_roles),
 ):
@@ -218,6 +254,8 @@ def sales_by_state(
         limit=limit,
         from_date=from_date,
         to_date=to_date,
+        status=status,
+        state=state,
     )
 
 
@@ -229,6 +267,8 @@ def product_usage_insights(
     months: int = Query(6, ge=1, le=24, description="How many months for trend"),
     from_date: Optional[date] = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: Optional[date] = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
+    status: Optional[str] = Query(None, description="Filter by order status"),
+    state: Optional[str] = Query(None, description="Filter by delivery/customer state"),
     db: Session = Depends(get_db),
     current_user=Depends(_all_roles),
 ):
@@ -242,6 +282,8 @@ def product_usage_insights(
         months=months,
         from_date=from_date,
         to_date=to_date,
+        status=status,
+        state=state,
     )
 
 
@@ -254,6 +296,8 @@ def forecast_report(
     horizon: int = Query(3, ge=1, le=6, description="Forecast horizon in months"),
     from_date: Optional[date] = Query(None, alias="from", description="Start date (YYYY-MM-DD)"),
     to_date: Optional[date] = Query(None, alias="to", description="End date (YYYY-MM-DD)"),
+    status: Optional[str] = Query(None, description="Filter by order status"),
+    state: Optional[str] = Query(None, description="Filter by delivery/customer state"),
     db: Session = Depends(get_db),
     current_user=Depends(_all_roles),
 ):
@@ -267,6 +311,8 @@ def forecast_report(
         horizon=horizon,
         from_date=from_date,
         to_date=to_date,
+        status=status,
+        state=state,
     )
 
 

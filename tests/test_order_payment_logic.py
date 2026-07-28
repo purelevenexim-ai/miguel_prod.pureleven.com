@@ -133,6 +133,8 @@ if status == 201:
          f"got {order.get('cod_amount')}")
     test("T2.6 Partial COD → advance_amount=100", float(order.get("advance_amount", 0)) == 100,
          f"got {order.get('advance_amount')}")
+    test("T2.6b Partial COD → amount_due=total-advance", float(order["amount_due"]) == total - 100,
+         f"due={order['amount_due']} vs expected={total - 100}")
 
     # Update advance from 100 to 200
     print("\n  --- Update advance 100 → 200 ---")
@@ -147,6 +149,8 @@ if status == 201:
              f"got {r2.get('cod_amount')}")
         test("T2.10 Updated amount_paid=200", float(r2.get("amount_paid", 0)) == 200,
              f"got {r2.get('amount_paid')}")
+        test("T2.11 Updated amount_due=900", float(r2.get("amount_due", 0)) == 900,
+             f"got {r2.get('amount_due')}")
 
 # ═════════════════════════════════════════════════════════════
 # TEST GROUP 3: Prepaid (UPI) Payment Method

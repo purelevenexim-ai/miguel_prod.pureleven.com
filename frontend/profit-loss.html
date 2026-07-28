@@ -48,8 +48,8 @@ body { background: var(--bg-page); margin: 0; }
 .panel-header h3 { font-size: 14px; font-weight: 600; color: var(--g-900); margin: 0; }
 .panel-body { padding: 16px; }
 .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 14px; margin-bottom: 18px; }
-.chart-panel { background: var(--surf); border: 1px solid var(--bdr); border-radius: var(--r-sm); padding: 14px 16px; }
-.chart-panel h4 { font-size: 13px; font-weight: 600; color: var(--g-900); margin: 0 0 12px; }
+.chart-panel { background: var(--surf); border: 1px solid #e7ebf1; border-radius: 15px; padding: 16px 18px; box-shadow:0 6px 22px rgba(25,40,70,.045); }
+.chart-panel h4 { font-size: 14px; font-weight: 700; color: var(--g-900); margin: 0 0 12px; letter-spacing:-.01em; }
 canvas { max-height: 240px; }
 .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid var(--bdr); background: var(--g-50); }
 .toolbar select { padding: 4px 8px; border: 1px solid var(--bdr); border-radius: var(--r-xs); font-size: 12px; background: #fff; font-family: var(--font); color: var(--g-900); height: 28px; }
@@ -1551,29 +1551,39 @@ function renderRevenueChart(byMonth) {
     }
     return m;
   }
+  var chartCtx = ctx.getContext('2d');
+  var revenueGradient = chartCtx.createLinearGradient(0, 0, 0, 260);
+  revenueGradient.addColorStop(0, 'rgba(37,99,235,.28)');
+  revenueGradient.addColorStop(1, 'rgba(37,99,235,0)');
+  var dueGradient = chartCtx.createLinearGradient(0, 0, 0, 260);
+  dueGradient.addColorStop(0, 'rgba(245,158,11,.15)');
+  dueGradient.addColorStop(1, 'rgba(245,158,11,0)');
   chartRevenue = new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
       labels: byMonth.map(function(m){ return fmtMonth(m.month); }),
       datasets: [
         {
           label: 'Revenue',
           data: byMonth.map(function(m){ return parseFloat(m.revenue) || 0; }),
-          backgroundColor: 'rgba(59,130,246,0.7)',
-          borderColor: '#3b82f6',
-          borderWidth: 1,
-          borderRadius: 4,
+          backgroundColor: revenueGradient,
+          borderColor: '#2563eb',
+          borderWidth: 2,
+          tension: .35,
+          fill: true,
+          pointRadius: 0,
+          pointHoverRadius: 4,
         },
         {
           label: 'Outstanding',
           data: byMonth.map(function(m){ return parseFloat(m.outstanding) || 0; }),
-          type: 'line',
-          backgroundColor: 'rgba(245,158,11,0.2)',
+          backgroundColor: dueGradient,
           borderColor: '#f59e0b',
           borderWidth: 2,
           tension: 0.4,
-          fill: false,
-          pointRadius: 4
+          fill: true,
+          pointRadius: 0,
+          pointHoverRadius: 4
         }
       ]
     },
@@ -1582,7 +1592,7 @@ function renderRevenueChart(byMonth) {
       maintainAspectRatio: true,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { position: 'top', labels: { font: { size: 11 }, usePointStyle: true } },
+        legend: { position: 'top', align:'end', labels: { font: { size: 11 }, usePointStyle: true, boxWidth:7 } },
         tooltip: {
           callbacks: {
             label: function(ctx) {
@@ -1603,9 +1613,10 @@ function renderRevenueChart(byMonth) {
               return '\u20b9' + v.toLocaleString('en-IN');
             }
           },
-          grid: { color: 'rgba(0,0,0,0.05)' }
+          grid: { color: '#edf1f6' },
+          border: { display:false }
         },
-        x: { grid: { display: false } }
+        x: { grid: { display: false }, border:{display:false} }
       }
     }
   });
@@ -1775,30 +1786,37 @@ function renderRevenueTabChart(byMonth) {
     }
     return m;
   }
+  var chartCtx = ctx.getContext('2d');
+  var revenueGradient = chartCtx.createLinearGradient(0, 0, 0, 260);
+  revenueGradient.addColorStop(0, 'rgba(16,185,129,.26)');
+  revenueGradient.addColorStop(1, 'rgba(16,185,129,0)');
   chartRevenueTab = new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
       labels: byMonth.map(function(m){ return fmtMonth(m.month); }),
       datasets: [
         {
           label: 'Revenue',
           data: byMonth.map(function(m){ return parseFloat(m.revenue) || 0; }),
-          backgroundColor: 'rgba(16,185,129,0.7)',
+          backgroundColor: revenueGradient,
           borderColor: '#10b981',
-          borderWidth: 1,
-          borderRadius: 4,
+          borderWidth: 2,
+          tension:.35,
+          fill:true,
+          pointRadius:0,
+          pointHoverRadius:4,
           order: 2
         },
         {
           label: 'Collected',
-          data: byMonth.map(function(m){ return Math.max(0, (parseFloat(m.revenue)||0) - (parseFloat(m.outstanding)||0)); }),
-          type: 'line',
+          data: byMonth.map(function(m){ return parseFloat(m.collected) || 0; }),
           backgroundColor: 'rgba(59,130,246,0.1)',
           borderColor: '#3b82f6',
           borderWidth: 2,
           tension: 0.4,
           fill: true,
-          pointRadius: 4,
+          pointRadius: 0,
+          pointHoverRadius: 4,
           pointBackgroundColor: '#3b82f6',
           order: 1
         },
@@ -1812,7 +1830,8 @@ function renderRevenueTabChart(byMonth) {
           borderDash: [5, 3],
           tension: 0.4,
           fill: false,
-          pointRadius: 4,
+          pointRadius: 0,
+          pointHoverRadius: 4,
           pointBackgroundColor: '#f59e0b',
           order: 0
         }
@@ -1866,15 +1885,16 @@ function renderRevenueTable(byMonth) {
     }
     return m;
   }
-  var totalRev = 0, totalOrders = 0, totalOut = 0;
+  var totalRev = 0, totalCollected = 0, totalOrders = 0, totalOut = 0;
   var rows = byMonth.map(function(m) {
     var rev = parseFloat(m.revenue) || 0;
+    var collected = parseFloat(m.collected) || 0;
     var out = parseFloat(m.outstanding) || 0;
     var oc  = parseInt(m.order_count) || 0;
     totalRev    += rev;
+    totalCollected += collected;
     totalOrders += oc;
     totalOut    += out;
-    var collected = rev - out;
     return '<tr>'
       + '<td style="font-weight:600">' + esc(fmtMonth(m.month)) + '</td>'
       + '<td class="num">' + oc + '</td>'
@@ -1885,7 +1905,6 @@ function renderRevenueTable(byMonth) {
       + '</tr>';
   }).join('');
 
-  var totalCollected = totalRev - totalOut;
   var totRow = '<tr style="background:var(--g-50);font-weight:700">'
     + '<td>TOTAL</td>'
     + '<td class="num">' + totalOrders + '</td>'

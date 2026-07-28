@@ -109,10 +109,16 @@ def _recalc_order_totals(order: Order) -> None:
         + (order.tax_amount or Decimal("0"))
         + (order.shipping_charge or Decimal("0"))
     ).quantize(Decimal("0.01"))
-    order.amount_due = max(
-        Decimal("0"),
-        order.total_amount - (order.amount_paid or Decimal("0")),
-    )
+    if order.payment_status == PaymentStatus.paid:
+        # A settled order remains settled when totals are recalculated
+        # (for example when a final courier charge is synchronized).
+        order.amount_paid = order.total_amount
+        order.amount_due = Decimal("0")
+    else:
+        order.amount_due = max(
+            Decimal("0"),
+            order.total_amount - (order.amount_paid or Decimal("0")),
+        )
     
     # ── Partial COD: Recalculate cod_amount (Issue: Partial COD) ────────────
     if order.payment_method and hasattr(PaymentMethod, "partial_cod") and \
@@ -138,13 +144,17 @@ def _update_payment_status(order: Order) -> None:
     # Otherwise auto-derive
     if order.amount_paid and order.amount_paid >= order.total_amount and order.total_amount > 0:
         order.payment_status = PaymentStatus.paid
+        order.amount_paid = order.total_amount
+        order.amount_due = Decimal("0")
     elif method and hasattr(PaymentMethod, "partial_cod") and \
          method.value == "partial_cod" and order.advance_amount and order.advance_amount > 0:
         # Partial COD with advance paid → mark as partial
         order.payment_status = PaymentStatus.partial
-        order.amount_paid = order.advance_amount
+        order.amount_paid = min(order.advance_amount, order.total_amount)
+        order.amount_due = max(Decimal("0"), order.total_amount - order.amount_paid)
     elif order.amount_paid and order.amount_paid > 0:
         order.payment_status = PaymentStatus.partial
+        order.amount_due = max(Decimal("0"), order.total_amount - order.amount_paid)
     elif method and method.value in ('upi', 'bank_transfer', 'cheque'):
         # Prepaid methods → mark paid immediately
         order.payment_status = PaymentStatus.paid
@@ -153,6 +163,8 @@ def _update_payment_status(order: Order) -> None:
     else:
         # COD or unset → pending
         order.payment_status = PaymentStatus.pending
+        order.amount_paid = Decimal("0")
+        order.amount_due = order.total_amount
 
 
 def _sync_order_profit_posting(db: Session, order: Order) -> None:

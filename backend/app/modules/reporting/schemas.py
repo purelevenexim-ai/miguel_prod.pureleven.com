@@ -48,8 +48,9 @@ class DashboardStats(BaseModel):
     total_revenue:              Decimal     # sum of all non-cancelled order values (order book)
     revenue_this_month:         Decimal
     delivered_revenue:          Decimal = Decimal("0")  # sum of delivered orders only (realised)
+    collected_revenue:          Decimal = Decimal("0")  # actual amount_paid across operational orders
     total_outstanding:          Decimal     # amount_due across open orders
-    total_shipping_cost:        Decimal = Decimal("0")  # sum of order.shipping_charge
+    total_shipping_cost:        Decimal = Decimal("0")  # sum of order.actual_shipping_cost
 
     # Products
     total_products:             int
@@ -64,6 +65,7 @@ class RevenueByMonth(BaseModel):
     month:          str          # "2026-01"
     order_count:    int
     revenue:        Decimal
+    collected:      Decimal = Decimal("0")
     outstanding:    Decimal
 
 
