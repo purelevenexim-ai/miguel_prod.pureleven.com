@@ -1,0 +1,301 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║        P&L DASHBOARD NOT AUTO-UPDATING — SOLUTION APPLIED ✅                   ║
+║                          The Complete Fix                                      ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+THE ISSUE YOU HAD:
+─────────────────
+  ✗ You marked 1 order as "delivered"
+  ✗ Went to P&L dashboard
+  ✗ Still shows ₹0 revenue
+  ✗ "Why isn't it updating?"
+
+WHY IT HAPPENED:
+────────────────
+  P&L dashboard loads data when the page opens.
+  It takes a "snapshot" of the database at that moment.
+  
+  When you change order status in Orders page:
+  - Database is updated ✓
+  - P&L page doesn't know about it ✗
+  - P&L page shows OLD snapshot ✗
+  
+  Orders page and P&L page are SEPARATE files with NO communication.
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+THE FIX (Applied Now):
+──────────────────────
+
+1️⃣  🔄 REFRESH BUTTON
+    ─────────────────
+    Location: Top-right corner of P&L dashboard
+    
+    Before:   [Logout]
+    Now:      [🔄 Refresh] [Logout]
+    
+    Click it to reload data from database.
+
+
+2️⃣  ℹ️ INFO BANNER
+    ───────────────
+    Appears at top of dashboard when data loads.
+    
+    Shows: "ℹ️ Data Updated: 14:25 — P&L shows revenue from delivered 
+           orders only. If you advanced an order status in Orders, 
+           click the 🔄 Refresh button above to update this view."
+    
+    The time updates every time you click 🔄 Refresh.
+
+
+3️⃣  📖 DOCUMENTATION
+    ──────────────────
+    /opt/miguel/P_L_DATA_REFRESH_GUIDE.md (detailed, 1000+ lines)
+    /opt/miguel/P_L_REFRESH_FIX_SUMMARY.md (quick reference)
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+HOW TO USE (5 STEPS):
+─────────────────────
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: Open Orders Page                                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Click: Dashboard → Orders                                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: Advance Order to Delivered                                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Click order → See status buttons:                                           │
+│   • 📤 Mark Processing                                                       │
+│   • 📦 Mark Packed                                                           │
+│   • 🚚 Mark Shipped                                                          │
+│   • 🚛 Out for Delivery                                                      │
+│   • ✅ Mark Delivered  ← Click this one                                     │
+│                                                                              │
+│ Order status = "delivered" ✓                                                 │
+│ Revenue is now counted ✓                                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 3: Go to P&L Dashboard                                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Click: Dashboard → Profit & Loss                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 4: Click 🔄 Refresh Button                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Location: Top-right corner (next to Logout)                                 │
+│                                                                              │
+│   ← Back    Profit & Loss    [🔄 Refresh] [Logout]                          │
+│             ↑                 ↑                                               │
+│             Title             Click here!                                    │
+│                                                                              │
+│ Page will reload for 1-2 seconds...                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 5: See Updated Revenue                                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Top of page shows:                                                           │
+│ ℹ️ Data Updated: 14:25 — P&L shows revenue from delivered orders only.      │
+│    If you advanced an order status in Orders, click the 🔄 Refresh          │
+│    button above to update this view.                                        │
+│                                                                              │
+│ Dashboard stats updated:                                                    │
+│   Total Revenue:    ₹500  (was ₹0, now updated!) ✅                         │
+│   Orders Delivered: 1     (was 0, now updated!) ✅                          │
+│   Outstanding:      ₹0    (for delivered orders)                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+QUICK REFERENCE:
+────────────────
+
+What happens:                    What to do:
+─────────────────────────────────────────────────────────────────────────────
+Marked order as delivered    →   Click 🔄 Refresh on P&L page
+Changed order amount         →   Click 🔄 Refresh on P&L page
+Cancelled an order           →   Click 🔄 Refresh on P&L page
+Switched between tabs        →   No refresh needed (filters work)
+Just opened P&L page         →   No refresh needed (loaded fresh)
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+UNDERSTANDING THE DATA:
+──────────────────────
+
+WHY ONLY "DELIVERED" ORDERS COUNT?
+───────────────────────────────────
+
+Revenue = Orders marked as DELIVERED
+
+Order Status Pipeline:
+  1. draft          → Not even confirmed yet
+  2. confirmed  ← You create order here
+  3. processing     → Picking from warehouse
+  4. packed         → Ready to ship
+  5. shipped        → In courier's hands (might get lost!)
+  6. out_for_delivery → Delivery guy has it (might be returned)
+  7. delivered  ← ONLY HERE counts revenue ✓
+  
+Why?
+  📦 Until delivered, customer might:
+    - Cancel order
+    - Return package
+    - Not pay
+  
+  ✅ Once delivered:
+    - Customer has physical product
+    - Can't be returned easily
+    - Revenue is guaranteed
+    - Can be counted in P&L
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+EXAMPLE SCENARIO:
+─────────────────
+
+SCENARIO 1: Order created but not delivered
+────────────────────────────────────────────
+  ✓ Create order (confirmed)
+  ✓ Advance to processing
+  ✓ Advance to packed
+  ✓ Advance to shipped
+  × Do NOT advance to delivered yet
+  
+  Result:
+  - Order exists in database
+  - P&L Total Revenue = ₹0 ❌ (not delivered)
+  - Orders Delivered count = 0
+
+SCENARIO 2: Order delivered (with refresh)
+────────────────────────────────────────────
+  ✓ Create order (confirmed)
+  ✓ Advance to processing
+  ✓ Advance to packed
+  ✓ Advance to shipped
+  ✓ Advance to out_for_delivery
+  ✓ Advance to delivered
+  ✓ Go to P&L
+  ✓ Click 🔄 Refresh
+  
+  Result:
+  - Order exists in database with status = delivered
+  - P&L Total Revenue = ₹500 ✅ (was delivered!)
+  - Orders Delivered count = 1
+  - Info banner shows refresh time
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+TESTING STEPS:
+──────────────
+
+Quick test (2 minutes):
+
+1. Orders → Create order
+   Product: Turmeric
+   Qty: 2 kg
+   Price: ₹250/kg
+   Total: ₹500
+   
+2. Click order → Status buttons appear
+   Click: 📤 Mark Processing
+   Click: 📦 Mark Packed
+   Click: 🚚 Mark Shipped (enter "TEST123" as tracking)
+   Click: 🚛 Out for Delivery
+   Click: ✅ Mark Delivered
+   
+3. Go to P&L Dashboard
+   Shows: ₹0 revenue (old data)
+   Info: (not visible yet)
+   
+4. Click: 🔄 Refresh
+   Waits: 1-2 seconds...
+   
+5. See updated dashboard:
+   Total Revenue: ₹500 ✅
+   Orders Delivered: 1 ✅
+   Info banner: "ℹ️ Data Updated: 14:25"
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING:
+────────────────
+
+Problem: Refresh button not visible
+Solution: 
+  • Refresh browser page (Ctrl+Shift+R)
+  • Make sure you're using latest version of profit-loss.html
+  • Check top-right corner (next to Logout button)
+
+Problem: Still shows ₹0 after refresh
+Solution:
+  • Check if order status is actually "delivered" (not just "shipped")
+  • Go to Orders → Open order → Check Status History
+  • Verify order is in same tenant (not different account)
+  • Try refresh again (sometimes takes 2-3 seconds)
+
+Problem: Revenue doesn't match
+Solution:
+  • Check filter dates (if filtered to specific month, recent orders might not show)
+  • Make sure orders are marked as delivered (check Status History)
+  • Verify order amounts are correct
+  • Open browser console (F12) for any error messages
+
+Problem: Refresh takes too long
+Solution:
+  • Check internet speed
+  • Refresh again (first load might be slow)
+  • If consistently slow, contact support
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+SUMMARY:
+────────
+
+BEFORE FIX:
+  ✗ No way to refresh P&L data
+  ✗ Have to hard-refresh entire page (Ctrl+Shift+R)
+  ✗ No explanation of why ₹0 shows
+  ✗ Confusing experience
+
+AFTER FIX:
+  ✓ 🔄 Refresh button in top-right
+  ✓ Single-click refresh (1-2 seconds)
+  ✓ ℹ️ Info banner explains why and when to refresh
+  ✓ Clear, intuitive workflow
+
+WORKFLOW:
+  Orders → advance status → P&L → click 🔄 Refresh → see updated revenue
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+DOCUMENTATION:
+───────────────
+
+For detailed explanations, see:
+
+1. /opt/miguel/P_L_REFRESH_FIX_SUMMARY.md
+   └─ Quick reference (this file)
+   
+2. /opt/miguel/P_L_DATA_REFRESH_GUIDE.md
+   └─ Comprehensive guide (1000+ lines, explains everything)
+
+3. /opt/miguel/QUICK_FIX_VERIFICATION.txt
+   └─ Order status workflow reference
+
+═══════════════════════════════════════════════════════════════════════════════════
+
+Next time you mark an order as delivered:
+  1. Click 🔄 Refresh
+  2. See updated P&L revenue
+  3. Done! ✅
+
+Questions? Check the detailed guide at P_L_DATA_REFRESH_GUIDE.md
+
+Status: ✅ COMPLETE — Ready to use!
+Last Updated: Feb 24, 2026, 14:37 IST

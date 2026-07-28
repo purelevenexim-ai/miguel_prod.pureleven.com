@@ -1,0 +1,301 @@
+{
+  "project": "PureLevenExim CRM",
+  "version": "2.4.0",
+  "status": "Production Ready",
+  "root": "/opt/pureleven",
+  "description": "Multi-tenant SaaS CRM with WhatsApp automation, order management, and logistics",
+  "summary": "96K LOC full-stack application (47K backend Python + 49K frontend HTML/JS/CSS)",
+  "metrics": {
+    "total_loc": 96372,
+    "backend_python": 47322,
+    "frontend_html_js_css": 49070,
+    "api_modules": 29,
+    "database_models": 22,
+    "database_migrations": 63,
+    "html_pages": 19,
+    "dependencies": 39,
+    "largest_service": "message_automation/service.py (3167 LOC)"
+  },
+  "architecture": {
+    "frontend": {
+      "type": "Vanilla HTML/CSS/JavaScript",
+      "server": "Nginx (reverse proxy)",
+      "pages": 19,
+      "modules": [
+        "auth.js",
+        "wa-chatbox.js",
+        "mobile-nav.js"
+      ],
+      "styling": "ds.css (design system) + adaptive.css + mobile.css"
+    },
+    "backend": {
+      "framework": "FastAPI + SQLAlchemy",
+      "server": "Uvicorn (ASGI)",
+      "port": 8000,
+      "modules": 29,
+      "models": 22,
+      "largest_file": "backend/app/modules/message_automation/service.py (3167 LOC)"
+    },
+    "database": {
+      "engine": "PostgreSQL 15",
+      "migrations": 63,
+      "models": 22,
+      "scoping": "Multi-tenant (tenant_id on all tables)"
+    },
+    "devops": {
+      "containerization": "Docker Compose",
+      "environments": [
+        "UAT (docker-compose.yml)",
+        "Production (docker-compose.prod.yml)"
+      ],
+      "health_checks": "Built-in liveness probes"
+    }
+  },
+  "modules": [
+    {
+      "name": "orders",
+      "path": "backend/app/modules/orders",
+      "purpose": "Order CRUD + workflow",
+      "loc": 3007,
+      "key_files": [
+        "service.py (1200)",
+        "router.py (800)",
+        "models.py (300)"
+      ]
+    },
+    {
+      "name": "message_automation",
+      "path": "backend/app/modules/message_automation",
+      "purpose": "7-checkpoint WhatsApp journey",
+      "loc": 5200,
+      "key_files": [
+        "service.py (3167)",
+        "journey.py (218)",
+        "templates.py (500)"
+      ]
+    },
+    {
+      "name": "whatsapp",
+      "path": "backend/app/modules/whatsapp",
+      "purpose": "WABIS + Meta integration",
+      "loc": 2000,
+      "key_files": [
+        "wabis_service.py",
+        "meta_service.py",
+        "router.py"
+      ]
+    },
+    {
+      "name": "shipments",
+      "path": "backend/app/modules/shipments",
+      "purpose": "Logistics + tracking",
+      "loc": 3007,
+      "key_files": [
+        "service.py",
+        "router.py",
+        "india_post.py"
+      ]
+    },
+    {
+      "name": "invoices",
+      "path": "backend/app/modules/invoices",
+      "purpose": "PDF invoice generation",
+      "loc": 1500,
+      "key_files": [
+        "service.py",
+        "router.py",
+        "pdf_generator.py"
+      ]
+    },
+    {
+      "name": "reporting",
+      "path": "backend/app/modules/reporting",
+      "purpose": "P&L + GST + analytics",
+      "loc": 2209,
+      "key_files": [
+        "service.py (2209)",
+        "router.py"
+      ]
+    },
+    {
+      "name": "customers",
+      "path": "backend/app/modules/customers",
+      "purpose": "CRM customer mgmt",
+      "loc": 1800,
+      "key_files": [
+        "service.py",
+        "router.py",
+        "models.py"
+      ]
+    },
+    {
+      "name": "leads",
+      "path": "backend/app/modules/leads",
+      "purpose": "6-stage sales funnel",
+      "loc": 1600,
+      "key_files": [
+        "service.py",
+        "router.py",
+        "models.py"
+      ]
+    },
+    {
+      "name": "products",
+      "path": "backend/app/modules/products",
+      "purpose": "Inventory + SKU",
+      "loc": 1400,
+      "key_files": [
+        "service.py",
+        "router.py"
+      ]
+    },
+    {
+      "name": "platform",
+      "path": "backend/app/modules/platform",
+      "purpose": "Multi-tenant admin",
+      "loc": 1200,
+      "key_files": [
+        "service.py",
+        "router.py"
+      ]
+    },
+    {
+      "name": "purchases",
+      "path": "backend/app/modules/purchases",
+      "purpose": "PO management",
+      "loc": 1000,
+      "key_files": [
+        "service.py",
+        "router.py"
+      ]
+    },
+    {
+      "name": "vendors",
+      "path": "backend/app/modules/vendors",
+      "purpose": "Supplier directory",
+      "loc": 800,
+      "key_files": [
+        "service.py",
+        "router.py"
+      ]
+    },
+    {
+      "name": "gst",
+      "path": "backend/app/modules/gst",
+      "purpose": "Tax compliance",
+      "loc": 1200,
+      "key_files": [
+        "service.py",
+        "router.py"
+      ]
+    },
+    {
+      "name": "india_post",
+      "path": "backend/app/modules/india_post",
+      "purpose": "Courier integration",
+      "loc": 800,
+      "key_files": [
+        "service.py",
+        "router.py"
+      ]
+    }
+  ],
+  "integrations": {
+    "shopify": {
+      "api": "Shopify REST API",
+      "purpose": "Order sync + webhook",
+      "status": "\u2705 Active"
+    },
+    "whatsapp": {
+      "providers": [
+        "WABIS (bot.wabis.in)",
+        "Meta Cloud API"
+      ],
+      "purpose": "Message automation + templates",
+      "status": "\u2705 Active"
+    },
+    "india_post": {
+      "api": "India Post AWB + tracking",
+      "purpose": "Shipping labels + tracking",
+      "status": "\u2705 Active"
+    },
+    "google": {
+      "api": "Google Maps (address geocoding)",
+      "purpose": "Address validation",
+      "status": "\u2705 Active"
+    }
+  },
+  "frontend_pages": {
+    "admin": [
+      "platform-admin.html",
+      "tenant-admin.html",
+      "platform-login.html"
+    ],
+    "operations": [
+      "orders.html",
+      "shipments.html",
+      "invoices.html",
+      "products.html"
+    ],
+    "crm": [
+      "customers.html",
+      "vendors.html",
+      "purchases.html",
+      "inventory.html"
+    ],
+    "features": [
+      "leads.html",
+      "whatsapp.html",
+      "gst.html",
+      "profit-loss.html"
+    ],
+    "tools": [
+      "label-editor.html",
+      "marketing.html",
+      "wa-setup-guide.html",
+      "customer-portal.html"
+    ]
+  },
+  "database_tables": {
+    "auth": [
+      "users",
+      "tenants",
+      "tenant_users",
+      "activity_logs"
+    ],
+    "ecommerce": [
+      "orders",
+      "order_items",
+      "customers",
+      "products",
+      "inventory"
+    ],
+    "fulfillment": [
+      "shipments",
+      "tracking_updates",
+      "shipment_labels",
+      "tariffs"
+    ],
+    "invoicing": [
+      "invoices",
+      "invoice_lines",
+      "gst_register"
+    ],
+    "messaging": [
+      "wa_settings",
+      "message_automation_tasks",
+      "message_templates",
+      "conversation_windows"
+    ],
+    "crm": [
+      "leads",
+      "lead_activity",
+      "customers",
+      "customer_notes"
+    ],
+    "integrations": [
+      "shopify_store",
+      "shopify_sync_log"
+    ]
+  }
+}

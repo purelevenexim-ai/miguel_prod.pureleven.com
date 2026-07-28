@@ -1,0 +1,866 @@
+"""
+Leads Service
+--------------
+All business logic for the Leads module.
+Thin router → fat service pattern.
+"""
+
+from __future__ import annotations
+
+import uuid
+import re
+from datetime import datetime, date, timezone
+from decimal import Decimal
+from typing import Optional
+
+from fastapi import HTTPException, status
+from sqlalchemy import func, case, or_
+from sqlalchemy.orm import Session, joinedload, selectinload
+
+from app.models.lead import Lead, LeadActivity, LeadPipelineStatus, LeadActivityType
+from app.models.customer import Customer, LeadStatus as CustomerLeadStatus, SourceType, CustomerType, PaymentMode
+from app.models.employee import Employee
+from app.models.order import Order
+from app.core.tenant_utils import apply_tenant_filter, assert_tenant_ownership
+from app.core.sequence import next_lead_number, next_customer_code
+from app.core.cache import cache_ttl, invalidate_cache
+from app.modules.leads.schemas import (
+    LeadCreate, LeadUpdate,
+    LeadActivityCreate, LeadConvertRequest,
+    LeadFilters, LeadStats,
+)
+
+
+# ─────────────────────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────────────────────
+
+def _next_lead_number(db: Session, tenant_id) -> str:
+    """Generate sequential lead number: LEAD-00001, LEAD-00002 ..."""
+    return next_lead_number(db, tenant_id)
+
+
+def _phone_match_variants(value: Optional[str]) -> set[str]:
+    digits = re.sub(r"\D", "", str(value or ""))
+    if not digits:
+        return set()
+    variants = {digits}
+    if len(digits) == 10:
+        variants.add(f"91{digits}")
+    if len(digits) == 12 and digits.startswith("91"):
+        variants.add(digits[2:])
+    return variants
+
+
+# ─────────────────────────────────────────────────────────────
+# CRUD
+# ─────────────────────────────────────────────────────────────
+
+def create_lead(db: Session, data: LeadCreate, current_user: Employee) -> Lead:
+    lead_number = _next_lead_number(db, current_user.tenant_id)
+
+    lead = Lead(
+        tenant_id=current_user.tenant_id,
+        lead_number=lead_number,
+        name=data.name,
+        phone=data.phone,
+        alternate_phone=data.alternate_phone,
+        email=data.email,
+        company_name=data.company_name,
+        city=data.city,
+        state=data.state,
+        country=data.country or "India",
+        source=data.source,
+        priority=data.priority,
+        status=data.status,
+        estimated_value=data.estimated_value,
+        product_interest=data.product_interest,
+        assigned_to_id=data.assigned_to_id,
+        created_by_id=current_user.id,
+        next_followup_date=data.next_followup_date,
+        notes=data.notes,
+    )
+    db.add(lead)
+    db.flush()
+
+    # Log creation activity
+    activity = LeadActivity(
+        tenant_id=current_user.tenant_id,
+        lead_id=lead.id,
+        employee_id=current_user.id,
+        activity_type=LeadActivityType.note,
+        note=f"Lead created. Status: {lead.status.value}",
+        new_status=lead.status,
+    )
+    db.add(activity)
+    db.commit()
+    db.refresh(lead)
+    return lead
+
+
+def list_leads(db: Session, filters: LeadFilters, current_user: Employee) -> dict:
+    query = db.query(Lead).filter(Lead.is_active == True)
+    query = apply_tenant_filter(query, Lead, current_user)
+
+    # ── Filters ───────────────────────────────────────────────
+    if filters.status:
+        query = query.filter(Lead.status == filters.status)
+
+    if filters.priority:
+        query = query.filter(Lead.priority == filters.priority)
+
+    if filters.source:
+        query = query.filter(Lead.source == filters.source)
+
+    if filters.assigned_to_id:
+        query = query.filter(Lead.assigned_to_id == filters.assigned_to_id)
+
+    if filters.city:
+        query = query.filter(Lead.city.ilike(f"%{filters.city}%"))
+
+    if filters.next_followup_before:
+        query = query.filter(Lead.next_followup_date <= filters.next_followup_before)
+
+    if filters.search:
+        term = f"%{filters.search}%"
+        clauses = [
+            Lead.name.ilike(term),
+            Lead.phone.ilike(term),
+            Lead.alternate_phone.ilike(term),
+            Lead.company_name.ilike(term),
+        ]
+
+        variants = _phone_match_variants(filters.search)
+        if variants:
+            lead_phone_digits = func.regexp_replace(func.coalesce(Lead.phone, ""), r"\D", "", "g")
+            alt_phone_digits = func.regexp_replace(func.coalesce(Lead.alternate_phone, ""), r"\D", "", "g")
+            for v in variants:
+                digit_term = f"%{v}%"
+                clauses.append(lead_phone_digits.ilike(digit_term))
+                clauses.append(alt_phone_digits.ilike(digit_term))
+
+        query = query.filter(or_(*clauses))
+
+    if filters.is_favorite is not None:
+        query = query.filter(Lead.is_favorite == filters.is_favorite)
+    
+    if filters.is_wholesale is not None:
+        query = query.filter(Lead.is_wholesale == filters.is_wholesale)
+
+    # ── Pagination ────────────────────────────────────────────
+    total = query.count()
+
+    # Priority sort order:
+    #   0 → remind_later due today (must act today)
+    #   1 → remind_later overdue / missed (past date, still pending)
+    #   2 → created     (came via unconfirmed order — high conversion chance)
+    #   3 → new_lead    (fresh from API / marketing / manual)
+    #   3 → contacted   (stays with active leads, not pushed down)
+    #   5 → success_won (closed — bottom)
+    #   6 → lost_lead   (dead — bottom)
+    # Within each bucket: newest first
+    today = date.today()
+    priority_expr = case(
+        (
+            (Lead.status == LeadPipelineStatus.remind_later) &
+            (Lead.remind_later_date == today),
+            0,
+        ),
+        (
+            (Lead.status == LeadPipelineStatus.remind_later) &
+            (
+                (Lead.remind_later_date < today) |
+                (Lead.remind_later_date == None)
+            ),
+            1,
+        ),
+        (Lead.status == LeadPipelineStatus.created,     2),
+        (Lead.status == LeadPipelineStatus.new_lead,    3),
+        (Lead.status == LeadPipelineStatus.contacted,   3),
+        (Lead.status == LeadPipelineStatus.success_won, 5),
+        (Lead.status == LeadPipelineStatus.lost_lead,   6),
+        else_=3,
+    )
+
+    leads = (
+        query
+        .options(
+            selectinload(Lead.activities),
+            selectinload(Lead.messages)
+        )
+        .order_by(priority_expr, Lead.created_at.desc())
+        .offset((filters.page - 1) * filters.page_size)
+        .limit(filters.page_size)
+        .all()
+    )
+
+    from app.modules.leads.schemas import LeadResponse
+    return {
+        "total": total,
+        "page": filters.page,
+        "page_size": filters.page_size,
+        "results": [LeadResponse.model_validate(l) for l in leads],
+    }
+
+
+def get_lead(db: Session, lead_id: str, current_user: Employee) -> Lead:
+    lead = db.query(Lead).filter(
+        Lead.id == lead_id,
+        Lead.tenant_id == current_user.tenant_id,
+        Lead.is_active == True,
+    ).options(joinedload(Lead.activities)).first()
+    if not lead:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lead not found")
+    return lead
+
+
+def update_lead(db: Session, lead_id: str, data: LeadUpdate, current_user: Employee) -> Lead:
+    lead = get_lead(db, lead_id, current_user)
+
+    old_status = lead.status
+    updated_fields = data.model_dump(exclude_unset=True)
+
+    for field, value in updated_fields.items():
+        setattr(lead, field, value)
+
+    lead.updated_at = datetime.now(timezone.utc)
+
+    # If status changed, log an activity
+    new_status = updated_fields.get("status")
+    if new_status and new_status != old_status:
+        activity = LeadActivity(
+            tenant_id=current_user.tenant_id,
+            lead_id=lead.id,
+            employee_id=current_user.id,
+            activity_type=LeadActivityType.status_change,
+            note=f"Status changed from {old_status.value} to {new_status.value}",
+            old_status=old_status,
+            new_status=new_status,
+        )
+        db.add(activity)
+
+    db.commit()
+    db.refresh(lead)
+    return lead
+
+
+def delete_lead(db: Session, lead_id: str, current_user: Employee) -> dict:
+    lead = get_lead(db, lead_id, current_user)
+    lead.is_active = False
+    lead.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    return {"message": f"Lead {lead.lead_number} deleted"}
+
+
+def update_lead_wabis_labels(db: Session, lead_id: str, labels: list, current_user: Employee) -> dict:
+    """Update WABIS labels on a lead."""
+    lead = get_lead(db, lead_id, current_user)
+    lead.wabis_labels = labels
+    lead.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    return {
+        "message": "Labels updated",
+        "lead_id": str(lead.id),
+        "wabis_labels": lead.wabis_labels,
+    }
+
+
+# ─────────────────────────────────────────────────────────────
+# Activity Log
+# ─────────────────────────────────────────────────────────────
+
+def add_activity(
+    db: Session,
+    lead_id: str,
+    data: LeadActivityCreate,
+    current_user: Employee,
+) -> LeadActivity:
+    lead = get_lead(db, lead_id, current_user)
+
+    old_status = lead.status
+
+    activity = LeadActivity(
+        tenant_id=current_user.tenant_id,
+        lead_id=lead.id,
+        employee_id=current_user.id,
+        activity_type=data.activity_type,
+        note=data.note,
+        old_status=old_status,
+        new_status=data.new_status or old_status,
+    )
+    db.add(activity)
+
+    # Update lead status if a new one was provided
+    if data.new_status and data.new_status != old_status:
+        lead.status = data.new_status
+        lead.updated_at = datetime.now(timezone.utc)
+
+    # Update last_contacted_at for interaction types
+    if data.activity_type in (
+        LeadActivityType.call,
+        LeadActivityType.whatsapp,
+        LeadActivityType.sms,
+        LeadActivityType.visit,
+        LeadActivityType.email,
+    ):
+        lead.last_contacted_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(activity)
+    return activity
+
+
+# ─────────────────────────────────────────────────────────────
+# Convert Lead → Customer
+# ─────────────────────────────────────────────────────────────
+
+def convert_lead_to_customer(
+    db: Session,
+    lead_id: str,
+    data: LeadConvertRequest,
+    current_user: Employee,
+) -> Customer:
+    lead = get_lead(db, lead_id, current_user)
+
+    if lead.converted_customer_id is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Lead is already converted to a customer",
+        )
+
+    if lead.status == LeadPipelineStatus.lost_lead:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot convert a lost lead",
+        )
+
+    # ── Generate customer code ────────────────────────────────
+    customer_code = next_customer_code(db, current_user.tenant_id)
+
+    # ── Map source ────────────────────────────────────────────
+    # Map lead source to customer source (use meta_ads, not legacy meta)
+    source_map = {
+        "manual":      SourceType.manual,
+        "meta":        SourceType.meta_ads,   # meta -> meta_ads (not legacy meta)
+        "whatsapp":    SourceType.whatsapp,
+        "google_form": SourceType.google_form,
+        "website":     SourceType.website,
+        "referral":    SourceType.manual,     # referral has no customer equivalent, default manual
+        "cold_call":   SourceType.manual,     # cold_call has no customer equivalent, default manual
+    }
+    customer_source = source_map.get(
+        lead.source.value if lead.source else "manual",
+        SourceType.manual,
+    )
+
+    # ── Map customer_type ─────────────────────────────────────
+    # Map to current (non-legacy) customer types
+    type_map = {
+        "home_cook":   CustomerType.retail,       # legacy -> retail
+        "wholesaler":  CustomerType.wholesale,    # legacy -> wholesale
+        "retailer":    CustomerType.retail,       # legacy -> retail
+        "mill":        CustomerType.wholesale,    # legacy -> wholesale
+        "retail":      CustomerType.retail,
+        "wholesale":   CustomerType.wholesale,
+        "distributor": CustomerType.distributor,
+    }
+    customer_type = type_map.get(data.customer_type or "", None)
+
+    # ── Map payment mode ──────────────────────────────────────
+    payment_map = {
+        "prepaid": PaymentMode.prepaid,
+        "cod": PaymentMode.cod,
+        "pay_after_delivery": PaymentMode.pay_after_delivery,
+    }
+    payment_mode = payment_map.get(data.payment_mode_preference or "", None)
+
+    # ── Create Customer record ────────────────────────────────
+    customer = Customer(
+        tenant_id=current_user.tenant_id,
+        unique_customer_code=customer_code,
+        name=lead.name,
+        phone=lead.phone,
+        alternate_phone=lead.alternate_phone,
+        email=lead.email,
+        city=lead.city,
+        state=lead.state,
+        country=lead.country,
+        source=customer_source,
+        lead_status=CustomerLeadStatus.converted,
+        customer_type=customer_type,
+        payment_mode_preference=payment_mode,
+        assigned_employee_id=lead.assigned_to_id,
+        created_by_employee_id=current_user.id,
+        notes=data.notes or lead.notes,
+        source_lead_id=lead.id,  # Track the source lead for activity history
+    )
+    db.add(customer)
+    db.flush()
+
+    # ── Update lead ───────────────────────────────────────────
+    old_status = lead.status
+    lead.status = LeadPipelineStatus.success_won
+    lead.converted_customer_id = customer.id
+    lead.converted_at = datetime.now(timezone.utc)
+    lead.converted_by_id = current_user.id
+    lead.updated_at = datetime.now(timezone.utc)
+
+    # ── Log conversion activity ───────────────────────────────
+    activity = LeadActivity(
+        tenant_id=current_user.tenant_id,
+        lead_id=lead.id,
+        employee_id=current_user.id,
+        activity_type=LeadActivityType.status_change,
+        note=f"Lead converted to Customer {customer_code}",
+        old_status=old_status,
+        new_status=LeadPipelineStatus.success_won,
+    )
+    db.add(activity)
+
+    db.commit()
+    db.refresh(customer)
+    return customer
+
+
+# ─────────────────────────────────────────────────────────────
+# Stats / Dashboard
+# ─────────────────────────────────────────────────────────────
+
+def get_lead_stats(db: Session, current_user: Employee) -> LeadStats:
+    base = db.query(Lead).filter(Lead.is_active == True)
+    base = apply_tenant_filter(base, Lead, current_user)
+
+    total = base.count()
+
+    # By status
+    by_status = {}
+    for s in LeadPipelineStatus:
+        by_status[s.value] = base.filter(Lead.status == s).count()
+
+    # By priority
+    from app.models.lead import LeadPriority
+    by_priority = {}
+    for p in LeadPriority:
+        by_priority[p.value] = base.filter(Lead.priority == p).count()
+
+    # By source
+    from app.models.lead import LeadSource
+    by_source = {}
+    for src in LeadSource:
+        by_source[src.value] = base.filter(Lead.source == src).count()
+
+    # Overdue followups (next_followup_date < today and not won/lost)
+    today = date.today()
+    overdue = base.filter(
+        Lead.next_followup_date < today,
+        Lead.status.notin_([LeadPipelineStatus.success_won, LeadPipelineStatus.lost_lead]),
+    ).count()
+
+    # Converted/won this month
+    now = datetime.now(timezone.utc)
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    converted_this_month = base.filter(
+        Lead.converted_at >= month_start,
+    ).count()
+
+    won_this_month = base.filter(
+        Lead.status == LeadPipelineStatus.success_won,
+        Lead.updated_at >= month_start,
+    ).count()
+
+    # Total pipeline value (sum of estimated_value for open leads)
+    pipeline_value = (
+        base.filter(
+            Lead.status.notin_([LeadPipelineStatus.success_won, LeadPipelineStatus.lost_lead]),
+            Lead.estimated_value.isnot(None),
+        )
+        .with_entities(func.sum(Lead.estimated_value))
+        .scalar()
+    )
+
+    return LeadStats(
+        total=total,
+        by_status=by_status,
+        by_priority=by_priority,
+        by_source=by_source,
+        overdue_followups=overdue,
+        converted_this_month=converted_this_month,
+        won_this_month=won_this_month,
+        total_pipeline_value=pipeline_value,
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+# Linked Orders
+# ─────────────────────────────────────────────────────────────
+
+def get_lead_orders(db: Session, lead_id: str, current_user: Employee) -> list:
+    """Return all orders linked to a lead (manual via orders.lead_id + Shopify via customer link)."""
+    lead = get_lead(db, lead_id, current_user)
+    result = []
+
+    # Manual orders linked directly to this lead
+    orders = (
+        db.query(Order)
+        .filter(
+            Order.lead_id == lead.id,
+            Order.tenant_id == current_user.tenant_id,
+        )
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+    for o in orders:
+        result.append({
+            "id": str(o.id),
+            "order_number": o.order_number,
+            "order_type": "manual",
+            "status": o.status.value if o.status else None,
+            "total_amount": float(o.total_amount or 0),
+            "payment_method": o.payment_method.value if o.payment_method else None,
+            "created_at": o.created_at.isoformat() if o.created_at else None,
+        })
+
+    # Shopify orders linked via the converted/linked customer
+    customer_id = lead.converted_customer_id or lead.customer_id
+    if customer_id:
+        from app.models.shopify_order import ShopifyOrder
+        shopify_orders = (
+            db.query(ShopifyOrder)
+            .filter(
+                ShopifyOrder.customer_id == customer_id,
+                ShopifyOrder.tenant_id == current_user.tenant_id,
+            )
+            .order_by(ShopifyOrder.created_at_shopify.desc())
+            .all()
+        )
+        for so in shopify_orders:
+            result.append({
+                "id": str(so.id),
+                "order_number": so.shopify_order_name,
+                "order_type": "shopify",
+                "status": so.shopify_fulfillment_status,
+                "total_amount": float(so.total_price or 0),
+                "payment_method": so.shopify_financial_status or "unknown",
+                "created_at": so.created_at_shopify.isoformat() if so.created_at_shopify else None,
+            })
+
+    # Sort combined list newest first
+    result.sort(key=lambda x: x.get("created_at") or "", reverse=True)
+    return result
+
+
+# ─────────────────────────────────────────────────────────────
+# PHASE 1: Contacted Popup & Workflow
+# ─────────────────────────────────────────────────────────────
+
+def mark_contacted(db: Session, lead_id: str, request, current_user: Employee) -> Lead:
+    """
+    Mark lead as contacted with mandatory note.
+    Actions:
+      "create_order"   → log note, set contacted status, frontend then opens MTO drawer
+      "remind_later"   → log note, schedule follow-up date, set remind_later status
+      "not_interested" → log note, set lost_lead status
+      "save_close"     → legacy fallback, set contacted status (kept for backwards compat)
+    """
+    from app.modules.leads.schemas import ContactedPopupRequest
+
+    lead = get_lead(db, lead_id, current_user)
+
+    # Save the note
+    lead.note_last = request.note
+    lead.contacted_count = (lead.contacted_count or 0) + 1
+    lead.last_contacted_at = datetime.now(timezone.utc)
+
+    # Log the contacted popup activity
+    activity = LeadActivity(
+        tenant_id=current_user.tenant_id,
+        lead_id=lead.id,
+        employee_id=current_user.id,
+        activity_type=LeadActivityType.contacted_popup,
+        note=request.note,
+        old_status=lead.status,
+        new_status=lead.status,  # will be updated below
+    )
+
+    # Handle action
+    if request.action in ("create_order", "save_close"):
+        # Log contact, set to contacted — frontend will immediately open MTO drawer
+        lead.status = LeadPipelineStatus.contacted
+        activity.new_status = LeadPipelineStatus.contacted
+
+    elif request.action == "remind_later":
+        if not request.remind_later_date:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="remind_later_date required for 'remind_later' action"
+            )
+        lead.remind_later_date = request.remind_later_date
+        lead.status = LeadPipelineStatus.remind_later
+        activity.new_status = LeadPipelineStatus.remind_later
+
+    elif request.action == "not_interested":
+        old_status = lead.status
+        lead.status = LeadPipelineStatus.lost_lead
+        activity.old_status = old_status
+        activity.new_status = LeadPipelineStatus.lost_lead
+
+        recovery_activity = LeadActivity(
+            tenant_id=current_user.tenant_id,
+            lead_id=lead.id,
+            employee_id=current_user.id,
+            activity_type=LeadActivityType.recovery_campaign,
+            note="Marked as not interested. Available for recovery campaigns.",
+            old_status=old_status,
+            new_status=LeadPipelineStatus.lost_lead,
+        )
+        db.add(recovery_activity)
+
+    db.add(activity)
+    lead.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(lead)
+    return lead
+
+
+def finalize_success_won(
+    db: Session,
+    lead_id: str,
+    order_items: list,
+    payment_method: str,
+    discount: Decimal = Decimal("0.00"),
+    advance_amount: Decimal = Decimal("0.00"),
+    notes: Optional[str] = None,
+    shipping_partner_id=None,
+    courier_name: Optional[str] = None,
+    courier_code: Optional[str] = None,
+    india_post_customer_id: Optional[str] = None,
+    current_user: Employee = None,
+) -> dict:
+    """
+    Convert lead to successful customer and create order.
+    Returns {lead, customer, order}.
+    """
+    lead = get_lead(db, lead_id, current_user)
+    
+    # Create/update customer
+    customer = db.query(Customer).filter(
+        Customer.phone == lead.phone,
+        Customer.tenant_id == current_user.tenant_id,
+    ).first()
+    
+    if not customer:
+        # Create new customer from lead data
+        customer = Customer(
+            tenant_id=current_user.tenant_id,
+            unique_customer_code=next_customer_code(db, current_user.tenant_id),
+            name=lead.name,
+            phone=lead.phone,
+            alternate_phone=lead.alternate_phone,
+            email=lead.email or "",
+            city=lead.city or "",
+            state=lead.state or "",
+            country=lead.country or "India",
+            lead_status=CustomerLeadStatus.converted,
+            source=SourceType.manual,
+            customer_type=CustomerType.retail,   # default to retail, not wholesaler
+            payment_mode_preference=PaymentMode.cod,
+            assigned_employee_id=lead.assigned_to_id,
+            created_by_employee_id=current_user.id,
+        )
+        db.add(customer)
+        db.flush()
+    else:
+        customer.lead_status = CustomerLeadStatus.converted
+    
+    # Create order
+    from app.models.order import Order, OrderStatus, PaymentMethod
+    from app.core.sequence import next_order_number
+
+    total = Decimal("0.00")
+    for item in order_items:
+        # In real scenario, calculate item total from product price * qty
+        total += Decimal(str(item.get("total", 0)))
+
+    tenant_slug = current_user.tenant.slug if current_user.tenant else ""
+    order_num = next_order_number(db, current_user.tenant_id, tenant_slug)
+
+    pm = PaymentMethod[payment_method] if hasattr(PaymentMethod, payment_method) else PaymentMethod.cash
+    order_total = max(total - discount, Decimal("0.00"))
+
+    # Partial COD: advance paid upfront, balance on delivery
+    adv = Decimal(str(advance_amount or "0"))
+    cod_amt = Decimal("0.00")
+    amount_paid = Decimal("0.00")
+    amount_due = order_total
+    if pm == PaymentMethod.partial_cod and adv > 0:
+        cod_amt = max(Decimal("0.00"), order_total - adv)
+        amount_paid = min(adv, order_total)
+        amount_due = cod_amt
+    elif pm in (PaymentMethod.upi, PaymentMethod.bank_transfer, PaymentMethod.cheque):
+        amount_paid = order_total
+        amount_due = Decimal("0.00")
+
+    order = Order(
+        tenant_id=current_user.tenant_id,
+        customer_id=customer.id,
+        lead_id=lead.id,
+        order_number=order_num,
+        status=OrderStatus.confirmed,
+        payment_method=pm,
+        subtotal=total,
+        total_amount=order_total,
+        discount_amount=discount,
+        advance_amount=adv,
+        cod_amount=cod_amt,
+        amount_paid=amount_paid,
+        amount_due=amount_due,
+        notes=notes or f"Converted from lead {lead.lead_number}",
+        created_by_id=current_user.id,
+        shipping_partner_id=shipping_partner_id,
+        courier_name=courier_name,
+        courier_code=courier_code,
+        india_post_customer_id=india_post_customer_id,
+    )
+    db.add(order)
+    db.flush()
+    
+    # Update lead
+    old_status = lead.status  # capture BEFORE changing
+    lead.status = LeadPipelineStatus.success_won
+    lead.converted_customer_id = customer.id
+    lead.converted_at = datetime.now(timezone.utc)
+    lead.order_id = order.id
+    
+    # Log activity
+    activity = LeadActivity(
+        tenant_id=current_user.tenant_id,
+        lead_id=lead.id,
+        employee_id=current_user.id,
+        activity_type=LeadActivityType.status_change,
+        note=f"Successfully converted to customer {customer.name} with order {order.order_number}",
+        old_status=old_status,
+        new_status=LeadPipelineStatus.success_won,
+    )
+    db.add(activity)
+    db.commit()
+    
+    return {
+        "lead": lead,
+        "customer": customer,
+        "order": order,
+    }
+
+
+def get_reminded_leads(db: Session, current_user: Employee, target_date: Optional[date] = None) -> list:
+    """Get leads with reminders scheduled for target_date (default: today)."""
+    if target_date is None:
+        target_date = date.today()
+    
+    leads = (
+        db.query(Lead)
+        .filter(
+            Lead.tenant_id == current_user.tenant_id,
+            Lead.remind_later_date == target_date,
+            Lead.is_active == True,
+        )
+        .order_by(Lead.remind_later_date.asc(), Lead.created_at.desc())
+        .all()
+    )
+    
+    from app.modules.leads.schemas import ReminderLeadResponse
+    return [ReminderLeadResponse.model_validate(l) for l in leads]
+
+
+def get_lost_leads(db: Session, current_user: Employee, page: int = 1, page_size: int = 20) -> dict:
+    """Get leads in 'lost_lead' status for recovery campaigns."""
+    query = (
+        db.query(Lead)
+        .filter(
+            Lead.tenant_id == current_user.tenant_id,
+            Lead.status == LeadPipelineStatus.lost_lead,
+            Lead.is_active == True,
+        )
+        .order_by(Lead.last_contacted_at.desc(), Lead.created_at.desc())
+    )
+    
+    total = query.count()
+    leads = (
+        query
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+        .all()
+    )
+    
+    from app.modules.leads.schemas import LostLeadResponse
+    return {
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "results": [LostLeadResponse.model_validate(l) for l in leads],
+    }
+
+
+def store_whatsapp_message(
+    db: Session,
+    lead_id: str,
+    message_create,
+    current_user: Employee,
+):
+    """Store incoming/outgoing WhatsApp message for a lead."""
+    from app.models.lead import LeadMessage
+    from app.modules.leads.schemas import LeadMessageCreate
+    
+    lead = get_lead(db, lead_id, current_user)
+    
+    message = LeadMessage(
+        tenant_id=current_user.tenant_id,
+        lead_id=lead.id,
+        message_body=message_create.message_body,
+        direction=message_create.direction,
+        whatsapp_message_id=message_create.whatsapp_message_id,
+    )
+    
+    # Log message received activity
+    if message_create.direction == "inbound":
+        activity = LeadActivity(
+            tenant_id=current_user.tenant_id,
+            lead_id=lead.id,
+            employee_id=current_user.id,
+            activity_type=LeadActivityType.message_received,
+            note=f"WhatsApp message received: {message_create.message_body[:100]}",
+        )
+        db.add(activity)
+    
+    db.add(message)
+    db.commit()
+    db.refresh(message)
+    return message
+
+
+def get_whatsapp_messages(
+    db: Session,
+    lead_id: str,
+    current_user: Employee,
+    limit: int = 50,
+) -> list:
+    """Get WhatsApp message history for a lead."""
+    from app.models.lead import LeadMessage
+    from app.modules.leads.schemas import LeadMessageResponse
+    
+    lead = get_lead(db, lead_id, current_user)
+    
+    messages = (
+        db.query(LeadMessage)
+        .filter(
+            LeadMessage.lead_id == lead.id,
+            LeadMessage.tenant_id == current_user.tenant_id,
+        )
+        .order_by(LeadMessage.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    
+    return [LeadMessageResponse.model_validate(m) for m in reversed(messages)]
+
+

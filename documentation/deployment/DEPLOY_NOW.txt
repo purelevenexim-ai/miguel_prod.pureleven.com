@@ -1,0 +1,99 @@
+# 🚀 PRODUCTION DEPLOYMENT - QUICK REFERENCE
+
+## ⚡ TL;DR - One Line to Deploy
+
+```bash
+cd /opt/pureleven && git clean -fd backend/app/models/__pycache__ && git checkout -- docker-compose.yml && git pull origin main && bash scripts/deploy_to_prod_FIXED.sh
+```
+
+**That's it!** Run this on production server (172.105.48.142) and wait 2-3 minutes.
+
+---
+
+## What This Does
+
+| Step | What | Time |
+|------|------|------|
+| `git clean` | Remove Python cache files | 1 sec |
+| `git checkout` | Discard docker-compose.yml changes | 1 sec |
+| `git pull` | Get latest code (commit 4354919) | 3 sec |
+| `bash scripts/deploy_to_prod_FIXED.sh` | Full deployment with backup, migrations, verify | 2 min |
+
+---
+
+## ✅ After Deployment
+
+### Verify it worked:
+```bash
+# Check git
+git log --oneline -1
+# Should show: 4354919 Add production deployment ready summary
+
+# Check services
+docker-compose -f config/docker-compose.prod.yml ps
+# Should show: All services RUNNING
+
+# Check API
+curl -I http://localhost:8000/docs
+# Should show: 200 OK
+```
+
+### Test login:
+```bash
+curl -X POST http://localhost:8000/tenant/login \
+  -H 'Content-Type: application/json' \
+  -d '{"slug":"purelevenexim","email":"admin@purelevenexim.com","password":"Admin@123"}'
+# Should return JWT token
+```
+
+---
+
+## 🆘 If It Fails
+
+### Git still conflicts?
+```bash
+git status  # See what's blocked
+git reset --hard HEAD  # Force reset
+git pull origin main
+```
+
+### Containers won't start?
+```bash
+docker-compose -f config/docker-compose.prod.yml logs backend
+docker-compose -f config/docker-compose.prod.yml down
+docker-compose -f config/docker-compose.prod.yml up -d --remove-orphans
+```
+
+### Need to rollback?
+```bash
+docker-compose -f config/docker-compose.prod.yml down
+pg_restore -U pureleven_user -d pureleven_db /tmp/prod_backup_*.dump
+docker-compose -f config/docker-compose.prod.yml up -d
+```
+
+---
+
+## 📚 Full Docs
+
+- **Quick Guide:** PRODUCTION_DEPLOYMENT_FIX.md
+- **Full Manual:** PRODUCTION_DEPLOYMENT_MANUAL.md
+- **Summary:** PRODUCTION_DEPLOYMENT_READY.md
+
+---
+
+## 🔑 Key Info
+
+- **Production Server:** 172.105.48.142
+- **Directory:** /opt/pureleven
+- **Database:** pureleven_db (PostgreSQL 15)
+- **API Port:** 8000
+- **Admin Email:** admin@purelevenexim.com / Admin@123
+- **Latest Commit:** 4354919
+- **Backup Location:** /tmp/prod_backup_*.dump
+
+---
+
+**Status:** ✅ READY TO DEPLOY
+**Created:** $(date)
+
+Run the one-liner above on production server and you're done!

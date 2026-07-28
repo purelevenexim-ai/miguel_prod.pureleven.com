@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2">
+<title>Platform Admin — Miguel CRM</title>
+<link rel="stylesheet" href="/ds.css?v=20260228">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<link rel="stylesheet" href="/styles/mobile.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<style>
+body { margin: 0; background: var(--bg-page); font-family: var(--font); font-size: 14px; display: flex; height: 100vh; overflow: hidden; }
+
+/* ── SIDEBAR (M3 Navigation Drawer) ── */
+.sidebar {
+  width: 240px; flex-shrink: 0; background: var(--md-sys-color-surface); display: flex; flex-direction: column;
+  height: 100vh; overflow-y: auto; position: relative; z-index: 10;
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+}
+.brand {
+  display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 56px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+.brand-icon {
+  width: 36px; height: 36px; border-radius: var(--r-md); background: var(--md-sys-color-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0; color: var(--md-sys-color-on-primary);
+}
+.brand-name  { font-size: 15px; font-weight: 600; color: var(--md-sys-color-on-surface); letter-spacing: -.01em; }
+.brand-tagline { font-size: 10px; color: var(--md-sys-color-outline); margin-top: 1px; text-transform: uppercase; letter-spacing: .05em; }
+
+.nav-section { padding: 16px 16px 8px; font-size: 11px; font-weight: 600; color: var(--md-sys-color-outline); text-transform: uppercase; letter-spacing: .07em; }
+.nav-link {
+  display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 40px; border-radius: var(--r-pill); margin: 1px 12px;
+  color: var(--md-sys-color-on-surface-variant); font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: all var(--t); text-decoration: none; border: none; background: none; width: calc(100% - 24px); text-align: left;
+  font-family: var(--md-ref-typeface-brand);
+}
+.nav-link:hover  { background: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface); }
+.nav-link.active { background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); font-weight: 600; }
+.nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+
+.sidebar-footer { margin-top: auto; padding: 12px 16px; border-top: 1px solid var(--md-sys-color-outline-variant); }
+.sidebar-user { font-size: 11px; color: var(--md-sys-color-outline); }
+.sidebar-user strong { color: var(--md-sys-color-on-surface); display: block; font-size: 12px; margin-bottom: 2px; }
+.sidebar-footer button { margin-top: 10px; width: 100%; background: transparent; border: 1px solid var(--md-sys-color-outline-variant); color: var(--md-sys-color-on-surface-variant); border-radius: var(--r-pill); padding: 7px; font-size: 12px; cursor: pointer; transition: all var(--t); font-family: var(--font); }
+.sidebar-footer button:hover { background: var(--md-sys-color-surface-container); color: var(--md-sys-color-on-surface); }
+
+/* ── MAIN ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar {
+  background: var(--surf); border-bottom: 1px solid var(--bdr);
+  padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 14px;
+  flex-shrink: 0; box-shadow: var(--shadow-1);
+}
+.topbar-titles h2 { font-size: 16px; font-weight: 600; color: var(--g-900); margin: 0; }
+.topbar-titles p  { font-size: 12px; color: var(--g-600); margin: 0; }
+
+.page-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+/* ── STATS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.stat-card { background: var(--surf); border-radius: var(--r-sm); padding: 16px 18px; box-shadow: var(--shadow-1); border-left: 3px solid var(--bdr); }
+.stat-card.blue   { border-left-color: var(--g-blue); }
+.stat-card.green  { border-left-color: var(--g-green); }
+.stat-card.red    { border-left-color: var(--g-red); }
+.stat-card.purple { border-left-color: var(--g-purple); }
+.stat-card.orange { border-left-color: var(--g-amber); }
+.stat-card .sv { font-size: 28px; font-weight: 700; color: var(--g-900); line-height: 1; }
+.stat-card .sl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--g-600); margin-top: 4px; }
+
+/* ── PANELS ── */
+.panel { background: var(--surf); border: 1px solid var(--bdr); border-radius: var(--r-sm); overflow: hidden; margin-bottom: 20px; }
+.panel-header { padding: 14px 16px; border-bottom: 1px solid var(--bdr); display: flex; align-items: center; justify-content: space-between; }
+.panel-header h3 { font-size: 14px; font-weight: 600; color: var(--g-900); margin: 0; }
+.tbl-wrap { overflow-x: auto; }
+
+/* ── SEARCH ── */
+.search-bar { padding: 10px 16px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--bdr); }
+
+/* ── TENANT ACTION BTNS ── */
+.btn-act { padding: 3px 9px; border-radius: var(--r-xs); font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid transparent; white-space: nowrap; font-family: var(--font); }
+.btn-act.act-activate   { background: #dcfce7; color: var(--g-green); border-color: #86efac; }
+.btn-act.act-activate:hover { background: #86efac; }
+.btn-act.act-deactivate { background: #fef9c3; color: #a16207; border-color: #fde68a; }
+.btn-act.act-deactivate:hover { background: #fde68a; }
+.btn-act.act-delete     { background: #fee2e2; color: var(--g-red); border-color: #fca5a5; }
+.btn-act.act-delete:hover { background: #fca5a5; }
+.btn-act.act-reset-pwd  { background: var(--g-purple-lt); color: var(--g-purple); border-color: #e9d5ff; }
+.btn-act.act-reset-pwd:hover { background: #e9d5ff; }
+.btn-act.act-restore    { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+.btn-act.act-restore:hover { background: #93c5fd; }
+.btn-act.act-destroy    { background: #fee2e2; color: var(--g-red); border-color: #f87171; font-weight: 600; }
+.btn-act.act-destroy:hover { background: #f87171; }
+
+/* ── LOGS PANEL ── */
+.log-toolbar { padding: 12px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--bdr); background: var(--g-50); }
+.log-toolbar select, .log-toolbar input { padding: 5px 10px; border: 1px solid var(--bdr); border-radius: var(--r-xs); font-size: 12px; background: #fff; font-family: var(--font); color: var(--g-900); height: 30px; }
+.log-toolbar select:focus, .log-toolbar input:focus { outline: none; border-color: var(--md-sys-color-primary); }
+.log-summary-chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 16px; border-bottom: 1px solid var(--bdr); }
+.lsc { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: var(--r-pill); font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all var(--t); }
+.lsc.info   { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+.lsc.warn   { background: #fef9c3; color: #a16207; border-color: #fde68a; }
+.lsc.error  { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+.lsc.crit   { background: #fce7f3; color: #9d174d; border-color: #f9a8d4; }
+.lsc.total  { background: var(--g-100); color: var(--g-800); border-color: var(--g-300); }
+.lsc.active { opacity: 0.6; }
+.log-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.log-table th { background: var(--g-50); padding: 8px 10px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--g-600); border-bottom: 1px solid var(--bdr); white-space: nowrap; }
+.log-table td { padding: 7px 10px; border-bottom: 1px solid var(--bdr); color: var(--g-800); vertical-align: top; }
+.log-table tr:hover td { background: var(--g-50); }
+.log-table .log-msg { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.log-table .log-detail { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono); font-size: 10px; color: var(--g-600); cursor: pointer; }
+.log-table .log-detail:hover { color: var(--md-sys-color-primary); text-decoration: underline; }
+.badge-level { display: inline-block; padding: 1px 7px; border-radius: var(--r-pill); font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+.badge-INFO     { background: #dbeafe; color: #1d4ed8; }
+.badge-WARNING  { background: #fef9c3; color: #a16207; }
+.badge-ERROR    { background: #fee2e2; color: #b91c1c; }
+.badge-CRITICAL { background: #fce7f3; color: #9d174d; }
+.log-method { display: inline-block; padding: 1px 5px; border-radius: var(--r-xs); font-size: 10px; font-family: var(--font-mono); font-weight: 600; background: var(--g-100); color: var(--g-700); }
+.log-empty { padding: 40px; text-align: center; color: var(--g-500); font-size: 13px; }
+.log-time { font-family: var(--font-mono); font-size: 11px; color: var(--g-500); white-space: nowrap; }
+.log-tenant-tabs { display: flex; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--bdr); overflow-x: auto; }
+.tab-btn { padding: 5px 14px; border-radius: var(--r-pill); font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--bdr); background: #fff; color: var(--g-700); white-space: nowrap; transition: all var(--t); font-family: var(--font); }
+.tab-btn:hover { background: var(--g-100); }
+.tab-btn.active { background: var(--md-sys-color-primary); color: #fff; border-color: var(--md-sys-color-primary); }
+/* Detail drawer */
+.log-drawer { position: fixed; right: 0; top: 0; bottom: 0; width: 480px; background: var(--md-sys-color-surface-container-high); box-shadow: -4px 0 24px rgba(0,0,0,.12); z-index: 200; transform: translateX(100%); transition: transform .25s ease; display: flex; flex-direction: column; }
+.log-drawer.open { transform: translateX(0); }
+.log-drawer-hdr { padding: 16px 20px; border-bottom: 1px solid var(--bdr); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.log-drawer-hdr h3 { font-size: 16px; font-weight: 600; margin: 0; }
+.log-drawer-body { flex: 1; overflow-y: auto; padding: 20px; }
+.log-field { margin-bottom: 14px; }
+.log-field label { font-size: 10px; font-weight: 700; color: var(--g-500); text-transform: uppercase; letter-spacing: .06em; display: block; margin-bottom: 3px; }
+.log-field .val { font-size: 13px; color: var(--g-900); word-break: break-all; }
+.log-field .val.mono { font-family: var(--font-mono); font-size: 12px; background: var(--g-100); padding: 2px 6px; border-radius: var(--r-xs); }
+.log-json { background: var(--g-900); color: #a5f3fc; border-radius: var(--r-sm); padding: 12px; font-family: var(--font-mono); font-size: 11px; overflow: auto; max-height: 300px; white-space: pre; }
+.log-refresh-bar { display: flex; align-items: center; gap: 8px; }
+.auto-refresh-btn { padding: 4px 10px; border-radius: var(--r-pill); font-size: 11px; font-weight: 600; border: 1px solid var(--bdr); background: #fff; cursor: pointer; font-family: var(--font); transition: all var(--t); }
+.auto-refresh-btn.on { background: #dcfce7; color: var(--g-green); border-color: #86efac; }
+
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.32); display: none; align-items: center; justify-content: center; z-index: 300; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--md-sys-color-surface-container-high); border-radius: var(--r-xl); padding: 24px; width: 100%; max-width: 480px; box-shadow: var(--md-sys-elevation-3); }
+.modal h3 { font-size: 24px; font-weight: 400; margin: 0 0 16px; color: var(--md-sys-color-on-surface); font-family: var(--md-ref-typeface-brand); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--bdr); }
+
+/* ── TOAST NOTIFICATIONS ── */
+#toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+.toast { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: var(--r-md); font-size: 13px; font-weight: 500; min-width: 280px; max-width: 400px; box-shadow: 0 4px 16px rgba(0,0,0,.18); pointer-events: all; animation: toastIn .25s ease; font-family: var(--font); }
+.toast.success { background: #ecfdf5; border: 1px solid #6ee7b7; color: #064e3b; }
+.toast.error   { background: #fff1f2; border: 1px solid #fda4af; color: #881337; }
+.toast.warning { background: #fffbeb; border: 1px solid #fcd34d; color: #78350f; }
+.toast .toast-icon { font-size: 16px; flex-shrink: 0; }
+.toast .toast-msg  { flex: 1; }
+.toast .toast-close { cursor: pointer; opacity: .6; font-size: 16px; flex-shrink: 0; line-height: 1; }
+.toast .toast-close:hover { opacity: 1; }
+@keyframes toastIn { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+@keyframes toastOut { from { opacity:1; transform: translateY(0); } to { opacity:0; transform: translateY(16px); } }
+
+/* ── ACTION MODAL SHARED ── */
+.action-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; z-index: 500; padding: 20px; animation: fadeIn .15s ease; }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+.action-modal { background: #fff; border-radius: 12px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,.2); overflow: hidden; }
+.action-modal .am-header { padding: 16px 20px; }
+.action-modal .am-body   { padding: 0 20px 20px; }
+.action-modal .am-footer { padding: 14px 20px; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px; }
+.action-modal .am-title  { font-size: 18px; font-weight: 700; margin: 0; }
+.action-modal .am-sub    { font-size: 13px; margin: 6px 0 0; opacity: .8; }
+
+/* ── RESULT BOXES ── */
+.result-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: var(--r-sm); padding: 14px 16px; margin-top: 12px; font-size: 12px; font-family: var(--font); }
+.result-box .rb-label { font-weight: 700; color: var(--g-green); margin-bottom: 8px; }
+.result-box .rb-row   { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #dcfce7; }
+.result-box .rb-row:last-child { border-bottom: none; }
+.result-box .rb-key   { color: var(--g-700); }
+.result-box .rb-val   { font-weight: 600; color: var(--g-900); font-family: var(--font-mono); }
+
+/* ── PWD MODAL ── */
+.pwd-result { background: var(--g-purple-lt); border: 1px solid #e9d5ff; border-radius: var(--r-sm); padding: 14px 16px; margin-top: 12px; font-size: 12px; font-family: var(--font); }
+.pwd-result .pr-label { font-weight: 700; color: var(--g-purple); margin-bottom: 8px; }
+.pwd-result .pr-email { color: var(--g-700); margin-bottom: 6px; }
+.pwd-result .pr-pass  { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--g-900); letter-spacing: .04em; background: #fff; padding: 6px 10px; border-radius: var(--r-xs); border: 1px solid #e9d5ff; display: block; margin: 4px 0; }
+
+/* ── MOBILE ───────────────────────────────────────────────────────── */
+@media (max-width: 599px) {
+  .topbar { padding: 0 12px; height: 52px; gap: 8px; }
+  .topbar-titles h2 { font-size: 15px; }
+  .topbar-titles p { display: none; }
+  .page-body { padding: 12px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { padding: 10px 12px; }
+  .stat-card .sv { font-size: 20px; }
+  .stat-card .sl { font-size: 10px; }
+  .panel { margin-bottom: 12px; border-radius: 10px; }
+  .panel-header { padding: 10px 12px; }
+  .panel-header h3 { font-size: 13px; }
+  .search-bar { padding: 8px 12px; flex-wrap: wrap; gap: 8px; }
+  .search-bar input { width: 100%; }
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tbl-wrap table { min-width: 600px; }
+  .btn-act { padding: 4px 8px; font-size: 10px; min-height: 28px; }
+  .log-toolbar { flex-direction: column; align-items: stretch; gap: 8px; padding: 10px 12px; }
+  .log-toolbar select, .log-toolbar input { width: 100%; height: 36px; font-size: 13px; }
+  .log-summary-chips { padding: 8px 12px; gap: 4px; }
+  .lsc { font-size: 10px; padding: 3px 8px; }
+  .log-drawer { width: 100% !important; max-width: 100% !important; border-radius: 0; }
+  .log-drawer-hdr { padding: 12px 16px; }
+  .log-drawer-body { padding: 16px; }
+  .modal-overlay.open { align-items: flex-end; }
+  .modal { max-width: 100%; border-radius: 16px 16px 0 0; padding: 20px 16px; }
+  .modal h3 { font-size: 18px; }
+}
+@media (min-width: 600px) and (max-width: 839px) {
+  .page-body { padding: 16px; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon" style="background:none;padding:0;overflow:hidden;"><img src="/miguel_favicon.png" alt="Miguel" style="width:30px;height:30px;display:block;"></div>
+    <div>
+      <div class="brand-name">Miguel CRM</div>
+      <div class="brand-tagline">Platform Admin</div>
+    </div>
+  </div>
+
+  <div class="nav-section">Overview</div>
+  <button class="nav-link active" onclick="nav('dashboard',this)"><span class="nav-icon">📊</span> Dashboard</button>
+
+  <div class="nav-section">Management</div>
+  <button class="nav-link" onclick="nav('tenants',this)"><span class="nav-icon">🏢</span> All Tenants</button>
+  <button class="nav-link" onclick="nav('create',this)"><span class="nav-icon">➕</span> Create Tenant</button>
+  <button class="nav-link" onclick="nav('archive',this)"><span class="nav-icon">🗑️</span> Archive</button>
+
+  <div class="nav-section">System</div>
+  <button class="nav-link" onclick="nav('stats',this)"><span class="nav-icon">📈</span> System Stats</button>
+  <button class="nav-link" onclick="nav('logs',this)"><span class="nav-icon">📋</span> Logs</button>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <strong id="adminName">Loading…</strong>
+      <span id="adminEmail"></span>
+    </div>
+    <button onclick="logout()">⏻ Sign Out</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-titles">
+      <h2 id="pageTitle">Dashboard</h2>
+      <p  id="pageSubtitle">Platform overview</p>
+    </div>
+    <div style="flex:1"></div>
+    <span class="chip chip-gray">SUPERADMIN</span>
+  </div>
+
+  <div class="page-body">
+    <div class="gs-banner gs-banner-error" id="errBanner" style="display:none;margin-bottom:16px;"></div>
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card blue">  <div class="sv" id="sTotalTenants">—</div>  <div class="sl">Total Tenants</div></div>
+        <div class="stat-card green"> <div class="sv" id="sActiveTenants">—</div> <div class="sl">Active</div></div>
+        <div class="stat-card red">   <div class="sv" id="sInactiveTenants">—</div><div class="sl">Inactive</div></div>
+        <div class="stat-card purple"><div class="sv" id="sTotalEmployees">—</div> <div class="sl">Total Employees</div></div>
+        <div class="stat-card orange"><div class="sv" id="sDeletedTenants">—</div> <div class="sl">Deleted</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Recent Tenants</h3>
+          <button class="btn btn-outlined btn-sm" onclick="nav('tenants', document.querySelector('.nav-link:nth-of-type(3)'))">View All →</button>
+        </div>
+        <div class="tbl-wrap" id="dashTbl"><div style="padding:24px;text-align:center;color:var(--g-600)">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- ALL TENANTS -->
+    <div id="sec-tenants" style="display:none">
+      <div class="panel">
+        <div class="panel-header">
+          <h3>All Tenants</h3>
+          <button class="btn btn-filled btn-sm" onclick="openCreateModal()">+ New Tenant</button>
+        </div>
+        <div class="search-bar">
+          <div class="gs-search" style="width:260px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input id="tenantSearch" placeholder="Search name, slug, contact…" oninput="filterTenants()">
+          </div>
+          <div style="flex:1"></div>
+          <button class="btn btn-outlined btn-sm" onclick="loadTenants()">⟳ Refresh</button>
+        </div>
+        <div class="tbl-wrap" id="tenantsTbl"><div style="padding:24px;text-align:center;color:var(--g-600)">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- CREATE TENANT -->
+    <div id="sec-create" style="display:none">
+      <div class="panel">
+        <div class="panel-header"><h3>Create New Tenant</h3></div>
+        <div class="create-form">
+          <div class="gs-banner gs-banner-error" id="createInlineErr" style="display:none;margin-bottom:14px;"></div>
+          <div id="createInlineResult" style="display:none"></div>
+          <div id="createInlineResultBody" style="display:none">
+            <div class="form-row" style="margin-bottom:12px">
+              <div class="form-group">
+                <label class="form-label">Company Name *</label>
+                <input class="form-input" id="ci_company" placeholder="Acme Organics Pvt Ltd" style="margin-top:3px">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Contact Person *</label>
+                <input class="form-input" id="ci_contact" placeholder="Vikram Shah" style="margin-top:3px">
+              </div>
+            </div>
+            <div class="form-row" style="margin-bottom:12px">
+              <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input class="form-input" id="ci_email" type="email" placeholder="admin@acme.com" style="margin-top:3px">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input class="form-input" id="ci_phone" placeholder="+91 98765 43210" style="margin-top:3px">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;max-width:300px">
+              <label class="form-label">Slug (URL identifier)</label>
+              <input class="form-input" id="ci_slug" placeholder="acme-organics" style="margin-top:3px">
+              <span class="form-hint">Leave blank to auto-generate from company name</span>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-filled" onclick="submitCreateTenant('inline')">✓ Create Tenant</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARCHIVE -->
+    <div id="sec-archive" style="display:none">
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Archived Tenants 🗑️</h3>
+          <button class="btn btn-outlined btn-sm" onclick="loadArchive()">⟳ Refresh</button>
+        </div>
+        <div class="tbl-wrap" id="archiveTbl"><div style="padding:24px;text-align:center;color:var(--g-600)">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div id="sec-stats" style="display:none">
+      <div class="stats-grid" id="statsGrid2"></div>
+      <div class="panel">
+        <div class="panel-header"><h3>System Detail</h3></div>
+        <div style="padding:20px" id="statsDetail"><div style="color:var(--g-600)">Loading system stats…</div></div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div id="sec-logs" style="display:none">
+      <!-- Tenant Tabs -->
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-header">
+          <h3>📋 Activity Logs <span id="logWindowBadge" class="chip chip-gray" style="font-size:10px;margin-left:6px">Last 6 hours</span></h3>
+          <div class="log-refresh-bar">
+            <button class="auto-refresh-btn" id="autoRefreshBtn" onclick="toggleAutoRefresh()">⟳ Auto-refresh: OFF</button>
+            <button class="btn btn-outlined btn-sm" onclick="loadLogs()">⟳ Refresh</button>
+            <button class="btn btn-sm" style="background:#fee2e2;border:1px solid #fca5a5;color:#b91c1c" onclick="confirmPurgeLogs()">🗑 Purge Expired</button>
+          </div>
+        </div>
+
+        <!-- Tenant tabs -->
+        <div class="log-tenant-tabs" id="logTenantTabs">
+          <button class="tab-btn active" data-tid="all" onclick="switchLogTab('all',this)">🌐 All Tenants</button>
+          <button class="tab-btn" data-tid="platform" onclick="switchLogTab('platform',this)">⚙️ Platform</button>
+          <!-- dynamic tenant tabs injected here -->
+        </div>
+
+        <!-- Summary chips -->
+        <div class="log-summary-chips" id="logSummaryChips">
+          <span class="lsc total" onclick="filterByLevel(null)">⬤ All: <span id="lsTotal">0</span></span>
+          <span class="lsc info"  onclick="filterByLevel('INFO')">ℹ️ INFO: <span id="lsInfo">0</span></span>
+          <span class="lsc warn"  onclick="filterByLevel('WARNING')">⚠️ WARN: <span id="lsWarn">0</span></span>
+          <span class="lsc error" onclick="filterByLevel('ERROR')">🔴 ERROR: <span id="lsError">0</span></span>
+          <span class="lsc crit"  onclick="filterByLevel('CRITICAL')">🚨 CRIT: <span id="lsCrit">0</span></span>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="log-toolbar">
+          <select id="logModuleFilter" onchange="loadLogs()">
+            <option value="">All Modules</option>
+            <option value="auth">Auth</option>
+            <option value="orders">Orders</option>
+            <option value="customers">Customers</option>
+            <option value="leads">Leads</option>
+            <option value="products">Products</option>
+            <option value="inventory">Inventory</option>
+            <option value="invoices">Invoices</option>
+            <option value="vendors">Vendors</option>
+            <option value="purchases">Purchases</option>
+            <option value="platform">Platform</option>
+            <option value="system">System</option>
+          </select>
+          <select id="logLevelFilter" onchange="loadLogs()">
+            <option value="">All Levels</option>
+            <option value="INFO">INFO</option>
+            <option value="WARNING">WARNING</option>
+            <option value="ERROR">ERROR</option>
+            <option value="CRITICAL">CRITICAL</option>
+          </select>
+          <input id="logActionFilter" placeholder="Filter action…" style="width:160px" oninput="debounceLogLoad()">
+          <select id="logHoursFilter" onchange="loadLogs()">
+            <option value="1">Last 1 hour</option>
+            <option value="2">Last 2 hours</option>
+            <option value="3">Last 3 hours</option>
+            <option value="6" selected>Last 6 hours</option>
+          </select>
+          <select id="logLimitFilter" onchange="loadLogs()">
+            <option value="50">50 rows</option>
+            <option value="100">100 rows</option>
+            <option value="200" selected>200 rows</option>
+            <option value="500">500 rows</option>
+          </select>
+          <span id="logCount" style="font-size:11px;color:var(--g-500);margin-left:auto"></span>
+        </div>
+
+        <!-- Log table -->
+        <div id="logTableWrap" class="tbl-wrap">
+          <div class="log-empty">Click Refresh or select a tenant to load logs.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOG DETAIL DRAWER -->
+<div class="log-drawer" id="logDrawer">
+  <div class="log-drawer-hdr">
+    <h3>Log Detail</h3>
+    <button class="btn btn-outlined btn-sm" onclick="closeLogDrawer()">✕ Close</button>
+  </div>
+  <div class="log-drawer-body" id="logDrawerBody"></div>
+</div>
+<div id="logDrawerOverlay" style="display:none;position:fixed;inset:0;z-index:199;background:rgba(0,0,0,.18)" onclick="closeLogDrawer()"></div>
+
+<!-- CREATE TENANT MODAL -->
+<div class="modal-overlay" id="createModal">
+  <div class="modal">
+    <h3>New Tenant</h3>
+    <div class="gs-banner gs-banner-error" id="modalErr" style="display:none;margin-bottom:12px;"></div>
+    <div id="modalResult" style="display:none"></div>
+    <div id="modalFooter">
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group">
+          <label class="form-label">Company Name *</label>
+          <input class="form-input" id="m_company" placeholder="Acme Organics" style="margin-top:3px">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contact Person *</label>
+          <input class="form-input" id="m_contact" placeholder="Vikram Shah" style="margin-top:3px">
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:12px">
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input class="form-input" id="m_email" type="email" placeholder="admin@acme.com" style="margin-top:3px">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input class="form-input" id="m_phone" placeholder="+91 98765 43210" style="margin-top:3px">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:4px">
+        <label class="form-label">Slug (URL identifier)</label>
+        <input class="form-input" id="m_slug" placeholder="acme-organics" style="margin-top:3px">
+        <span class="form-hint">Leave blank to auto-generate</span>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outlined" onclick="closeCreateModal()">Cancel</button>
+        <button class="btn btn-filled" onclick="submitCreateTenant('modal')">Create Tenant</button>
+      </div>
+    </div>
+    <div id="modalResultBody" style="display:none">
+      <div class="modal-footer" style="margin-top:0;border-top:none;padding-top:0;justify-content:flex-start">
+        <button class="btn btn-outlined" onclick="closeCreateModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESET PASSWORD MODAL -->
+<div class="modal-overlay" id="resetPwdModal">
+  <div class="modal">
+    <h3>🔑 Reset Admin Password</h3>
+    <p id="resetPwdCompany" style="font-size:13px;color:var(--g-700);margin:0 0 14px;"></p>
+    <div class="gs-banner gs-banner-error" id="resetPwdErr" style="display:none;margin-bottom:12px;"></div>
+    <div id="resetPwdResult" style="display:none"></div>
+    <div id="resetPwdFooter">
+      <p style="font-size:13px;color:var(--g-700);margin:0 0 16px;">This will generate a new random password for the tenant's admin account and invalidate the old one.</p>
+      <div class="modal-footer">
+        <button class="btn btn-outlined" onclick="closeResetPwdModal()">Cancel</button>
+        <button class="btn btn-filled" style="background:var(--g-purple);border-color:var(--g-purple)" onclick="doResetPassword()">Reset Password</button>
+      </div>
+    </div>
+    <div id="resetPwdDoneFooter" style="display:none">
+      <div class="modal-footer" style="margin-top:0;border-top:none;padding-top:0;justify-content:flex-start">
+        <button class="btn btn-outlined" onclick="closeResetPwdModal()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/modules/auth.js"></script>
+<script>
+// ✅ v2026-02-25 - Fixed tenant creation field names
+console.log('Platform Admin loaded - Version 2026-02-25');
+const TOKEN = localStorage.getItem('token');
+const TYPE  = localStorage.getItem('type');
+if (!TOKEN || TYPE !== 'platform') window.location.replace('/platform-login.html');
+const H = { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' };
+
+let allTenants      = [];
+let filteredTenants = [];
+let resetTenantId   = null;
+
+boot();
+
+async function boot() {
+  await loadProfile();
+  await loadStats();
+  await loadTenants();
+  document.getElementById('createInlineResultBody').style.display = '';
+}
+
+async function loadProfile() {
+  try {
+    const r = await fetch('/platform/me', { headers: H });
+    if (!r.ok) { logout(); return; }
+    const d = await r.json();
+    document.getElementById('adminName').textContent  = d.name  || 'Admin';
+    document.getElementById('adminEmail').textContent = d.email || '';
+  } catch {}
+}
+
+async function loadStats() {
+  try {
+    const r = await fetch('/platform/stats', { headers: H });
+    if (!r.ok) return;
+    const d = await r.json();
+    document.getElementById('sTotalTenants').textContent  = d.total_tenants  ?? 0;
+    document.getElementById('sActiveTenants').textContent = d.active_tenants ?? 0;
+    document.getElementById('sInactiveTenants').textContent = (d.total_tenants ?? 0) - (d.active_tenants ?? 0);
+    document.getElementById('sTotalEmployees').textContent = d.total_employees ?? 0;
+    document.getElementById('sDeletedTenants').textContent = d.deleted_tenants ?? 0;
+
+    // Stats section detail
+    const g2 = document.getElementById('statsGrid2');
+    g2.innerHTML = `
+      <div class="stat-card blue">  <div class="sv">${d.total_tenants??0}</div>  <div class="sl">Total Tenants</div></div>
+      <div class="stat-card green"> <div class="sv">${d.active_tenants??0}</div> <div class="sl">Active</div></div>
+      <div class="stat-card red">   <div class="sv">${(d.total_tenants??0)-(d.active_tenants??0)}</div><div class="sl">Inactive</div></div>
+      <div class="stat-card purple"><div class="sv">${d.total_employees??0}</div><div class="sl">Total Employees</div></div>
+      <div class="stat-card orange"><div class="sv">${d.deleted_tenants??0}</div><div class="sl">Deleted</div></div>`;
+    document.getElementById('statsDetail').innerHTML = `
+      <table class="gs-table">
+        <tbody>
+          <tr><td><strong>Total Tenants</strong></td><td>${d.total_tenants??0}</td></tr>
+          <tr><td><strong>Active Tenants</strong></td><td>${d.active_tenants??0}</td></tr>
+          <tr><td><strong>Inactive Tenants</strong></td><td>${(d.total_tenants??0)-(d.active_tenants??0)}</td></tr>
+          <tr><td><strong>Deleted Tenants</strong></td><td>${d.deleted_tenants??0}</td></tr>
+          <tr><td><strong>Total Employees</strong></td><td>${d.total_employees??0}</td></tr>
+        </tbody>
+      </table>`;
+  } catch {}
+}
+
+async function loadTenants() {
+  try {
+    const r = await fetch('/platform/tenants', { headers: H });
+    if (!r.ok) throw new Error(await r.text());
+    allTenants = await r.json();
+    filteredTenants = [...allTenants];
+    renderDashTable();
+    renderTenantsTable();
+  } catch(ex) { showErr('Failed to load tenants: ' + ex.message); }
+}
+
+let archivedTenants = [];
+
+async function loadArchive() {
+  try {
+    const r = await fetch('/platform/tenants/archived/list', { headers: H });
+    if (!r.ok) throw new Error(await r.text());
+    archivedTenants = await r.json();
+    renderArchiveTable();
+  } catch(ex) { showErr('Failed to load archived tenants: ' + ex.message); }
+}
+
+function archiveHtml(list) {
+  if (!list.length) return '<div style="padding:32px;text-align:center;color:var(--g-600)">No archived tenants.</div>';
+  return `<table class="gs-table"><thead><tr>
+    <th>Company</th><th>Slug</th><th>Contact</th><th>Deleted On</th><th>Actions</th>
+  </tr></thead><tbody>${list.map(t => `
+    <tr style="opacity:0.7">
+      <td><strong>${esc(t.company_name)}</strong></td>
+      <td><code style="background:var(--g-100);padding:2px 6px;border-radius:var(--r-xs);font-family:var(--font-mono);font-size:11px">${esc(t.slug)}</code></td>
+      <td>${esc(t.contact_person_name||'—')}</td>
+      <td style="font-size:12px;color:var(--g-600)">${t.deleted_at ? new Date(t.deleted_at).toLocaleDateString('en-IN') : '—'}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button class="btn-act act-restore" onclick="restoreTenant('${t.id}','${esc(t.company_name)}')">↶ Restore</button>
+          <button class="btn-act act-destroy" onclick="confirmPermanentDelete('${t.id}','${esc(t.company_name)}')">🔥 Permanently Delete</button>
+        </div>
+      </td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderArchiveTable() {
+  document.getElementById('archiveTbl').innerHTML = archiveHtml(archivedTenants);
+}
+
+function tenantsHtml(list) {
+  if (!list.length) return '<div style="padding:32px;text-align:center;color:var(--g-600)">No tenants found.</div>';
+  return `<table class="gs-table"><thead><tr>
+    <th>Company</th><th>Slug</th><th>Contact</th><th>Email</th><th>Status</th><th>Created</th><th>Actions</th>
+  </tr></thead><tbody>${list.map(t => `
+    <tr>
+      <td><strong>${esc(t.company_name)}</strong></td>
+      <td><code style="background:var(--g-100);padding:2px 6px;border-radius:var(--r-xs);font-family:var(--font-mono);font-size:11px">${esc(t.slug)}</code></td>
+      <td>${esc(t.contact_person_name||'—')}</td>
+      <td style="font-size:12px;color:var(--g-700)">${esc(t.owner_email||'—')}</td>
+      <td>${t.is_active ? '<span class="chip chip-green">Active</span>' : '<span class="chip chip-red">Inactive</span>'}</td>
+      <td style="font-size:12px;color:var(--g-600)">${t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN') : '—'}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          ${t.is_active
+            ? `<button class="btn-act act-deactivate" onclick="tenantAction('${t.id}','deactivate')">⏸ Deactivate</button>`
+            : `<button class="btn-act act-activate"   onclick="tenantAction('${t.id}','activate')">▶ Activate</button>`}
+          <button class="btn-act act-reset-pwd" onclick="openResetPwdModal('${t.id}','${esc(t.company_name)}')">🔑 Reset Pwd</button>
+          <button class="btn-act act-delete"    onclick="confirmDelete('${t.id}','${esc(t.company_name)}')">✕ Delete</button>
+        </div>
+      </td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+function renderDashTable() {
+  const recent = [...allTenants].sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0)).slice(0, 8);
+  document.getElementById('dashTbl').innerHTML = tenantsHtml(recent);
+}
+function renderTenantsTable() {
+  document.getElementById('tenantsTbl').innerHTML = tenantsHtml(filteredTenants);
+}
+function filterTenants() {
+  const q = document.getElementById('tenantSearch').value.toLowerCase().trim();
+  filteredTenants = q
+    ? allTenants.filter(t =>
+        (t.company_name||'').toLowerCase().includes(q) ||
+        (t.slug||'').toLowerCase().includes(q) ||
+        (t.contact_person_name||'').toLowerCase().includes(q) ||
+        (t.owner_email||'').toLowerCase().includes(q))
+    : [...allTenants];
+  renderTenantsTable();
+}
+
+// ── Toast Notification System ─────────────────────────────────
+function showToast(type, message, duration = 4000) {
+  const icons = { success: '✅', error: '❌', warning: '⚠️' };
+  const tc = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${esc(message)}</span><span class="toast-close" onclick="this.closest('.toast').remove()">✕</span>`;
+  tc.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'toastOut .3s ease forwards';
+    setTimeout(() => t.remove(), 300);
+  }, duration);
+}
+
+// ── Generic action-modal close helper ────────────────────────
+function closeActionModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+async function tenantAction(id, action) {
+  try {
+    const r = await fetch(`/platform/tenants/${id}/${action}`, { method:'PATCH', headers:H });
+    if (r.ok) {
+      const label = action === 'activate' ? 'activated' : 'deactivated';
+      showToast('success', `Tenant ${label} successfully`);
+      await loadStats();
+      await loadTenants();
+    } else {
+      const e = await r.json().catch(()=>({}));
+      showToast('error', e.detail || 'Action failed.');
+    }
+  } catch(ex) {
+    showToast('error', 'Network error: ' + ex.message);
+  }
+}
+
+function confirmDelete(id, name) {
+  // Remove any existing action modal
+  closeActionModal('actionModal');
+  const modal = document.createElement('div');
+  modal.className = 'action-modal-overlay';
+  modal.id = 'actionModal';
+  modal.innerHTML = `
+    <div class="action-modal" style="max-width:440px">
+      <div class="am-header" style="background:#fff8e1;border-bottom:2px solid #ffc107">
+        <p class="am-title" style="color:#6d4c00">⚠️ Archive Tenant?</p>
+        <p class="am-sub" style="color:#856404">The tenant will be moved to Archive — no data is deleted.</p>
+      </div>
+      <div class="am-body" style="padding-top:16px">
+        <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;font-size:13px;color:#6d4c00">
+          <strong>${esc(name)}</strong>
+        </div>
+        <p style="font-size:13px;color:var(--g-600);margin:12px 0 0">You can <strong>restore</strong> this tenant anytime from the <strong>Archive</strong> tab.</p>
+      </div>
+      <div class="am-footer">
+        <button class="btn btn-outlined" onclick="closeActionModal('actionModal')">Cancel</button>
+        <button class="btn btn-filled" style="background:#f59e0b;border-color:#f59e0b" onclick="performSoftDelete('${id}')">🗄 Archive Tenant</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeActionModal('actionModal'); });
+}
+
+async function performSoftDelete(id) {
+  closeActionModal('actionModal');
+  try {
+    const r = await fetch(`/platform/tenants/${id}`, { method:'DELETE', headers:H });
+    if (r.ok) {
+      showToast('success', 'Tenant moved to Archive');
+      await Promise.all([loadStats(), loadTenants()]);
+      // Silently refresh archive in background so it's ready when user navigates there
+      loadArchive();
+    } else {
+      const e = await r.json().catch(()=>({}));
+      showToast('error', e.detail || 'Archive failed.');
+    }
+  } catch(ex) {
+    showToast('error', 'Network error: ' + ex.message);
+  }
+}
+
+function confirmRestore(id, name) {
+  closeActionModal('actionModal');
+  const modal = document.createElement('div');
+  modal.className = 'action-modal-overlay';
+  modal.id = 'actionModal';
+  modal.innerHTML = `
+    <div class="action-modal" style="max-width:400px">
+      <div class="am-header" style="background:#eff6ff;border-bottom:2px solid #3b82f6">
+        <p class="am-title" style="color:#1e3a5f">↶ Restore Tenant?</p>
+        <p class="am-sub" style="color:#1d4ed8">Tenant will be moved back to the active list.</p>
+      </div>
+      <div class="am-body" style="padding-top:16px">
+        <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:8px;padding:12px;font-size:13px;color:#1e3a5f">
+          <strong>${esc(name)}</strong>
+        </div>
+      </div>
+      <div class="am-footer">
+        <button class="btn btn-outlined" onclick="closeActionModal('actionModal')">Cancel</button>
+        <button class="btn btn-filled" style="background:#3b82f6;border-color:#3b82f6" onclick="performRestore('${id}')">↶ Restore Tenant</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeActionModal('actionModal'); });
+}
+
+// Keep backward compat — old inline onclick calls restoreTenant()
+function restoreTenant(id, name) { confirmRestore(id, name); }
+
+async function performRestore(id) {
+  closeActionModal('actionModal');
+  try {
+    const r = await fetch(`/platform/tenants/${id}/activate`, { method:'PATCH', headers:H });
+    if (r.ok) {
+      showToast('success', 'Tenant restored to active list');
+      await Promise.all([loadStats(), loadTenants(), loadArchive()]);
+    } else {
+      const e = await r.json().catch(()=>({}));
+      showToast('error', e.detail || 'Restore failed.');
+    }
+  } catch(ex) {
+    showToast('error', 'Network error: ' + ex.message);
+  }
+}
+
+function confirmPermanentDelete(id, name) {
+  closeActionModal('actionModal');
+  const modal = document.createElement('div');
+  modal.className = 'action-modal-overlay';
+  modal.id = 'actionModal';
+  modal.innerHTML = `
+    <div class="action-modal" style="max-width:500px">
+      <div class="am-header" style="background:#dc2626;border-bottom:2px solid #991b1b">
+        <p class="am-title" style="color:#fff">🔥 Permanently Delete Tenant</p>
+        <p class="am-sub" style="color:#fecaca">This action <strong>cannot be undone</strong>. All data will be destroyed.</p>
+      </div>
+      <div class="am-body" style="padding-top:16px">
+        <div style="background:#fef2f2;border:1px solid #f87171;border-radius:8px;padding:12px;font-size:14px;font-weight:700;color:#991b1b;margin-bottom:12px">
+          ${esc(name)}
+        </div>
+        <p style="font-size:12px;color:var(--g-700);margin:0 0 6px;font-weight:600">The following will be permanently deleted:</p>
+        <ul style="font-size:12px;color:var(--g-600);margin:0 0 14px;padding-left:18px;line-height:1.8">
+          <li>All orders, leads, products, customers</li>
+          <li>All employees and user accounts</li>
+          <li>All configurations and settings</li>
+          <li>All invoices, purchases, vendor records</li>
+          <li>All audit logs and activity history</li>
+        </ul>
+        <label style="font-size:12px;font-weight:600;color:#991b1b;display:block;margin-bottom:6px">Type <code style="background:#fee2e2;padding:2px 6px;border-radius:4px">${esc(name)}</code> to confirm:</label>
+        <input type="text" id="permDeleteInput" autocomplete="off"
+               placeholder="Type tenant name exactly…"
+               style="width:100%;box-sizing:border-box;padding:9px 12px;border:2px solid #f87171;border-radius:6px;font-size:13px;font-family:var(--font);outline:none"
+               oninput="checkPermDeleteInput('${id}','${esc(name)}')">
+      </div>
+      <div class="am-footer">
+        <button class="btn btn-outlined" onclick="closeActionModal('actionModal')">Cancel</button>
+        <button class="btn btn-filled" id="permDeleteBtn" disabled
+                style="background:#dc2626;border-color:#dc2626;opacity:.5"
+                onclick="performPermanentDelete('${id}','${esc(name)}')">
+          🔥 Delete Everything
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeActionModal('actionModal'); });
+  // Auto-focus input
+  setTimeout(() => { const inp = document.getElementById('permDeleteInput'); if(inp) inp.focus(); }, 60);
+}
+
+function checkPermDeleteInput(id, name) {
+  const val = (document.getElementById('permDeleteInput') || {}).value || '';
+  const btn = document.getElementById('permDeleteBtn');
+  if (!btn) return;
+  const match = val === name;
+  btn.disabled = !match;
+  btn.style.opacity = match ? '1' : '0.5';
+}
+
+async function performPermanentDelete(id, name) {
+  closeActionModal('actionModal');
+  try {
+    const r = await fetch(`/platform/tenants/${id}/permanent`, { method:'DELETE', headers:H });
+    if (r.ok) {
+      showToast('success', `"${name}" permanently deleted`);
+      await Promise.all([loadStats(), loadTenants(), loadArchive()]);
+    } else {
+      const e = await r.json().catch(()=>({}));
+      showToast('error', e.detail || 'Permanent delete failed.');
+    }
+  } catch(ex) {
+    showToast('error', 'Network error: ' + ex.message);
+  }
+}
+
+function openResetPwdModal(tenantId, companyName) {
+  resetTenantId = tenantId;
+  document.getElementById('resetPwdCompany').textContent = companyName;
+  document.getElementById('resetPwdErr').style.display    = 'none';
+  document.getElementById('resetPwdResult').style.display = 'none';
+  document.getElementById('resetPwdFooter').style.display = '';
+  document.getElementById('resetPwdDoneFooter').style.display = 'none';
+  document.getElementById('resetPwdModal').classList.add('open');
+}
+function closeResetPwdModal() {
+  document.getElementById('resetPwdModal').classList.remove('open');
+  resetTenantId = null;
+}
+async function doResetPassword() {
+  if (!resetTenantId) return;
+  const btn = document.querySelector('#resetPwdFooter .btn-filled');
+  btn.disabled = true; btn.textContent = 'Resetting…';
+  try {
+    const r = await fetch(`/platform/tenants/${resetTenantId}/reset-password`, { method:'PATCH', headers:H });
+    if (!r.ok) { const e=await r.json().catch(()=>({})); document.getElementById('resetPwdErr').textContent=e.detail||'Failed.'; document.getElementById('resetPwdErr').style.display=''; return; }
+    const d = await r.json();
+    document.getElementById('resetPwdResult').innerHTML = `
+      <div class="pwd-result">
+        <div class="pr-label">✅ Password Reset Successfully</div>
+        <div class="pr-email">Admin Email: <strong>${esc(d.admin_email||'')}</strong></div>
+        <code class="pr-pass" id="resetPwdNewPass">${esc(d.new_password||'')}</code>
+        <button class="btn btn-outlined btn-sm" style="margin-top:6px" onclick="copyResetPwd()">📋 Copy Password</button>
+      </div>`;
+    document.getElementById('resetPwdResult').style.display     = '';
+    document.getElementById('resetPwdFooter').style.display     = 'none';
+    document.getElementById('resetPwdDoneFooter').style.display = '';
+  } catch(ex) { document.getElementById('resetPwdErr').textContent='Error: '+ex.message; document.getElementById('resetPwdErr').style.display=''; }
+  finally { btn.disabled=false; btn.textContent='Reset Password'; }
+}
+function copyResetPwd() {
+  const el = document.getElementById('resetPwdNewPass');
+  if (el) navigator.clipboard.writeText(el.textContent.trim()).then(()=>showToast('success','Password copied to clipboard'));
+}
+
+function openCreateModal() {
+  clearCreateForm();
+  document.getElementById('modalErr').style.display = 'none';
+  document.getElementById('modalResult').style.display = 'none';
+  document.getElementById('modalFooter').style.display = '';
+  document.getElementById('modalResultBody').style.display = 'none';
+  document.getElementById('createModal').classList.add('open');
+  setTimeout(()=>document.getElementById('m_company').focus(), 50);
+}
+function closeCreateModal() {
+  document.getElementById('createModal').classList.remove('open');
+  clearCreateForm();
+}
+function clearCreateForm() {
+  ['m_company','m_contact','m_email','m_phone','m_slug','ci_company','ci_contact','ci_email','ci_phone','ci_slug'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+}
+
+async function submitCreateTenant(mode) {
+  const isModal  = mode === 'modal';
+  const company  = document.getElementById(isModal ? 'm_company' : 'ci_company').value.trim();
+  const contact  = document.getElementById(isModal ? 'm_contact' : 'ci_contact').value.trim();
+  const email    = document.getElementById(isModal ? 'm_email'   : 'ci_email').value.trim();
+  const phone    = document.getElementById(isModal ? 'm_phone'   : 'ci_phone').value.trim();
+  const slug     = document.getElementById(isModal ? 'm_slug'    : 'ci_slug').value.trim();
+  const errEl    = document.getElementById(isModal ? 'modalErr'  : 'createInlineErr');
+  errEl.style.display = 'none';
+  if (!company) { errEl.textContent='Company name is required.'; errEl.style.display=''; return; }
+  if (!contact) { errEl.textContent='Contact person is required.'; errEl.style.display=''; return; }
+  if (!email)   { errEl.textContent='Email is required.'; errEl.style.display=''; return; }
+  const btn = isModal
+    ? document.querySelector('#modalFooter .btn-filled')
+    : document.querySelector('#sec-create .btn-filled');
+  if (btn) { btn.disabled=true; btn.textContent='Creating…'; }
+  try {
+    const payload = { company_name:company, contact_person_name:contact, owner_email:email, contact_phone:phone||null, slug:slug||null };
+    console.log('Sending payload:', JSON.stringify(payload, null, 2));
+    const r = await fetch('/platform/tenants', { method:'POST', headers:H, body:JSON.stringify(payload) });
+    console.log('Response status:', r.status);
+    if (!r.ok) { 
+      const e=await r.json().catch(()=>({})); 
+      console.error('Error response:', e);
+      const msg=Array.isArray(e.detail)?e.detail.map(d=>d.msg).join(', '):(e.detail||'Failed.'); 
+      errEl.textContent=msg; 
+      errEl.style.display=''; 
+      return; 
+    }
+    const d = await r.json();
+    const resultHtml = `
+      <div class="result-box">
+        <div class="rb-label">✅ Tenant Created Successfully</div>
+        <div class="rb-row"><span class="rb-key">Company</span>  <span class="rb-val">${esc(d.company_name||company)}</span></div>
+        <div class="rb-row"><span class="rb-key">Slug</span>     <span class="rb-val">${esc(d.slug||slug)}</span></div>
+        <div class="rb-row"><span class="rb-key">Admin Email</span><span class="rb-val">${esc(d.admin_email||email)}</span></div>
+        <div class="rb-row"><span class="rb-key">Password</span> <span class="rb-val">${esc(d.generated_password||'(see email)')}</span></div>
+      </div>`;
+    if (isModal) {
+      document.getElementById('modalResult').innerHTML     = resultHtml;
+      document.getElementById('modalResult').style.display = '';
+      document.getElementById('modalFooter').style.display = 'none';
+      document.getElementById('modalResultBody').style.display = '';
+    } else {
+      document.getElementById('createInlineResult').innerHTML     = resultHtml;
+      document.getElementById('createInlineResult').style.display = '';
+    }
+    await loadStats(); await loadTenants();
+    showToast('success', `Tenant "${company}" created successfully`);
+  } catch(ex) { errEl.textContent='Error: '+ex.message; errEl.style.display=''; }
+  finally { if(btn){ btn.disabled=false; btn.textContent = isModal?'Create Tenant':'✓ Create Tenant'; } }
+}
+
+function nav(section, el) {
+  ['dashboard','tenants','create','archive','stats','logs'].forEach(s => {
+    document.getElementById('sec-'+s).style.display = s === section ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const titles = {
+    dashboard: ['Dashboard','Platform overview'],
+    tenants:   ['All Tenants','Manage tenant accounts'],
+    create:    ['Create Tenant','Provision a new tenant workspace'],
+    archive:   ['Archive','Soft-deleted tenants — restore or permanently remove'],
+    stats:     ['System Stats','Infrastructure and usage metrics'],
+    logs:      ['Logs','Activity & audit logs — last 6 hours, SuperAdmin only'],
+  };
+  const [title, sub] = titles[section] || ['Dashboard',''];
+  document.getElementById('pageTitle').textContent    = title;
+  document.getElementById('pageSubtitle').textContent = sub;
+
+  if (section === 'logs')    { initLogsSection(); }
+  if (section === 'archive') { loadArchive(); }
+  if (section === 'stats')   { loadStats(); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// LOGS MODULE
+// ══════════════════════════════════════════════════════════════
+
+let logData          = [];         // all fetched logs
+let logLevelFilter   = null;       // client-side level filter active
+let logCurrentTab    = 'all';      // 'all' | 'platform' | '<tenant_id>'
+let logAutoInterval  = null;
+let logDebounceTimer = null;
+
+// Called when user navigates to Logs section
+async function initLogsSection() {
+  await buildTenantTabs();
+  await loadLogs();
+}
+
+async function buildTenantTabs() {
+  const tabBar = document.getElementById('logTenantTabs');
+  // Keep the static first two tabs, add one per tenant
+  const existing = tabBar.querySelectorAll('[data-tid]');
+  // Remove old dynamic tabs (keep 'all' and 'platform')
+  tabBar.querySelectorAll('.dynamic-tab').forEach(e => e.remove());
+
+  try {
+    // allTenants already loaded
+    const sorted = [...allTenants].sort((a,b)=>(a.company_name||'').localeCompare(b.company_name||''));
+    for (const t of sorted) {
+      const btn = document.createElement('button');
+      btn.className = 'tab-btn dynamic-tab';
+      btn.dataset.tid = t.id;
+      btn.textContent = t.company_name || t.slug;
+      btn.onclick = () => switchLogTab(t.id, btn);
+      tabBar.appendChild(btn);
+    }
+  } catch {}
+}
+
+function switchLogTab(tid, el) {
+  logCurrentTab = tid;
+  document.querySelectorAll('.log-tenant-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  logLevelFilter = null;
+  loadLogs();
+}
+
+async function loadLogs() {
+  const module  = document.getElementById('logModuleFilter').value;
+  const level   = document.getElementById('logLevelFilter').value;
+  const action  = document.getElementById('logActionFilter').value.trim();
+  const hours   = document.getElementById('logHoursFilter').value;
+  const limit   = document.getElementById('logLimitFilter').value;
+
+  document.getElementById('logTableWrap').innerHTML = '<div class="log-empty">⏳ Loading logs…</div>';
+
+  let url;
+  const params = new URLSearchParams({ hours, limit });
+  if (level) params.set('level', level);
+  if (action) params.set('action', action);
+
+  if (logCurrentTab === 'all') {
+    if (module) params.set('module', module);
+    url = `/platform/logs/all?${params}`;
+  } else if (logCurrentTab === 'platform') {
+    url = `/platform/logs/platform?${params}`;
+  } else {
+    if (module) params.set('module', module);
+    url = `/platform/logs/tenants/${logCurrentTab}?${params}`;
+  }
+
+  try {
+    const r = await fetch(url, { headers: H });
+    if (!r.ok) { document.getElementById('logTableWrap').innerHTML = `<div class="log-empty">⚠️ ${(await r.json().catch(()=>({}))).detail || 'Failed to load logs'}</div>`; return; }
+    const d = await r.json();
+    logData = d.logs || [];
+    renderLogTable(logData);
+    updateLogSummary(logData);
+    document.getElementById('logCount').textContent = `${logData.length} entries`;
+    document.getElementById('logWindowBadge').textContent = `Last ${hours} hour${hours>1?'s':''}`;
+  } catch(ex) {
+    document.getElementById('logTableWrap').innerHTML = `<div class="log-empty">⚠️ Error: ${ex.message}</div>`;
+  }
+}
+
+function renderLogTable(logs) {
+  if (!logs.length) {
+    document.getElementById('logTableWrap').innerHTML = '<div class="log-empty">📭 No log entries found for the selected filters.</div>';
+    return;
+  }
+  const rows = logs.map((l, idx) => {
+    const t  = l.created_at ? new Date(l.created_at).toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '—';
+    const dt = l.created_at ? new Date(l.created_at).toLocaleDateString('en-IN') : '';
+    const detailStr = l.detail ? JSON.stringify(l.detail).slice(0, 80) : '—';
+    const ip  = l.actor_ip || '—';
+    const who = l.actor_email ? l.actor_email.split('@')[0] : (l.actor_role || '—');
+    return `<tr onclick="openLogDrawer(${idx})" style="cursor:pointer">
+      <td class="log-time">${dt}<br>${t}</td>
+      <td><span class="badge-level badge-${l.level||'INFO'}">${l.level||'INFO'}</span></td>
+      <td><span class="chip chip-gray" style="font-size:10px">${l.module||'—'}</span></td>
+      <td><code style="font-size:11px;color:var(--g-700)">${esc(l.action||'')}</code></td>
+      <td class="log-msg" title="${esc(l.message||'')}">${esc(l.message||'—')}</td>
+      <td style="font-size:11px">${l.method ? `<span class="log-method">${l.method}</span>` : ''} <span style="color:var(--g-600)">${l.status_code||''}</span></td>
+      <td style="font-size:11px;color:var(--g-600)">${esc(who)}</td>
+      <td style="font-size:11px;color:var(--g-500);font-family:var(--font-mono)">${ip}</td>
+      <td class="log-detail" title="${esc(JSON.stringify(l.detail||{}))}">${esc(detailStr)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('logTableWrap').innerHTML = `
+    <table class="log-table">
+      <thead><tr>
+        <th>Time</th><th>Level</th><th>Module</th><th>Action</th><th>Message</th>
+        <th>HTTP</th><th>Actor</th><th>IP</th><th>Detail</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function updateLogSummary(logs) {
+  const counts = { INFO:0, WARNING:0, ERROR:0, CRITICAL:0 };
+  logs.forEach(l => { if (l.level && counts[l.level] !== undefined) counts[l.level]++; });
+  document.getElementById('lsTotal').textContent = logs.length;
+  document.getElementById('lsInfo').textContent  = counts.INFO;
+  document.getElementById('lsWarn').textContent  = counts.WARNING;
+  document.getElementById('lsError').textContent = counts.ERROR;
+  document.getElementById('lsCrit').textContent  = counts.CRITICAL;
+}
+
+function filterByLevel(level) {
+  document.querySelectorAll('.lsc').forEach(c => c.classList.remove('active'));
+  if (level) {
+    const map = {INFO:'info',WARNING:'warn',ERROR:'error',CRITICAL:'crit'};
+    document.querySelector(`.lsc.${map[level]}`).classList.add('active');
+    document.getElementById('logLevelFilter').value = level;
+  } else {
+    document.querySelector('.lsc.total').classList.add('active');
+    document.getElementById('logLevelFilter').value = '';
+  }
+  loadLogs();
+}
+
+function openLogDrawer(idx) {
+  const log = logData[idx];
+  if (!log) return;
+  const expiresAt = log.expires_at ? new Date(log.expires_at).toLocaleString('en-IN') : '—';
+  const createdAt = log.created_at ? new Date(log.created_at).toLocaleString('en-IN') : '—';
+  const errorCodeSection = log.error_code ? `
+    <div class="log-field" style="background:#fee2e2;border:1px solid #fca5a5;padding:10px;border-radius:var(--r-xs);margin-bottom:10px">
+      <label style="color:#b91c1c">🔴 Error Code</label>
+      <div class="val mono" style="font-size:14px;font-weight:600;color:#b91c1c;letter-spacing:.05em">${esc(log.error_code||'')}</div>
+      <div style="font-size:11px;color:var(--g-600);margin-top:4px">Share this code for remote support</div>
+    </div>` : '';
+  document.getElementById('logDrawerBody').innerHTML = errorCodeSection + `
+    <div class="log-field"><label>Level</label><div class="val"><span class="badge-level badge-${log.level||'INFO'}">${log.level||'INFO'}</span></div></div>
+    <div class="log-field"><label>Module</label><div class="val">${esc(log.module||'—')}</div></div>
+    <div class="log-field"><label>Action</label><div class="val mono">${esc(log.action||'—')}</div></div>
+    <div class="log-field"><label>Message</label><div class="val">${esc(log.message||'—')}</div></div>
+    <div class="log-field"><label>HTTP</label><div class="val">${log.method||''} ${log.path||''} → ${log.status_code||'—'}</div></div>
+    <div class="log-field"><label>Actor</label><div class="val">${esc(log.actor_email||'—')} <span style="color:var(--g-500)">(${esc(log.actor_role||'—')})</span></div></div>
+    <div class="log-field"><label>IP Address</label><div class="val mono">${log.actor_ip||'—'}</div></div>
+    <div class="log-field"><label>Tenant ID</label><div class="val mono">${log.tenant_id||'—'}</div></div>
+    <div class="log-field"><label>Created At</label><div class="val">${createdAt}</div></div>
+    <div class="log-field"><label>Expires At (TTL 6h)</label><div class="val">${expiresAt}</div></div>
+    <div class="log-field"><label>User Agent</label><div class="val" style="font-size:11px;color:var(--g-500)">${esc(log.user_agent||'—')}</div></div>
+    <div class="log-field"><label>Detail (JSON)</label>
+      <pre class="log-json">${log.detail ? JSON.stringify(log.detail, null, 2) : 'null'}</pre>
+    </div>`;
+  document.getElementById('logDrawer').classList.add('open');
+  document.getElementById('logDrawerOverlay').style.display = '';
+}
+function closeLogDrawer() {
+  document.getElementById('logDrawer').classList.remove('open');
+  document.getElementById('logDrawerOverlay').style.display = 'none';
+}
+
+function toggleAutoRefresh() {
+  const btn = document.getElementById('autoRefreshBtn');
+  if (logAutoInterval) {
+    clearInterval(logAutoInterval);
+    logAutoInterval = null;
+    btn.textContent = '⟳ Auto-refresh: OFF';
+    btn.classList.remove('on');
+  } else {
+    logAutoInterval = setInterval(loadLogs, 15000);
+    btn.textContent = '⟳ Auto-refresh: 15s';
+    btn.classList.add('on');
+    loadLogs();
+  }
+}
+
+async function confirmPurgeLogs() {
+  if (!confirm('Manually purge all expired log entries (older than 6 hours)?\n\nThis will delete them from the database.')) return;
+  try {
+    const r = await fetch('/platform/logs/purge', { method: 'DELETE', headers: H });
+    const d = await r.json();
+    showToast('success', d.message || 'Purge complete.');
+    loadLogs();
+  } catch(ex) { showToast('error', 'Error: ' + ex.message); }
+}
+
+function debounceLogLoad() {
+  clearTimeout(logDebounceTimer);
+  logDebounceTimer = setTimeout(loadLogs, 400);
+}
+
+// End logs module
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;'); }
+function logout() { localStorage.clear(); window.location.replace('/platform-login.html'); }
+
+document.getElementById('createModal').addEventListener('click',  function(e){ if(e.target===this) closeCreateModal(); });
+document.getElementById('resetPwdModal').addEventListener('click', function(e){ if(e.target===this) closeResetPwdModal(); });
+</script>
+<script src="/modules/mobile-nav.v4.js?v=20260307"></script>
+</body>
+</html>

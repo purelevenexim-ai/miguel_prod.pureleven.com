@@ -1,0 +1,1107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>GST & Accounting — Miguel CRM</title>
+<link rel="stylesheet" href="/ds.css?v=20260228">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<link rel="stylesheet" href="/styles/mobile.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<style>
+body { background:var(--bg-page); }
+
+/* ── Layout ─────────────────────────────────────────────── */
+.gst-layout { display:flex; height:calc(100vh - 48px); overflow:hidden; }
+.gst-sidebar { width:280px; flex-shrink:0; background:var(--surf); border-right:1px solid var(--bdr);
+  display:flex; flex-direction:column; overflow-y:auto; padding:16px; gap:14px; }
+.gst-main { flex:1; overflow-y:auto; padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
+
+/* ── Sidebar sections ────────────────────────────────────── */
+.sb-section { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--g-600); margin-bottom:6px; margin-top:4px; }
+.sb-field { margin-bottom:10px; }
+.sb-field label { font-size:12px; font-weight:500; color:var(--g-700); display:block; margin-bottom:3px; }
+.sb-field input, .sb-field select {
+  width:100%; height:34px; padding:0 10px; border:1px solid var(--bdr);
+  border-radius:var(--r-xs); background:var(--surf); color:var(--g-900);
+  font-size:13px; font-family:var(--font); box-sizing:border-box;
+}
+.sb-field input:focus, .sb-field select:focus { outline:none; border-color:var(--g-blue); border-width:2px; }
+
+/* Month quick-select chips */
+.month-chips { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+.mchip { padding:4px 9px; border:1px solid var(--bdr); border-radius:var(--r-xs); font-size:11px;
+  font-weight:500; cursor:pointer; background:var(--surf); color:var(--g-700);
+  transition:all var(--t); white-space:nowrap; }
+.mchip:hover { border-color:var(--g-blue); color:var(--g-blue); background:var(--g-blue-lt); }
+.mchip.active { border-color:var(--g-blue); background:var(--g-blue-lt); color:var(--g-blue); font-weight:700; }
+
+/* Toggle chips (B2B/B2C) */
+.toggle-chips { display:flex; gap:6px; margin-bottom:10px; }
+.tchip { flex:1; padding:6px 4px; text-align:center; border:1.5px solid var(--bdr);
+  border-radius:var(--r-xs); font-size:12px; font-weight:500; cursor:pointer;
+  background:var(--surf); color:var(--g-700); transition:all var(--t); }
+.tchip:hover { border-color:var(--g-blue); }
+.tchip.active { border-color:var(--g-blue); background:var(--g-blue-lt); color:var(--g-blue); font-weight:600; }
+
+.sb-divider { border:none; border-top:1px solid var(--bdr); margin:4px 0; }
+
+/* Generate button */
+.gen-btn { width:100%; height:40px; background:var(--g-blue); color:#fff; border:none;
+  border-radius:var(--r-xs); font-size:13px; font-weight:600; font-family:var(--font);
+  cursor:pointer; transition:opacity var(--t); }
+.gen-btn:hover { opacity:.88; }
+.gen-btn:disabled { opacity:.5; cursor:not-allowed; }
+.reset-btn { width:100%; height:34px; background:none; border:1px solid var(--bdr);
+  border-radius:var(--r-xs); font-size:12px; font-weight:500; color:var(--g-700);
+  font-family:var(--font); cursor:pointer; margin-top:6px; transition:all var(--t); }
+.reset-btn:hover { border-color:var(--g-red); color:var(--g-red); }
+
+/* ── GST Profile box ─────────────────────────────────────── */
+.profile-box { background:var(--g-blue-lt); border:1px solid var(--bdr); border-radius:var(--r-sm);
+  padding:10px 12px; margin-bottom:6px; }
+.profile-box .prow { display:flex; justify-content:space-between; align-items:center;
+  font-size:12px; margin-bottom:3px; }
+.profile-box .plbl { color:var(--g-600); font-weight:500; }
+.profile-box .pval { color:var(--g-900); font-weight:600; }
+.profile-setup-btn { font-size:11px; color:var(--g-blue); background:none; border:none;
+  cursor:pointer; text-decoration:underline; padding:0; font-family:var(--font); }
+.profile-warn { background:var(--g-amber-lt); border:1px solid #fcd34d; border-radius:var(--r-xs);
+  padding:7px 10px; font-size:12px; color:var(--g-amber); margin-bottom:8px; }
+
+/* ── Tab bar ─────────────────────────────────────────────── */
+.tab-bar { display:flex; border-bottom:2px solid var(--bdr); flex-shrink:0; background:var(--surf);
+  border-radius:var(--r-sm) var(--r-sm) 0 0; border:1px solid var(--bdr); }
+.tab-btn { flex:1; padding:11px 8px; text-align:center; font-size:13px; font-weight:600;
+  cursor:pointer; border:none; border-bottom:3px solid transparent; margin-bottom:-2px;
+  background:none; font-family:var(--font); color:var(--g-600); transition:all .15s; white-space:nowrap; }
+.tab-btn:hover { color:var(--g-blue); background:var(--g-blue-lt); }
+.tab-btn.active { color:var(--g-blue); border-bottom-color:var(--g-blue); }
+
+/* ── Summary strip ───────────────────────────────────────── */
+.sum-strip { display:flex; gap:10px; flex-wrap:wrap; flex-shrink:0; }
+.sum-card { flex:1; min-width:110px; background:var(--surf); border:1px solid var(--bdr);
+  border-radius:var(--r-sm); padding:10px 14px; }
+.sum-card-val { font-size:18px; font-weight:700; color:var(--g-900); }
+.sum-card-lbl { font-size:10px; color:var(--g-600); text-transform:uppercase;
+  letter-spacing:.04em; margin-top:2px; font-weight:500; }
+.sum-card.blue  { border-left:3px solid var(--g-blue); }
+.sum-card.green { border-left:3px solid var(--g-green); }
+.sum-card.amber { border-left:3px solid var(--g-amber); }
+.sum-card.red   { border-left:3px solid var(--g-red); }
+.sum-card.gray  { border-left:3px solid var(--g-600); }
+
+/* ── Panel ───────────────────────────────────────────────── */
+.gst-panel { background:var(--surf); border:1px solid var(--bdr); border-radius:0 0 var(--r-sm) var(--r-sm);
+  flex:1; display:flex; flex-direction:column; min-height:0; border-top:none; }
+.gst-toolbar { display:flex; align-items:center; gap:8px; padding:10px 14px;
+  border-bottom:1px solid var(--bdr); flex-shrink:0; flex-wrap:wrap; }
+.tbl-scroll { flex:1; overflow:auto; min-height:0; }
+
+/* ── Table ───────────────────────────────────────────────── */
+.gst-table { width:100%; border-collapse:collapse; font-size:12px; }
+.gst-table th { position:sticky; top:0; background:var(--g-50); padding:8px 10px;
+  text-align:left; font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.04em; color:var(--g-600); border-bottom:2px solid var(--bdr);
+  white-space:nowrap; }
+.gst-table th.num, .gst-table td.num { text-align:right; }
+.gst-table td { padding:7px 10px; border-bottom:1px solid var(--bdr); color:var(--g-900);
+  vertical-align:middle; }
+.gst-table tr:last-child td { border-bottom:none; }
+.gst-table tr:hover td { background:var(--g-50); }
+.gst-table .total-row td { font-weight:700; background:var(--g-100); border-top:2px solid var(--bdr); }
+
+/* Badge */
+.badge { display:inline-block; padding:2px 7px; border-radius:3px; font-size:10px; font-weight:700; }
+.badge-b2b { background:var(--g-blue-lt); color:var(--g-blue); }
+.badge-b2c { background:var(--g-100); color:var(--g-600); }
+
+/* ── GSTR-3B totals box ──────────────────────────────────── */
+.tax-totals-box { background:var(--g-50); border:1px solid var(--bdr); border-radius:var(--r-sm);
+  padding:16px 20px; margin:16px; }
+.tax-totals-box h4 { font-size:13px; font-weight:700; color:var(--g-900); margin:0 0 12px; }
+.ttrow { display:flex; justify-content:space-between; padding:6px 0;
+  border-bottom:1px solid var(--bdr); font-size:13px; }
+.ttrow:last-child { border-bottom:none; }
+.ttrow.grand { font-weight:700; font-size:15px; margin-top:4px; padding-top:10px;
+  border-top:2px solid var(--bdr); border-bottom:none; }
+.ttrow .tl { color:var(--g-700); }
+.ttrow .tv { color:var(--g-900); font-weight:600; font-family:var(--font-mono); }
+
+/* ── Modal ───────────────────────────────────────────────── */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(32,33,36,.4);
+  z-index:500; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal-box { background:var(--surf); border-radius:var(--r-sm); padding:24px; width:420px;
+  box-shadow:var(--shadow-4); max-height:90vh; overflow-y:auto; }
+.modal-box h3 { font-size:16px; font-weight:700; color:var(--g-900); margin:0 0 4px; }
+.modal-box .sub { font-size:12px; color:var(--g-600); margin-bottom:16px; }
+.mf { margin-bottom:12px; }
+.mf label { font-size:12px; font-weight:500; color:var(--g-700); display:block; margin-bottom:4px; }
+.mf input { width:100%; height:36px; padding:0 10px; border:1px solid var(--bdr);
+  border-radius:var(--r-xs); font-size:13px; font-family:var(--font); box-sizing:border-box; }
+.mf input:focus { outline:none; border-color:var(--g-blue); border-width:2px; }
+.modal-footer { display:flex; gap:8px; margin-top:20px; }
+
+/* ── Empty / Loading ─────────────────────────────────────── */
+.gst-empty { text-align:center; padding:60px 20px; color:var(--g-600); }
+.gst-empty .ei { font-size:40px; margin-bottom:10px; }
+
+/* ── Export btn ──────────────────────────────────────────── */
+.export-btn { display:flex; align-items:center; gap:6px; padding:7px 12px;
+  border:1px solid var(--bdr); border-radius:var(--r-xs); background:var(--surf);
+  color:var(--g-700); font-size:12px; font-weight:500; font-family:var(--font);
+  cursor:pointer; transition:all var(--t); text-decoration:none; }
+.export-btn:hover { border-color:var(--g-green); color:var(--g-green); background:var(--g-green-lt); }
+
+/* ── Mobile compact ≤599px ───────────────────────────────── */
+@media (max-width:599px) {
+  .gst-layout { flex-direction:column; height:auto; overflow:visible; }
+  .gst-sidebar {
+    width:100%; border-right:none; border-bottom:1px solid var(--bdr);
+    padding:12px; gap:10px; overflow:visible;
+  }
+  .gst-main { padding:12px; overflow:visible; }
+
+  /* Month chips */
+  .month-chips { gap:4px; }
+  .mchip { padding:3px 7px; font-size:10px; }
+
+  /* Summary strip: 2-col */
+  .sum-strip { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .sum-card { min-width:0; padding:8px 10px; }
+  .sum-card-val { font-size:15px; }
+  .sum-card-lbl { font-size:9px; }
+
+  /* Tab bar: scroll */
+  .tab-bar { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:var(--r-sm) var(--r-sm) 0 0; }
+  .tab-btn { padding:9px 12px; font-size:12px; flex-shrink:0; white-space:nowrap; }
+
+  /* Toolbar */
+  .gst-toolbar { padding:8px 10px; gap:6px; }
+
+  /* Table scroll */
+  .tbl-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .gst-table { min-width:600px; }
+
+  /* Tax totals */
+  .tax-totals-box { margin:10px; padding:12px 14px; }
+  .ttrow { font-size:12px; }
+
+  /* Profile box */
+  .profile-box { padding:8px 10px; }
+
+  /* Modal: bottom-sheet */
+  .modal-overlay { padding:0; align-items:flex-end; }
+  .modal-box {
+    width:100vw; max-width:100vw;
+    border-radius:16px 16px 0 0;
+    max-height:85vh;
+  }
+}
+
+/* ── Mobile medium 600-839px ─────────────────────────────── */
+@media (min-width:600px) and (max-width:839px) {
+  .gst-layout { flex-direction:column; height:auto; overflow:visible; }
+  .gst-sidebar { width:100%; border-right:none; border-bottom:1px solid var(--bdr); }
+  .gst-main { padding:16px; }
+  .sum-strip { display:grid; grid-template-columns:repeat(3,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ════════════════════════════════════════════════ -->
+<div class="gs-topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/tenant-admin.html" class="gs-back-btn">← Dashboard</a>
+    <div>
+      <div style="font-size:15px;font-weight:600;color:var(--g-900);">GST & Accounting</div>
+      <div style="font-size:11px;color:var(--g-600);" id="tenantName">Loading…</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="font-size:11px;color:var(--g-600);">India GST Filing · Monthly Reports</span>
+  </div>
+</div>
+
+<!-- ══ BANNERS ═══════════════════════════════════════════════ -->
+<div style="position:sticky;top:48px;z-index:150;padding:0 20px;">
+  <div class="gs-banner gs-banner-error"   id="errBanner" style="display:none;"></div>
+  <div class="gs-banner gs-banner-success" id="okBanner"  style="display:none;"></div>
+</div>
+
+<div class="gst-layout">
+
+  <!-- ══ SIDEBAR ════════════════════════════════════════════ -->
+  <aside class="gst-sidebar">
+
+    <!-- GST Profile -->
+    <div>
+      <div class="sb-section">Your GST Profile</div>
+      <div id="profileBox">
+        <div style="font-size:12px;color:var(--g-600);margin-bottom:6px;">Loading…</div>
+      </div>
+      <button class="profile-setup-btn" onclick="openProfileModal()">✏️ Edit GST Profile</button>
+    </div>
+
+    <hr class="sb-divider">
+
+    <!-- Month quick-select -->
+    <div>
+      <div class="sb-section">Quick Select Month</div>
+      <div class="month-chips" id="monthChips"></div>
+    </div>
+
+    <!-- Date range -->
+    <div>
+      <div class="sb-section">Date Range</div>
+      <div class="sb-field">
+        <label>From</label>
+        <input type="date" id="dateFrom">
+      </div>
+      <div class="sb-field">
+        <label>To</label>
+        <input type="date" id="dateTo">
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div>
+      <div class="sb-section">Filters</div>
+      <div class="sb-field">
+        <label>State</label>
+        <select id="stateFilter">
+          <option value="">All States</option>
+          <option>Andhra Pradesh</option><option>Arunachal Pradesh</option>
+          <option>Assam</option><option>Bihar</option><option>Chhattisgarh</option>
+          <option>Goa</option><option>Gujarat</option><option>Haryana</option>
+          <option>Himachal Pradesh</option><option>Jharkhand</option>
+          <option>Karnataka</option><option>Kerala</option>
+          <option>Madhya Pradesh</option><option>Maharashtra</option>
+          <option>Manipur</option><option>Meghalaya</option><option>Mizoram</option>
+          <option>Nagaland</option><option>Odisha</option><option>Punjab</option>
+          <option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option>
+          <option>Telangana</option><option>Tripura</option>
+          <option>Uttar Pradesh</option><option>Uttarakhand</option>
+          <option>West Bengal</option>
+          <option>Andaman and Nicobar Islands</option>
+          <option>Chandigarh</option><option>Dadra and Nagar Haveli</option>
+          <option>Daman and Diu</option><option>Delhi</option>
+          <option>Jammu and Kashmir</option><option>Ladakh</option>
+          <option>Lakshadweep</option><option>Puducherry</option>
+        </select>
+      </div>
+      <div class="sb-field">
+        <label>Customer Type</label>
+        <div class="toggle-chips">
+          <div class="tchip active" id="tc_all"  onclick="setB2B('')">All</div>
+          <div class="tchip"        id="tc_b2b"  onclick="setB2B('b2b')">B2B</div>
+          <div class="tchip"        id="tc_b2c"  onclick="setB2B('b2c')">B2C</div>
+        </div>
+      </div>
+      <div class="sb-field">
+        <label>Min Amount (₹)</label>
+        <input type="number" id="minAmount" placeholder="e.g. 1000" min="0">
+      </div>
+      <div class="sb-field">
+        <label>Max Amount (₹)</label>
+        <input type="number" id="maxAmount" placeholder="e.g. 250000" min="0">
+      </div>
+    </div>
+
+    <hr class="sb-divider">
+    <button class="gen-btn" id="genBtn" onclick="generate()">⚡ Generate Report</button>
+    <button class="reset-btn" onclick="resetFilters()">✕ Reset Filters</button>
+
+  </aside>
+
+  <!-- ══ MAIN AREA ══════════════════════════════════════════ -->
+  <main class="gst-main">
+
+    <!-- Summary strip -->
+    <div class="sum-strip" id="sumStrip" style="display:none;">
+      <div class="sum-card blue">
+        <div class="sum-card-val" id="sOrders">—</div>
+        <div class="sum-card-lbl">Orders</div>
+      </div>
+      <div class="sum-card gray">
+        <div class="sum-card-val" id="sTaxable">—</div>
+        <div class="sum-card-lbl">Taxable Value</div>
+      </div>
+      <div class="sum-card green">
+        <div class="sum-card-val" id="sCgst">—</div>
+        <div class="sum-card-lbl">CGST</div>
+      </div>
+      <div class="sum-card green">
+        <div class="sum-card-val" id="sSgst">—</div>
+        <div class="sum-card-lbl">SGST</div>
+      </div>
+      <div class="sum-card amber">
+        <div class="sum-card-val" id="sIgst">—</div>
+        <div class="sum-card-lbl">IGST</div>
+      </div>
+      <div class="sum-card red">
+        <div class="sum-card-val" id="sTotal">—</div>
+        <div class="sum-card-lbl">Total Invoice</div>
+      </div>
+    </div>
+
+    <!-- Tabs + panel -->
+    <div style="display:flex;flex-direction:column;flex:1;min-height:0;">
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab_gstr1"    onclick="switchTab('gstr1')">📋 GSTR-1 Detailed</button>
+        <button class="tab-btn"        id="tab_hsn"      onclick="switchTab('hsn')">🔢 HSN Summary</button>
+        <button class="tab-btn"        id="tab_tax"      onclick="switchTab('tax')">📊 Tax Summary</button>
+        <button class="tab-btn"        id="tab_csv"      onclick="switchTab('csv')">⬇ Export CSV</button>
+      </div>
+
+      <div class="gst-panel">
+
+        <!-- ── GSTR-1 Detailed ──────────────────────────── -->
+        <div id="view_gstr1">
+          <div class="gst-toolbar">
+            <input type="text" id="gstrSearch" placeholder="Search invoice, customer, HSN…"
+              oninput="filterGstr1()" style="width:220px;height:32px;border:1px solid var(--bdr);
+              border-radius:var(--r-xs);padding:0 10px;font-size:12px;font-family:var(--font);background:var(--surf);color:var(--g-900);">
+            <div style="flex:1;"></div>
+            <button class="export-btn" onclick="downloadCSV('gstr1')">⬇ GSTR-1 CSV</button>
+            <button class="export-btn" onclick="downloadCSV('accounting')">⬇ Accounting CSV</button>
+          </div>
+          <div class="tbl-scroll">
+            <table class="gst-table" id="gstr1Table">
+              <thead>
+                <tr>
+                  <th>Invoice No</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>GSTIN</th>
+                  <th>State</th>
+                  <th>Type</th>
+                  <th>HSN</th>
+                  <th>Product</th>
+                  <th class="num">Qty</th>
+                  <th class="num">Taxable ₹</th>
+                  <th class="num">GST %</th>
+                  <th class="num">CGST ₹</th>
+                  <th class="num">SGST ₹</th>
+                  <th class="num">IGST ₹</th>
+                  <th class="num">Total ₹</th>
+                </tr>
+              </thead>
+              <tbody id="gstr1Body">
+                <tr><td colspan="15" class="gst-empty"><div class="ei">📊</div>
+                  <div>Select a period and click Generate Report</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── HSN Summary ──────────────────────────────── -->
+        <div id="view_hsn" style="display:none;">
+          <div class="gst-toolbar">
+            <div style="font-size:12px;color:var(--g-600);">HSN-wise consolidated summary for the period</div>
+            <div style="flex:1;"></div>
+            <button class="export-btn" onclick="downloadCSV('hsn')">⬇ HSN CSV</button>
+          </div>
+          <div class="tbl-scroll">
+            <table class="gst-table" id="hsnTable">
+              <thead>
+                <tr>
+                  <th>HSN Code</th>
+                  <th>Description</th>
+                  <th class="num">GST %</th>
+                  <th class="num">Total Qty</th>
+                  <th class="num">Taxable ₹</th>
+                  <th class="num">CGST ₹</th>
+                  <th class="num">SGST ₹</th>
+                  <th class="num">IGST ₹</th>
+                  <th class="num">Total ₹</th>
+                </tr>
+              </thead>
+              <tbody id="hsnBody">
+                <tr><td colspan="9" class="gst-empty"><div class="ei">🔢</div>
+                  <div>Generate report to see HSN summary</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── Tax Summary ──────────────────────────────── -->
+        <div id="view_tax" style="display:none;">
+          <div class="gst-toolbar">
+            <div style="font-size:12px;color:var(--g-600);">Rate-wise GST summary — use for GSTR-3B filing</div>
+            <div style="flex:1;"></div>
+            <button class="export-btn" onclick="downloadCSV('tax')">⬇ Tax Summary CSV</button>
+          </div>
+          <div class="tbl-scroll" style="max-height:300px;">
+            <table class="gst-table" id="taxTable">
+              <thead>
+                <tr>
+                  <th>GST Rate %</th>
+                  <th class="num">Taxable ₹</th>
+                  <th class="num">CGST ₹</th>
+                  <th class="num">SGST ₹</th>
+                  <th class="num">IGST ₹</th>
+                  <th class="num">Total Tax ₹</th>
+                </tr>
+              </thead>
+              <tbody id="taxBody">
+                <tr><td colspan="6" class="gst-empty"><div class="ei">📊</div>
+                  <div>Generate report to see tax summary</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- GSTR-3B totals box -->
+          <div class="tax-totals-box" id="gstr3bBox" style="display:none;">
+            <h4>📝 GSTR-3B Summary — Output Tax Liability</h4>
+            <div class="ttrow"><span class="tl">Taxable Value</span>  <span class="tv" id="tt_taxable">—</span></div>
+            <div class="ttrow"><span class="tl">CGST Payable</span>   <span class="tv" id="tt_cgst">—</span></div>
+            <div class="ttrow"><span class="tl">SGST Payable</span>   <span class="tv" id="tt_sgst">—</span></div>
+            <div class="ttrow"><span class="tl">IGST Payable</span>   <span class="tv" id="tt_igst">—</span></div>
+            <div class="ttrow grand"><span class="tl">Total GST Payable</span><span class="tv" id="tt_total">—</span></div>
+          </div>
+        </div>
+
+        <!-- ── Export CSV ───────────────────────────────── -->
+        <div id="view_csv" style="display:none;">
+          <div style="padding:24px;">
+            <div style="font-size:14px;font-weight:700;color:var(--g-900);margin-bottom:4px;">Download CSV Exports</div>
+            <div style="font-size:12px;color:var(--g-600);margin-bottom:20px;">
+              Select a period in the sidebar and click Generate Report first, then download any format below.
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+              <div style="border:1px solid var(--bdr);border-radius:var(--r-sm);padding:16px;">
+                <div style="font-size:13px;font-weight:700;color:var(--g-900);margin-bottom:4px;">📋 GSTR-1 Detailed</div>
+                <div style="font-size:11px;color:var(--g-600);margin-bottom:12px;">
+                  Line-item level. Invoice No · Date · Customer · GSTIN · HSN · Taxable · CGST · SGST · IGST
+                </div>
+                <button class="export-btn" style="width:100%;justify-content:center;" onclick="downloadCSV('gstr1')">
+                  ⬇ Download GSTR-1 CSV
+                </button>
+              </div>
+
+              <div style="border:1px solid var(--bdr);border-radius:var(--r-sm);padding:16px;">
+                <div style="font-size:13px;font-weight:700;color:var(--g-900);margin-bottom:4px;">🔢 HSN Summary</div>
+                <div style="font-size:11px;color:var(--g-600);margin-bottom:12px;">
+                  HSN-wise total. HSN · Description · Qty · Taxable · CGST · SGST · IGST
+                </div>
+                <button class="export-btn" style="width:100%;justify-content:center;" onclick="downloadCSV('hsn')">
+                  ⬇ Download HSN CSV
+                </button>
+              </div>
+
+              <div style="border:1px solid var(--bdr);border-radius:var(--r-sm);padding:16px;">
+                <div style="font-size:13px;font-weight:700;color:var(--g-900);margin-bottom:4px;">📊 Tax Summary</div>
+                <div style="font-size:11px;color:var(--g-600);margin-bottom:12px;">
+                  Rate-wise output tax for GSTR-3B. Total CGST + SGST + IGST payable.
+                </div>
+                <button class="export-btn" style="width:100%;justify-content:center;" onclick="downloadCSV('tax')">
+                  ⬇ Download Tax Summary CSV
+                </button>
+              </div>
+
+              <div style="border:1px solid var(--bdr);border-radius:var(--r-sm);padding:16px;">
+                <div style="font-size:13px;font-weight:700;color:var(--g-900);margin-bottom:4px;">📒 Accounting CSV</div>
+                <div style="font-size:11px;color:var(--g-600);margin-bottom:12px;">
+                  Invoice-level. Tally / Zoho Books / Excel compatible. Sales Ledger · CGST · SGST · IGST.
+                </div>
+                <button class="export-btn" style="width:100%;justify-content:center;" onclick="downloadCSV('accounting')">
+                  ⬇ Download Accounting CSV
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /gst-panel -->
+    </div>
+
+  </main>
+
+</div><!-- /gst-layout -->
+
+
+<!-- ══ GST PROFILE MODAL ═════════════════════════════════════ -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal-box">
+    <h3>🏢 GST Profile Setup</h3>
+    <div class="sub">This information is used for CGST/SGST vs IGST calculation and invoice headers.</div>
+    <div class="mf">
+      <label>Company GSTIN</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="pGstin" placeholder="e.g. 32BCJPT7873A1ZG" maxlength="15" style="text-transform:uppercase;flex:1;">
+        <button style="padding:0 12px;border:1px solid var(--bdr);border-radius:var(--r-xs);background:var(--g-blue);color:#fff;font-weight:600;font-size:12px;cursor:pointer;transition:opacity var(--t);" onclick="validateGstin()">✓ Verify</button>
+      </div>
+      <div id="gstinStatus" style="font-size:11px;margin-top:4px;display:none;"></div>
+    </div>
+    <div class="mf">
+      <label>Home State (for CGST/SGST split) *</label>
+      <select id="pState" style="width:100%;height:36px;padding:0 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px;font-family:var(--font);">
+        <option value="">— Select your state —</option>
+        <option>Andhra Pradesh</option><option>Arunachal Pradesh</option>
+        <option>Assam</option><option>Bihar</option><option>Chhattisgarh</option>
+        <option>Goa</option><option>Gujarat</option><option>Haryana</option>
+        <option>Himachal Pradesh</option><option>Jharkhand</option>
+        <option>Karnataka</option><option>Kerala</option>
+        <option>Madhya Pradesh</option><option>Maharashtra</option>
+        <option>Manipur</option><option>Meghalaya</option><option>Mizoram</option>
+        <option>Nagaland</option><option>Odisha</option><option>Punjab</option>
+        <option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option>
+        <option>Telangana</option><option>Tripura</option>
+        <option>Uttar Pradesh</option><option>Uttarakhand</option>
+        <option>West Bengal</option>
+        <option>Andaman and Nicobar Islands</option>
+        <option>Chandigarh</option><option>Dadra and Nagar Haveli</option>
+        <option>Daman and Diu</option><option>Delhi</option>
+        <option>Jammu and Kashmir</option><option>Ladakh</option>
+        <option>Lakshadweep</option><option>Puducherry</option>
+      </select>
+    </div>
+    <div class="mf">
+      <label>Registered Address</label>
+      <input type="text" id="pAddress" placeholder="Shop/Building, Street, Area">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div class="mf" style="margin-bottom:0;">
+        <label>City</label>
+        <input type="text" id="pCity" placeholder="City">
+      </div>
+      <div class="mf" style="margin-bottom:0;">
+        <label>Pincode</label>
+        <input type="text" id="pPincode" placeholder="6-digit" maxlength="6">
+      </div>
+    </div>
+    <div style="background:var(--g-amber-lt);border:1px solid #fcd34d;border-radius:var(--r-xs);padding:8px 10px;font-size:11px;color:var(--g-amber);margin-top:12px;">
+      ⚠️ <strong>Home State is critical.</strong> Orders delivered to the same state → CGST + SGST. Other states → IGST only.
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" style="flex:1;" onclick="closeProfileModal()">Cancel</button>
+      <button class="btn btn-filled"   style="flex:1;" id="saveProfileBtn" onclick="saveProfile()">💾 Save Profile</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="/modules/auth.js"></script>
+<script>
+/* ════════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════════ */
+const TOKEN = localStorage.getItem('token');
+const SLUG  = localStorage.getItem('slug') || '';
+const H = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${TOKEN}` };
+
+function logout() {
+  ['token','type','role','slug','user_id','email','tenant_token'].forEach(k => {
+    localStorage.removeItem(k); sessionStorage.removeItem(k);
+  });
+  window.location.replace('/tenant-login.html');
+}
+
+if (!TOKEN || localStorage.getItem('type') !== 'tenant') {
+  window.location.replace('/tenant-login.html');
+}
+
+document.getElementById('tenantName').textContent = SLUG.toUpperCase();
+
+/* ════════════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════════════ */
+let currentTab = 'gstr1';
+let b2bFilter  = '';
+let gstr1Data  = null;
+let hsnData    = null;
+let taxData    = null;
+let gstr1Rows  = [];  // for client-side search filter
+let profile    = {};
+
+/* ════════════════════════════════════════════════════════════
+   MONTH CHIPS — last 6 months
+════════════════════════════════════════════════════════════ */
+function buildMonthChips() {
+  const now = new Date();
+  const chips = document.getElementById('monthChips');
+  chips.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const label = d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+    const from  = fmtDate(d);
+    const last  = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    const to    = fmtDate(last);
+    const chip  = document.createElement('div');
+    chip.className = 'mchip' + (i === 0 ? '' : '');
+    chip.textContent = label;
+    chip.dataset.from = from;
+    chip.dataset.to   = to;
+    chip.onclick = () => {
+      document.querySelectorAll('.mchip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      document.getElementById('dateFrom').value = from;
+      document.getElementById('dateTo').value   = to;
+    };
+    chips.appendChild(chip);
+  }
+}
+
+function fmtDate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PROFILE
+════════════════════════════════════════════════════════════ */
+async function loadProfile() {
+  try {
+    const r = await fetch('/api/gst/profile', { headers: H });
+    if (!r.ok) return;
+    profile = await r.json();
+    renderProfileBox();
+  } catch(e) { /* silent */ }
+}
+
+function renderProfileBox() {
+  const box = document.getElementById('profileBox');
+  if (!profile.gst_state) {
+    box.innerHTML = `<div class="profile-warn">⚠️ No GST state set. CGST/SGST vs IGST cannot be calculated.<br>Click "Edit GST Profile" below.</div>`;
+    return;
+  }
+  box.innerHTML = `
+    <div class="profile-box">
+      <div class="prow"><span class="plbl">State</span><span class="pval">${esc(profile.gst_state)}</span></div>
+      ${profile.gstin ? `<div class="prow"><span class="plbl">GSTIN</span><span class="pval" style="font-family:var(--font-mono);font-size:11px;">${esc(profile.gstin)}</span></div>` : ''}
+      ${profile.gst_city ? `<div class="prow"><span class="plbl">City</span><span class="pval">${esc(profile.gst_city)}</span></div>` : ''}
+    </div>`;
+}
+
+function openProfileModal() {
+  document.getElementById('pGstin').value   = profile.gstin    || '';
+  document.getElementById('pState').value   = profile.gst_state || '';
+  document.getElementById('pAddress').value = profile.gst_address || '';
+  document.getElementById('pCity').value    = profile.gst_city   || '';
+  document.getElementById('pPincode').value = profile.gst_pincode || '';
+  document.getElementById('profileModal').classList.add('open');
+}
+
+function closeProfileModal() {
+  document.getElementById('profileModal').classList.remove('open');
+}
+
+async function saveProfile() {
+  const btn = document.getElementById('saveProfileBtn');
+  const state = document.getElementById('pState').value.trim();
+  if (!state) { alert('Please select your home state — it is required for GST calculation.'); return; }
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const r = await fetch('/api/gst/profile', {
+      method: 'POST', headers: H,
+      body: JSON.stringify({
+        gstin:       document.getElementById('pGstin').value.trim().toUpperCase(),
+        gst_state:   state,
+        gst_address: document.getElementById('pAddress').value.trim(),
+        gst_city:    document.getElementById('pCity').value.trim(),
+        gst_pincode: document.getElementById('pPincode').value.trim(),
+      }),
+    });
+    if (!r.ok) { const e = await r.json(); alert(e.detail || 'Save failed'); return; }
+    profile = await r.json();
+    renderProfileBox();
+    closeProfileModal();
+    showOk('✅ GST Profile saved successfully.');
+  } catch(e) { alert('Network error'); }
+  finally { btn.disabled = false; btn.textContent = '💾 Save Profile'; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   TABS
+════════════════════════════════════════════════════════════ */
+const TABS = ['gstr1', 'hsn', 'tax', 'csv'];
+function switchTab(t) {
+  currentTab = t;
+  TABS.forEach(id => {
+    document.getElementById(`tab_${id}`).classList.toggle('active', id === t);
+    document.getElementById(`view_${id}`).style.display = id === t ? '' : 'none';
+  });
+}
+
+/* ════════════════════════════════════════════════════════════
+   FILTERS
+════════════════════════════════════════════════════════════ */
+function setB2B(v) {
+  b2bFilter = v;
+  ['all','b2b','b2c'].forEach(id => {
+    document.getElementById(`tc_${id}`).classList.toggle('active', (v||'all') === id || (v==='' && id==='all'));
+  });
+}
+
+function resetFilters() {
+  document.getElementById('dateFrom').value  = '';
+  document.getElementById('dateTo').value    = '';
+  document.getElementById('stateFilter').value = '';
+  document.getElementById('minAmount').value = '';
+  document.getElementById('maxAmount').value = '';
+  document.querySelectorAll('.mchip').forEach(c => c.classList.remove('active'));
+  setB2B('');
+  // Clear tables
+  gstr1Data = hsnData = taxData = null;
+  gstr1Rows = [];
+  document.getElementById('gstr1Body').innerHTML = emptyRow(15, '📊', 'Select a period and click Generate Report');
+  document.getElementById('hsnBody').innerHTML   = emptyRow(9,  '🔢', 'Generate report to see HSN summary');
+  document.getElementById('taxBody').innerHTML   = emptyRow(6,  '📊', 'Generate report to see tax summary');
+  document.getElementById('gstr3bBox').style.display = 'none';
+  document.getElementById('sumStrip').style.display = 'none';
+}
+
+function emptyRow(cols, icon, msg) {
+  return `<tr><td colspan="${cols}" style="text-align:center;padding:48px 20px;color:var(--g-600);">
+    <div style="font-size:32px;margin-bottom:8px;">${icon}</div>
+    <div style="font-size:13px;">${msg}</div></td></tr>`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   GENERATE REPORT
+════════════════════════════════════════════════════════════ */
+async function generate() {
+  const dateFrom = document.getElementById('dateFrom').value;
+  const dateTo   = document.getElementById('dateTo').value;
+  if (!dateFrom || !dateTo) { alert('Please select a date range.'); return; }
+  if (dateFrom > dateTo)    { alert('"From" date cannot be after "To" date.'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true; btn.textContent = '⏳ Loading…';
+
+  const params = buildParams(dateFrom, dateTo);
+
+  try {
+    const [r1, r2, r3] = await Promise.all([
+      fetch(`/api/gst/gstr1?${params}`, { headers: H }),
+      fetch(`/api/gst/hsn-summary?${params}`, { headers: H }),
+      fetch(`/api/gst/tax-summary?${params}`, { headers: H }),
+    ]);
+
+    if (!r1.ok || !r2.ok || !r3.ok) {
+      if (r1.status === 401 || r2.status === 401 || r3.status === 401) { logout(); return; }
+      let errMsg = 'API error';
+      if (!r1.ok) {
+        const e1 = await r1.json().catch(() => ({}));
+        errMsg = e1.detail || `GSTR-1 error: ${r1.status}`;
+      } else if (!r2.ok) {
+        const e2 = await r2.json().catch(() => ({}));
+        errMsg = e2.detail || `HSN error: ${r2.status}`;
+      } else if (!r3.ok) {
+        const e3 = await r3.json().catch(() => ({}));
+        errMsg = e3.detail || `Tax error: ${r3.status}`;
+      }
+      console.error('Generate error:', errMsg, {r1: r1.status, r2: r2.status, r3: r3.status});
+      showErr('❌ ' + errMsg);
+      return;
+    }
+
+    gstr1Data = await r1.json();
+    hsnData   = await r2.json();
+    taxData   = await r3.json();
+
+    renderSummary(gstr1Data.summary);
+    renderGstr1(gstr1Data.rows);
+    renderHsn(hsnData.rows);
+    renderTax(taxData.rows, taxData.totals);
+    document.getElementById('sumStrip').style.display = '';
+    showOk('✅ Report generated successfully');
+
+  } catch(e) {
+    console.error('Generate exception:', e);
+    showErr('❌ Error: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '⚡ Generate Report';
+  }
+}
+
+function buildParams(dateFrom, dateTo) {
+  const p = new URLSearchParams();
+  p.set('date_from', dateFrom);
+  p.set('date_to',   dateTo);
+  const state = document.getElementById('stateFilter').value;
+  if (state) p.set('state', state);
+  if (b2bFilter) p.set('b2b', b2bFilter);
+  const min = document.getElementById('minAmount').value;
+  const max = document.getElementById('maxAmount').value;
+  if (min) p.set('min_amount', min);
+  if (max) p.set('max_amount', max);
+  return p.toString();
+}
+
+/* ════════════════════════════════════════════════════════════
+   RENDER — Summary Strip
+════════════════════════════════════════════════════════════ */
+function renderSummary(s) {
+  document.getElementById('sOrders').textContent  = s.order_count;
+  document.getElementById('sTaxable').textContent = '₹' + fmt(s.total_taxable);
+  document.getElementById('sCgst').textContent    = '₹' + fmt(s.total_cgst);
+  document.getElementById('sSgst').textContent    = '₹' + fmt(s.total_sgst);
+  document.getElementById('sIgst').textContent    = '₹' + fmt(s.total_igst);
+  document.getElementById('sTotal').textContent   = '₹' + fmt(s.total_invoice);
+}
+
+/* ════════════════════════════════════════════════════════════
+   RENDER — GSTR-1 Table
+════════════════════════════════════════════════════════════ */
+function renderGstr1(rows) {
+  gstr1Rows = rows;
+  paintGstr1(rows);
+}
+
+function paintGstr1(rows) {
+  const tb = document.getElementById('gstr1Body');
+  if (!rows.length) {
+    tb.innerHTML = emptyRow(15, '📭', 'No GST orders found for the selected period.');
+    return;
+  }
+  tb.innerHTML = rows.map(r => `
+    <tr>
+      <td style="font-family:var(--font-mono);font-size:11px;font-weight:600;">${esc(r.invoice_number)}</td>
+      <td style="white-space:nowrap;">${esc(r.invoice_date)}</td>
+      <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(r.customer_name)}">${esc(r.customer_name)}</td>
+      <td style="font-family:var(--font-mono);font-size:10px;">${esc(r.customer_gstin) || '—'}</td>
+      <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(r.place_of_supply)}">${esc(r.place_of_supply)}</td>
+      <td><span class="badge ${r.b2b_b2c==='B2B'?'badge-b2b':'badge-b2c'}">${r.b2b_b2c}</span></td>
+      <td style="font-family:var(--font-mono);font-size:11px;">${esc(r.hsn_code)||'—'}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(r.product_name)}">${esc(r.product_name)}</td>
+      <td class="num">${r.quantity} ${esc(r.unit)}</td>
+      <td class="num" style="font-weight:600;">₹${fmt(r.taxable_value)}</td>
+      <td class="num">${r.gst_rate}%</td>
+      <td class="num">${r.cgst > 0 ? '₹'+fmt(r.cgst) : '—'}</td>
+      <td class="num">${r.sgst > 0 ? '₹'+fmt(r.sgst) : '—'}</td>
+      <td class="num">${r.igst > 0 ? '₹'+fmt(r.igst) : '—'}</td>
+      <td class="num" style="font-weight:700;">₹${fmt(r.total_value)}</td>
+    </tr>`).join('');
+}
+
+function filterGstr1() {
+  const q = document.getElementById('gstrSearch').value.toLowerCase().trim();
+  if (!q) { paintGstr1(gstr1Rows); return; }
+  const filtered = gstr1Rows.filter(r =>
+    r.invoice_number.toLowerCase().includes(q) ||
+    r.customer_name.toLowerCase().includes(q)  ||
+    r.customer_gstin.toLowerCase().includes(q) ||
+    (r.hsn_code || '').toLowerCase().includes(q) ||
+    r.product_name.toLowerCase().includes(q)   ||
+    r.place_of_supply.toLowerCase().includes(q)
+  );
+  paintGstr1(filtered);
+}
+
+/* ════════════════════════════════════════════════════════════
+   RENDER — HSN Summary
+════════════════════════════════════════════════════════════ */
+function renderHsn(rows) {
+  const tb = document.getElementById('hsnBody');
+  if (!rows.length) {
+    tb.innerHTML = emptyRow(9, '📭', 'No HSN data for the selected period.'); return;
+  }
+  let totTax=0, totCgst=0, totSgst=0, totIgst=0, totTotal=0;
+  const html = rows.map(r => {
+    totTax   += parseFloat(r.taxable);
+    totCgst  += parseFloat(r.cgst);
+    totSgst  += parseFloat(r.sgst);
+    totIgst  += parseFloat(r.igst);
+    totTotal += parseFloat(r.total);
+    return `<tr>
+      <td style="font-family:var(--font-mono);font-weight:600;">${esc(r.hsn_code)}</td>
+      <td>${esc(r.description)}</td>
+      <td class="num">${r.gst_rate}%</td>
+      <td class="num">${r.total_qty}</td>
+      <td class="num">₹${fmt(r.taxable)}</td>
+      <td class="num">${parseFloat(r.cgst)>0?'₹'+fmt(r.cgst):'—'}</td>
+      <td class="num">${parseFloat(r.sgst)>0?'₹'+fmt(r.sgst):'—'}</td>
+      <td class="num">${parseFloat(r.igst)>0?'₹'+fmt(r.igst):'—'}</td>
+      <td class="num" style="font-weight:700;">₹${fmt(r.total)}</td>
+    </tr>`;
+  }).join('');
+  tb.innerHTML = html + `
+    <tr class="total-row">
+      <td colspan="4">TOTAL</td>
+      <td class="num">₹${fmt(totTax)}</td>
+      <td class="num">₹${fmt(totCgst)}</td>
+      <td class="num">₹${fmt(totSgst)}</td>
+      <td class="num">₹${fmt(totIgst)}</td>
+      <td class="num">₹${fmt(totTotal)}</td>
+    </tr>`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RENDER — Tax Summary (GSTR-3B)
+════════════════════════════════════════════════════════════ */
+function renderTax(rows, totals) {
+  const tb = document.getElementById('taxBody');
+  if (!rows.length) {
+    tb.innerHTML = emptyRow(6, '📭', 'No tax data for the selected period.'); return;
+  }
+  tb.innerHTML = rows.map(r => `
+    <tr>
+      <td style="font-weight:700;">${r.gst_rate}%</td>
+      <td class="num">₹${fmt(r.taxable)}</td>
+      <td class="num">${parseFloat(r.cgst)>0?'₹'+fmt(r.cgst):'—'}</td>
+      <td class="num">${parseFloat(r.sgst)>0?'₹'+fmt(r.sgst):'—'}</td>
+      <td class="num">${parseFloat(r.igst)>0?'₹'+fmt(r.igst):'—'}</td>
+      <td class="num" style="font-weight:700;">₹${fmt(r.total_tax)}</td>
+    </tr>`).join('');
+
+  // GSTR-3B box
+  if (totals) {
+    document.getElementById('tt_taxable').textContent = '₹' + fmt(totals.taxable);
+    document.getElementById('tt_cgst').textContent    = '₹' + fmt(totals.cgst);
+    document.getElementById('tt_sgst').textContent    = '₹' + fmt(totals.sgst);
+    document.getElementById('tt_igst').textContent    = '₹' + fmt(totals.igst);
+    document.getElementById('tt_total').textContent   = '₹' + fmt(totals.total_gst);
+    document.getElementById('gstr3bBox').style.display = '';
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   CSV DOWNLOADS
+════════════════════════════════════════════════════════════ */
+async function downloadCSV(type) {
+  const dateFrom = document.getElementById('dateFrom').value;
+  const dateTo   = document.getElementById('dateTo').value;
+  if (!dateFrom || !dateTo) { alert('Please select a date range first, then click Generate Report.'); return; }
+
+  const params = buildParams(dateFrom, dateTo);
+  const url = `/api/gst/export/${type}?${params}`;
+
+  try {
+    const r = await fetch(url, { headers: H });
+    if (!r.ok) { const e = await r.json().catch(()=>({})); alert(e.detail || `Export error ${r.status}`); return; }
+    const blob = await r.blob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    const cd = r.headers.get('Content-Disposition') || '';
+    const fname = cd.match(/filename="([^"]+)"/)?.[1] || `gst_${type}_${dateFrom}.csv`;
+    link.download = fname;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 30000);
+  } catch(e) { alert('Download failed: ' + e.message); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   UTILS
+════════════════════════════════════════════════════════════ */
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmt(v) {
+  const n = parseFloat(v) || 0;
+  return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function showOk(msg) {
+  const el = document.getElementById('okBanner');
+  el.textContent = msg; el.style.display = '';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+function showErr(msg) {
+  const el = document.getElementById('errBanner');
+  el.textContent = msg; el.style.display = '';
+  setTimeout(() => { el.style.display = 'none'; }, 6000);
+}
+
+/* ════════════════════════════════════════════════════════════
+   GSTIN VALIDATION
+════════════════════════════════════════════════════════════ */
+async function validateGstin() {
+  const gstin = document.getElementById('pGstin').value.trim().toUpperCase();
+  const status = document.getElementById('gstinStatus');
+  
+  if (!gstin) { 
+    status.style.display = 'none';
+    return;
+  }
+
+  if (gstin.length !== 15) {
+    status.textContent = '⚠️ GSTIN must be 15 characters';
+    status.style.color = 'var(--g-amber)';
+    status.style.display = '';
+    return;
+  }
+
+  status.textContent = '⏳ Validating…';
+  status.style.color = 'var(--g-600)';
+  status.style.display = '';
+
+  try {
+    const r = await fetch(`/api/gst/validate-gstin/${gstin}`, { headers: H });
+    
+    if (!r.ok) {
+      const errData = await r.json().catch(() => ({}));
+      const errMsg = errData.detail || `HTTP ${r.status}`;
+      status.textContent = `❌ Validation error: ${errMsg}`;
+      status.style.color = 'var(--g-red)';
+      console.error('GSTIN validation error:', errMsg);
+      return;
+    }
+    
+    const data = await r.json();
+    
+    if (!data.valid) {
+      status.textContent = `❌ ${data.error}`;
+      status.style.color = 'var(--g-red)';
+      return;
+    }
+
+    // Valid GSTIN
+    const details = data.details;
+    status.innerHTML = `✅ Valid GSTIN · State: <strong>${esc(details.state_name)}</strong>`;
+    status.style.color = 'var(--g-green)';
+    
+    // Auto-fill state
+    document.getElementById('pState').value = details.state_name;
+  } catch(e) {
+    status.textContent = `❌ Error: ${e.message}`;
+    status.style.color = 'var(--g-red)';
+    console.error('GSTIN validation exception:', e);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════════════════════ */
+buildMonthChips();
+loadProfile();
+
+// Default to current month
+const now = new Date();
+const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+const lastDay  = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+document.getElementById('dateFrom').value = fmtDate(firstDay);
+document.getElementById('dateTo').value   = fmtDate(lastDay);
+// Activate current month chip
+setTimeout(() => {
+  const chips = document.querySelectorAll('.mchip');
+  if (chips[0]) chips[0].classList.add('active');
+}, 50);
+</script>
+<script src="/modules/wa-chatbox.js"></script>
+<script>
+  (function initWaChatbox() {
+    const t = localStorage.getItem('token');
+    if (t && window.WaChatbox) WaChatbox.init(t);
+    else window.addEventListener('load', () => {
+      const t2 = localStorage.getItem('token');
+      if (t2 && window.WaChatbox) WaChatbox.init(t2);
+    });
+  })();
+</script>
+<script src="/modules/mobile-nav.v4.js?v=20260307"></script>
+</body>
+</html>

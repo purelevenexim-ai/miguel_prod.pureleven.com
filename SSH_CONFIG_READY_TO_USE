@@ -1,0 +1,64 @@
+# Complete SSH Configuration - Ready to Use
+# File: ~/.ssh/config
+# Created: February 27, 2026
+# Status: PRODUCTION READY
+
+#####################################################################
+# SSH Configuration for Miguel CRM Platform
+# PureLeven - Production & UAT Environments
+#####################################################################
+
+# ===================================================================
+# UAT Server (Staging/Testing Environment)
+# ===================================================================
+Host uat
+    HostName 172.232.118.208
+    User root
+    IdentityFile ~/.ssh/uat
+    Port 22
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ConnectTimeout 10
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    IdentitiesOnly yes
+    # Description: UAT/Staging server for testing
+
+# ===================================================================
+# Production Server (Main Application Server - Linode)
+# ===================================================================
+Host prod
+    HostName 172.105.48.142
+    User root
+    IdentityFile ~/.ssh/prod
+    Port 22
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    ConnectTimeout 10
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    IdentitiesOnly yes
+    # Description: Main production server at Linode
+
+# ===================================================================
+# Global SSH Configuration Options
+# ===================================================================
+Host *
+    # Key management
+    AddKeysToAgent yes
+    UseKeychain yes
+    IgnoreUnknown UseKeychain
+    
+    # Connection settings
+    TCPKeepAlive yes
+    ServerAliveInterval 300
+    ServerAliveCountMax 2
+    
+    # Security
+    StrictHostKeyChecking accept-new
+    PasswordAuthentication no
+    PubkeyAuthentication yes
+    
+    # Performance
+    Compression yes
+    CompressionLevel 6

@@ -1,0 +1,20 @@
+source_product_name,occurrences,sample_order_ids,best_suggestions
+Clove 100,133,IN_25100365; IN_25100396; IN_25100628; IN_25100765; IN_25100890; IN_25101330; IN_25101344; IN_25101442,Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5)
+Turmeric 100gm,10,IN_25100662; IN_25101330; IN_25102311; IN_25102430; IN_25111294; IN_25120872; IN_25121481; IN_25121577,Kerala Cardamom 8mm - 100gm (0.5)
+Idukki Tamarind 500 gm,6,IN_25101496; IN_25110843; IN_25121481; IN_25121577; IN_25121746; IN_26021448,Clove 500 gram (0.3333); Black Pepper Kerala - 500 (0.25); Kerala Cardamom 8mm - 500 (0.25)
+Clove 100gm,3,IN_25091994; IN_25091995; IN_25092115,Kerala Cardamom 8mm - 100gm (0.5); Clove 500 gram (0.5); Clove 50 gram (0.5)
+Delivery Charge,3,IN_25091910; IN_25092020; IN_25092252,
+Cardamom 500gms,3,IN_25091910; IN_25092020; IN_25092024,Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5)
+Clove 1 kg,3,IN_25110481; IN_26012319; IN_26020692,Clove 500 gram (0.5); Clove 50 gram (0.5); Clove 200 gram (0.5)
+Spices,2,IN_25092989; IN_25122312,
+Cardamom 300,2,IN_25102864; IN_25110323,Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5)
+Nutmeg Mace,1,IN_25092024,
+Kerala Nutmug,1,IN_25092024,Black Pepper Kerala - 100 (0.5); Black Pepper Kerala - 500 (0.5); Black Pepper Kerala - 250 (0.5)
+Black Pepper (Bulk) 1kg,1,IN_25092630,Black Pepper Kerala - 100 (0.5); Black Pepper Kerala - 500 (0.5); Black Pepper Kerala - 250 (0.5)
+Cardamom 150,1,IN_25101489,Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5)
+clove 150,1,IN_25101489,Clove 500 gram (0.5); Clove 50 gram (0.5); Clove 200 gram (0.5)
+White Pepper 500 gm,1,IN_25110896,Black Pepper Kerala - 500 (0.5); Clove 500 gram (0.3333); Black Pepper Kerala - 100 (0.25)
+Javithri 50 gm,1,IN_25111857,Cinnamon 50 gram (0.3333); Cardamom 50 gram (0.3333); Clove 50 gram (0.3333)
+Cardamom 120,1,IN_26012488,Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5)
+Malabar Nutmeg Mace,1,IN_26020692,
+coffe powder 200,1,IN_26020914,Kerala Cardamom 8mm - 200 (0.3333); Ceylon True Cinnamon 200 (0.3333); Black pepper 200 gram (0.3333)

@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script defer src="/modules/page-loader.js?v=20260307"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2">
+<title>Lead Messages — Miguel</title>
+<link rel="stylesheet" href="/ds.css?v=20260228">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<link rel="stylesheet" href="/styles/mobile.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<style>
+/* ═══════════════════════════════════════════════════════
+   LEAD MESSAGES  —  LinkedIn-style WhatsApp Inbox
+   ═══════════════════════════════════════════════════════ */
+:root {
+  --wa-green:#25d366; --wa-dark:#075e54; --wa-lite:#dcf8c6;
+  --wa-bg:#e5ddd5; --panel-w:340px;
+}
+
+/* Layout */
+body { margin:0; overflow:hidden; }
+#lm-root {
+  display:flex; flex-direction:column;
+  height:100vh; background:var(--md-sys-color-background, #f5f5f5);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+#lm-topbar {
+  background:var(--wa-dark); color:#fff;
+  padding:10px 20px; display:flex; align-items:center; gap:14px;
+  flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,.2); z-index:10;
+}
+#lm-topbar h1 { margin:0; font-size:17px; font-weight:700; flex:1; }
+.lm-topbar-btn {
+  background:rgba(255,255,255,.15); border:none; color:#fff;
+  border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; gap:5px; transition:background .15s;
+}
+.lm-topbar-btn:hover { background:rgba(255,255,255,.25); }
+.lm-topbar-back { background:none; border:none; color:#fff; font-size:20px; cursor:pointer; padding:2px 6px; }
+
+/* Body: sidebar + chat */
+#lm-body { display:flex; flex:1; min-height:0; }
+
+/* ── LEFT SIDEBAR ── */
+#lm-sidebar {
+  width:var(--panel-w); flex-shrink:0; border-right:1px solid #e0e0e0;
+  display:flex; flex-direction:column; background:#fff;
+  box-shadow:2px 0 8px rgba(0,0,0,.06);
+}
+#lm-sidebar-top {
+  padding:10px 12px 8px; border-bottom:1px solid #eee; flex-shrink:0;
+}
+#lm-search {
+  width:100%; border:1px solid #ddd; border-radius:20px;
+  padding:7px 14px; font-size:13px; outline:none; background:#f5f5f5;
+  box-sizing:border-box; transition:border-color .15s;
+}
+#lm-search:focus { border-color:var(--wa-green); background:#fff; }
+.lm-filter-row {
+  display:flex; gap:5px; margin-top:7px; overflow-x:auto; scrollbar-width:none;
+}
+.lm-filter-row::-webkit-scrollbar { display:none; }
+.lm-filter-chip {
+  flex-shrink:0; padding:4px 10px; border-radius:14px; font-size:11px; font-weight:600;
+  background:#f0f0f0; color:#555; cursor:pointer; border:1.5px solid transparent;
+  transition:all .15s; white-space:nowrap;
+}
+.lm-filter-chip.active { background:var(--wa-dark); color:#fff; border-color:var(--wa-dark); }
+.lm-sync-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:5px 12px 6px; background:#fafafa; border-bottom:1px solid #eee;
+  font-size:11px; color:#888; flex-shrink:0;
+}
+#lm-sync-status { font-size:11px; color:#888; }
+#lm-sync-btn {
+  background:none; border:1px solid #ccc; border-radius:6px;
+  padding:3px 8px; font-size:11px; cursor:pointer; color:#555;
+  display:flex; align-items:center; gap:4px; transition:all .15s;
+}
+#lm-sync-btn:hover { border-color:var(--wa-green); color:var(--wa-dark); }
+#lm-sync-btn.spinning { animation:spin .7s linear infinite; }
+
+/* Conversation list */
+#lm-conv-list {
+  flex:1; overflow-y:auto; scrollbar-width:thin;
+  scrollbar-color:#ccc transparent;
+}
+#lm-conv-list::-webkit-scrollbar { width:4px; }
+#lm-conv-list::-webkit-scrollbar-thumb { background:#ccc; border-radius:3px; }
+
+.lm-conv-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 12px; border-bottom:1px solid #f0f0f0;
+  cursor:pointer; transition:background .12s; position:relative;
+}
+.lm-conv-item:hover { background:#f8fffe; }
+.lm-conv-item.active { background:#e8f5e9; border-left:3px solid var(--wa-green); }
+.lm-conv-item.unread { background:#f0fff4; }
+.lm-conv-item.unread .lm-conv-name { font-weight:700; color:#111; }
+.lm-conv-item.unread .lm-conv-preview { color:#333; font-weight:500; }
+
+.lm-avatar {
+  width:42px; height:42px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; font-weight:700; color:#fff; position:relative;
+}
+.lm-avatar-badge {
+  position:absolute; bottom:-1px; right:-1px;
+  width:13px; height:13px; border-radius:50%; border:2px solid #fff;
+  background:#4caf50; /* online indicator */
+  display:none;
+}
+.lm-avatar-badge.show { display:block; }
+
+.lm-conv-body { flex:1; min-width:0; }
+.lm-conv-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
+.lm-conv-name { font-size:13px; font-weight:600; color:#222; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+.lm-conv-time { font-size:10px; color:#aaa; flex-shrink:0; margin-left:4px; }
+.lm-conv-preview { font-size:12px; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lm-conv-meta { display:flex; align-items:center; gap:4px; margin-top:3px; flex-wrap:wrap; }
+.lm-unread-dot {
+  width:18px; height:18px; border-radius:50%; background:var(--wa-green);
+  color:#fff; font-size:9px; font-weight:700; display:flex; align-items:center;
+  justify-content:center; flex-shrink:0;
+}
+.lm-win-dot {
+  font-size:9px; font-weight:700; padding:1px 5px; border-radius:8px;
+  background:#e8f5e9; color:#2e7d32;
+}
+.lm-win-dot.closed { background:#fff3e0; color:#bf360c; }
+.lm-label-tag {
+  font-size:9px; padding:1px 5px; border-radius:8px;
+  background:#e3f2fd; color:#1565c0; font-weight:600;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px;
+}
+.lm-conv-empty { text-align:center; color:#aaa; font-size:13px; padding:40px 20px; }
+
+/* ── RIGHT: CHAT AREA ── */
+#lm-chat {
+  flex:1; min-width:0; display:flex; flex-direction:column;
+  background:var(--wa-bg);
+}
+#lm-no-chat {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; color:#aaa; gap:10px;
+}
+#lm-no-chat .icon { font-size:52px; }
+#lm-no-chat p { font-size:14px; }
+
+/* Chat header */
+#lm-chat-hdr {
+  background:var(--wa-dark); color:#fff;
+  padding:10px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+#lm-chat-hdr .lm-avatar { width:38px; height:38px; font-size:15px; }
+.lm-chat-hdr-info { flex:1; min-width:0; }
+.lm-chat-hdr-name { font-weight:700; font-size:15px; }
+.lm-chat-hdr-phone { font-size:11px; opacity:.75; }
+.lm-chat-win-badge {
+  font-size:10px; font-weight:700; padding:3px 9px; border-radius:10px;
+  background:#e8f5e9; color:#2e7d32;
+}
+.lm-chat-win-badge.closed { background:#fff3e0; color:#bf360c; }
+.lm-chat-win-badge.unknown { background:#e3f2fd; color:#1565c0; }
+#lm-chat-refresh {
+  background:rgba(255,255,255,.15); border:none; color:#fff;
+  border-radius:8px; padding:5px 10px; font-size:12px; cursor:pointer;
+  display:flex; align-items:center; gap:4px; transition:background .15s;
+}
+#lm-chat-refresh:hover { background:rgba(255,255,255,.25); }
+
+/* Mode bar */
+#lm-mode-bar {
+  background:#f5f5f5; border-bottom:1px solid #e0e0e0;
+  padding:5px 12px; display:flex; align-items:center; gap:6px; flex-shrink:0;
+}
+.lm-mode-lbl { font-size:11px; color:#555; font-weight:600; }
+.lm-mode-btn {
+  padding:4px 12px; border:1px solid #ddd; border-radius:20px;
+  background:#fff; font-size:12px; cursor:pointer; font-weight:500;
+  transition:all .15s;
+}
+.lm-mode-btn.active { background:var(--wa-green); color:#fff; border-color:var(--wa-green); }
+
+/* 24h warning bar */
+#lm-win-warn {
+  background:#fff3e0; border-bottom:1px solid #ffe082;
+  padding:7px 14px; font-size:12px; color:#bf360c;
+  display:none; align-items:center; gap:8px; flex-shrink:0;
+}
+#lm-win-warn a { color:var(--wa-dark); font-weight:700; cursor:pointer; text-decoration:underline; }
+
+/* Tabs */
+#lm-tabs {
+  display:flex; background:#fafafa; border-bottom:1px solid #e0e0e0;
+  flex-shrink:0; overflow-x:auto; scrollbar-width:none;
+}
+#lm-tabs::-webkit-scrollbar { display:none; }
+.lm-tab {
+  flex:0; padding:8px 14px; font-size:11px; font-weight:600;
+  cursor:pointer; color:#666; border-bottom:2px solid transparent;
+  transition:all .15s; white-space:nowrap;
+}
+.lm-tab.active { color:var(--wa-dark); border-bottom-color:var(--wa-green); }
+
+/* Messages */
+#lm-msgs {
+  flex:1; overflow-y:auto; padding:12px 16px;
+  display:flex; flex-direction:column; gap:5px; min-height:0;
+  scrollbar-width:thin; scrollbar-color:#ccc transparent;
+}
+#lm-msgs::-webkit-scrollbar { width:5px; }
+#lm-msgs::-webkit-scrollbar-thumb { background:#ccc; border-radius:3px; }
+
+.lm-msg {
+  max-width:75%; padding:8px 12px; border-radius:12px;
+  font-size:13px; line-height:1.45; word-break:break-word; position:relative;
+}
+.lm-msg-out { background:var(--wa-lite); margin-left:auto; border-bottom-right-radius:3px; }
+.lm-msg-in  { background:#fff; margin-right:auto; border-bottom-left-radius:3px; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+.lm-msg-time { font-size:10px; color:#888; margin-top:3px; text-align:right; }
+.lm-msg-status { font-size:9px; opacity:.6; margin-left:4px; }
+.lm-msg-sender { font-size:10px; color:#1565c0; margin-bottom:2px; font-weight:600; }
+.lm-date-sep {
+  text-align:center; font-size:10px; color:#888;
+  background:#d1d7db; border-radius:8px; padding:2px 12px; margin:6px auto;
+  align-self:center;
+}
+.lm-msgs-empty { text-align:center; color:#aaa; font-size:12px; padding:30px; align-self:center; }
+
+/* 5-day cache expiry notice */
+.lm-cache-note {
+  text-align:center; font-size:10px; color:#aaa; padding:4px 10px;
+  background:#fffde7; border-radius:8px; align-self:center; margin-bottom:4px;
+}
+
+/* NEW MESSAGE notification bubble */
+.lm-new-msg-bubble {
+  position:absolute; bottom:80px; left:50%; transform:translateX(-50%);
+  background:var(--wa-dark); color:#fff; border-radius:20px;
+  padding:7px 16px; font-size:12px; font-weight:600;
+  cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.25);
+  display:none; z-index:5; white-space:nowrap;
+  animation:slideUp .25s ease;
+}
+.lm-new-msg-bubble.show { display:block; }
+@keyframes slideUp { from{opacity:0;transform:translateX(-50%) translateY(10px);} to{opacity:1;transform:translateX(-50%) translateY(0);} }
+
+/* Compose */
+#lm-compose { border-top:1px solid #e0e0e0; padding:8px 12px; background:#f5f5f5; flex-shrink:0; }
+.lm-compose-row { display:flex; gap:8px; align-items:flex-end; }
+#lm-input {
+  flex:1; border:1px solid #ddd; border-radius:20px;
+  padding:8px 14px; font-size:13px; resize:none;
+  max-height:100px; overflow-y:auto; outline:none;
+  background:#fff; font-family:inherit; transition:border-color .15s;
+}
+#lm-input:focus { border-color:var(--wa-green); }
+#lm-input:disabled { background:#f0f0f0; color:#999; }
+.lm-send-btn {
+  width:38px; height:38px; border-radius:50%;
+  background:var(--wa-green); color:#fff; border:none;
+  font-size:16px; cursor:pointer; display:flex;
+  align-items:center; justify-content:center; flex-shrink:0; transition:transform .15s;
+}
+.lm-send-btn:hover { transform:scale(1.1); }
+.lm-send-btn:disabled { background:#ccc; cursor:not-allowed; transform:none; }
+.lm-toolbar { display:flex; gap:3px; padding:4px 0 0; }
+.lm-tool-btn {
+  background:none; border:none; cursor:pointer; font-size:15px;
+  padding:4px 7px; border-radius:8px; color:#555; transition:background .15s;
+}
+.lm-tool-btn:hover { background:#e0e0e0; }
+
+/* Template tab */
+#lm-tab-tpl { display:none; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
+.lm-tpl-hdr {
+  padding:8px 12px; border-bottom:1px solid #eee;
+  display:flex; align-items:center; justify-content:space-between;
+  background:#fafafa; flex-shrink:0;
+}
+#lm-tpl-list { overflow-y:auto; flex:1; padding:8px; }
+.lm-tpl-card {
+  border:1px solid #e0e0e0; border-radius:10px; padding:10px 12px;
+  margin-bottom:7px; cursor:pointer; background:#fff; transition:all .15s;
+}
+.lm-tpl-card:hover { border-color:var(--wa-green); background:#f1fff4; }
+.lm-tpl-name { font-weight:700; font-size:13px; color:#333; }
+.lm-tpl-cat {
+  font-size:10px; font-weight:600; padding:2px 7px; border-radius:10px;
+  display:inline-block; margin-bottom:4px;
+}
+.lm-tpl-cat.Marketing { background:#fce4ec; color:#c62828; }
+.lm-tpl-cat.Utility   { background:#e3f2fd; color:#1565c0; }
+.lm-tpl-body { font-size:12px; color:#555; line-height:1.45; white-space:pre-wrap; }
+
+/* Quick replies tab */
+#lm-tab-quick { display:none; flex:1; overflow-y:auto; padding:8px; }
+.lm-quick-item {
+  border:1px solid #e0e0e0; border-radius:8px; padding:8px 12px;
+  margin-bottom:6px; cursor:pointer; background:#fff;
+  display:flex; align-items:center; gap:8px; transition:border-color .15s;
+}
+.lm-quick-item:hover { border-color:var(--wa-green); background:#f1fff4; }
+.lm-quick-title { font-weight:600; font-size:12px; color:#333; }
+.lm-quick-prev { font-size:11px; color:#888; margin-top:1px; }
+
+/* Toast */
+#lm-toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:#333; color:#fff; padding:10px 22px; border-radius:20px;
+  font-size:13px; z-index:9000; opacity:0; transition:all .3s; pointer-events:none;
+}
+#lm-toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+#lm-toast.success { background:#2e7d32; }
+#lm-toast.error   { background:#c62828; }
+#lm-toast.info    { background:#1565c0; }
+
+/* MINI CHAT BUBBLES (LinkedIn bottom-right popups) */
+#lm-bubbles {
+  position:fixed; bottom:0; right:0; display:flex; align-items:flex-end;
+  gap:8px; padding:0 16px 0 0; z-index:8000; pointer-events:none;
+}
+.lm-bubble-window {
+  width:300px; background:#fff; border-radius:12px 12px 0 0;
+  box-shadow:0 -4px 20px rgba(0,0,0,.18); display:flex; flex-direction:column;
+  pointer-events:all; max-height:72vh; transition:max-height .2s ease;
+  overflow:hidden;
+}
+.lm-bubble-window.collapsed { max-height:44px; }
+.lm-bubble-hdr {
+  background:var(--wa-dark); color:#fff; padding:8px 12px;
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  border-radius:12px 12px 0 0; flex-shrink:0;
+}
+.lm-bubble-hdr-name { font-weight:700; font-size:13px; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lm-bubble-badge { background:var(--wa-green); color:#fff; font-size:9px; font-weight:700; padding:1px 6px; border-radius:10px; }
+.lm-bubble-close { background:none; border:none; color:rgba(255,255,255,.7); cursor:pointer; font-size:16px; padding:0 2px; }
+.lm-bubble-close:hover { color:#fff; }
+.lm-bubble-msgs {
+  flex:1; overflow-y:auto; padding:8px 10px; background:var(--wa-bg);
+  display:flex; flex-direction:column; gap:4px; min-height:120px;
+}
+.lm-bubble-compose { padding:6px 8px; background:#f5f5f5; border-top:1px solid #eee; display:flex; gap:6px; align-items:flex-end; }
+.lm-bubble-input {
+  flex:1; border:1px solid #ddd; border-radius:16px; padding:6px 11px;
+  font-size:12px; outline:none; resize:none; max-height:60px;
+  background:#fff; font-family:inherit;
+}
+.lm-bubble-input:focus { border-color:var(--wa-green); }
+.lm-bubble-send {
+  width:32px; height:32px; border-radius:50%; background:var(--wa-green);
+  color:#fff; border:none; font-size:14px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* Responsive */
+@media (max-width:599px) {
+  #lm-body { flex-direction:column; }
+  #lm-sidebar { width:100%; display:none; border-right:none; border-bottom:1px solid #e0e0e0; max-height:280px; }
+  #lm-sidebar.mobile-show { display:flex; position:fixed; inset:0; z-index:100; max-height:100%; }
+  #lm-chat { width:100%; min-height:400px; }
+  #lm-chat-hdr { padding:8px 12px; gap:8px; }
+  .lm-chat-hdr-name { font-size:14px; }
+  #lm-msgs { padding:8px 10px; }
+  .lm-msg { max-width:88%; }
+  .lm-bubble-window { width:calc(100vw - 16px); }
+  #lm-topbar { padding:0 10px; }
+  #lm-topbar h1 { font-size:14px; }
+  #lm-topbar-stats { font-size:11px; gap:8px; }
+}
+
+@media (min-width:600px) and (max-width:839px) {
+  #lm-sidebar { width:260px; }
+}
+</style>
+</head>
+<body>
+<div id="lm-root">
+
+  <!-- Top bar -->
+  <div id="lm-topbar">
+    <button class="lm-topbar-back" onclick="history.back()" title="Back">‹</button>
+    <h1>💬 Lead Messages</h1>
+    <div id="lm-topbar-stats" style="font-size:12px;opacity:.8;display:flex;gap:12px;"></div>
+    <button class="lm-topbar-btn" onclick="LM.syncAll()" id="lm-global-sync">🔄 Sync All</button>
+    <button class="lm-topbar-btn" onclick="location.href='leads.html'">← Leads</button>
+  </div>
+
+  <!-- Body -->
+  <div id="lm-body">
+
+    <!-- SIDEBAR -->
+    <div id="lm-sidebar">
+      <div id="lm-sidebar-top">
+        <input type="text" id="lm-search" placeholder="🔍 Search conversations…" oninput="LM.filterConvs(this.value)">
+        <div class="lm-filter-row">
+          <span class="lm-filter-chip active" data-filter="all"     onclick="LM.setFilter('all',this)">All</span>
+          <span class="lm-filter-chip"        data-filter="unread"  onclick="LM.setFilter('unread',this)">Unread</span>
+          <span class="lm-filter-chip"        data-filter="open"    onclick="LM.setFilter('open',this)">24h Open</span>
+          <span class="lm-filter-chip"        data-filter="pending" onclick="LM.setFilter('pending',this)">Pending Reply</span>
+          <span class="lm-filter-chip"        data-filter="today"   onclick="LM.setFilter('today',this)">Today</span>
+        </div>
+      </div>
+      <div class="lm-sync-row">
+        <span id="lm-sync-status">—</span>
+        <button id="lm-sync-btn" onclick="LM.syncAll()">🔄 Refresh</button>
+      </div>
+      <div id="lm-conv-list">
+        <div class="lm-conv-empty">⏳ Loading conversations…</div>
+      </div>
+    </div>
+
+    <!-- CHAT AREA -->
+    <div id="lm-chat" style="display:flex;flex-direction:column;position:relative;">
+      <!-- No chat selected -->
+      <div id="lm-no-chat">
+        <div class="icon">💬</div>
+        <p>Select a conversation from the left</p>
+        <p style="font-size:12px;">Conversations are cached locally for 5 days</p>
+      </div>
+
+      <!-- Chat header (hidden until conv selected) -->
+      <div id="lm-chat-hdr" style="display:none;flex-shrink:0;">
+        <button id="lm-mobile-back" class="mobile-only" onclick="LM.showMobileSidebar()" title="Back" style="background:rgba(255,255,255,.15);border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 10px;border-radius:8px;line-height:1;">‹</button>
+        <div class="lm-avatar" id="lm-ch-avatar" style="background:#075e54;">?</div>
+        <div class="lm-chat-hdr-info">
+          <div class="lm-chat-hdr-name" id="lm-ch-name">—</div>
+          <div class="lm-chat-hdr-phone" id="lm-ch-phone">—</div>
+        </div>
+        <span class="lm-chat-win-badge unknown" id="lm-win-badge">⏳ Checking…</span>
+        <button id="lm-chat-refresh" onclick="LM.refreshChat()" title="Refresh this chat">🔄</button>
+        <button class="lm-topbar-btn" onclick="LM.openPopout()" style="margin-left:4px;font-size:11px;" title="Pop out to bubble">⊞</button>
+        <button class="lm-topbar-btn" onclick="LM.openInFullChatbox()" style="margin-left:4px;font-size:11px;" title="Open in chatbox">↗</button>
+      </div>
+
+      <!-- Mode bar -->
+      <div id="lm-mode-bar" style="display:none;">
+        <span class="lm-mode-lbl">Send via:</span>
+        <button class="lm-mode-btn active" id="lm-mode-wabis" onclick="LM.setMode('wabis')">🤖 WABIS API</button>
+        <button class="lm-mode-btn"        id="lm-mode-web"   onclick="LM.setMode('web')">🌐 WhatsApp Web</button>
+      </div>
+
+      <!-- 24h warning -->
+      <div id="lm-win-warn">
+        ⚠️ <strong>Outside 24h window</strong> — Free text unavailable.
+        <a onclick="LM.showTab('tpl')">Use a Template instead</a>.
+      </div>
+
+      <!-- Tabs -->
+      <div id="lm-tabs" style="display:none;">
+        <div class="lm-tab active" data-tab="chat"  onclick="LM.showTab('chat')">💬 Chat</div>
+        <div class="lm-tab"       data-tab="tpl"   onclick="LM.showTab('tpl')">📋 Templates</div>
+        <div class="lm-tab"       data-tab="quick" onclick="LM.showTab('quick')">⚡ Quick</div>
+      </div>
+
+      <!-- TAB: Chat messages -->
+      <div id="lm-tab-chat" style="display:flex;flex-direction:column;flex:1;min-height:0;position:relative;">
+        <div id="lm-msgs"><div class="lm-msgs-empty">Select a conversation</div></div>
+        <!-- New message notification bubble -->
+        <div class="lm-new-msg-bubble" id="lm-new-bubble" onclick="LM.scrollToBottom()">
+          ↓ New messages
+        </div>
+      </div>
+
+      <!-- TAB: Templates -->
+      <div id="lm-tab-tpl">
+        <div class="lm-tpl-hdr">
+          <span style="font-size:13px;font-weight:700;">📋 Templates</span>
+          <button onclick="LM.loadTemplates(true)" style="background:none;border:1px solid #ccc;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">🔄 Refresh</button>
+        </div>
+        <div id="lm-tpl-list"><div style="text-align:center;color:#aaa;padding:20px;font-size:12px;">Loading…</div></div>
+      </div>
+
+      <!-- TAB: Quick replies -->
+      <div id="lm-tab-quick">
+        <div id="lm-quick-list"></div>
+      </div>
+
+      <!-- Compose bar (hidden until conv selected) -->
+      <div id="lm-compose" style="display:none;">
+        <div class="lm-compose-row">
+          <textarea id="lm-input" rows="1" placeholder="Type a message…"
+            oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();LM.send();}"></textarea>
+          <button class="lm-send-btn" id="lm-send-btn" onclick="LM.send()">➤</button>
+        </div>
+        <div class="lm-toolbar">
+          <button class="lm-tool-btn" title="Quick replies" onclick="LM.showTab('quick')">⚡</button>
+          <button class="lm-tool-btn" title="Templates"     onclick="LM.showTab('tpl')">📋</button>
+          <button class="lm-tool-btn" title="Refresh chat"  onclick="LM.refreshChat()">🔄</button>
+          <button class="lm-tool-btn" title="Open full chatbox" onclick="LM.openInFullChatbox()">↗</button>
+          <span style="font-size:10px;color:#aaa;margin-left:auto;align-self:center;" id="lm-cache-info"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mini bubble popouts (LinkedIn style) -->
+<div id="lm-bubbles"></div>
+
+<!-- Toast -->
+<div id="lm-toast"></div>
+
+<!-- Load the existing WA chatbox (for "open in chatbox" button) -->
+<script src="/modules/wa-chatbox.js"></script>
+
+<script src="/modules/auth.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   LEAD MESSAGES — Full LinkedIn-style WA Inbox
+   Features:
+   - All WABIS conversations in left panel
+   - Live chat with auto-sync every 30s + manual refresh
+   - Local cache (IndexedDB) for 5 days, then flush
+   - Unread badge + new message notification bubble
+   - Multiple mini popout bubbles (LinkedIn-style)
+   - Filter: all / unread / 24h open / pending / today
+   ═══════════════════════════════════════════════════════════ */
+const LM = (() => {
+'use strict';
+
+/* ── CONFIG ── */
+const CACHE_TTL_MS   = 5 * 24 * 60 * 60 * 1000; // 5 days
+const SYNC_INTERVAL  = 30000;   // 30 seconds auto-sync
+const DB_NAME        = 'lm_cache_v1';
+const DB_VER         = 1;
+const QUICK_DEFAULTS = [
+  { title:'👋 Hi',          text:"Hi! Hope you're doing well 😊" },
+  { title:'📦 Order update', text:"Your order is being processed. We'll update you shortly!" },
+  { title:'✅ Confirmed',    text:'Your order has been confirmed. Thank you!' },
+  { title:'🚚 Shipped',      text:'Your order has been shipped and is on its way!' },
+  { title:'💳 Payment',      text:'Please complete your payment. Let us know if you need help.' },
+  { title:'📞 Callback',     text:'Can we schedule a quick call to discuss this further?' },
+];
+
+/* ── STATE ── */
+let token = '';
+let db = null;           // IndexedDB
+let convs = [];          // all conversations (merged WABIS + local cache)
+let filtered = [];       // after filter/search
+let activePhone = null;  // currently open phone
+let activeConv = null;   // conversation object
+let mode = 'wabis';
+let filter = 'all';
+let searchQ = '';
+let windowOpen = null;
+let templates = [];
+let syncTimer = null;
+let bubbles = {};        // phone → bubble state
+let lastMsgCount = 0;    // detect new messages
+let autoScrollEnabled = true;
+
+/* ── HELPERS ── */
+function tok() {
+  return localStorage.getItem('token') || '';
+}
+function authHdr() {
+  const t = tok();
+  return t ? { 'Authorization': 'Bearer ' + t } : {};
+}
+async function apiFetch(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json', ...authHdr() } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(path, opts);
+  if (r.status === 401) { logout(); throw new Error('Session expired'); }
+  return r.json();
+}
+function toast(msg, type='info', dur=3000) {
+  const el = document.getElementById('lm-toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(LM._toastT);
+  LM._toastT = setTimeout(() => el.classList.remove('show'), dur);
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function cleanPhone(p) {
+  if (!p) return '';
+  let d = p.replace(/\D/g,'');
+  if (d.length===10) d='91'+d;
+  return d;
+}
+function fmtTime(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts.includes('T') ? ts : ts.replace(' ','T')+'Z');
+    return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+  } catch { return ''; }
+}
+function fmtRelTime(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts.includes('T') ? ts : ts.replace(' ','T')+'Z');
+    const diff = Date.now() - d.getTime();
+    if (diff < 60000) return 'Just now';
+    if (diff < 3600000) return Math.floor(diff/60000)+'m';
+    if (diff < 86400000) return fmtTime(ts);
+    const days = Math.floor(diff/86400000);
+    if (days === 1) return 'Yesterday';
+    if (days < 7) return d.toLocaleDateString('en-IN',{weekday:'short'});
+    return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  } catch { return ''; }
+}
+function fmtDate(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts.includes('T') ? ts : ts.replace(' ','T')+'Z');
+    return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  } catch { return ''; }
+}
+function parseMsg(raw) {
+  if (!raw) return '';
+  try {
+    const o = typeof raw==='string' ? JSON.parse(raw) : raw;
+    if (o.text?.body) return o.text.body;
+    if (o.template?.name) return `[Template: ${o.template.name}]`;
+    if (o.image) return '📷 Image';
+    if (o.document) return '📄 Document';
+    return JSON.stringify(o).slice(0,80);
+  } catch { return String(raw).slice(0,120); }
+}
+function avatarColor(name) {
+  const colors = ['#075e54','#128c7e','#25d366','#1976d2','#7b1fa2','#c62828','#e65100','#2e7d32'];
+  let hash = 0;
+  for (let i=0; i<(name||'').length; i++) hash = name.charCodeAt(i) + ((hash<<5)-hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+function initials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(' ');
+  return parts.length > 1 ? (parts[0][0]+parts[parts.length-1][0]).toUpperCase() : name[0].toUpperCase();
+}
+
+/* ── INDEXEDDB CACHE (5-day TTL) ── */
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('messages')) {
+        const s = d.createObjectStore('messages', { keyPath: 'phone' });
+        s.createIndex('ts', 'ts');
+      }
+      if (!d.objectStoreNames.contains('convs')) {
+        d.createObjectStore('convs', { keyPath: 'phone' });
+      }
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+async function cacheGet(store, key) {
+  return new Promise(resolve => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = e => resolve(e.target.result || null);
+    req.onerror   = () => resolve(null);
+  });
+}
+async function cachePut(store, obj) {
+  return new Promise(resolve => {
+    const tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).put(obj);
+    tx.oncomplete = resolve;
+    tx.onerror    = resolve;
+  });
+}
+async function cacheGetAll(store) {
+  return new Promise(resolve => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = e => resolve(e.target.result || []);
+    req.onerror   = () => resolve([]);
+  });
+}
+async function flushOldCache() {
+  // Remove messages older than 5 days
+  const cutoff = Date.now() - CACHE_TTL_MS;
+  const all = await cacheGetAll('messages');
+  for (const entry of all) {
+    if (entry.ts < cutoff) {
+      const tx = db.transaction('messages','readwrite');
+      tx.objectStore('messages').delete(entry.phone);
+    }
+  }
+  const allC = await cacheGetAll('convs');
+  for (const entry of allC) {
+    if (entry.ts < cutoff) {
+      const tx = db.transaction('convs','readwrite');
+      tx.objectStore('convs').delete(entry.phone);
+    }
+  }
+}
+async function saveMessagesToCache(phone, messages) {
+  await cachePut('messages', { phone, messages, ts: Date.now() });
+}
+async function loadMessagesFromCache(phone) {
+  const entry = await cacheGet('messages', phone);
+  if (!entry) return null;
+  if (Date.now() - entry.ts > CACHE_TTL_MS) return null; // expired
+  return entry.messages;
+}
+function cacheAgeLabel(phone) {
+  // Return how long ago cache was updated
+  const key = 'lm_cache_ts_' + phone;
+  const ts = parseInt(localStorage.getItem(key) || '0');
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'cached just now';
+  if (diff < 3600000) return `cached ${Math.floor(diff/60000)}m ago`;
+  return `cached ${Math.floor(diff/3600000)}h ago`;
+}
+
+function logout() {
+  ['token','type','role','slug','user_id','email','tenant_token'].forEach(k => {
+    localStorage.removeItem(k); sessionStorage.removeItem(k);
+  });
+  window.location.replace('/tenant-login.html');
+}
+
+/* ── INIT ── */
+async function init() {
+  token = localStorage.getItem('token') || '';
+  if (!token) { window.location.replace('/tenant-login.html'); return; }
+
+  db = await openDB();
+  await flushOldCache();
+
+  if (window.WaChatbox) WaChatbox.init(token);
+
+  await syncAll();
+
+  // Auto-sync every 30s
+  syncTimer = setInterval(() => syncAll(true), SYNC_INTERVAL);
+}
+
+/* ── SYNC ALL CONVERSATIONS ── */
+let _syncing = false;
+async function syncAll(silent=false) {
+  if (_syncing) return;
+  _syncing = true;
+  const btn = document.getElementById('lm-sync-btn');
+  const gbtn = document.getElementById('lm-global-sync');
+  if (btn) btn.style.opacity='0.5';
+  setSyncStatus('🔄 Syncing…');
+
+  try {
+    // Load WaSubscribers from our own DB (they have last_seen_at)
+    const r = await fetch('/api/wa/subscribers?limit=200', { headers: authHdr() });
+    if (!r.ok) throw new Error(`Subscribers API error: ${r.status}`);
+    const data = await r.json();
+    const subs = Array.isArray(data) ? data : (data.subscribers || data.results || []);
+
+    // Also load WABIS inbox from our conversation API
+    let wabisConvs = [];
+    try {
+      const r2 = await fetch('/api/wa/conversations/inbox?limit=100', { headers: authHdr() });
+      const d2 = await r2.json();
+      // inbox returns { total, page, limit, results: [...] }
+      wabisConvs = d2.results || d2.conversations || d2 || [];
+    } catch {}
+
+    // Merge: build conversation list
+    const convMap = {};
+
+    for (const sub of subs) {
+      const phone = cleanPhone(sub.phone_number || '');
+      if (!phone) continue;
+      convMap[phone] = {
+        phone,
+        name:        sub.name || phone,
+        labels:      sub.wabis_labels || [],
+        last_seen:   sub.last_seen_at || '',
+        unread:      0,
+        window_open: null,
+        last_msg:    '',
+        last_msg_ts: sub.last_seen_at || '',
+        source:      'subscriber',
+        subscriber_id: sub.id,
+      };
+    }
+
+    for (const conv of wabisConvs) {
+      // inbox uses subscriber_phone, last_message_preview, last_message_at, unread_count
+      const phone = cleanPhone(conv.subscriber_phone || conv.phone_number || conv.phone || '');
+      if (!phone) continue;
+      const existing = convMap[phone] || {};
+      convMap[phone] = {
+        ...existing,
+        phone,
+        name:           conv.subscriber_name || conv.name || existing.name || phone,
+        unread:         conv.unread_count || existing.unread || 0,
+        last_msg:       conv.last_message_preview || conv.last_message || existing.last_msg || '',
+        last_msg_ts:    conv.last_message_at || existing.last_msg_ts || '',
+        last_direction: conv.last_message_direction || '',
+        source:         'inbox',
+        conv_id:        conv.conversation_id || conv.id,
+      };
+    }
+
+    convs = Object.values(convMap).sort((a,b) => {
+      const ta = new Date(a.last_msg_ts || 0).getTime();
+      const tb = new Date(b.last_msg_ts || 0).getTime();
+      if (b.unread !== a.unread) return b.unread - a.unread;
+      return tb - ta;
+    });
+
+    // Cache conversations
+    await cachePut('convs', { phone: '__all__', convs, ts: Date.now() });
+
+    applyFilter();
+    updateTopStats();
+    setSyncStatus(`✓ ${convs.length} conversations — ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`);
+
+    // If a chat is open, silently refresh it too
+    if (activePhone) {
+      await loadChatMessages(activePhone, true);
+    }
+
+    if (!silent) toast(`Synced ${convs.length} conversations`, 'success');
+  } catch (e) {
+    console.error('Sync error:', e);
+    setSyncStatus('⚠ Sync failed');
+    if (!silent) toast('Sync failed: ' + e.message, 'error');
+
+    // Fallback: load from cache
+    const cached = await cacheGet('convs', '__all__');
+    if (cached && cached.convs) {
+      convs = cached.convs;
+      applyFilter();
+    }
+  }
+  _syncing = false;
+  if (btn) btn.style.opacity='1';
+}
+function setSyncStatus(s) {
+  const el = document.getElementById('lm-sync-status');
+  if (el) el.textContent = s;
+}
+function updateTopStats() {
+  const el = document.getElementById('lm-topbar-stats');
+  if (!el) return;
+  const unread = convs.filter(c => c.unread > 0).length;
+  const open24 = convs.filter(c => c.window_open).length;
+  el.innerHTML = `
+    <span title="Total conversations">${convs.length} chats</span>
+    ${unread ? `<span style="background:var(--wa-green);color:#fff;padding:2px 8px;border-radius:10px;font-weight:700;">${unread} unread</span>` : ''}
+  `;
+}
+
+/* ── FILTER + SEARCH ── */
+function setFilter(f, el) {
+  filter = f;
+  document.querySelectorAll('.lm-filter-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  applyFilter();
+}
+function filterConvs(q) {
+  searchQ = q.toLowerCase();
+  applyFilter();
+}
+function applyFilter() {
+  let list = [...convs];
+  // search
+  if (searchQ) {
+    list = list.filter(c =>
+      c.name.toLowerCase().includes(searchQ) ||
+      c.phone.includes(searchQ) ||
+      (c.last_msg||'').toLowerCase().includes(searchQ) ||
+      (c.labels||[]).some(l => l.toLowerCase().includes(searchQ))
+    );
+  }
+  // filter chips
+  if (filter === 'unread')  list = list.filter(c => c.unread > 0);
+  if (filter === 'open')    list = list.filter(c => c.window_open === true);
+  if (filter === 'pending') list = list.filter(c => c.last_direction !== 'outbound');
+  if (filter === 'today')   list = list.filter(c => {
+    if (!c.last_msg_ts) return false;
+    const d = new Date(c.last_msg_ts.includes('T') ? c.last_msg_ts : c.last_msg_ts.replace(' ','T')+'Z');
+    return d.toDateString() === new Date().toDateString();
+  });
+  filtered = list;
+  renderConvList();
+}
+
+/* ── RENDER CONVERSATION LIST ── */
+function renderConvList() {
+  const box = document.getElementById('lm-conv-list');
+  if (!filtered.length) {
+    box.innerHTML = `<div class="lm-conv-empty">
+      ${searchQ ? '🔍 No results for "'+esc(searchQ)+'"' : '📭 No conversations found'}
+    </div>`;
+    return;
+  }
+  box.innerHTML = filtered.map(c => {
+    const av = `<div class="lm-avatar" style="background:${avatarColor(c.name)};">${esc(initials(c.name))}<div class="lm-avatar-badge ${c.window_open ? 'show' : ''}"></div></div>`;
+    const isActive = c.phone === activePhone;
+    const isUnread = c.unread > 0;
+    const preview = c.last_msg ? esc(String(c.last_msg).slice(0,50)) : '<em style="color:#bbb">No messages yet</em>';
+    const dir = c.last_direction === 'outbound' ? '✓ ' : '';
+    const winDot = c.window_open === true
+      ? '<span class="lm-win-dot">24h</span>'
+      : c.window_open === false
+        ? '<span class="lm-win-dot closed">closed</span>' : '';
+    const labelTags = (c.labels||[]).slice(0,2).map(l =>
+      `<span class="lm-label-tag">${esc(l)}</span>`).join('');
+    const unreadBadge = isUnread
+      ? `<span class="lm-unread-dot">${c.unread > 9 ? '9+' : c.unread}</span>` : '';
+
+    return `<div class="lm-conv-item ${isActive?'active':''} ${isUnread?'unread':''}"
+      onclick="LM.openConv('${c.phone}')">
+      ${av}
+      <div class="lm-conv-body">
+        <div class="lm-conv-top">
+          <span class="lm-conv-name">${esc(c.name)}</span>
+          <span class="lm-conv-time">${fmtRelTime(c.last_msg_ts)}</span>
+        </div>
+        <div class="lm-conv-preview">${dir}${preview}</div>
+        <div class="lm-conv-meta">${winDot}${labelTags}${unreadBadge}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── OPEN A CONVERSATION ── */
+async function openConv(phone) {
+  activePhone = phone;
+  activeConv = convs.find(c => c.phone === phone);
+  windowOpen = null;
+  lastMsgCount = 0;
+  autoScrollEnabled = true;
+
+  // Mark as active in sidebar
+  document.querySelectorAll('.lm-conv-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('onclick')?.includes(phone));
+  });
+
+  // Show chat area UI
+  document.getElementById('lm-no-chat').style.display    = 'none';
+  document.getElementById('lm-chat-hdr').style.display   = 'flex';
+  document.getElementById('lm-mode-bar').style.display   = 'flex';
+  document.getElementById('lm-tabs').style.display       = 'flex';
+  document.getElementById('lm-compose').style.display    = 'block';
+
+  // Mobile: hide sidebar overlay, show chat pane
+  if (window.innerWidth <= 767) {
+    const sb = document.getElementById('lm-sidebar');
+    if (sb) sb.classList.remove('mobile-show');
+  }
+
+  // Set header info
+  const name = activeConv?.name || phone;
+  const color = avatarColor(name);
+  document.getElementById('lm-ch-avatar').style.background = color;
+  document.getElementById('lm-ch-avatar').textContent = initials(name);
+  document.getElementById('lm-ch-name').textContent  = name;
+  document.getElementById('lm-ch-phone').textContent = '+' + phone;
+
+  const badge = document.getElementById('lm-win-badge');
+  badge.className = 'lm-chat-win-badge unknown';
+  badge.textContent = '⏳ Checking…';
+  document.getElementById('lm-win-warn').style.display = 'none';
+
+  showTab('chat');
+
+  // Load messages (cache first, then API)
+  const msgs = document.getElementById('lm-msgs');
+  msgs.innerHTML = '<div class="lm-msgs-empty">⏳ Loading…</div>';
+
+  const cached = await loadMessagesFromCache(phone);
+  if (cached && cached.length) {
+    renderMessages(cached, true);
+  }
+
+  await loadChatMessages(phone, false);
+}
+
+/* ── LOAD CHAT MESSAGES FROM WABIS ── */
+let _loadingChat = false;
+async function loadChatMessages(phone, silent=false) {
+  if (!phone) return;
+  if (_loadingChat && !silent) return;
+  _loadingChat = true;
+
+  const btn = document.getElementById('lm-chat-refresh');
+  if (btn && !silent) btn.style.opacity='0.5';
+
+  try {
+    const r = await fetch(`/api/wa/conversation-by-phone?phone=${phone}&limit=60`, { headers: authHdr() });
+    const d = await r.json();
+
+    const msgs = d.messages || [];
+    windowOpen = d.window_open;
+
+    console.log(`[LM] Chat loaded: phone=${phone} msgs=${msgs.length} window_open=${windowOpen} last_inbound=${d.last_inbound_at}`);
+
+    // Cache messages locally for 5 days
+    await saveMessagesToCache(phone, msgs);
+    localStorage.setItem('lm_cache_ts_'+phone, Date.now().toString());
+
+    // Update window badge
+    updateWindowBadge();
+
+    // Only re-render if phone is still active
+    if (phone === activePhone) {
+      const prevCount = lastMsgCount;
+      renderMessages(msgs, false);
+
+      // Show "new messages" bubble if new inbound arrived while user is not at bottom
+      if (prevCount > 0 && msgs.length > prevCount && !autoScrollEnabled) {
+        const newCount = msgs.length - prevCount;
+        const inboundNew = msgs.slice(-newCount).filter(m => m.sender !== 'bot' && m.sender !== 'agent').length;
+        if (inboundNew > 0) {
+          const bubble = document.getElementById('lm-new-bubble');
+          if (bubble) {
+            bubble.textContent = `↓ ${inboundNew} new message${inboundNew > 1 ? 's' : ''}`;
+            bubble.classList.add('show');
+          }
+          // Update sidebar with notification
+          updateConvInSidebar(phone, msgs, true);
+        }
+      }
+    }
+
+    // Update conversation last_msg in our list
+    if (msgs.length) {
+      updateConvInSidebar(phone, msgs, false);
+    }
+
+    // Update cache label
+    const cacheInfo = document.getElementById('lm-cache-info');
+    if (cacheInfo) cacheInfo.textContent = `cached ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`;
+
+  } catch (e) {
+    console.error('[LM] loadChatMessages error:', e);
+    if (!silent) {
+      const msgs = document.getElementById('lm-msgs');
+      const cached = await loadMessagesFromCache(phone);
+      if (cached && cached.length) {
+        renderMessages(cached, false);
+        toast('Using cached messages (offline)', 'info');
+      } else {
+        msgs.innerHTML = '<div class="lm-msgs-empty">⚠ Could not load messages</div>';
+      }
+    }
+  }
+
+  _loadingChat = false;
+  if (btn) btn.style.opacity='1';
+}
+
+/* ── UPDATE CONV IN SIDEBAR (live) ── */
+function updateConvInSidebar(phone, msgs, hasNew) {
+  const c = convs.find(x => x.phone === phone);
+  if (!c) return;
+  const last = msgs[msgs.length-1];
+  if (last) {
+    c.last_msg    = parseMsg(last.message_content || last.message || '');
+    c.last_msg_ts = last.conversation_time || last.delivery_status_updated_at || '';
+    c.last_direction = (last.sender === 'bot' || last.sender === 'agent') ? 'outbound' : 'inbound';
+    if (hasNew) c.unread = (c.unread || 0) + 1;
+  }
+  c.window_open = windowOpen;
+  // Re-sort by recency
+  convs.sort((a,b) => new Date(b.last_msg_ts||0) - new Date(a.last_msg_ts||0));
+  applyFilter();
+}
+
+/* ── RENDER MESSAGES ── */
+function renderMessages(msgs, fromCache) {
+  const box = document.getElementById('lm-msgs');
+  if (!box) return;
+
+  if (!msgs.length) {
+    box.innerHTML = '<div class="lm-msgs-empty">📭 No conversation yet<br><small>Send a message to start</small></div>';
+    lastMsgCount = 0;
+    return;
+  }
+
+  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  const prevCount = lastMsgCount;
+  lastMsgCount = msgs.length;
+
+  const sorted = [...msgs].sort((a,b) =>
+    new Date(a.conversation_time||0) - new Date(b.conversation_time||0)
+  );
+
+  let html = '';
+  if (fromCache) {
+    const expiry = new Date(Date.now() + CACHE_TTL_MS);
+    html += `<div class="lm-cache-note">📦 Showing cached messages (auto-expires ${expiry.toLocaleDateString('en-IN',{day:'numeric',month:'short'})})</div>`;
+  }
+
+  let lastDate = '';
+  for (const m of sorted) {
+    const ts      = m.conversation_time || m.delivery_status_updated_at || '';
+    const dateStr = fmtDate(ts);
+    if (dateStr && dateStr !== lastDate) {
+      html += `<div class="lm-date-sep">${esc(dateStr)}</div>`;
+      lastDate = dateStr;
+    }
+    const isOut = m.sender === 'bot' || m.sender === 'agent';
+    const body  = esc(parseMsg(m.message_content || m.message || ''));
+    const stat  = m.message_status ? `<span class="lm-msg-status">${esc(m.message_status)}</span>` : '';
+    html += `<div class="lm-msg ${isOut ? 'lm-msg-out' : 'lm-msg-in'}">
+      ${!isOut && m.agent_name ? `<div class="lm-msg-sender">${esc(m.agent_name)}</div>` : ''}
+      ${body}
+      <div class="lm-msg-time">${fmtTime(ts)}${stat}</div>
+    </div>`;
+  }
+  box.innerHTML = html;
+
+  // Auto-scroll only if user was already at bottom
+  if (wasAtBottom || prevCount === 0) {
+    scrollToBottom();
+    autoScrollEnabled = true;
+    const bubble = document.getElementById('lm-new-bubble');
+    if (bubble) bubble.classList.remove('show');
+  } else {
+    autoScrollEnabled = false;
+  }
+}
+
+function scrollToBottom() {
+  const box = document.getElementById('lm-msgs');
+  if (box) { box.scrollTop = box.scrollHeight; }
+  const bubble = document.getElementById('lm-new-bubble');
+  if (bubble) bubble.classList.remove('show');
+  autoScrollEnabled = true;
+  // Mark as read
+  if (activeConv) activeConv.unread = 0;
+  applyFilter();
+}
+
+/* ── SCROLL DETECTION ── */
+document.getElementById('lm-msgs').addEventListener('scroll', function() {
+  const atBottom = this.scrollHeight - this.scrollTop - this.clientHeight < 80;
+  autoScrollEnabled = atBottom;
+  if (atBottom) {
+    document.getElementById('lm-new-bubble')?.classList.remove('show');
+    if (activeConv) activeConv.unread = 0;
+    applyFilter();
+  }
+}, { passive: true });
+
+/* ── WINDOW BADGE ── */
+function updateWindowBadge() {
+  const badge = document.getElementById('lm-win-badge');
+  const warn  = document.getElementById('lm-win-warn');
+  const inp   = document.getElementById('lm-input');
+  if (!badge) return;
+  if (windowOpen === null) {
+    badge.className = 'lm-chat-win-badge unknown';
+    badge.textContent = '⏳ Checking…';
+    if (warn) warn.style.display = 'none';
+    if (inp) inp.disabled = false;
+  } else if (windowOpen) {
+    badge.className = 'lm-chat-win-badge';
+    badge.textContent = '✅ 24h Window Open';
+    if (warn) warn.style.display = 'none';
+    if (inp) { inp.disabled = false; inp.placeholder = 'Type a message…'; }
+  } else {
+    badge.className = 'lm-chat-win-badge closed';
+    badge.textContent = '⛔ Outside 24h Window';
+    if (warn) warn.style.display = 'flex';
+    if (inp && mode === 'wabis') {
+      inp.disabled = true;
+      inp.placeholder = 'Outside 24h window — use Templates tab';
+    }
+  }
+}
+
+/* ── MODE SWITCHER ── */
+function setMode(m) {
+  mode = m;
+  document.getElementById('lm-mode-wabis').classList.toggle('active', m==='wabis');
+  document.getElementById('lm-mode-web').classList.toggle('active', m==='web');
+  const inp = document.getElementById('lm-input');
+  if (!inp) return;
+  if (m==='web') { inp.disabled=false; inp.placeholder='Type a message (opens WhatsApp Web)…'; }
+  else updateWindowBadge();
+}
+
+/* ── TAB SWITCHER ── */
+function showTab(tab) {
+  document.querySelectorAll('.lm-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===tab));
+  document.getElementById('lm-tab-chat').style.display  = tab==='chat'  ? 'flex'  : 'none';
+  document.getElementById('lm-tab-tpl').style.display   = tab==='tpl'   ? 'flex'  : 'none';
+  document.getElementById('lm-tab-quick').style.display = tab==='quick' ? 'block' : 'none';
+  if (tab==='tpl'   && !templates.length) loadTemplates();
+  if (tab==='quick') renderQuickReplies();
+}
+
+/* ── SEND MESSAGE ── */
+async function send() {
+  const inp = document.getElementById('lm-input');
+  const msg = (inp.value||'').trim();
+  if (!msg || !activePhone) return;
+
+  if (windowOpen === false && mode === 'wabis') {
+    toast('24h window closed — use Templates tab', 'info');
+    showTab('tpl');
+    return;
+  }
+  if (mode === 'web') {
+    window.open(`https://wa.me/${activePhone}?text=${encodeURIComponent(msg)}`, '_blank');
+    inp.value=''; inp.style.height='auto';
+    return;
+  }
+
+  const btn = document.getElementById('lm-send-btn');
+  if (btn) btn.disabled = true;
+
+  // Optimistic UI: add message immediately
+  appendOutMsg(msg);
+  inp.value=''; inp.style.height='auto';
+
+  try {
+    const r = await apiFetch('POST', '/api/wa/send-direct', {
+      phone_number: activePhone,
+      message_text: msg,
+    });
+    if (r.success) {
+      toast('Sent ✓', 'success');
+      // Update sidebar
+      if (activeConv) {
+        activeConv.last_msg = msg;
+        activeConv.last_msg_ts = new Date().toISOString();
+        activeConv.last_direction = 'outbound';
+        applyFilter();
+      }
+      // Refresh messages after 2s to get confirmed status
+      setTimeout(() => loadChatMessages(activePhone, true), 2000);
+    } else {
+      toast('Send failed: ' + (r.message || 'Error'), 'error');
+    }
+  } catch { toast('Network error', 'error'); }
+  if (btn) btn.disabled = false;
+}
+
+function appendOutMsg(text) {
+  const box = document.getElementById('lm-msgs');
+  const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+  const div = document.createElement('div');
+  div.className = 'lm-msg lm-msg-out';
+  div.innerHTML = `${esc(text)}<div class="lm-msg-time">${now} <span class="lm-msg-status">sending…</span></div>`;
+  box.appendChild(div);
+  scrollToBottom();
+}
+
+/* ── REFRESH CURRENT CHAT ── */
+async function refreshChat() {
+  if (!activePhone) return;
+  await loadChatMessages(activePhone, false);
+  toast('Refreshed', 'success');
+}
+
+/* ── TEMPLATES ── */
+async function loadTemplates(force=false) {
+  if (!force && templates.length) { renderTemplates(); return; }
+  const box = document.getElementById('lm-tpl-list');
+  if (box) box.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-size:12px;">⏳ Loading…</div>';
+  try {
+    const r = await fetch('/api/wa/templates', { headers: authHdr() });
+    const d = await r.json();
+    templates = d.templates || [];
+    renderTemplates();
+    if (force) toast(`${templates.length} templates loaded`, 'success');
+  } catch {
+    if (box) box.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-size:12px;">⚠ Could not load templates</div>';
+  }
+}
+function renderTemplates() {
+  const box = document.getElementById('lm-tpl-list');
+  if (!box) return;
+  if (!templates.length) {
+    box.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-size:12px;">No approved templates found.</div>';
+    return;
+  }
+  box.innerHTML = templates.map((t,i) => {
+    const cat  = t.template_category || 'Utility';
+    const body = t.body_content || '';
+    return `<div class="lm-tpl-card" onclick="LM.sendTemplate(${i})">
+      <div class="lm-tpl-name">${esc(t.template_name||'Template')} <span class="lm-tpl-cat ${cat}">${esc(cat)}</span></div>
+      <div class="lm-tpl-body">${esc(body.slice(0,140))}${body.length>140?'…':''}</div>
+    </div>`;
+  }).join('');
+}
+async function sendTemplate(idx) {
+  const t = templates[idx];
+  if (!t || !activePhone) return;
+  toast('Sending template…', 'info');
+  let locale='en', accessToken=null, components=[];
+  try {
+    const tj = typeof t.template_json==='string' ? JSON.parse(t.template_json) : t.template_json;
+    if (tj?.access_token) accessToken = tj.access_token;
+    if (tj?.language)     locale      = tj.language;
+  } catch {}
+  try {
+    const r = await apiFetch('POST', '/api/wa/send-template-direct', {
+      phone_number: activePhone, template_name: t.template_name,
+      template_id: t.template_id, locale, access_token: accessToken,
+      body_text: t.body_content||'', components:[],
+    });
+    if (r.success) {
+      appendOutMsg(`📋 Template: ${t.template_name}`);
+      showTab('chat');
+      toast('Template sent ✓', 'success');
+    } else {
+      toast('Failed: '+(r.message||r.detail||'Error'), 'error');
+    }
+  } catch { toast('Network error', 'error'); }
+}
+
+/* ── QUICK REPLIES ── */
+let quickReplies = [];
+function renderQuickReplies() {
+  quickReplies = JSON.parse(localStorage.getItem('waQuickReplies')||'null') || QUICK_DEFAULTS;
+  const box = document.getElementById('lm-quick-list');
+  if (!box) return;
+  box.innerHTML = quickReplies.map((q,i) => `
+    <div class="lm-quick-item" onclick="LM.useQuick(${i})">
+      <span>⚡</span>
+      <div>
+        <div class="lm-quick-title">${esc(q.title)}</div>
+        <div class="lm-quick-prev">${esc(q.text.slice(0,60))}${q.text.length>60?'…':''}</div>
+      </div>
+    </div>`).join('') +
+    `<div class="lm-quick-item" onclick="LM.addQuick()" style="border-style:dashed;color:#aaa;justify-content:center;">＋ Add quick reply</div>`;
+}
+function useQuick(idx) {
+  const q = quickReplies[idx];
+  if (!q) return;
+  const inp = document.getElementById('lm-input');
+  inp.value = q.text;
+  inp.style.height='auto'; inp.style.height=Math.min(inp.scrollHeight,100)+'px';
+  showTab('chat'); inp.focus();
+}
+function addQuick() {
+  const title = prompt('Quick reply title (e.g. 👋 Hi):'); if (!title) return;
+  const text  = prompt('Message text:'); if (!text) return;
+  const saved = JSON.parse(localStorage.getItem('waQuickReplies')||'null') || [...QUICK_DEFAULTS];
+  saved.push({title,text});
+  localStorage.setItem('waQuickReplies', JSON.stringify(saved));
+  renderQuickReplies();
+}
+
+/* ── OPEN IN FULL CHATBOX ── */
+function openInFullChatbox() {
+  if (!activePhone || !window.WaChatbox) return;
+  WaChatbox.open({
+    phone: activePhone,
+    name:  activeConv?.name || activePhone,
+    contextType: 'lead',
+  });
+}
+
+/* ── POPOUT MINI BUBBLE (LinkedIn style) ── */
+function openPopout() {
+  if (!activePhone) return;
+  const phone = activePhone;
+  const name  = activeConv?.name || phone;
+  if (bubbles[phone]) { closeBubble(phone); return; }
+
+  const id = 'bubble_'+phone;
+  bubbles[phone] = { phone, name, msgs:[], collapsed:false };
+
+  const wrap = document.createElement('div');
+  wrap.className = 'lm-bubble-window';
+  wrap.id = id;
+  wrap.innerHTML = `
+    <div class="lm-bubble-hdr" onclick="LM.toggleBubble('${phone}')">
+      <div class="lm-avatar" style="width:28px;height:28px;font-size:12px;background:${avatarColor(name)};">${esc(initials(name))}</div>
+      <span class="lm-bubble-hdr-name">${esc(name)}</span>
+      <span class="lm-bubble-badge" id="${id}_badge" style="display:none;">1</span>
+      <button class="lm-bubble-close" onclick="event.stopPropagation();LM.closeBubble('${phone}')" title="Close">✕</button>
+    </div>
+    <div class="lm-bubble-msgs" id="${id}_msgs">
+      <div class="lm-msgs-empty" style="font-size:11px;">Loading…</div>
+    </div>
+    <div class="lm-bubble-compose">
+      <textarea class="lm-bubble-input" id="${id}_inp" rows="1" placeholder="Type…"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,60)+'px'"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();LM.sendBubble('${phone}');}"></textarea>
+      <button class="lm-bubble-send" onclick="LM.sendBubble('${phone}')">➤</button>
+    </div>
+  `;
+  document.getElementById('lm-bubbles').appendChild(wrap);
+  loadBubbleMsgs(phone);
+}
+function closeBubble(phone) {
+  const el = document.getElementById('bubble_'+phone);
+  if (el) el.remove();
+  delete bubbles[phone];
+}
+function toggleBubble(phone) {
+  const el = document.getElementById('bubble_'+phone);
+  if (!el) return;
+  el.classList.toggle('collapsed');
+  bubbles[phone].collapsed = el.classList.contains('collapsed');
+}
+async function loadBubbleMsgs(phone) {
+  const id = 'bubble_'+phone;
+  const box = document.getElementById(id+'_msgs');
+  if (!box) return;
+  const cached = await loadMessagesFromCache(phone);
+  if (cached && cached.length) renderBubbleMsgs(phone, cached);
+  try {
+    const r = await fetch(`/api/wa/conversation-by-phone?phone=${phone}&limit=20`, { headers: authHdr() });
+    const d = await r.json();
+    if ((d.messages||[]).length) renderBubbleMsgs(phone, d.messages);
+  } catch {}
+}
+function renderBubbleMsgs(phone, msgs) {
+  const id = 'bubble_'+phone;
+  const box = document.getElementById(id+'_msgs');
+  if (!box) return;
+  const sorted = [...msgs].sort((a,b) => new Date(a.conversation_time||0) - new Date(b.conversation_time||0));
+  box.innerHTML = sorted.map(m => {
+    const isOut = m.sender==='bot'||m.sender==='agent';
+    const body  = esc(parseMsg(m.message_content||m.message||''));
+    return `<div class="lm-msg ${isOut?'lm-msg-out':'lm-msg-in'}" style="font-size:12px;padding:5px 9px;">${body}<div class="lm-msg-time">${fmtTime(m.conversation_time||'')}</div></div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+
+  // Update notification badge if bubble is collapsed
+  if (bubbles[phone]?.collapsed) {
+    const newIn = msgs.filter(m => m.sender !== 'bot' && m.sender !== 'agent').length;
+    const badge = document.getElementById(id+'_badge');
+    if (badge && newIn > 0) { badge.style.display='inline'; badge.textContent=newIn; }
+  }
+}
+async function sendBubble(phone) {
+  const id  = 'bubble_'+phone;
+  const inp = document.getElementById(id+'_inp');
+  const msg = (inp?.value||'').trim();
+  if (!msg) return;
+  inp.value=''; inp.style.height='auto';
+  const box = document.getElementById(id+'_msgs');
+  if (box) {
+    const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+    const div = document.createElement('div');
+    div.className = 'lm-msg lm-msg-out';
+    div.style.fontSize = '12px';
+    div.innerHTML = `${esc(msg)}<div class="lm-msg-time">${now}</div>`;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
+  try {
+    const r = await apiFetch('POST', '/api/wa/send-direct', { phone_number: phone, message_text: msg });
+    if (!r.success) toast('Bubble send failed: '+(r.message||'Error'), 'error');
+  } catch { toast('Network error', 'error'); }
+}
+
+/* ── MOBILE SIDEBAR ── */
+function showMobileSidebar() {
+  const sb = document.getElementById('lm-sidebar');
+  if (sb) sb.classList.add('mobile-show');
+}
+
+/* ── RETURN API ── */
+return {
+  init, syncAll, setFilter, filterConvs, openConv,
+  scrollToBottom, refreshChat, send, sendTemplate, sendBubble,
+  showTab, setMode, loadTemplates, renderQuickReplies,
+  useQuick, addQuick, openInFullChatbox, openPopout, closeBubble, toggleBubble,
+  showMobileSidebar,
+  _toastT: null,
+};
+})();
+
+/* ── BOOT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  LM.init();
+  // Mobile: start with sidebar visible
+  if (window.innerWidth <= 767) LM.showMobileSidebar();
+});
+</script>
+<script src="/modules/mobile-nav.v4.js?v=20260307"></script>
+</body>
+</html>

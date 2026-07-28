@@ -1,0 +1,287 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║         SHOPIFY + DELHIVERY INTEGRATION — READY FOR BUILD ��              ║
+║                    Logistics Intelligence Engine                           ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+WHAT WE'VE DESIGNED:
+────────────────────
+
+✅ Complete automation flow
+✅ Risk intelligence engine
+✅ COD confirmation system
+✅ 15-min tracking sync
+✅ WhatsApp notifications
+✅ Customer scoring & blacklist
+✅ NDR auto-handling
+✅ Admin dashboard
+
+🗄️ DATABASE SCHEMA:
+─────────────────
+
+7 new tables:
+  • shipments (core shipment data)
+  • tracking_events (real-time tracking)
+  • rto_zones (pincode risk scoring)
+  • blacklisted_customers
+  • customer_delivery_scores
+  • cod_transactions
+  • notification_logs
+
+🔌 API ENDPOINTS:
+──────────────────
+
+POST /webhooks/shopify/order-created
+  └─ Receive new Shopify orders
+
+POST /api/shipments/validate-risk
+  └─ Run risk assessment
+
+POST /api/shipments/confirm-cod
+  └─ COD confirmation from WhatsApp
+
+POST /api/shipments/create
+  └─ Create shipment in Delhivery
+
+POST /api/shipments/sync-tracking
+  └─ Sync tracking (background, every 15 min)
+
+GET /api/shipments/dashboard
+  └─ Admin dashboard stats
+
+🧠 SERVICE CLASSES:
+────────────────────
+
+1. DelhiveryService
+   └─ All Delhivery API calls
+
+2. RiskEngine
+   └─ Order validation & scoring
+
+3. ShopifyService
+   └─ Shopify order & fulfillment API
+
+4. NotificationService
+   └─ WhatsApp, SMS, Email
+
+🔄 BACKGROUND WORKER:
+──────────────────────
+
+Every 15 minutes:
+  • Fetch all active shipments
+  • Call Delhivery tracking API
+  • Update statuses
+  • Process delivery/RTO/NDR events
+  • Send notifications
+
+════════════════════════════════════════════════════════════════════════════════
+
+WHAT WE NEED FROM YOU NOW:
+──────────────────────────
+
+📄 Fill out: SHOPIFY_DELHIVERY_TECHNICAL_CLARIFICATIONS.md
+
+Section 1: API Credentials
+  [ ] Delhivery API keys
+  [ ] Shopify store URL + token
+  [ ] WhatsApp API credentials
+
+Section 2: Business Rules
+  [ ] Order value thresholds
+  [ ] RTO risk thresholds
+  [ ] COD confirmation settings
+
+Section 3: Operational Decisions
+  [ ] Notification preferences
+  [ ] Workflow triggers
+  [ ] NDR handling
+
+Section 4: Technical Infrastructure
+  [ ] Processing architecture (sync/async)
+  [ ] Background job system
+  [ ] Expected daily volume
+
+Section 5: Production Readiness
+  [ ] Server setup
+  [ ] HTTPS/SSL
+  [ ] Backup strategy
+
+Section 6: Advanced Features (nice to have)
+  [ ] Analytics
+  [ ] Multi-courier support
+  [ ] Integration with accounting
+
+════════════════════════════════════════════════════════════════════════════════
+
+DELIVERABLES (After You Provide Details):
+────────────────────────────────────────────
+
+PHASE 1: Core Integration (Week 1-2)
+  ✅ Database migration scripts (Alembic)
+  ✅ SQLAlchemy models
+  ✅ Shopify webhook receiver
+  ✅ Delhivery API service
+  ✅ Basic shipment creation
+
+PHASE 2: Risk Engine (Week 2-3)
+  ✅ Risk assessment logic
+  ✅ RTO zone calculations
+  ✅ Customer scoring
+  ✅ Blacklist management
+
+PHASE 3: Tracking & Notifications (Week 3-4)
+  ✅ 15-min background sync worker
+  ✅ WhatsApp integration
+  ✅ Event handlers
+  ✅ Notification logging
+
+PHASE 4: Admin Dashboard (Week 4-5)
+  ✅ Shipment management UI
+  ✅ Risk alerts
+  ✅ Analytics
+  ✅ Manual controls
+
+════════════════════════════════════════════════════════════════════════════════
+
+ARCHITECTURE OVERVIEW:
+──────────────────────
+
+Shopify Order
+    ↓
+CRM Webhook Receiver
+    ↓
+Risk Engine (block/pass/review)
+    ↓
+COD Confirmation (if COD)
+    ↓
+Delhivery API (create shipment)
+    ↓
+Save AWB + Update Shopify
+    ↓
+Queue for tracking sync
+    ↓
+Every 15 min: Track & Update
+    ↓
+Events: Delivered/RTO/NDR
+    ↓
+Notifications + Analytics
+
+════════════════════════════════════════════════════════════════════════════════
+
+COMPETITIVE ADVANTAGES:
+────────────────────────
+
+By building this properly, you get:
+
+1. ZERO manual work
+   └─ Orders auto-flow from Shopify to Delhivery
+
+2. INTELLIGENT RISK CONTROL
+   └─ Prevent fraud & COD losses automatically
+
+3. REAL-TIME TRACKING
+   └─ Every 15 minutes, not manual checks
+
+4. CUSTOMER INTELLIGENCE
+   └─ Delivery scoring, risk profiling
+
+5. MULTI-COURIER READY
+   └─ Easy to add BlueDart, DTDC, etc.
+
+6. ANALYTICS ENGINE
+   └─ Deep insights into delivery performance
+
+7. OPERATIONAL EFFICIENCY
+   └─ Admin dashboard, not spreadsheets
+
+════════════════════════════════════════════════════════════════════════════════
+
+QUICK START GUIDE:
+────────────────────
+
+1. READ: /opt/miguel/SHOPIFY_DELHIVERY_INTEGRATION_BLUEPRINT.md
+   └─ Complete architecture & data model
+
+2. FILL OUT: /opt/miguel/SHOPIFY_DELHIVERY_TECHNICAL_CLARIFICATIONS.md
+   └─ All your preferences & credentials
+
+3. SEND TO ME: Your filled clarifications document
+
+4. I WILL BUILD:
+   └─ Production-ready FastAPI implementation
+   └─ Database migrations
+   └─ Complete service layer
+   └─ Unit & integration tests
+   └─ Deployment guide
+
+5. YOU DEPLOY:
+   └─ Run migrations
+   └─ Configure credentials
+   └─ Deploy to Linode
+   └─ Start shipping!
+
+════════════════════════════════════════════════════════════════════════════════
+
+TIMELINE:
+──────────
+
+Assumptions:
+  • All credentials provided
+  • No unexpected blockers
+  • Your team available for questions
+
+Phase 1: 1-2 weeks
+Phase 2: 1-2 weeks
+Phase 3: 1 week
+Phase 4: 1 week
+
+Total: 4-6 weeks to complete implementation
+
+Testing & UAT: 1-2 weeks
+
+Live: 5-8 weeks from today
+
+════════════════════════════════════════════════════════════════════════════════
+
+DOCUMENTATION PROVIDED:
+─────────────────────────
+
+✅ SHOPIFY_DELHIVERY_INTEGRATION_BLUEPRINT.md (2500+ lines)
+   └─ Complete system design
+   └─ Database schema with all tables
+   └─ FastAPI route definitions
+   └─ Service class structure
+   └─ Background worker design
+
+✅ SHOPIFY_DELHIVERY_TECHNICAL_CLARIFICATIONS.md
+   └─ 100+ questions organized by section
+   └─ Fill-in-the-blanks format
+   └─ All decisions documented
+
+════════════════════════════════════════════════════════════════════════════════
+
+KEY FILES LOCATION:
+────────────────────
+
+/opt/miguel/SHOPIFY_DELHIVERY_INTEGRATION_BLUEPRINT.md
+/opt/miguel/SHOPIFY_DELHIVERY_TECHNICAL_CLARIFICATIONS.md
+/opt/miguel/SHOPIFY_DELHIVERY_NEXT_STEPS.txt (this file)
+
+════════════════════════════════════════════════════════════════════════════════
+
+WHAT TO DO NEXT:
+─────────────────
+
+1. Open: SHOPIFY_DELHIVERY_TECHNICAL_CLARIFICATIONS.md
+2. Fill out all sections (copy-paste answers)
+3. Send me the filled document
+4. I generate complete implementation
+5. You review & deploy
+
+Ready to build the most powerful logistics integration for your CRM? 🔥
+
+════════════════════════════════════════════════════════════════════════════════
+
+Status: ✅ Architecture Complete, Ready for Implementation
+Date: Feb 24, 2026
+Next: Awaiting your clarifications
+

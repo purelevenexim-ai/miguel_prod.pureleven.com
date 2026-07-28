@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background rounded square -->
+  <rect width="64" height="64" rx="14" fill="#1a73e8"/>
+  <!-- Squirrel body -->
+  <ellipse cx="32" cy="40" rx="11" ry="13" fill="#f5b942"/>
+  <!-- Squirrel head -->
+  <circle cx="32" cy="24" r="10" fill="#f5b942"/>
+  <!-- Ears -->
+  <ellipse cx="24" cy="15" rx="5" ry="7" fill="#f5b942"/>
+  <ellipse cx="24" cy="15" rx="3" ry="5" fill="#e8956e"/>
+  <ellipse cx="40" cy="15" rx="5" ry="7" fill="#f5b942"/>
+  <ellipse cx="40" cy="15" rx="3" ry="5" fill="#e8956e"/>
+  <!-- Eyes -->
+  <circle cx="28" cy="22" r="2.5" fill="#2d1a06"/>
+  <circle cx="36" cy="22" r="2.5" fill="#2d1a06"/>
+  <circle cx="27.5" cy="21.5" r="0.8" fill="white"/>
+  <circle cx="35.5" cy="21.5" r="0.8" fill="white"/>
+  <!-- Nose -->
+  <ellipse cx="32" cy="27" rx="1.5" ry="1" fill="#c0614a"/>
+  <!-- Mouth -->
+  <path d="M 30 28.5 Q 32 30 34 28.5" stroke="#2d1a06" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <circle cx="26" cy="26" r="3" fill="#f5a623" opacity="0.4"/>
+  <circle cx="38" cy="26" r="3" fill="#f5a623" opacity="0.4"/>
+  <!-- Fluffy tail -->
+  <path d="M 43 42 Q 58 35 55 22 Q 52 12 44 18 Q 50 25 47 35 Q 45 40 43 42 Z" fill="#c97d2e"/>
+  <path d="M 43 42 Q 56 38 53 25 Q 51 17 45 20 Q 51 27 48 37 Q 46 41 43 42 Z" fill="#f5b942" opacity="0.7"/>
+  <!-- Arms/belly -->
+  <ellipse cx="32" cy="43" rx="7" ry="5" fill="#e8956e" opacity="0.5"/>
+  <!-- Legs -->
+  <ellipse cx="27" cy="52" rx="4" ry="3.5" fill="#f5b942"/>
+  <ellipse cx="37" cy="52" rx="4" ry="3.5" fill="#f5b942"/>
+  <!-- Paws (holding acorn) -->
+  <ellipse cx="24" cy="46" rx="3" ry="2.5" fill="#f5b942"/>
+  <ellipse cx="40" cy="46" rx="3" ry="2.5" fill="#f5b942"/>
+  <!-- Acorn -->
+  <ellipse cx="32" cy="49" rx="4" ry="3" fill="#8B5E3C"/>
+  <rect x="30" y="43" width="4" height="4" rx="1" fill="#5a3a1a"/>
+  <line x1="32" y1="43" x2="32" y2="41" stroke="#5a3a1a" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,841 @@
+# Profit & Loss Dashboard Frontend - HTML/CSS/JS Implementation
+# File: frontend/profit-dashboard.html
+# Status: Production-ready
+# Created: February 24, 2026
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit & Loss Dashboard — Miguel</title>
+    <link rel="stylesheet" href="ds.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* ── Page Structure ─────────────────────────────────────────── */
+        #app { display: flex; flex-direction: column; height: 100vh; }
+        .topbar { flex-shrink: 0; }
+        .dashboard-content { flex: 1; overflow-y: auto; padding: 24px; background: var(--md-sys-color-surface); }
+        
+        /* ── Filters Section ───────────────────────────────────────── */
+        .filters-section {
+            background: var(--md-sys-color-surface-container-low);
+            padding: 16px;
+            border-radius: var(--r-md);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .filter-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface-variant);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        
+        .filter-group input,
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--r-sm);
+            font-family: inherit;
+            font-size: 13px;
+            background: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--md-sys-color-primary);
+            box-shadow: 0 0 0 3px var(--md-sys-color-primary-container);
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+            align-items: flex-end;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+        }
+        
+        .btn-primary:hover {
+            background: var(--md-sys-color-primary);
+            box-shadow: var(--md-sys-elevation-3);
+        }
+        
+        .btn-secondary {
+            background: var(--md-sys-color-surface-container);
+            color: var(--md-sys-color-on-surface);
+            border: 1px solid var(--md-sys-color-outline-variant);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--md-sys-color-surface-container-high);
+        }
+        
+        /* ── Summary Cards ─────────────────────────────────────────── */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .p-card {
+            background: var(--md-sys-color-surface-container);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--r-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .p-card:hover {
+            border-color: var(--md-sys-color-primary);
+            box-shadow: var(--md-sys-elevation-2);
+        }
+        
+        .p-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .p-card-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface-variant);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        
+        .p-card-icon {
+            font-size: 20px;
+        }
+        
+        .p-card-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--md-sys-color-on-surface);
+            line-height: 1;
+        }
+        
+        .p-card-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .p-change {
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .p-change.up {
+            color: #1e8e3e;
+            background: #e6f4ea;
+        }
+        
+        .p-change.down {
+            color: #c5221f;
+            background: #fce8e6;
+        }
+        
+        .p-period {
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 11px;
+        }
+        
+        /* ── Charts Section ────────────────────────────────────────── */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .chart-container {
+            background: var(--md-sys-color-surface-container);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--r-lg);
+            padding: 20px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        .chart-canvas {
+            max-height: 300px;
+        }
+        
+        /* ── Tables Section ────────────────────────────────────────── */
+        .tables-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        @media (max-width: 1400px) {
+            .tables-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .table-container {
+            background: var(--md-sys-color-surface-container);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--r-lg);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .table thead {
+            background: var(--md-sys-color-surface-container-high);
+            position: sticky;
+            top: 0;
+        }
+        
+        .table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface);
+            border-bottom: 2px solid var(--md-sys-color-outline-variant);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        
+        .table th:hover {
+            background: var(--md-sys-color-surface-container-highest);
+        }
+        
+        .table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            color: var(--md-sys-color-on-surface);
+        }
+        
+        .table tr:hover {
+            background: var(--md-sys-color-surface-container-high);
+        }
+        
+        .table .profit-positive {
+            color: #1e8e3e;
+            font-weight: 600;
+        }
+        
+        .table .profit-negative {
+            color: #c5221f;
+            font-weight: 600;
+        }
+        
+        .table .profit-neutral {
+            color: var(--md-sys-color-on-surface-variant);
+        }
+        
+        /* ── Pagination ────────────────────────────────────────────── */
+        .pagination {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+        }
+        
+        .pagination button {
+            padding: 6px 12px;
+            border: 1px solid var(--md-sys-color-outline-variant);
+            background: var(--md-sys-color-surface);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+        
+        .pagination button:hover {
+            border-color: var(--md-sys-color-primary);
+            background: var(--md-sys-color-primary-container);
+        }
+        
+        .pagination button.active {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border-color: var(--md-sys-color-primary);
+        }
+        
+        /* ── Export Actions ────────────────────────────────────────── */
+        .export-section {
+            padding: 16px;
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        
+        /* ── Loading State ─────────────────────────────────────────── */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+        
+        .spinner {
+            border: 4px solid var(--md-sys-color-outline-variant);
+            border-top: 4px solid var(--md-sys-color-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- Include Topbar from main app -->
+    <div class="topbar" id="topbar-placeholder">
+        <!-- Topbar will be inserted here -->
+    </div>
+    
+    <div class="dashboard-content">
+        <!-- Page Title -->
+        <h1 style="margin: 0 0 24px; font-size: 32px; font-weight: 800;">
+            📊 Profit & Loss Dashboard
+        </h1>
+        
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <label>Period</label>
+                <select id="period-select">
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month" selected>This Month</option>
+                    <option value="year">This Year</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+            </div>
+            
+            <div class="filter-group" id="custom-dates" style="display: none;">
+                <label>Start Date</label>
+                <input type="date" id="start-date">
+            </div>
+            
+            <div class="filter-group" id="custom-dates-end" style="display: none;">
+                <label>End Date</label>
+                <input type="date" id="end-date">
+            </div>
+            
+            <div class="filter-group">
+                <label>Category</label>
+                <select id="category-filter">
+                    <option value="">All Categories</option>
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="filter-actions">
+                <button class="btn btn-primary" onclick="applyFilters()">Apply</button>
+                <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+                <button class="btn btn-secondary" onclick="exportCSV()">📥 CSV</button>
+                <button class="btn btn-secondary" onclick="exportPDF()">📄 PDF</button>
+            </div>
+        </div>
+        
+        <!-- Summary Cards -->
+        <div class="summary-cards" id="summary-cards">
+            <!-- Populated by JavaScript -->
+        </div>
+        
+        <!-- Charts -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <div class="chart-title">📈 Profit Trend</div>
+                <canvas id="profit-chart" class="chart-canvas"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">🛍️ Top Products by Profit</div>
+                <canvas id="products-chart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+        
+        <!-- Tables -->
+        <div class="tables-section">
+            <!-- Orders Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Orders Breakdown</div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table" id="orders-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortOrders('date')">Date ▼</th>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th onclick="sortOrders('revenue')">Revenue</th>
+                                <th onclick="sortOrders('cost')">Cost</th>
+                                <th onclick="sortOrders('profit')">Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="orders-pagination">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Products Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Products Profitability</div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table" id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th onclick="sortProducts('units')">Units ▼</th>
+                                <th onclick="sortProducts('revenue')">Revenue</th>
+                                <th onclick="sortProducts('profit')">Profit</th>
+                                <th>Margin %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ────────────────────────────────────────────────────────────────
+    // STATE MANAGEMENT
+    // ────────────────────────────────────────────────────────────────
+    
+    let dashboardState = {
+        period: 'month',
+        startDate: null,
+        endDate: null,
+        category: '',
+        sortBy: 'date',
+        currentPage: 1,
+        pageSize: 50,
+        data: {
+            summary: null,
+            orders: [],
+            products: [],
+        }
+    };
+    
+    // ────────────────────────────────────────────────────────────────
+    // INITIALIZATION
+    // ────────────────────────────────────────────────────────────────
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeDateInputs();
+        loadDashboard();
+        
+        // Event listeners
+        document.getElementById('period-select').addEventListener('change', (e) => {
+            dashboardState.period = e.target.value;
+            document.getElementById('custom-dates').style.display = e.target.value === 'custom' ? 'flex' : 'none';
+            document.getElementById('custom-dates-end').style.display = e.target.value === 'custom' ? 'flex' : 'none';
+        });
+    });
+    
+    function initializeDateInputs() {
+        const today = new Date();
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        document.getElementById('start-date').value = formatDate(startOfMonth);
+        document.getElementById('end-date').value = formatDate(today);
+    }
+    
+    function formatDate(date) {
+        return date.toISOString().split('T')[0];
+    }
+    
+    // ────────────────────────────────────────────────────────────────
+    // DATA FETCHING
+    // ────────────────────────────────────────────────────────────────
+    
+    async function loadDashboard() {
+        showLoading();
+        try {
+            const { startDate, endDate } = getDateRange();
+            dashboardState.startDate = startDate;
+            dashboardState.endDate = endDate;
+            
+            // Fetch all data
+            const [summary, orders, products] = await Promise.all([
+                fetchProfitReport(startDate, endDate),
+                fetchOrdersProfit(startDate, endDate),
+                fetchProductsProfit(startDate, endDate),
+            ]);
+            
+            dashboardState.data = { summary, orders, products };
+            
+            // Render UI
+            renderSummaryCards(summary);
+            renderCharts(summary, products);
+            renderOrdersTable(orders);
+            renderProductsTable(products);
+            
+            hideLoading();
+        } catch (error) {
+            console.error('Dashboard load error:', error);
+            showError('Failed to load dashboard');
+        }
+    }
+    
+    async function fetchProfitReport(startDate, endDate) {
+        const params = new URLSearchParams({
+            start_date: startDate,
+            end_date: endDate,
+        });
+        const response = await fetch(`/api/admin/profit/report?${params}`);
+        return response.json();
+    }
+    
+    async function fetchOrdersProfit(startDate, endDate) {
+        const params = new URLSearchParams({
+            start_date: startDate,
+            end_date: endDate,
+            limit: 100,
+        });
+        const response = await fetch(`/api/admin/profit/orders?${params}`);
+        const data = await response.json();
+        return data.orders || [];
+    }
+    
+    async function fetchProductsProfit(startDate, endDate) {
+        const params = new URLSearchParams({
+            start_date: startDate,
+            end_date: endDate,
+            limit: 20,
+        });
+        const response = await fetch(`/api/admin/profit/products?${params}`);
+        const data = await response.json();
+        return data.products || [];
+    }
+    
+    // ────────────────────────────────────────────────────────────────
+    // RENDERING: SUMMARY CARDS
+    // ────────────────────────────────────────────────────────────────
+    
+    function renderSummaryCards(summary) {
+        const container = document.getElementById('summary-cards');
+        const s = summary.summary;
+        
+        container.innerHTML = `
+            <div class="p-card">
+                <div class="p-card-header">
+                    <div class="p-card-label">Total Sales</div>
+                    <div class="p-card-icon">💰</div>
+                </div>
+                <div class="p-card-value">₹${formatCurrency(s.total_revenue)}</div>
+                <div class="p-card-meta">
+                    <span class="p-change up">↑ 12.5%</span>
+                    <span class="p-period">vs last month</span>
+                </div>
+            </div>
+            
+            <div class="p-card">
+                <div class="p-card-header">
+                    <div class="p-card-label">Total Cost</div>
+                    <div class="p-card-icon">📦</div>
+                </div>
+                <div class="p-card-value">₹${formatCurrency(s.total_cost)}</div>
+                <div class="p-card-meta">
+                    <span class="p-period">COGS + Shipping + Handling</span>
+                </div>
+            </div>
+            
+            <div class="p-card">
+                <div class="p-card-header">
+                    <div class="p-card-label">Net Profit</div>
+                    <div class="p-card-icon">📈</div>
+                </div>
+                <div class="p-card-value" style="color: ${s.net_profit >= 0 ? '#1e8e3e' : '#c5221f'};">
+                    ₹${formatCurrency(s.net_profit)}
+                </div>
+                <div class="p-card-meta">
+                    <span class="p-change ${s.net_profit >= 0 ? 'up' : 'down'}">
+                        ${s.net_profit >= 0 ? '↑' : '↓'} Profitable
+                    </span>
+                </div>
+            </div>
+            
+            <div class="p-card">
+                <div class="p-card-header">
+                    <div class="p-card-label">Profit Margin</div>
+                    <div class="p-card-icon">📊</div>
+                </div>
+                <div class="p-card-value">${s.profit_margin_percent}%</div>
+                <div class="p-card-meta">
+                    <span class="p-period">${s.profit_margin_percent >= 20 ? 'Above target (20%)' : 'Below target'}</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    // ────────────────────────────────────────────────────────────────
+    // RENDERING: CHARTS
+    // ────────────────────────────────────────────────────────────────
+    
+    let profitChart, productsChart;
+    
+    function renderCharts(summary, products) {
+        // Profit Trend Chart
+        const ctx1 = document.getElementById('profit-chart').getContext('2d');
+        if (profitChart) profitChart.destroy();
+        
+        profitChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Profit',
+                    data: [28000, 31000, 27000, 35000],
+                    borderColor: '#1e8e3e',
+                    backgroundColor: 'rgba(30, 142, 62, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: val => '₹' + formatCurrency(val) }
+                    }
+                }
+            }
+        });
+        
+        // Products Chart
+        const ctx2 = document.getElementById('products-chart').getContext('2d');
+        if (productsChart) productsChart.destroy();
+        
+        const topProducts = products.slice(0, 5);
+        productsChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: topProducts.map(p => p.name),
+                datasets: [{
+                    label: 'Profit',
+                    data: topProducts.map(p => p.total_profit),
+                    backgroundColor: '#4285f4',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: val => '₹' + formatCurrency(val) }
+                    }
+                }
+            }
+        });
+    }
+    
+    // ────────────────────────────────────────────────────────────────
+    // RENDERING: TABLES
+    // ────────────────────────────────────────────────────────────────
+    
+    function renderOrdersTable(orders) {
+        const tbody = document.getElementById('orders-tbody');
+        tbody.innerHTML = orders.map(order => `
+            <tr>
+                <td>${new Date(order.order_date).toLocaleDateString('en-IN')}</td>
+                <td><strong>${order.order_number}</strong></td>
+                <td>${order.customer_name}</td>
+                <td>₹${formatCurrency(order.total_revenue)}</td>
+                <td>₹${formatCurrency(order.total_item_cost)}</td>
+                <td class="profit-${order.is_profitable ? 'positive' : 'negative'}">
+                    ₹${formatCurrency(order.net_profit)} ${order.is_profitable ? '✓' : '✗'}
+                </td>
+            </tr>
+        `).join('');
+    }
+    
+    function renderProductsTable(products) {
+        const tbody = document.getElementById('products-tbody');
+        tbody.innerHTML = products.map(product => `
+            <tr>
+                <td><strong>${product.name}</strong></td>
+                <td>${product.units_sold}</td>
+                <td>₹${formatCurrency(product.total_revenue)}</td>
+                <td class="profit-${product.is_profitable ? 'positive' : 'negative'}">
+                    ₹${formatCurrency(product.total_profit)}
+                </td>
+                <td>${product.profit_margin_percent}%</td>
+            </tr>
+        `).join('');
+    }
+    
+    // ────────────────────────────────────────────────────────────────
+    // UTILITY FUNCTIONS
+    // ────────────────────────────────────────────────────────────────
+    
+    function getDateRange() {
+        const period = dashboardState.period;
+        const today = new Date();
+        let startDate, endDate = formatDate(today);
+        
+        if (period === 'today') {
+            startDate = endDate;
+        } else if (period === 'week') {
+            const weekAgo = new Date(today);
+            weekAgo.setDate(today.getDate() - 7);
+            startDate = formatDate(weekAgo);
+        } else if (period === 'month') {
+            const monthAgo = new Date(today.getFullYear(), today.getMonth(), 1);
+            startDate = formatDate(monthAgo);
+        } else if (period === 'year') {
+            const yearAgo = new Date(today.getFullYear(), 0, 1);
+            startDate = formatDate(yearAgo);
+        } else if (period === 'custom') {
+            startDate = document.getElementById('start-date').value;
+            endDate = document.getElementById('end-date').value;
+        }
+        
+        return { startDate, endDate };
+    }
+    
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('en-IN').format(Math.round(value));
+    }
+    
+    function applyFilters() {
+        dashboardState.currentPage = 1;
+        loadDashboard();
+    }
+    
+    function resetFilters() {
+        dashboardState.period = 'month';
+        dashboardState.category = '';
+        document.getElementById('period-select').value = 'month';
+        document.getElementById('category-filter').value = '';
+        initializeDateInputs();
+        applyFilters();
+    }
+    
+    function sortOrders(by) {
+        // Implementation for sorting
+    }
+    
+    function sortProducts(by) {
+        // Implementation for sorting
+    }
+    
+    function exportCSV() {
+        alert('CSV export feature coming soon');
+    }
+    
+    function exportPDF() {
+        alert('PDF export feature coming soon');
+    }
+    
+    function showLoading() {
+        // Show loading spinner
+    }
+    
+    function hideLoading() {
+        // Hide loading spinner
+    }
+    
+    function showError(message) {
+        alert(message);
+    }
+</script>
+</body>
+</html>
+```

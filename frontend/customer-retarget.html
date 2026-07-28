@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Customer Retarget — Miguel CRM</title>
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="stylesheet" href="/ds.css?v=20260228">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{--rt-blue:#1a73e8;--rt-green:#188038;--rt-red:#c5221f;--rt-amber:#b06000;--rt-purple:#7627bb}
+body{margin:0;background:var(--bg-page);color:var(--g-900);font:14px var(--font,system-ui,sans-serif)}
+button,input,select,textarea{font:inherit}
+.topbar{height:60px;padding:0 22px;background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand img{width:34px;height:34px}
+.title{font-weight:750;font-size:17px;line-height:1.15}.subtitle{font-size:11px;color:var(--g-600);margin-top:2px}
+.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.tenant{padding:4px 10px;border-radius:99px;background:#e8f0fe;color:#174ea6;font-size:11px;font-weight:700;letter-spacing:.04em}
+.btn{border:1px solid var(--bdr);background:var(--surf);color:var(--g-800);border-radius:8px;padding:8px 13px;cursor:pointer;font-weight:650;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{background:var(--g-50)}.btn-primary{background:var(--rt-blue);border-color:var(--rt-blue);color:#fff}.btn-primary:hover{background:#1558b0}
+.btn-danger{color:var(--rt-red);border-color:#f3b4b2;background:#fff8f8}.btn-sm{padding:6px 10px;font-size:12px}.btn:disabled{opacity:.55;cursor:not-allowed}
+.shell{padding:18px 22px 34px;max-width:1800px;margin:0 auto}
+.summary{display:grid;grid-template-columns:repeat(8,minmax(125px,1fr));gap:10px;margin-bottom:14px}
+.metric{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:13px 14px;position:relative;overflow:hidden}
+.metric::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--metric,var(--rt-blue))}
+.metric-value{font-size:22px;font-weight:800;line-height:1.1}.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--g-600);font-weight:700;margin-top:4px}
+.metric-hint{font-size:10px;color:var(--g-500);margin-top:3px}
+.panel{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;overflow:hidden}
+.toolbar{padding:12px 14px;border-bottom:1px solid var(--bdr);display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.search{min-width:260px;flex:1;max-width:480px;position:relative}.search input{width:100%;height:38px;border:1px solid var(--bdr);border-radius:8px;padding:0 12px 0 36px;background:var(--surf);color:var(--g-900)}
+.search span{position:absolute;left:12px;top:9px;color:var(--g-500)}
+.check{display:flex;gap:7px;align-items:center;font-size:12px;color:var(--g-700);white-space:nowrap}
+.tabs{display:flex;gap:5px;padding:9px 14px;border-bottom:1px solid var(--bdr);overflow-x:auto;background:var(--g-50)}
+.tab{border:1px solid transparent;background:transparent;color:var(--g-700);border-radius:99px;padding:7px 12px;cursor:pointer;font-size:12px;font-weight:650;white-space:nowrap}
+.tab:hover{background:var(--surf)}.tab.active{background:#e8f0fe;color:#174ea6;border-color:#c5d8fd}
+.table-meta{padding:10px 14px;font-size:12px;color:var(--g-600);border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;gap:12px}
+.table-wrap{overflow:auto;min-height:360px}
+table{width:100%;border-collapse:collapse;min-width:1180px}
+th{text-align:left;padding:10px 12px;background:var(--g-50);border-bottom:1px solid var(--bdr);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--g-600);position:sticky;top:0;z-index:1}
+td{padding:11px 12px;border-bottom:1px solid var(--bdr);vertical-align:top}
+tbody tr{cursor:pointer}tbody tr:hover td{background:#f8faff}
+.position{color:var(--g-500);font:12px var(--font-mono,monospace)}
+.customer{display:flex;gap:9px;align-items:flex-start}.avatar{width:34px;height:34px;border-radius:50%;background:#e8f0fe;color:#174ea6;display:flex;align-items:center;justify-content:center;font-weight:800;flex:0 0 auto}
+.customer-name{font-weight:700;max-width:190px}.muted{font-size:11px;color:var(--g-600);margin-top:2px}.mono{font-family:var(--font-mono,monospace)}
+.phone-actions{display:flex;gap:5px;margin-top:5px}.icon-btn{width:28px;height:26px;padding:0;border:1px solid var(--bdr);background:var(--surf);border-radius:6px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.value{font-weight:800}.repeat{color:#7c3aed;font-size:10px;font-weight:700;margin-top:3px}
+.old-tag{display:inline-flex;margin-top:4px;padding:2px 6px;border-radius:99px;background:#e6f4ea;color:#137333;border:1px solid #b7dfbe;font-size:9px;font-weight:800;letter-spacing:.04em}
+.products{max-width:220px;font-size:11px;color:var(--g-700);line-height:1.5}
+.chip{display:inline-flex;align-items:center;padding:3px 7px;border-radius:99px;font-size:10px;font-weight:750;white-space:nowrap;background:var(--g-100);color:var(--g-700)}
+.chip.pending{background:#eef2f7;color:#475569}.chip.no_answer,.chip.callback{background:#fff3cd;color:#855d00}.chip.interested{background:#e6f4ea;color:#137333}.chip.purchased_again{background:#d7f8e1;color:#0d652d}.chip.not_interested,.chip.purchased_elsewhere{background:#f1f3f4;color:#5f6368}.chip.invalid_number,.chip.risk{background:#fce8e6;color:#a50e0e}.chip.unlinked{background:#f3e8fd;color:#7627bb}
+.missing{display:flex;gap:3px;flex-wrap:wrap;max-width:180px}.missing span{background:#fff4e5;color:#934b00;border:1px solid #ffd7a3;padding:2px 5px;border-radius:4px;font-size:9px}
+.pagination{padding:13px 14px;display:flex;justify-content:center;gap:10px;align-items:center;border-top:1px solid var(--bdr)}
+.loading,.empty,.error-state{padding:70px 24px;text-align:center;color:var(--g-600)}.error-state{color:var(--rt-red)}
+.toast{position:fixed;right:22px;bottom:22px;z-index:200;background:#202124;color:#fff;padding:11px 15px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.25);display:none;max-width:360px}.toast.error{background:#a50e0e}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.42);z-index:90;display:none}.overlay.open{display:block}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:min(720px,100%);background:var(--bg-page);z-index:100;transform:translateX(100%);transition:transform .2s ease;overflow-y:auto;box-shadow:-10px 0 35px rgba(0,0,0,.18)}
+.drawer.open{transform:translateX(0)}.drawer-head{height:60px;background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 18px;position:sticky;top:0;z-index:2}
+.drawer-title{font-size:16px;font-weight:800}.drawer-head .icon-btn{margin-left:auto}.drawer-body{padding:16px}
+.hero{background:linear-gradient(135deg,#174ea6,#4285f4);color:#fff;border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start;margin-bottom:14px}
+.hero .avatar{width:48px;height:48px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.35)}.hero-name{font-size:20px;font-weight:800}.hero-meta{font-size:12px;color:rgba(255,255,255,.82);margin-top:4px}
+.section{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;margin-bottom:13px;overflow:hidden}.section-head{padding:12px 14px;border-bottom:1px solid var(--bdr);font-weight:750;display:flex;justify-content:space-between;align-items:center}.section-body{padding:14px}
+.outcomes{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.outcome input{display:none}.outcome label{min-height:50px;border:1px solid var(--bdr);border-radius:8px;padding:8px 6px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:700;cursor:pointer;background:var(--surf)}
+.outcome input:checked+label{border-color:var(--rt-blue);background:#e8f0fe;color:#174ea6;box-shadow:0 0 0 1px var(--rt-blue)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:12px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:700;color:var(--g-700)}
+.field input,.field textarea,.field select{border:1px solid var(--bdr);border-radius:8px;padding:9px 10px;background:var(--surf);color:var(--g-900);width:100%}.field textarea{min-height:78px;resize:vertical}
+.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.history{display:flex;flex-direction:column;gap:8px}.history-item{border-left:3px solid #c5d8fd;padding:8px 10px;background:var(--g-50);border-radius:0 8px 8px 0}.history-title{font-size:12px;font-weight:750}.history-meta{font-size:10px;color:var(--g-600);margin-top:3px}.history-notes{font-size:12px;margin-top:5px;white-space:pre-wrap}
+.order-item{display:grid;grid-template-columns:1fr auto;gap:5px;padding:10px 0;border-bottom:1px solid var(--bdr)}.order-item:last-child{border-bottom:0}.order-title{font-size:12px;font-weight:750}.order-products{font-size:11px;color:var(--g-600);margin-top:4px}.order-amount{font-weight:800}
+.workspace-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.address-card{background:var(--g-50);border:1px solid var(--g-200);border-radius:10px;padding:12px 14px;line-height:1.55}.address-card strong{display:block;margin-bottom:4px}.order-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.unlinked-banner{padding:11px;background:#f3e8fd;color:#5b21b6;border:1px solid #d8b4fe;border-radius:8px;margin-bottom:12px;font-size:12px}
+.denied{max-width:560px;margin:80px auto;background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:30px;text-align:center}
+@media(max-width:1200px){.summary{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:720px){
+ .topbar{padding:0 12px}.subtitle,.tenant{display:none}.shell{padding:10px}.summary{grid-template-columns:repeat(2,1fr)}.metric{padding:11px}
+ .toolbar{padding:10px}.search{min-width:100%;max-width:none}.tabs{padding:8px 10px}.table-meta{padding:9px 10px}
+ .drawer-body{padding:10px}.outcomes{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+ .top-actions .btn span{display:none}
+}
+</style>
+<style id="retarget-redesign">
+:root{--rt-ink:#172033;--rt-sub:#667085;--rt-line:#e6eaf0;--rt-soft:#f7f9fc;--rt-brand:#2563eb;--rt-brand-dark:#1748b5;--rt-success:#16835a;--rt-warning:#b45f06;--rt-danger:#c4322b;--rt-radius:16px}
+body{background:#f4f7fb;color:var(--rt-ink)}
+.topbar{height:68px;padding:0 28px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-color:var(--rt-line);z-index:80}
+.topbar .brand img{width:32px;height:32px}.title{font-size:16px;font-weight:800;letter-spacing:-.01em}.subtitle{color:var(--rt-sub)}
+.top-actions{gap:10px}.tenant{background:#eef4ff;color:#244fa1;border:1px solid #dbe7ff}.btn{border-radius:10px;min-height:38px;padding:8px 14px;transition:transform .14s ease,box-shadow .14s ease,background .14s ease}.btn:hover{transform:translateY(-1px)}.btn-primary{background:var(--rt-brand);border-color:var(--rt-brand);box-shadow:0 5px 14px rgba(37,99,235,.18)}.btn-primary:hover{background:var(--rt-brand-dark)}
+.shell{max-width:1640px;padding:24px 28px 48px}
+.page-intro{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;align-items:center;margin-bottom:18px;padding:26px 28px;border:1px solid #dce6f5;border-radius:20px;background:linear-gradient(125deg,#fff 0%,#f5f9ff 60%,#eaf2ff 100%);box-shadow:0 10px 28px rgba(32,52,89,.07)}
+.page-intro::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-90px;top:-130px;background:rgba(37,99,235,.08)}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--rt-brand);margin-bottom:8px}.page-intro h1{font-size:28px;line-height:1.15;letter-spacing:-.035em;margin:0;color:#15213a}.page-intro p{max-width:720px;margin:10px 0 0;color:var(--rt-sub);font-size:14px;line-height:1.6}
+.intro-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.coverage-card{position:relative;z-index:1;background:rgba(255,255,255,.86);border:1px solid rgba(194,211,239,.85);border-radius:15px;padding:18px;box-shadow:0 8px 22px rgba(37,70,128,.08)}.coverage-top{display:flex;align-items:end;justify-content:space-between;gap:12px}.coverage-label{font-size:11px;font-weight:750;color:var(--rt-sub);text-transform:uppercase;letter-spacing:.06em}.coverage-value{font-size:26px;font-weight:850;color:var(--rt-brand)}.coverage-track{height:8px;background:#e7edf7;border-radius:99px;overflow:hidden;margin:12px 0 8px}.coverage-fill{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#18a173);border-radius:inherit;transition:width .35s ease}.coverage-copy{font-size:11px;color:var(--rt-sub)}
+.summary{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:18px}.metric{border-color:var(--rt-line);border-radius:14px;padding:15px 16px;box-shadow:0 5px 18px rgba(33,52,86,.045);min-height:92px}.metric::before{left:16px;right:16px;top:auto;bottom:0;width:auto;height:3px;border-radius:3px 3px 0 0}.metric-value{font-size:24px;letter-spacing:-.025em}.metric-label{font-size:10px;margin-top:6px}.metric-hint{font-size:10px}
+.panel{border-color:var(--rt-line);border-radius:18px;box-shadow:0 10px 30px rgba(33,52,86,.06)}.queue-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px 13px}.queue-title{font-size:17px;font-weight:820;letter-spacing:-.02em}.queue-subtitle{font-size:11px;color:var(--rt-sub);margin-top:4px}.queue-head-actions{display:flex;align-items:center;gap:8px}
+.toolbar{padding:10px 20px 14px;border-bottom:0}.search{max-width:600px}.search input{height:42px;border-color:#dfe4ec;background:#f9fbfd;border-radius:11px;padding-left:39px}.search input:focus{outline:0;border-color:#8fb2f5;box-shadow:0 0 0 3px rgba(37,99,235,.09);background:#fff}.search span{top:10px;font-size:17px}.check{height:42px;padding:0 12px;border:1px solid #dfe4ec;border-radius:10px;background:#fff}
+.tabs{gap:7px;padding:11px 20px;background:#fafbfd;border-top:1px solid #eef1f5;border-bottom-color:var(--rt-line)}.tab{padding:8px 12px;border-radius:9px;font-weight:700}.tab.active{background:#fff;color:var(--rt-brand);border-color:#cbdcfb;box-shadow:0 3px 10px rgba(37,99,235,.08)}
+.table-meta{padding:11px 20px;background:#fff;border-color:var(--rt-line)}.table-wrap{min-height:440px}table{min-width:1040px}th{padding:11px 16px;background:#f7f9fc;border-color:var(--rt-line);color:#7b8494}td{padding:15px 16px;border-color:#edf0f4;vertical-align:middle}tbody tr{transition:background .14s ease,box-shadow .14s ease}tbody tr:hover td{background:#f8fbff}.priority-old td:first-child{box-shadow:inset 3px 0 0 #1f9d6a}
+.customer{align-items:center}.avatar{width:40px;height:40px;background:linear-gradient(145deg,#eaf1ff,#dbe8ff);color:#2457b5}.customer-name{font-size:13px;max-width:230px}.old-tag{margin-top:5px}.contact-number{font-weight:760;color:#253047}.purchase-title{font-size:12px;font-weight:750;color:#273248}.purchase-products{font-size:11px;line-height:1.5;color:var(--rt-sub);margin-top:5px;max-width:310px}.value{font-size:14px}.status-stack{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.missing{max-width:240px}.phone-actions{margin-top:6px}.icon-btn{width:31px;height:30px;border-radius:8px}.row-action{white-space:nowrap}
+.pagination{padding:15px 18px;background:#fafbfd}
+.drawer{width:min(980px,calc(100vw - 80px));background:#f5f7fb;box-shadow:-24px 0 60px rgba(23,32,51,.2)}.drawer-head{height:72px;padding:0 22px;background:#fff;border-color:var(--rt-line)}.drawer-title-wrap{display:flex;flex-direction:column}.drawer-eyebrow{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--rt-brand)}.drawer-title{font-size:17px;margin-top:3px}.drawer-body{padding:18px 20px 36px}.overlay{background:rgba(20,29,48,.48);backdrop-filter:blur(2px)}
+.hero{background:linear-gradient(125deg,#172a50,#245bbd);border-radius:17px;padding:21px 22px;box-shadow:0 10px 26px rgba(22,50,104,.18)}.hero .avatar{width:56px;height:56px}.hero-name{font-size:22px}.workspace-actions .btn{background:rgba(255,255,255,.96);border-color:transparent;color:#243451}.workspace-actions .btn-primary{background:#fff;color:#1748b5}
+.workspace-grid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:15px;align-items:start}.workspace-main,.workspace-side{min-width:0}.workspace-side{position:sticky;top:90px}.section{border-color:var(--rt-line);border-radius:14px;box-shadow:0 5px 18px rgba(33,52,86,.035)}.section-head{padding:13px 15px}.section-body{padding:15px}.section-kicker{font-size:9px;color:var(--rt-sub);text-transform:uppercase;letter-spacing:.08em;font-weight:800}.call-card{border-color:#cfe0ff;box-shadow:0 12px 28px rgba(37,99,235,.09)}.call-card .section-head{background:#f5f9ff}.call-phone{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;background:#f7f9fc;border:1px solid var(--rt-line);border-radius:10px;margin-bottom:12px}.call-phone strong{font-size:14px}.outcomes{grid-template-columns:1fr 1fr;gap:8px}.outcome label{min-height:44px;border-radius:9px}.form-grid{grid-template-columns:1fr;gap:10px}.field.full{grid-column:auto}.form-actions .btn-primary{width:100%;min-height:44px}.address-card{border-color:#dfe5ed;background:#f8fafc}.address-lines{font-size:13px;color:#2d3748}.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profile-item{padding:10px 11px;background:#f8fafc;border:1px solid #edf0f4;border-radius:9px}.profile-item label{display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#7b8494;margin-bottom:4px}.profile-item div{font-size:12px;color:#273248;overflow-wrap:anywhere}
+.order-list{display:flex;flex-direction:column;gap:10px}.order-item{border:1px solid #e4e8ef;border-radius:12px;padding:13px 14px;background:#fff}.order-item:last-child{border-bottom:1px solid #e4e8ef}.order-title{font-size:13px}.order-amount{font-size:14px}.order-products{color:#4e5969;line-height:1.6}.order-actions{margin-top:10px}.history-item{background:#f8fafc;border-left-color:#8fb2f5;border-radius:0 10px 10px 0;padding:10px 12px}
+.empty-inline{padding:20px;text-align:center;background:#f8fafc;border:1px dashed #d8dee8;border-radius:10px;color:var(--rt-sub);font-size:12px}
+@media(max-width:1180px){.page-intro{grid-template-columns:1fr 260px}.summary{grid-template-columns:repeat(2,1fr)}.workspace-grid{grid-template-columns:1fr 320px}}
+@media(max-width:839px){.topbar{padding:0 16px}.shell{padding:18px 16px 90px}.page-intro{grid-template-columns:1fr}.coverage-card{max-width:420px}.drawer{width:calc(100vw - 72px)}.workspace-grid{grid-template-columns:1fr}.workspace-side{position:static}.summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:599px){.topbar{height:56px}.topbar .subtitle,.topbar .tenant,.topbar .secondary-action{display:none}.shell{padding:12px 10px 90px}.page-intro{padding:20px;border-radius:16px}.page-intro h1{font-size:23px}.coverage-card{display:none}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:12px;min-height:84px}.metric-value{font-size:20px}.queue-head{align-items:flex-start;padding:15px 14px 9px}.queue-head-actions{display:none}.toolbar{padding:8px 14px 12px}.search{min-width:100%}.check{width:100%;justify-content:center}.tabs{padding:9px 12px}.table-meta{padding:10px 14px}.drawer{width:100vw!important;height:94vh!important;max-height:94vh!important}.drawer-body{padding:12px}.hero{padding:16px}.hero-name{font-size:18px}.profile-grid{grid-template-columns:1fr}.outcomes{grid-template-columns:1fr 1fr}.top-actions .btn-primary{padding:8px 10px;font-size:11px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="/miguel_favicon.png" alt="Miguel">
+    <div><div class="title">Customer Retarget</div><div class="subtitle">Every ordered customer, one accountable follow-up queue</div></div>
+  </div>
+  <div class="top-actions"><span class="tenant" id="tenantBadge"></span><button class="btn btn-sm secondary-action" onclick="loadQueue()">↻ Refresh</button><button class="btn btn-sm btn-primary" onclick="startNextCustomer()">☎ Start next</button></div>
+</header>
+
+<main class="shell" id="app">
+  <section class="page-intro">
+    <div>
+      <div class="eyebrow">Repeat purchase workspace</div>
+      <h1>Turn past buyers into repeat buyers.</h1>
+      <p>Review what each customer bought, call with context, record the outcome, and move interested customers straight into the complete order workflow.</p>
+      <div class="intro-actions"><button class="btn btn-primary" onclick="startNextCustomer()">☎ Start next customer</button><button class="btn" onclick="setView('follow_up')">↻ View callbacks</button></div>
+    </div>
+    <div class="coverage-card">
+      <div class="coverage-top"><div><div class="coverage-label">Contact coverage</div><div class="coverage-copy" id="coverageCopy">Loading progress…</div></div><div class="coverage-value" id="coverageValue">0%</div></div>
+      <div class="coverage-track"><div class="coverage-fill" id="coverageFill"></div></div>
+      <div class="coverage-copy">Every completed call improves team coverage.</div>
+    </div>
+  </section>
+  <section class="summary" id="summary"></section>
+  <section class="panel">
+    <div class="queue-head">
+      <div><div class="queue-title" id="queueTitle">To Contact</div><div class="queue-subtitle">Old customers first, then oldest latest purchase date.</div></div>
+      <div class="queue-head-actions"><button class="btn btn-sm" onclick="loadQueue()">Refresh queue</button><button class="btn btn-sm btn-primary" onclick="startNextCustomer()">Work next customer</button></div>
+    </div>
+    <div class="toolbar">
+      <div class="search"><span>⌕</span><input id="searchInput" placeholder="Search customer, phone, order or code…" oninput="debouncedLoad()"></div>
+      <label class="check"><input type="checkbox" id="repeatOnly" onchange="resetAndLoad()"> Repeat buyers only</label>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="table-meta"><span id="tableMeta">Loading queue…</span><span>Oldest latest purchase first</span></div>
+    <div class="table-wrap" id="tableWrap"><div class="loading">Loading Customer Retarget…</div></div>
+    <div class="pagination" id="pagination"></div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" aria-label="Customer retarget workspace">
+  <div class="drawer-head"><div class="drawer-title-wrap"><span class="drawer-eyebrow">Retarget workspace</span><div class="drawer-title" id="drawerTitle">Customer workspace</div></div><button class="icon-btn" onclick="closeDrawer()" aria-label="Close">✕</button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+<div class="toast" id="toast"></div>
+
+<script src="/modules/auth.js"></script>
+<script>
+const TOKEN = localStorage.getItem('token');
+const TYPE = localStorage.getItem('type');
+const ROLE = localStorage.getItem('role') || '';
+const SLUG = localStorage.getItem('slug') || '';
+const ALLOWED = ['admin','sales','marketing'];
+const CAN_CREATE_ORDER = ['admin','sales'].includes(ROLE);
+if (!TOKEN || TYPE !== 'tenant') window.location.replace('/tenant-login.html');
+const H = {'Authorization':`Bearer ${TOKEN}`,'Content-Type':'application/json'};
+document.getElementById('tenantBadge').textContent = SLUG.toUpperCase();
+
+const VIEWS = [
+  ['to_contact','To Contact','☎'],['follow_up','Follow-up / Overdue','↻'],['interested','Interested','★'],
+  ['purchased_again','Purchased Again','✓'],['closed','Not Interested / Closed','—'],['risk','Risk Customers','!'],
+  ['missing_details','Missing Details','◇'],['unlinked','Unlinked Orders','↗'],['all','All Customers','☰']
+];
+const OUTCOMES = [
+  ['no_answer','No answer'],['callback','Callback requested'],['interested','Interested'],['purchased_again','Purchased again'],
+  ['not_interested','Not interested'],['purchased_elsewhere','Purchased elsewhere'],['invalid_number','Invalid number'],['risk','Bad experience / Risk']
+];
+const OUTCOME_LABELS = Object.fromEntries([['pending','Not called'],['unlinked','Unlinked'],...OUTCOMES]);
+let currentView='to_contact', currentPage=1, total=0, rows=[], searchTimer=null, currentCustomerId=null;
+let currentCustomerProfile=null, currentWorkspaceOrders=[];
+const PAGE_SIZE=50;
+
+function logout(){
+  ['token','type','role','slug','user_id','email','tenant_token'].forEach(k=>{localStorage.removeItem(k);sessionStorage.removeItem(k)});
+  window.location.replace('/tenant-login.html');
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function initials(name){return (name||'?').split(/\s+/).slice(0,2).map(v=>v[0]||'').join('').toUpperCase()||'?'}
+function money(v){return '₹'+(Number(v)||0).toLocaleString('en-IN',{maximumFractionDigits:0})}
+function dateOnly(v){if(!v)return '—';return new Date(v).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
+function dateTime(v){if(!v)return '—';return new Date(v).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}
+function outcomeLabel(v){return OUTCOME_LABELS[v]||String(v||'').replaceAll('_',' ')}
+function showToast(message,isError=false){const el=document.getElementById('toast');el.textContent=message;el.className='toast'+(isError?' error':'');el.style.display='block';setTimeout(()=>el.style.display='none',3200)}
+async function api(url,options={}){const r=await fetch(url,{...options,headers:{...H,...(options.headers||{})}});if(!r.ok){let msg='Request failed';try{const e=await r.json();msg=e.detail||JSON.stringify(e)}catch(_){msg=await r.text()}throw new Error(msg)}return r.status===204?null:r.json()}
+
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=VIEWS.map(([id,label,icon])=>`<button class="tab ${id===currentView?'active':''}" onclick="setView('${id}')"><span>${icon}</span> ${esc(label)}</button>`).join('');
+  const active=VIEWS.find(([id])=>id===currentView);
+  document.getElementById('queueTitle').textContent=active?active[1]:'Customer queue';
+}
+function setView(view){currentView=view;currentPage=1;renderTabs();loadQueue()}
+function resetAndLoad(){currentPage=1;loadQueue()}
+function debouncedLoad(){clearTimeout(searchTimer);searchTimer=setTimeout(resetAndLoad,350)}
+
+function renderSummary(s={}){
+  const metrics=[
+    ['Total eligible',s.total_eligible||0,'Linked + unlinked','#1a73e8'],
+    ['Never contacted',s.never_contacted||0,'Must remain visible','#b06000'],
+    ['Coverage',(s.coverage_percent||0)+'%',`${s.contacted||0} contacted`,'#188038'],
+    ['Callbacks due',s.callbacks_due||0,'Due or overdue','#d97706'],
+    ['Interested',s.interested||0,'Active opportunities','#188038'],
+    ['Purchased again',s.purchased_again||0,'Retarget conversions','#0d652d'],
+    ['Risk customers',s.risk||0,'Retarget-only risk','#c5221f'],
+    ['Repeat buyers',s.repeat_buyers||0,`${s.old_customers||0} old · ${s.unlinked_buyers||0} unlinked`,'#7627bb']
+  ];
+  document.getElementById('summary').innerHTML=metrics.map(([label,value,hint,color])=>`<div class="metric" style="--metric:${color}"><div class="metric-value">${esc(value)}</div><div class="metric-label">${esc(label)}</div><div class="metric-hint">${esc(hint)}</div></div>`).join('');
+  const coverage=Math.max(0,Math.min(100,Number(s.coverage_percent)||0));
+  document.getElementById('coverageValue').textContent=coverage+'%';
+  document.getElementById('coverageFill').style.width=coverage+'%';
+  document.getElementById('coverageCopy').textContent=`${Number(s.contacted)||0} of ${Number(s.total_eligible)||0} customers contacted`;
+}
+function startNextCustomer(){const next=rows.find(r=>r.kind==='customer');if(next){openRow(next);return}if(currentView!=='to_contact'){currentView='to_contact';currentPage=1;renderTabs();loadQueue({openNext:true});return}showToast('No callable customer on this page',true)}
+
+async function loadQueue(options={}){
+  if(!ALLOWED.includes(ROLE)){
+    document.getElementById('app').innerHTML=`<div class="denied"><h2>Access restricted</h2><p>Customer Retarget is available to admin, sales, and marketing roles.</p><a class="btn" href="/tenant-admin.html">Back to Dashboard</a></div>`;
+    return;
+  }
+  const search=document.getElementById('searchInput').value.trim();
+  const repeat=document.getElementById('repeatOnly').checked;
+  let url=`/api/customer-retarget/queue?view=${encodeURIComponent(currentView)}&page=${currentPage}&limit=${PAGE_SIZE}&repeat_only=${repeat}`;
+  if(search)url+=`&search=${encodeURIComponent(search)}`;
+  document.getElementById('tableWrap').innerHTML='<div class="loading">Loading queue…</div>';
+  try{
+    const d=await api(url);rows=d.data||[];total=d.total||0;renderSummary(d.summary);renderTable();renderPagination();
+    document.getElementById('tableMeta').textContent=`${total.toLocaleString('en-IN')} record${total===1?'':'s'} · Page ${d.page}`;
+    if(options.openNext){
+      const next=rows.find(r=>r.kind==='customer');
+      if(next)openRow(next);else closeDrawer();
+    }
+  }catch(e){document.getElementById('tableWrap').innerHTML=`<div class="error-state">Could not load queue.<br><small>${esc(e.message)}</small></div>`;showToast(e.message,true)}
+}
+
+function renderTable(){
+  if(!rows.length){document.getElementById('tableWrap').innerHTML='<div class="empty">No customers in this view.</div>';return}
+  document.getElementById('tableWrap').innerHTML=`<table><thead><tr>
+    <th>#</th><th>Customer & contact</th><th>Purchase context</th><th>Customer value</th><th>Follow-up status</th><th></th>
+  </tr></thead><tbody>${rows.map(rowHtml).join('')}</tbody></table>`;
+}
+function rowHtml(r){
+  const missing=(r.missing_fields||[]);
+  const repeat=Number(r.order_count)>1;
+  const products=(r.latest_products||[]).map(esc).join(' · ');
+  return `<tr class="${r.is_old_customer?'priority-old':''}" onclick="openRowById('${esc(r.id)}')">
+    <td class="position">${r.queue_position||''}</td>
+    <td><div class="customer"><div class="avatar">${esc(initials(r.name))}</div><div><div class="customer-name">${esc(r.name||'Unknown customer')}</div><div class="muted mono">${esc(r.customer_code||r.latest_order_number||'')}</div><div class="contact-number">${esc(r.phone||'No phone')}</div>${r.alternate_phone?`<div class="muted">${esc(r.alternate_phone)}</div>`:''}${r.is_old_customer?'<div class="old-tag">OLD CUSTOMERS</div>':''}${r.kind==='unlinked'?'<div class="muted" style="color:#7627bb">Shopify buyer not linked</div>':''}<div class="phone-actions" onclick="event.stopPropagation()">${r.phone?`<a class="icon-btn" href="tel:${esc(r.phone)}" title="Call">☎</a><button class="icon-btn" onclick="copyPhone('${esc(r.phone)}')" title="Copy phone">⧉</button>`:''}</div></div></div></td>
+    <td><div class="purchase-title">${r.latest_order_date?dateOnly(r.latest_order_date):'Purchase history unavailable'}</div><div class="muted mono">${esc(r.latest_order_number||'')}</div><div class="purchase-products">${products||'No product history available'}</div></td>
+    <td><div class="value">${money(r.lifetime_value)}</div><div class="muted">${Number(r.successful_order_count)||0} successful · ${Number(r.order_count)||0} total</div>${repeat?'<div class="repeat">★ Repeat buyer</div>':''}</td>
+    <td><div class="status-stack"><span class="chip ${esc(r.outcome)}">${esc(outcomeLabel(r.outcome))}</span>${r.next_callback_at?`<div class="muted">↻ ${dateTime(r.next_callback_at)}</div>`:''}${r.last_employee_name?`<div class="muted">Owner: ${esc(r.last_employee_name)}</div>`:''}<div class="missing">${missing.length?missing.slice(0,4).map(v=>`<span>${esc(v)}</span>`).join(''):'<span style="background:#e6f4ea;color:#137333;border-color:#b7dfbe">Details complete</span>'}</div></div></td>
+    <td><button class="btn btn-sm btn-primary row-action" onclick="event.stopPropagation();openRowById('${esc(r.id)}')">${r.kind==='unlinked'?'Resolve buyer':'Open workspace'} →</button></td>
+  </tr>`;
+}
+function renderPagination(){
+  const pages=Math.ceil(total/PAGE_SIZE);const el=document.getElementById('pagination');
+  if(pages<=1){el.innerHTML='';return}
+  el.innerHTML=`<button class="btn btn-sm" ${currentPage<=1?'disabled':''} onclick="goPage(${currentPage-1})">← Previous</button><span class="muted">Page ${currentPage} of ${pages}</span><button class="btn btn-sm" ${currentPage>=pages?'disabled':''} onclick="goPage(${currentPage+1})">Next →</button>`;
+}
+function goPage(p){const pages=Math.ceil(total/PAGE_SIZE);if(p<1||p>pages)return;currentPage=p;loadQueue();window.scrollTo({top:0,behavior:'smooth'})}
+function copyPhone(phone){navigator.clipboard.writeText(phone).then(()=>showToast('Phone number copied')).catch(()=>showToast('Could not copy phone',true))}
+function openRowById(id){const row=rows.find(item=>String(item.id)===String(id));if(row)openRow(row)}
+function openDrawer(){document.getElementById('overlay').classList.add('open');document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden'}
+function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';currentCustomerId=null}
+
+async function openRow(row){
+  openDrawer();document.getElementById('drawerTitle').textContent=row.kind==='unlinked'?'Resolve unlinked buyer':'Customer workspace';
+  document.getElementById('drawerBody').innerHTML='<div class="loading">Loading workspace…</div>';
+  if(row.kind==='unlinked'){renderUnlinked(row);return}
+  currentCustomerId=row.customer_id;
+  try{const d=await api(`/api/customer-retarget/${row.customer_id}`);renderWorkspace(d)}
+  catch(e){document.getElementById('drawerBody').innerHTML=`<div class="error-state">${esc(e.message)}</div>`}
+}
+
+function renderWorkspace(d){
+  const c=d.customer,s=d.state||{},orders=d.orders||[],calls=d.calls||[];
+  currentCustomerProfile=c;
+  currentWorkspaceOrders=orders;
+  const address=[c.address,c.city,c.state,c.pincode].filter(Boolean).join(', ');
+  const missing=c.missing_fields||[];
+  document.getElementById('drawerBody').innerHTML=`
+    <div class="hero"><div class="avatar">${esc(initials(c.name))}</div><div><div class="hero-name">${esc(c.name)} ${c.is_old_customer?'<span class="chip interested">Old Customers</span>':''}</div><div class="hero-meta">${esc(c.customer_code)} · ${esc(c.phone||'No phone')}</div><div class="hero-meta">${orders.length} previous order${orders.length===1?'':'s'} · Current outcome: ${esc(outcomeLabel(s.outcome))}${s.next_callback_at?' · Callback '+dateTime(s.next_callback_at):''}</div><div class="workspace-actions"><a class="btn btn-sm" href="tel:${esc(c.phone)}">☎ Call customer</a><button class="btn btn-sm" onclick="viewCustomer()">View full customer</button>${CAN_CREATE_ORDER?'<button class="btn btn-sm btn-primary" onclick="startOrder()">Open full order form →</button>':''}</div></div></div>
+    <div class="workspace-grid">
+      <div class="workspace-main">
+        <section class="section"><div class="section-head"><div><div class="section-kicker">Confirm before ordering</div>Saved delivery address</div>${missing.length?`<span class="chip no_answer">${missing.length} missing</span>`:'<span class="chip interested">Complete</span>'}</div><div class="section-body"><div class="address-card"><strong>${esc(c.name)}</strong><div class="address-lines">${address?esc(address):'No saved address. Edit the customer details before confirming an order.'}</div><div class="muted">${esc(c.phone||'No phone')}${c.alternate_phone?' · '+esc(c.alternate_phone):''}</div></div></div></section>
+        <section class="section"><div class="section-head"><div><div class="section-kicker">Purchased items by date</div>Previous orders</div><span class="chip pending">${orders.length}</span></div><div class="section-body"><div class="order-list">${orders.length?orders.map(orderHtml).join(''):'<div class="empty-inline">Purchase date and product history are unavailable for this customer. You can still create a fresh order using the saved profile.</div>'}</div></div></section>
+        <section class="section"><div class="section-head"><div><div class="section-kicker">Master customer record</div>Customer details</div><button class="btn btn-sm" onclick="toggleEdit()">Edit details</button></div><div class="section-body"><div class="profile-grid"><div class="profile-item"><label>Primary phone</label><div>${esc(c.phone||'Missing')}</div></div><div class="profile-item"><label>Alternate phone</label><div>${esc(c.alternate_phone||'Not provided')}</div></div><div class="profile-item"><label>Email</label><div>${esc(c.email||'Not provided')}</div></div><div class="profile-item"><label>Location</label><div>${esc([c.city,c.state,c.pincode].filter(Boolean).join(', ')||'Not provided')}</div></div></div><div id="editSection">${editForm(c)}</div></div></section>
+        <section class="section"><div class="section-head"><div><div class="section-kicker">Employee-attributed timeline</div>Call history</div><span class="chip pending">${calls.length}</span></div><div class="section-body"><div class="history">${calls.length?calls.map(callHtml).join(''):'<div class="empty-inline">No calls recorded yet.</div>'}</div></div></section>
+      </div>
+      <aside class="workspace-side">
+        <section class="section call-card"><div class="section-head"><div><div class="section-kicker">Current task</div>Record call outcome</div><span class="chip ${esc(s.outcome||'pending')}">${esc(outcomeLabel(s.outcome))}</span></div><div class="section-body">
+          <div class="call-phone"><div><div class="section-kicker">Calling number</div><strong>${esc(c.phone||'No phone saved')}</strong></div>${c.phone?`<a class="btn btn-sm btn-primary" href="tel:${esc(c.phone)}">Call now</a>`:''}</div>
+          <form id="callForm" onsubmit="saveCall(event)">
+            <div class="outcomes">${OUTCOMES.map(([id,label])=>`<div class="outcome"><input id="out_${id}" type="radio" name="outcome" value="${id}" onchange="toggleCallRequirements()" required><label for="out_${id}">${esc(label)}</label></div>`).join('')}</div>
+            <div class="form-grid"><div class="field"><label>Phone called</label><input id="calledPhone" value="${esc(c.phone||'')}" maxlength="20"></div><div class="field" id="callbackField" style="display:none"><label>Next callback *</label><input id="callbackAt" type="datetime-local"></div><div class="field full"><label>Call notes <span id="notesRequired"></span></label><textarea id="callNotes" placeholder="Products requested, feedback, concerns and next step…"></textarea></div></div>
+            <div class="form-actions"><button type="submit" class="btn btn-primary" id="saveCallBtn">Save &amp; next customer</button></div>
+          </form>
+        </div></section>
+      </aside>
+    </div>`;
+  document.getElementById('editForm').style.display='none';
+  setDefaultCallback();
+}
+function editForm(c){return `<form id="editForm" onsubmit="saveCustomer(event)"><div class="form-grid">
+  <div class="field"><label>Name</label><input id="editName" value="${esc(c.name)}" required></div><div class="field"><label>Primary phone</label><input id="editPhone" value="${esc(c.phone)}" required></div>
+  <div class="field"><label>Alternate phone</label><input id="editAltPhone" value="${esc(c.alternate_phone)}"></div><div class="field"><label>Email</label><input id="editEmail" type="email" value="${esc(c.email)}"></div>
+  <div class="field full"><label>Address</label><textarea id="editAddress">${esc(c.address)}</textarea></div><div class="field"><label>City</label><input id="editCity" value="${esc(c.city)}"></div>
+  <div class="field"><label>State</label><input id="editState" value="${esc(c.state)}"></div><div class="field"><label>Pincode</label><input id="editPincode" value="${esc(c.pincode)}"></div>
+  <div class="field full"><label>Customer notes</label><textarea id="editNotes">${esc(c.notes)}</textarea></div></div><div class="form-actions"><button type="button" class="btn" onclick="toggleEdit()">Cancel</button><button class="btn btn-primary">Save customer</button></div></form>`}
+function toggleEdit(){const f=document.getElementById('editForm');f.style.display=f.style.display==='none'?'block':'none'}
+function orderHtml(o,index){const orderAddress=[o.delivery_address,o.delivery_city,o.delivery_state,o.delivery_pincode].filter(Boolean).join(', ');return `<article class="order-item"><div><div class="order-title">${dateOnly(o.created_at)} · ${esc(o.order_number)}</div><div class="muted">${esc(o.order_type)} · ${esc(o.status)} · ${esc(o.payment_status)}</div><div class="order-products">${(o.items||[]).map(i=>`<strong>${esc(i.product_name)}</strong> ×${esc(i.quantity)} · ${money(i.unit_price)}`).join('<br>')||'No product details'}</div>${orderAddress?`<div class="muted" style="margin-top:7px">Delivered to ${esc(orderAddress)}</div>`:''}${CAN_CREATE_ORDER?`<div class="order-actions"><button class="btn btn-sm btn-primary" onclick="startOrder(${index})">Use items in new order →</button></div>`:''}</div><div class="order-amount">${money(o.total_amount)}</div></article>`}
+function callHtml(c){return `<div class="history-item"><div class="history-title"><span class="chip ${esc(c.outcome)}">${esc(outcomeLabel(c.outcome))}</span> · ${esc(c.employee_name)}</div><div class="history-meta">${dateTime(c.created_at)}${c.phone_called?' · '+esc(c.phone_called):''}${c.next_callback_at?' · callback '+dateTime(c.next_callback_at):''}</div>${c.notes?`<div class="history-notes">${esc(c.notes)}</div>`:''}</div>`}
+function viewCustomer(){if(currentCustomerId)window.location.href=`/customers.html?customer_id=${encodeURIComponent(currentCustomerId)}`}
+function startOrder(orderIndex=null){
+  if(!currentCustomerProfile||!currentCustomerId)return;
+  const previous=Number.isInteger(orderIndex)?currentWorkspaceOrders[orderIndex]:null;
+  const c=currentCustomerProfile;
+  const payload={
+    source:'customer-retarget',created_at:Date.now(),customer_id:currentCustomerId,customer_code:c.customer_code,
+    name:c.name,phone:c.phone,alternate_phone:c.alternate_phone,
+    address:previous?.delivery_address||c.address,city:previous?.delivery_city||c.city,
+    state:previous?.delivery_state||c.state,pincode:previous?.delivery_pincode||c.pincode,
+    items:(previous?.items||[]).map(i=>({product_name:i.product_name,quantity:i.quantity,unit:i.unit,unit_price:i.unit_price}))
+  };
+  localStorage.setItem('retarget_order_prefill',JSON.stringify(payload));
+  window.location.href=`/orders.html?customer_id=${encodeURIComponent(currentCustomerId)}&source=customer-retarget`;
+}
+function setDefaultCallback(){const dt=new Date(Date.now()+24*60*60*1000);dt.setMinutes(dt.getMinutes()-dt.getTimezoneOffset());const el=document.getElementById('callbackAt');if(el)el.value=dt.toISOString().slice(0,16)}
+function toggleCallRequirements(){const selected=document.querySelector('input[name="outcome"]:checked')?.value;const needs=['no_answer','callback','interested'].includes(selected);document.getElementById('callbackField').style.display=needs?'flex':'none';document.getElementById('callbackAt').required=needs;document.getElementById('notesRequired').textContent=selected==='risk'?'*':'';document.getElementById('callNotes').required=selected==='risk';document.getElementById('saveCallBtn').textContent=selected==='interested'&&CAN_CREATE_ORDER?'Save interested & create order':'Save & next customer'}
+
+async function saveCall(event){
+  event.preventDefault();const outcome=document.querySelector('input[name="outcome"]:checked')?.value;if(!outcome)return;
+  const btn=document.getElementById('saveCallBtn');btn.disabled=true;btn.textContent='Saving…';
+  const callback=document.getElementById('callbackAt').value;
+  const payload={outcome,phone_called:document.getElementById('calledPhone').value.trim()||null,notes:document.getElementById('callNotes').value.trim()||null,next_callback_at:callback?new Date(callback).toISOString():null};
+  try{await api(`/api/customer-retarget/${currentCustomerId}/calls`,{method:'POST',body:JSON.stringify(payload)});showToast('Call result saved');if(outcome==='interested'&&CAN_CREATE_ORDER){startOrder();return}await loadQueue({openNext:true})}
+  catch(e){showToast(e.message,true);btn.disabled=false;btn.textContent='Save & next customer'}
+}
+async function saveCustomer(event){
+  event.preventDefault();const payload={name:document.getElementById('editName').value.trim(),phone:document.getElementById('editPhone').value.trim(),alternate_phone:document.getElementById('editAltPhone').value.trim()||null,email:document.getElementById('editEmail').value.trim()||null,address:document.getElementById('editAddress').value.trim()||null,city:document.getElementById('editCity').value.trim()||null,state:document.getElementById('editState').value.trim()||null,pincode:document.getElementById('editPincode').value.trim()||null,notes:document.getElementById('editNotes').value.trim()||null};
+  try{await api(`/api/customers/${currentCustomerId}`,{method:'PATCH',body:JSON.stringify(payload)});showToast('Customer details updated');const d=await api(`/api/customer-retarget/${currentCustomerId}`);renderWorkspace(d);loadQueue()}
+  catch(e){showToast(e.message,true)}
+}
+
+function renderUnlinked(r){
+  const suggestion=r.suggested_customer;
+  document.getElementById('drawerBody').innerHTML=`
+    <div class="unlinked-banner">This Shopify buyer is not linked to a customer. Resolve it before logging retarget calls. ${r.order_count} order${r.order_count===1?'':'s'} will be linked together by normalized phone.</div>
+    <div class="hero"><div class="avatar">${esc(initials(r.name))}</div><div><div class="hero-name">${esc(r.name)}</div><div class="hero-meta">${esc(r.phone||'No phone')} · ${esc(r.latest_order_number)}</div></div></div>
+    ${suggestion?`<section class="section"><div class="section-head">Suggested existing customer</div><div class="section-body"><strong>${esc(suggestion.name)}</strong><div class="muted">${esc(suggestion.customer_code)} · ${esc(suggestion.phone)}</div><div class="form-actions"><button class="btn btn-primary" onclick="linkSuggested('${esc(r.representative_order_id)}','${esc(suggestion.id)}')">Link existing customer</button></div></div></section>`:''}
+    <section class="section"><div class="section-head">Create customer from order</div><div class="section-body"><form id="resolveForm" onsubmit="createFromUnlinked(event,'${esc(r.representative_order_id)}')"><div class="form-grid">
+      <div class="field"><label>Name *</label><input id="newName" value="${esc(r.name)}" required></div><div class="field"><label>Phone *</label><input id="newPhone" value="${esc(r.phone)}" required></div>
+      <div class="field"><label>Alternate phone</label><input id="newAltPhone" value="${esc(r.alternate_phone||'')}"></div><div class="field"><label>Email</label><input id="newEmail" type="email" value="${esc(r.email||'')}"></div>
+      <div class="field full"><label>Address</label><textarea id="newAddress">${esc(r.address||'')}</textarea></div><div class="field"><label>City</label><input id="newCity" value="${esc(r.city||'')}"></div>
+      <div class="field"><label>State</label><input id="newState" value="${esc(r.state||'')}"></div><div class="field"><label>Pincode</label><input id="newPincode" value="${esc(r.pincode||'')}"></div>
+      <div class="field full"><label>Notes</label><textarea id="newNotes">Created from Customer Retarget using Shopify order ${esc(r.latest_order_number)}</textarea></div>
+    </div><div class="form-actions"><button class="btn btn-primary">Create and link customer</button></div></form></div></section>`;
+}
+async function linkSuggested(orderId,customerId){try{const d=await api(`/api/customer-retarget/unlinked/${orderId}/resolve`,{method:'POST',body:JSON.stringify({customer_id:customerId})});showToast(`${d.linked_order_count} order(s) linked`);closeDrawer();loadQueue()}catch(e){showToast(e.message,true)}}
+async function createFromUnlinked(event,orderId){
+  event.preventDefault();const payload={customer:{name:document.getElementById('newName').value.trim(),phone:document.getElementById('newPhone').value.trim(),alternate_phone:document.getElementById('newAltPhone').value.trim()||null,email:document.getElementById('newEmail').value.trim()||null,address:document.getElementById('newAddress').value.trim()||null,city:document.getElementById('newCity').value.trim()||null,state:document.getElementById('newState').value.trim()||null,pincode:document.getElementById('newPincode').value.trim()||null,country:'India',notes:document.getElementById('newNotes').value.trim()||null}};
+  try{const d=await api(`/api/customer-retarget/unlinked/${orderId}/resolve`,{method:'POST',body:JSON.stringify(payload)});showToast(`Customer created; ${d.linked_order_count} order(s) linked`);closeDrawer();loadQueue()}catch(e){showToast(e.message,true)}
+}
+
+renderTabs();
+loadQueue();
+</script>
+<script src="/modules/mobile-nav.v4.js?v=20260728b"></script>
+</body>
+</html>

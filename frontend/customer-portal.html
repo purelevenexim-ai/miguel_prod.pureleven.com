@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Track Your Order — Miguel CRM</title>
+<style>
+/* ── Reset & tokens ──────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --blue: #1a73e8;
+  --blue-lt: #e8f0fe;
+  --green: #188038;
+  --green-lt: #e6f4ea;
+  --amber: #f29900;
+  --amber-lt: #fef7e0;
+  --red: #d93025;
+  --red-lt: #fce8e6;
+  --g-50: #f8f9fa;
+  --g-100: #f1f3f4;
+  --g-200: #e8eaed;
+  --g-500: #80868b;
+  --g-700: #5f6368;
+  --g-900: #202124;
+  --surf: #ffffff;
+  --bdr: #e0e0e0;
+  --t: .15s ease;
+  --r-xs: 4px; --r-sm: 8px; --r-md: 12px; --r-lg: 16px;
+  --shadow-2: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.08);
+  --shadow-4: 0 4px 16px rgba(0,0,0,.12);
+}
+body { background: linear-gradient(135deg,#667eea22 0%,#764ba222 100%); min-height:100vh; font-family:var(--font); color:var(--g-900); display:flex; flex-direction:column; }
+
+/* ── Header ─────────────────────────────────────────── */
+.header { background:var(--surf); border-bottom:1px solid var(--bdr); padding:0 24px; height:56px; display:flex; align-items:center; justify-content:space-between; position:sticky;top:0;z-index:10; box-shadow:var(--shadow-2); }
+.header-logo { font-size:16px; font-weight:700; color:var(--g-900); display:flex; align-items:center; gap:8px; }
+.header-logo span { font-size:13px; font-weight:400; color:var(--g-500); }
+
+/* ── Main ────────────────────────────────────────────── */
+.main { flex:1; padding:32px 16px; max-width:680px; width:100%; margin:0 auto; }
+
+/* ── Hero card ───────────────────────────────────────── */
+.hero-card {
+  background:var(--surf); border-radius:var(--r-lg); padding:28px 28px 32px;
+  box-shadow:var(--shadow-4); margin-bottom:20px;
+  text-align:center;
+}
+.hero-icon { font-size:36px; margin-bottom:12px; }
+.hero-title { font-size:22px; font-weight:700; color:var(--g-900); margin-bottom:6px; }
+.hero-sub { font-size:13px; color:var(--g-500); }
+
+/* ── Search form ─────────────────────────────────────── */
+.search-card { background:var(--surf); border-radius:var(--r-lg); padding:24px; box-shadow:var(--shadow-2); margin-bottom:20px; }
+.search-card h2 { font-size:14px; font-weight:600; color:var(--g-700); margin-bottom:14px; }
+.search-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+.fgroup { display:flex; flex-direction:column; gap:5px; }
+.fgroup label { font-size:11px; font-weight:600; color:var(--g-700); text-transform:uppercase; letter-spacing:.04em; }
+.fgroup input { padding:10px 12px; border:1.5px solid var(--bdr); border-radius:var(--r-sm); font-size:13px; font-family:var(--font); outline:none; transition:border-color var(--t); }
+.fgroup input:focus { border-color:var(--blue); }
+.btn-track { width:100%; padding:12px; background:var(--blue); color:#fff; border:none; border-radius:var(--r-sm); font-size:14px; font-weight:600; font-family:var(--font); cursor:pointer; transition:background var(--t); display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-track:hover { background:#1557b0; }
+.btn-track:disabled { opacity:.6; cursor:not-allowed; }
+
+/* ── Result card ─────────────────────────────────────── */
+.result-card { background:var(--surf); border-radius:var(--r-lg); box-shadow:var(--shadow-2); overflow:hidden; margin-bottom:20px; }
+.result-header { padding:18px 20px 14px; border-bottom:1px solid var(--bdr); }
+.result-order-num { font-size:18px; font-weight:700; color:var(--g-900); }
+.result-date { font-size:12px; color:var(--g-500); margin-top:3px; }
+
+/* ── Status badge ────────────────────────────────────── */
+.status-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:700; margin-top:8px; }
+.badge-pending   { background:var(--amber-lt); color:#7c4b00; }
+.badge-confirmed { background:var(--blue-lt);  color:#174ea6; }
+.badge-packed    { background:#e8f0fe;          color:#185abc; }
+.badge-shipped   { background:#e6f4ea;          color:#0d652d; }
+.badge-delivered { background:#e6f4ea;          color:#0d652d; }
+.badge-cancelled { background:var(--red-lt);    color:#c5221f; }
+.badge-default   { background:var(--g-100);     color:var(--g-700); }
+
+/* ── Order sections ──────────────────────────────────── */
+.result-section { padding:16px 20px; border-bottom:1px solid var(--bdr); }
+.result-section:last-child { border-bottom:none; }
+.section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--g-500); margin-bottom:10px; }
+
+/* ── Items list ──────────────────────────────────────── */
+.item-row { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--g-100); }
+.item-row:last-child { border-bottom:none; }
+.item-thumb { width:44px; height:44px; border-radius:var(--r-xs); background:var(--g-100); object-fit:cover; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.item-name { font-size:13px; font-weight:500; color:var(--g-900); }
+.item-meta { font-size:11px; color:var(--g-500); margin-top:2px; }
+.item-price { font-size:13px; font-weight:600; color:var(--g-900); margin-left:auto; }
+
+/* ── Tracking timeline ───────────────────────────────── */
+.tracking-timeline { position:relative; padding-left:24px; }
+.tracking-timeline::before { content:''; position:absolute; left:8px; top:8px; bottom:8px; width:2px; background:var(--g-200); }
+.track-event { position:relative; padding:0 0 16px 16px; }
+.track-event:last-child { padding-bottom:0; }
+.track-dot { position:absolute; left:-20px; top:3px; width:12px; height:12px; border-radius:50%; background:var(--g-200); border:2px solid var(--surf); }
+.track-dot.done  { background:var(--green); }
+.track-dot.active { background:var(--blue); box-shadow:0 0 0 3px var(--blue-lt); }
+.track-title { font-size:13px; font-weight:600; color:var(--g-900); }
+.track-time  { font-size:11px; color:var(--g-500); margin-top:1px; }
+.track-loc   { font-size:11px; color:var(--g-700); margin-top:2px; }
+
+/* ── Address / meta grid ─────────────────────────────── */
+.meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.meta-item label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--g-500); }
+.meta-item p { font-size:13px; color:var(--g-900); margin-top:3px; line-height:1.4; }
+
+/* ── Error / empty ───────────────────────────────────── */
+.error-card { background:#fce8e6; border:1px solid #f5c6c4; border-radius:var(--r-md); padding:16px 20px; display:flex; align-items:center; gap:12px; }
+.error-icon { font-size:20px; flex-shrink:0; }
+.error-text { font-size:13px; color:#c5221f; }
+
+/* ── Help section ────────────────────────────────────── */
+.help-section { text-align:center; padding:24px; color:var(--g-500); font-size:13px; }
+.help-section a { color:var(--blue); text-decoration:none; }
+
+/* ── Footer ──────────────────────────────────────────── */
+footer { background:var(--surf); border-top:1px solid var(--bdr); text-align:center; padding:16px; font-size:12px; color:var(--g-500); }
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width:480px) {
+  .search-grid { grid-template-columns:1fr; }
+  .meta-grid   { grid-template-columns:1fr; }
+  .main { padding:16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo">
+    <span>📦</span>
+    <span id="brandName">CRM Customer Portal</span>
+  </div>
+  <span id="poweredBy" style="font-size:11px;color:var(--g-500);">Powered by Miguel CRM</span>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Hero -->
+  <div class="hero-card">
+    <div class="hero-icon">🔍</div>
+    <div class="hero-title">Track Your Order</div>
+    <div class="hero-sub">Enter your order ID or phone number to track your delivery status</div>
+  </div>
+
+  <!-- Search form -->
+  <div class="search-card">
+    <h2>Order Lookup</h2>
+    <div class="search-grid">
+      <div class="fgroup">
+        <label>Order ID / Order Number</label>
+        <input type="text" id="inOrderId" placeholder="e.g. ORD-1001 or #1001" autocomplete="off">
+      </div>
+      <div class="fgroup">
+        <label>Phone Number</label>
+        <input type="tel" id="inPhone" placeholder="e.g. 9876543210" autocomplete="off">
+      </div>
+    </div>
+    <div class="fgroup" style="margin-bottom:14px;">
+      <label>Email (optional)</label>
+      <input type="email" id="inEmail" placeholder="yourname@email.com" autocomplete="off">
+    </div>
+    <button class="btn-track" id="trackBtn" onclick="trackOrder()">
+      🔍 Track Order
+    </button>
+    <div id="searchError" style="display:none;margin-top:12px;"></div>
+  </div>
+
+  <!-- Result area -->
+  <div id="resultArea"></div>
+
+  <!-- Help -->
+  <div class="help-section">
+    <p>Need help? Contact us via <a id="helpWaLink" href="#">WhatsApp</a> or call our support team.</p>
+  </div>
+
+</div>
+
+<footer>
+  <span id="footerBrand">Miguel CRM</span> — Secure Order Tracking Portal
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════ */
+const API = '';   // same origin
+// Tenant slug from URL param or subdomain
+const urlParams  = new URLSearchParams(window.location.search);
+const TENANT     = urlParams.get('t') || urlParams.get('tenant') || '';
+const SUPPORT_WA = urlParams.get('wa') || '';   // optional support WA number
+
+// Branding
+if (SUPPORT_WA) {
+  document.getElementById('helpWaLink').href = `https://wa.me/${SUPPORT_WA}`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STATUS MAP
+═══════════════════════════════════════════════════════════ */
+const STATUS_MAP = {
+  pending:   { label:'Pending',   cls:'badge-pending',   icon:'⏳' },
+  confirmed: { label:'Confirmed', cls:'badge-confirmed', icon:'✅' },
+  packed:    { label:'Packed',    cls:'badge-packed',    icon:'📦' },
+  shipped:   { label:'Shipped',   cls:'badge-shipped',   icon:'🚚' },
+  delivered: { label:'Delivered', cls:'badge-delivered', icon:'✅' },
+  cancelled: { label:'Cancelled', cls:'badge-cancelled', icon:'❌' },
+};
+
+function getStatusBadge(status) {
+  const s = STATUS_MAP[status?.toLowerCase()] || { label: status || 'Unknown', cls:'badge-default', icon:'📋' };
+  return `<span class="status-badge ${s.cls}">${s.icon} ${s.label}</span>`;
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+  catch { return d; }
+}
+function fmtMoney(n) {
+  if (n === undefined || n === null) return '—';
+  return '₹' + Number(n).toLocaleString('en-IN', { minimumFractionDigits:0 });
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRACK ORDER
+═══════════════════════════════════════════════════════════ */
+async function trackOrder() {
+  const orderId = document.getElementById('inOrderId').value.trim();
+  const phone   = document.getElementById('inPhone').value.replace(/\D/g,'');
+  const email   = document.getElementById('inEmail').value.trim();
+
+  if (!orderId && !phone) {
+    showSearchError('Please enter your Order ID or Phone Number');
+    return;
+  }
+
+  const btn = document.getElementById('trackBtn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Searching…';
+  document.getElementById('searchError').style.display = 'none';
+  document.getElementById('resultArea').innerHTML = '';
+
+  try {
+    const qs = new URLSearchParams();
+    if (orderId) qs.set('order_id', orderId);
+    if (phone)   qs.set('phone',    phone);
+    if (email)   qs.set('email',    email);
+    if (TENANT)  qs.set('tenant',   TENANT);
+
+    const resp = await fetch(`${API}/api/portal/order-status?${qs}`);
+
+    if (resp.status === 404) {
+      showSearchError('Order not found. Please check the order ID or phone number and try again.');
+    } else if (resp.status === 400) {
+      const d = await resp.json();
+      showSearchError(d.detail || 'Invalid request');
+    } else if (!resp.ok) {
+      showSearchError('An error occurred. Please try again later.');
+    } else {
+      const data = await resp.json();
+      renderResult(data);
+    }
+  } catch(e) {
+    showSearchError('Network error. Please check your connection and try again.');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔍 Track Order';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER RESULT
+═══════════════════════════════════════════════════════════ */
+function renderResult(data) {
+  const order    = data.order || data;
+  const tracking = data.tracking || {};
+  const events   = data.tracking_events || [];
+  const items    = data.items || order.items || [];
+  const shippingCharge = Number(tracking.shipping_charge ?? order.shipping_charge ?? 0);
+  const shippingService = (tracking.shipping_service || order.shipping_service || '').toString();
+
+  let html = `<div class="result-card">`;
+
+  // ── Header ──
+  html += `
+    <div class="result-header">
+      <div class="result-order-num">${esc(order.order_number || order.shopify_order_name || order.id || '—')}</div>
+      <div class="result-date">Placed on ${fmtDate(order.created_at || order.created_at_shopify)}</div>
+      ${getStatusBadge(order.status || order.shopify_status)}
+    </div>`;
+
+  // ── Items ──
+  if (items.length) {
+    html += `<div class="result-section">
+      <div class="section-title">Items Ordered</div>
+      ${items.map(it => `
+        <div class="item-row">
+          <div class="item-thumb">${it.image_url ? `<img src="${esc(it.image_url)}" alt="" style="width:44px;height:44px;border-radius:4px;object-fit:cover;">` : '📦'}</div>
+          <div>
+            <div class="item-name">${esc(it.title || it.name || 'Product')}</div>
+            <div class="item-meta">Qty: ${it.quantity || 1}${it.variant_title ? ' · ' + esc(it.variant_title) : ''}</div>
+          </div>
+          <div class="item-price">${fmtMoney(it.price)}</div>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  // ── Summary ──
+  html += `<div class="result-section">
+    <div class="section-title">Order Summary</div>
+    <div class="meta-grid">
+      <div class="meta-item"><label>Total Amount</label><p>${fmtMoney(order.total_price || order.total_amount)}</p></div>
+      <div class="meta-item"><label>Payment</label><p>${esc(order.payment_status || order.financial_status || '—')}</p></div>
+      <div class="meta-item"><label>Shipping Cost</label><p>${shippingCharge > 0 ? fmtMoney(shippingCharge) : '—'}${shippingService ? ` (${esc(shippingService.replace(/_/g,' '))})` : ''}</p></div>
+      ${shippingCharge > 0 ? `<div class="meta-item" style="grid-column:1/-1;"><label>Shipping Note</label><p>This was the shipping cost previously calculated from the uploaded tariff sheet.</p></div>` : ''}
+      ${order.shipping_address ? `<div class="meta-item" style="grid-column:1/-1;"><label>Delivery Address</label><p>${esc(formatAddress(order.shipping_address))}</p></div>` : ''}
+    </div>
+  </div>`;
+
+  // ── Tracking ──
+  const awb = tracking.awb_number || order.awb_number || order.tracking_number;
+  const partner = tracking.shipping_partner || order.shipping_partner;
+  if (awb || partner || events.length || shippingService || shippingCharge > 0) {
+    html += `<div class="result-section">
+      <div class="section-title">Shipping & Tracking</div>`;
+    if (awb) html += `<div style="margin-bottom:10px;font-size:12px;color:var(--g-700);">📬 AWB: <strong style="font-family:monospace;">${esc(awb)}</strong>${partner ? ` &nbsp;·&nbsp; Courier: ${esc(partner)}` : ''}</div>`;
+    if (shippingService || shippingCharge > 0) {
+      html += `<div style="margin-bottom:10px;font-size:12px;color:var(--g-700);">${shippingService ? `🚚 Service: <strong>${esc(shippingService.replace(/_/g,' '))}</strong>` : ''}${shippingCharge > 0 ? `${shippingService ? ' &nbsp;·&nbsp; ' : ''}<strong>Shipping Charge: ${fmtMoney(shippingCharge)}</strong>` : ''}</div>`;
+    }
+    if (events.length) {
+      html += `<div class="tracking-timeline">
+        ${events.map((ev, i) => `
+          <div class="track-event">
+            <div class="track-dot ${i===0?'active':i<events.length?'done':''}"></div>
+            <div class="track-title">${esc(ev.status_description || ev.activity || ev.status || 'Update')}</div>
+            <div class="track-time">${fmtDate(ev.timestamp || ev.created_at || ev.event_time)}</div>
+            ${ev.location ? `<div class="track-loc">📍 ${esc(ev.location)}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>`;
+    } else if (awb) {
+      html += `<div style="font-size:12px;color:var(--g-500);">Tracking details will appear here once the shipment is dispatched.</div>`;
+    }
+    html += `</div>`;
+  }
+
+  // ── Support ──
+  html += `<div class="result-section" style="background:var(--g-50);">
+    <div class="section-title">Need Help?</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      ${SUPPORT_WA ? `<a href="https://wa.me/${SUPPORT_WA}?text=Hi, I need help with my order ${esc(order.order_number||order.id||'')}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#25d366;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">💬 WhatsApp Support</a>` : ''}
+      <a href="tel:${urlParams.get('phone')||''}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--blue);color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">📞 Call Us</a>
+    </div>
+  </div>`;
+
+  html += `</div>`;
+  document.getElementById('resultArea').innerHTML = html;
+  document.getElementById('resultArea').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function formatAddress(addr) {
+  if (!addr) return '—';
+  if (typeof addr === 'string') return addr;
+  const parts = [addr.address1, addr.address2, addr.city, addr.province, addr.country, addr.zip].filter(Boolean);
+  return parts.join(', ');
+}
+
+function showSearchError(msg) {
+  const el = document.getElementById('searchError');
+  el.style.display = 'block';
+  el.innerHTML = `<div class="error-card"><div class="error-icon">❌</div><div class="error-text">${esc(msg)}</div></div>`;
+}
+
+// Handle Enter key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const tag = document.activeElement.tagName.toLowerCase();
+    if (tag === 'input') trackOrder();
+  }
+});
+
+// Pre-fill from URL params
+const preOrderId = urlParams.get('order') || urlParams.get('order_id') || urlParams.get('id');
+const prePhone   = urlParams.get('phone');
+if (preOrderId) { document.getElementById('inOrderId').value = preOrderId; }
+if (prePhone)   { document.getElementById('inPhone').value   = prePhone;   }
+if (preOrderId || prePhone) trackOrder();
+</script>
+
+</body>
+</html>

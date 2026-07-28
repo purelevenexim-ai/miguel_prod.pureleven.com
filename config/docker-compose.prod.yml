@@ -1,0 +1,80 @@
+# ── Production docker-compose ─────────────────────────────────────────────────
+# Used on the Production server at /opt/pureleven
+# Run: docker compose -p pureleven -f config/docker-compose.prod.yml up -d --build
+# Container names: pureleven_db, pureleven_backend, pureleven_frontend
+# Network: pureleven_pureleven_network  (set by -p pureleven flag)
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  db:
+    image: postgres:15
+    container_name: pureleven_db
+    restart: always
+    mem_limit: 4g
+    cpus: 2.0
+    environment:
+      POSTGRES_DB: pureleven_db
+      POSTGRES_USER: pureleven_user
+      POSTGRES_PASSWORD: pureleven_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pureleven_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pureleven_user -d pureleven_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build: ../backend
+    image: pureleven_backend
+    container_name: pureleven_backend
+    restart: always
+    mem_limit: 2g
+    cpus: 2.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pureleven_network
+    env_file:
+      - ../.env
+    # DATABASE_URL is already set correctly in ../.env — do NOT override it here
+    # with ${DB_PASSWORD} substitution as that causes empty password when
+    # DB_PASSWORD is not exported in the shell environment.
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/docs > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  frontend:
+    image: nginx:alpine
+    container_name: pureleven_frontend
+    restart: always
+    mem_limit: 512m
+    cpus: 1.0
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../frontend:/usr/share/nginx/html:ro
+      - ../infra/nginx-prod.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    networks:
+      - pureleven_network
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  pureleven_network:

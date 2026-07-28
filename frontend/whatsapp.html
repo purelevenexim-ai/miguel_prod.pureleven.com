@@ -1,0 +1,2480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>WhatsApp — Miguel CRM</title>
+<link rel="stylesheet" href="/ds.css?v=20260228">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<link rel="stylesheet" href="/styles/mobile.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<style>
+body { background:var(--bg-page); }
+
+/* ── Layout ─────────────────────────────────────────── */
+.wa-layout { display:flex; height:calc(100vh - 52px); overflow:hidden; }
+.wa-sidebar { width:220px; flex-shrink:0; border-right:1px solid var(--bdr); background:var(--surf); display:flex; flex-direction:column; overflow-y:auto; }
+.wa-main    { flex:1; overflow-y:auto; padding:20px 24px; }
+
+/* ── Sidebar nav ─────────────────────────────────────── */
+.wa-nav-section { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--g-500); padding:16px 16px 6px; }
+.wa-nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:0 14px; height:38px; font-size:13px; font-weight:500;
+  color:var(--g-700); cursor:pointer; border-radius:0;
+  border-left:3px solid transparent;
+  transition:all var(--t); font-family:var(--font);
+  user-select:none;
+}
+.wa-nav-item:hover { background:var(--g-50); color:var(--g-900); }
+.wa-nav-item.active { background:#e8f5e9; color:#1b5e20; border-left-color:#25d366; font-weight:600; }
+.wa-nav-item .nav-icon { font-size:16px; flex-shrink:0; }
+.wa-nav-badge { margin-left:auto; background:#25d366; color:#fff; font-size:10px; font-weight:700; padding:1px 7px; border-radius:10px; }
+
+/* ── Section panels ──────────────────────────────────── */
+.wa-section { display:none; }
+.wa-section.active { display:block; }
+
+/* ── Page header ─────────────────────────────────────── */
+.page-header { margin-bottom:20px; }
+.page-header h1 { font-size:20px; font-weight:700; color:var(--g-900); font-family:var(--font); }
+.page-header p  { font-size:13px; color:var(--g-600); margin-top:3px; }
+
+/* ── Cards ───────────────────────────────────────────── */
+.card { background:var(--surf); border:1px solid var(--bdr); border-radius:var(--r-sm); margin-bottom:16px; overflow:hidden; }
+.card-header { padding:12px 16px; border-bottom:1px solid var(--bdr); display:flex; align-items:center; justify-content:space-between; }
+.card-header h3 { font-size:14px; font-weight:600; color:var(--g-900); }
+.card-body { padding:16px; }
+
+/* ── Form ────────────────────────────────────────────── */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-grid.single { grid-template-columns:1fr; }
+.form-group { display:flex; flex-direction:column; gap:4px; }
+.form-group label { font-size:11px; font-weight:600; color:var(--g-600); text-transform:uppercase; letter-spacing:.04em; }
+.form-group input, .form-group select, .form-group textarea {
+  padding:8px 10px; border:1px solid var(--bdr); border-radius:var(--r-xs);
+  font-size:13px; font-family:var(--font); color:var(--g-900); background:var(--surf);
+  outline:none; transition:border-color var(--t);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--g-blue); }
+.form-group textarea { resize:vertical; min-height:72px; }
+.form-hint { font-size:11px; color:var(--g-500); margin-top:2px; }
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:var(--r-xs); font-size:13px; font-weight:500; font-family:var(--font); cursor:pointer; border:1px solid transparent; transition:all var(--t); }
+.btn-primary   { background:var(--g-blue); color:#fff; border-color:var(--g-blue); }
+.btn-primary:hover { background:#1557b0; }
+.btn-green     { background:#25d366; color:#fff; border-color:#25d366; }
+.btn-green:hover { background:#1daa4f; }
+.btn-outlined  { background:var(--surf); color:var(--g-700); border-color:var(--bdr); }
+.btn-outlined:hover { background:var(--g-50); }
+.btn-danger    { background:#fce8e6; color:var(--g-red); border-color:#f5c6c4; }
+.btn-danger:hover { background:#f5c6c4; }
+.btn-sm { padding:4px 10px; font-size:12px; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+
+/* ── Status badge ────────────────────────────────────── */
+.status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:5px; }
+.dot-green { background:#25d366; }
+.dot-red   { background:var(--g-red); }
+.dot-amber { background:var(--g-amber); }
+
+/* ── Template cards ──────────────────────────────────── */
+.tpl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
+.tpl-card {
+  background:var(--surf); border:1.5px solid var(--bdr); border-radius:var(--r-sm);
+  padding:14px; cursor:pointer; transition:all var(--t);
+  position:relative;
+}
+.tpl-card:hover { border-color:var(--g-blue); box-shadow:0 2px 8px rgba(26,115,232,.12); }
+.tpl-card.selected { border-color:#25d366; background:#f0fdf4; }
+.tpl-card-name { font-size:13px; font-weight:700; color:var(--g-900); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+.tpl-card-category { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:2px 8px; border-radius:10px; margin-left:auto; }
+.cat-marketing { background:#e3f2fd; color:#1565c0; }
+.cat-utility   { background:#e8f5e9; color:#2e7d32; }
+.cat-authentication { background:#fce4ec; color:#c62828; }
+.tpl-card-body { font-size:12px; color:var(--g-600); margin:6px 0; line-height:1.5; white-space:pre-wrap; }
+.tpl-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; font-size:11px; color:var(--g-500); }
+.tpl-status-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; }
+.tpl-status-APPROVED  { background:#e8f5e9; color:#2e7d32; }
+.tpl-status-PENDING   { background:#fff8e1; color:#f57f17; }
+.tpl-status-REJECTED  { background:#fce4ec; color:#c62828; }
+
+/* ── Variable input form ─────────────────────────────── */
+.var-form { background:#f8f9fa; border:1px solid var(--bdr); border-radius:var(--r-sm); padding:14px; margin-top:14px; }
+.var-form-title { font-size:12px; font-weight:700; color:var(--g-700); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.var-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.var-label { font-size:12px; font-weight:600; color:var(--g-600); width:90px; flex-shrink:0; font-family:var(--font-mono); }
+.var-input { flex:1; padding:6px 10px; border:1px solid var(--bdr); border-radius:var(--r-xs); font-size:12px; font-family:var(--font); outline:none; }
+.var-input:focus { border-color:var(--g-blue); }
+.tpl-preview { background:var(--g-50); border:1px solid var(--bdr); border-radius:var(--r-sm); padding:12px; margin-top:10px; font-size:12px; line-height:1.6; color:var(--g-800); white-space:pre-wrap; font-style:italic; }
+
+/* ── Settings form ───────────────────────────────────── */
+.settings-section { margin-bottom:24px; }
+.settings-section-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--g-600); border-bottom:1px solid var(--bdr); padding-bottom:8px; margin-bottom:14px; }
+.copy-row { display:flex; gap:8px; align-items:center; }
+.copy-row input { flex:1; background:var(--g-50); color:var(--g-700); font-family:var(--font-mono); font-size:12px; }
+.copy-btn { padding:6px 10px; border:1px solid var(--bdr); border-radius:var(--r-xs); background:var(--surf); cursor:pointer; font-size:12px; transition:background var(--t); }
+.copy-btn:hover { background:var(--g-100); }
+
+/* ── Send panel ──────────────────────────────────────── */
+.send-panel { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+.send-left { min-width:0; }
+.send-right { position:sticky; top:20px; }
+.phone-input-wrap { position:relative; }
+.phone-input-wrap input { width:100%; padding:8px 10px 8px 36px; }
+.phone-prefix { position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:13px; color:var(--g-500); pointer-events:none; }
+.preview-bubble {
+  background:#dcf8c6; border-radius:12px 12px 3px 12px;
+  padding:10px 14px; font-size:13px; line-height:1.5; color:#1a1a1a;
+  margin-bottom:8px; white-space:pre-wrap; max-width:360px;
+  word-break:break-word;
+}
+.preview-header-img { width:100%; max-height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px; background:var(--g-100); display:flex; align-items:center; justify-content:center; color:var(--g-500); font-size:12px; }
+.preview-footer-txt { font-size:11px; color:#888; margin-top:4px; }
+.preview-buttons { display:flex; flex-direction:column; gap:4px; margin-top:8px; }
+.preview-btn { padding:7px 10px; border:1px solid #b2dfdb; border-radius:8px; background:#fff; font-size:12px; font-weight:500; color:#1565c0; text-align:center; }
+
+/* ── Campaign types table ────────────────────────────── */
+.ct-table { width:100%; border-collapse:collapse; font-size:13px; }
+.ct-table th { padding:8px 12px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--g-600); border-bottom:2px solid var(--bdr); text-align:left; }
+.ct-table td { padding:9px 12px; border-bottom:1px solid var(--g-100); color:var(--g-800); }
+.ct-table tr:hover td { background:var(--g-50); }
+
+/* ── Subscribers table ───────────────────────────────── */
+.sub-table { width:100%; border-collapse:collapse; font-size:13px; }
+.sub-table th { padding:8px 10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--g-600); border-bottom:2px solid var(--bdr); text-align:left; }
+.sub-table td { padding:8px 10px; border-bottom:1px solid var(--g-100); }
+
+/* ── Toast ───────────────────────────────────────────── */
+#waToast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:#323232; color:#fff; padding:10px 20px; border-radius:24px; font-size:13px; font-weight:500; z-index:9999; transition:transform .25s; pointer-events:none; }
+#waToast.show { transform:translateX(-50%) translateY(0); }
+#waToast.success { background:#2e7d32; }
+#waToast.error   { background:#c62828; }
+
+/* ── Empty / loading ─────────────────────────────────── */
+.empty-state { text-align:center; padding:48px 20px; color:var(--g-500); }
+.empty-state .icon { font-size:32px; margin-bottom:10px; }
+.empty-state p { font-size:13px; }
+.loading-state { text-align:center; padding:40px; color:var(--g-500); font-size:13px; }
+
+/* ═══════════════════════════════════════════════════════
+   INBOX SECTION — LinkedIn-style WA Inbox
+   ═══════════════════════════════════════════════════════ */
+:root { --wa-green:#25d366; --wa-dark:#075e54; --wa-lite:#dcf8c6; --wa-bg:#e5ddd5; --lm-panel-w:320px; }
+#sec-inbox { padding:0 !important; height:calc(100vh - 56px); overflow:hidden; display:none; flex-direction:column; }
+#sec-inbox.active { display:flex; }
+.lm-inbox-body { display:flex; flex:1; min-height:0; }
+/* LEFT SIDEBAR */
+#lm-sidebar { width:var(--lm-panel-w); flex-shrink:0; border-right:1px solid #e0e0e0; display:flex; flex-direction:column; background:#fff; }
+#lm-sidebar-top { padding:10px 12px 8px; border-bottom:1px solid #eee; flex-shrink:0; }
+#lm-search { width:100%; border:1px solid #ddd; border-radius:20px; padding:7px 14px; font-size:13px; outline:none; background:#f5f5f5; box-sizing:border-box; }
+#lm-search:focus { border-color:var(--wa-green); background:#fff; }
+.lm-filter-row { display:flex; gap:5px; margin-top:7px; overflow-x:auto; scrollbar-width:none; }
+.lm-filter-row::-webkit-scrollbar { display:none; }
+.lm-filter-chip { flex-shrink:0; padding:4px 10px; border-radius:14px; font-size:11px; font-weight:600; background:#f0f0f0; color:#555; cursor:pointer; border:1.5px solid transparent; white-space:nowrap; }
+.lm-filter-chip.active { background:var(--wa-dark); color:#fff; border-color:var(--wa-dark); }
+.lm-sync-row { display:flex; align-items:center; justify-content:space-between; padding:5px 12px 6px; background:#fafafa; border-bottom:1px solid #eee; font-size:11px; color:#888; flex-shrink:0; }
+#lm-sync-status { font-size:11px; color:#888; }
+#lm-sync-btn { background:none; border:1px solid #ccc; border-radius:6px; padding:3px 8px; font-size:11px; cursor:pointer; color:#555; }
+#lm-sync-btn:hover { border-color:var(--wa-green); color:var(--wa-dark); }
+#lm-conv-list { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#ccc transparent; }
+#lm-conv-list::-webkit-scrollbar { width:4px; }
+#lm-conv-list::-webkit-scrollbar-thumb { background:#ccc; border-radius:3px; }
+.lm-conv-item { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border-bottom:1px solid #f0f0f0; cursor:pointer; transition:background .12s; position:relative; }
+.lm-conv-item:hover { background:#f8fffe; }
+.lm-conv-item.active { background:#e8f5e9; border-left:3px solid var(--wa-green); }
+.lm-conv-item.unread { background:#f0fff4; }
+.lm-conv-item.unread .lm-conv-name { font-weight:700; color:#111; }
+.lm-avatar { width:42px; height:42px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:700; color:#fff; position:relative; }
+.lm-avatar-badge { position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; border-radius:50%; border:2px solid #fff; background:#4caf50; display:none; }
+.lm-avatar-badge.show { display:block; }
+.lm-conv-body { flex:1; min-width:0; }
+.lm-conv-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
+.lm-conv-name { font-size:13px; font-weight:600; color:#222; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+.lm-conv-time { font-size:10px; color:#aaa; flex-shrink:0; margin-left:4px; }
+.lm-conv-preview { font-size:12px; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lm-conv-meta { display:flex; align-items:center; gap:4px; margin-top:3px; flex-wrap:wrap; }
+.lm-unread-dot { width:18px; height:18px; border-radius:50%; background:var(--wa-green); color:#fff; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.lm-win-dot { font-size:9px; font-weight:700; padding:1px 5px; border-radius:8px; background:#e8f5e9; color:#2e7d32; }
+.lm-win-dot.closed { background:#fff3e0; color:#bf360c; }
+.lm-label-tag { font-size:9px; padding:1px 5px; border-radius:8px; background:#e3f2fd; color:#1565c0; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px; }
+.lm-conv-empty { text-align:center; color:#aaa; font-size:13px; padding:40px 20px; }
+/* RIGHT CHAT AREA */
+#lm-chat { flex:1; min-width:0; display:flex; flex-direction:column; background:var(--wa-bg); }
+#lm-no-chat { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#aaa; gap:10px; }
+#lm-no-chat .lm-nc-icon { font-size:52px; }
+#lm-chat-hdr { background:var(--wa-dark); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+#lm-chat-hdr .lm-avatar { width:38px; height:38px; font-size:15px; }
+.lm-chat-hdr-info { flex:1; min-width:0; }
+.lm-chat-hdr-name { font-weight:700; font-size:15px; }
+.lm-chat-hdr-phone { font-size:11px; opacity:.75; }
+.lm-chat-win-badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:10px; background:#e8f5e9; color:#2e7d32; }
+.lm-chat-win-badge.closed { background:#fff3e0; color:#bf360c; }
+.lm-chat-win-badge.unknown { background:#e3f2fd; color:#1565c0; }
+#lm-chat-refresh { background:rgba(255,255,255,.15); border:none; color:#fff; border-radius:8px; padding:5px 10px; font-size:12px; cursor:pointer; }
+#lm-mode-bar { background:#f5f5f5; border-bottom:1px solid #e0e0e0; padding:5px 12px; display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.lm-mode-lbl { font-size:11px; color:#555; font-weight:600; }
+.lm-mode-btn { padding:4px 12px; border:1px solid #ddd; border-radius:20px; background:#fff; font-size:12px; cursor:pointer; font-weight:500; }
+.lm-mode-btn.active { background:var(--wa-green); color:#fff; border-color:var(--wa-green); }
+#lm-win-warn { background:#fff3e0; border-bottom:1px solid #ffe082; padding:7px 14px; font-size:12px; color:#bf360c; display:none; align-items:center; gap:8px; flex-shrink:0; }
+#lm-win-warn a { color:var(--wa-dark); font-weight:700; cursor:pointer; text-decoration:underline; }
+#lm-tabs { display:flex; background:#fafafa; border-bottom:1px solid #e0e0e0; flex-shrink:0; overflow-x:auto; scrollbar-width:none; }
+#lm-tabs::-webkit-scrollbar { display:none; }
+.lm-tab { flex:0; padding:8px 14px; font-size:11px; font-weight:600; cursor:pointer; color:#666; border-bottom:2px solid transparent; white-space:nowrap; }
+.lm-tab.active { color:var(--wa-dark); border-bottom-color:var(--wa-green); }
+#lm-msgs { flex:1; overflow-y:auto; padding:12px 16px; display:flex; flex-direction:column; gap:5px; min-height:0; scrollbar-width:thin; scrollbar-color:#ccc transparent; }
+#lm-msgs::-webkit-scrollbar { width:5px; }
+#lm-msgs::-webkit-scrollbar-thumb { background:#ccc; border-radius:3px; }
+.lm-msg { max-width:75%; padding:8px 12px; border-radius:12px; font-size:13px; line-height:1.45; word-break:break-word; position:relative; }
+.lm-msg-out { background:var(--wa-lite); margin-left:auto; border-bottom-right-radius:3px; }
+.lm-msg-in  { background:#fff; margin-right:auto; border-bottom-left-radius:3px; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+.lm-msg-time { font-size:10px; color:#888; margin-top:3px; text-align:right; }
+.lm-msg-status { font-size:9px; opacity:.6; margin-left:4px; }
+.lm-msg-sender { font-size:10px; color:#1565c0; margin-bottom:2px; font-weight:600; }
+.lm-date-sep { text-align:center; font-size:10px; color:#888; background:#d1d7db; border-radius:8px; padding:2px 12px; margin:6px auto; align-self:center; }
+.lm-msgs-empty { text-align:center; color:#aaa; font-size:12px; padding:30px; align-self:center; }
+.lm-cache-note { text-align:center; font-size:10px; color:#aaa; padding:4px 10px; background:#fffde7; border-radius:8px; align-self:center; margin-bottom:4px; }
+.lm-new-msg-bubble { position:absolute; bottom:80px; left:50%; transform:translateX(-50%); background:var(--wa-dark); color:#fff; border-radius:20px; padding:7px 16px; font-size:12px; font-weight:600; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.25); display:none; z-index:5; white-space:nowrap; }
+.lm-new-msg-bubble.show { display:block; }
+#lm-compose { border-top:1px solid #e0e0e0; padding:8px 12px; background:#f5f5f5; flex-shrink:0; }
+.lm-compose-row { display:flex; gap:8px; align-items:flex-end; }
+#lm-input { flex:1; border:1px solid #ddd; border-radius:20px; padding:8px 14px; font-size:13px; resize:none; max-height:100px; overflow-y:auto; outline:none; background:#fff; font-family:inherit; }
+#lm-input:focus { border-color:var(--wa-green); }
+#lm-input:disabled { background:#f0f0f0; color:#999; }
+.lm-send-btn { width:38px; height:38px; border-radius:50%; background:var(--wa-green); color:#fff; border:none; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.lm-send-btn:hover { transform:scale(1.1); }
+.lm-send-btn:disabled { background:#ccc; cursor:not-allowed; transform:none; }
+.lm-toolbar { display:flex; gap:3px; padding:4px 0 0; }
+.lm-tool-btn { background:none; border:none; cursor:pointer; font-size:15px; padding:4px 7px; border-radius:8px; color:#555; }
+.lm-tool-btn:hover { background:#e0e0e0; }
+#lm-tab-tpl { display:none; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
+.lm-tpl-hdr { padding:8px 12px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; background:#fafafa; flex-shrink:0; }
+#lm-tpl-list { overflow-y:auto; flex:1; padding:8px; }
+.lm-tpl-card { border:1px solid #e0e0e0; border-radius:10px; padding:10px 12px; margin-bottom:7px; cursor:pointer; background:#fff; }
+.lm-tpl-card:hover { border-color:var(--wa-green); background:#f1fff4; }
+.lm-tpl-name { font-weight:700; font-size:13px; color:#333; }
+.lm-tpl-cat { font-size:10px; font-weight:600; padding:2px 7px; border-radius:10px; display:inline-block; margin-bottom:4px; }
+.lm-tpl-cat.Marketing { background:#fce4ec; color:#c62828; }
+.lm-tpl-cat.Utility   { background:#e3f2fd; color:#1565c0; }
+.lm-tpl-body { font-size:12px; color:#555; line-height:1.45; white-space:pre-wrap; }
+#lm-tab-quick { display:none; flex:1; overflow-y:auto; padding:8px; }
+.lm-quick-item { border:1px solid #e0e0e0; border-radius:8px; padding:8px 12px; margin-bottom:6px; cursor:pointer; background:#fff; display:flex; align-items:center; gap:8px; }
+.lm-quick-item:hover { border-color:var(--wa-green); background:#f1fff4; }
+.lm-quick-title { font-weight:600; font-size:12px; color:#333; }
+.lm-quick-prev { font-size:11px; color:#888; margin-top:1px; }
+/* Bubbles */
+#lm-bubbles { position:fixed; bottom:0; right:0; display:flex; align-items:flex-end; gap:8px; padding:0 16px 0 0; z-index:8000; pointer-events:none; }
+.lm-bubble-window { width:300px; background:#fff; border-radius:12px 12px 0 0; box-shadow:0 -4px 20px rgba(0,0,0,.18); display:flex; flex-direction:column; pointer-events:all; max-height:72vh; overflow:hidden; }
+.lm-bubble-window.collapsed { max-height:44px; }
+.lm-bubble-hdr { background:var(--wa-dark); color:#fff; padding:8px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; border-radius:12px 12px 0 0; flex-shrink:0; }
+.lm-bubble-hdr-name { font-weight:700; font-size:13px; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lm-bubble-badge { background:var(--wa-green); color:#fff; font-size:9px; font-weight:700; padding:1px 6px; border-radius:10px; }
+.lm-bubble-close { background:none; border:none; color:rgba(255,255,255,.7); cursor:pointer; font-size:16px; padding:0 2px; }
+.lm-bubble-msgs { flex:1; overflow-y:auto; padding:8px 10px; background:var(--wa-bg); display:flex; flex-direction:column; gap:4px; min-height:120px; }
+.lm-bubble-compose { padding:6px 8px; background:#f5f5f5; border-top:1px solid #eee; display:flex; gap:6px; align-items:flex-end; }
+.lm-bubble-input { flex:1; border:1px solid #ddd; border-radius:16px; padding:6px 11px; font-size:12px; outline:none; resize:none; max-height:60px; background:#fff; font-family:inherit; }
+.lm-bubble-input:focus { border-color:var(--wa-green); }
+.lm-bubble-send { width:32px; height:32px; border-radius:50%; background:var(--wa-green); color:#fff; border:none; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+@keyframes lmSpin { to { transform:rotate(360deg); } }
+
+/* ── Mobile compact ≤599px ───────────────────────────────── */
+@media (max-width:599px) {
+  /* WA Layout: stack */
+  .wa-layout { flex-direction:column; height:auto; overflow:visible; }
+  .wa-sidebar {
+    width:100%; border-right:none; border-bottom:1px solid var(--bdr);
+    max-height:auto; overflow:visible;
+  }
+  .wa-nav-section { padding:10px 12px 4px; }
+  .wa-nav-item { height:36px; font-size:12px; padding:0 12px; }
+  .wa-main { padding:12px; overflow:visible; }
+
+  /* Page header */
+  .page-header h1 { font-size:16px; }
+  .page-header p { font-size:12px; }
+
+  /* Cards */
+  .card-header { padding:10px 12px; }
+  .card-header h3 { font-size:13px; }
+  .card-body { padding:12px; }
+
+  /* Forms */
+  .form-grid { grid-template-columns:1fr; gap:10px; }
+  .send-panel { grid-template-columns:1fr; gap:14px; }
+  .send-right { position:static; }
+
+  /* Template grid */
+  .tpl-grid { grid-template-columns:1fr; gap:10px; }
+  .tpl-card { padding:12px; }
+
+  /* Settings */
+  .settings-section-title { font-size:11px; }
+  .copy-row { flex-direction:column; gap:4px; }
+  .copy-row input { width:100%; }
+
+  /* Inbox section: mobile */
+  #sec-inbox { height:auto; min-height:calc(100vh - 100px); }
+  .lm-inbox-body { flex-direction:column; }
+  #lm-sidebar { width:100%; border-right:none; border-bottom:1px solid #e0e0e0; max-height:260px; }
+  #lm-chat { min-height:400px; }
+  #lm-chat-hdr { padding:8px 12px; gap:8px; }
+  .lm-chat-hdr-name { font-size:14px; }
+  #lm-msgs { padding:8px 10px; }
+  .lm-msg { max-width:88%; }
+
+  /* Bubbles: full width */
+  .lm-bubble-window { width:100vw; border-radius:12px 12px 0 0; }
+}
+
+/* ── Mobile medium 600-839px ─────────────────────────────── */
+@media (min-width:600px) and (max-width:839px) {
+  .wa-layout { flex-direction:column; height:auto; overflow:visible; }
+  .wa-sidebar { width:100%; border-right:none; border-bottom:1px solid var(--bdr); }
+  .wa-main { padding:16px; }
+  .send-panel { grid-template-columns:1fr; }
+  .tpl-grid { grid-template-columns:repeat(2,1fr); }
+  .lm-inbox-body { flex-direction:column; }
+  #lm-sidebar { width:100%; max-height:300px; }
+}
+</style>
+</head>
+<body>
+
+<div class="gs-topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/tenant-admin.html" class="gs-back-btn">← Dashboard</a>
+    <div>
+      <div style="font-size:15px;font-weight:600;color:var(--g-900);">WhatsApp</div>
+      <div style="font-size:11px;color:var(--g-600);" id="tenantName">Loading…</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span id="connStatusDot" class="status-dot dot-amber"></span>
+    <span id="connStatusText" style="font-size:12px;color:var(--g-600);">Checking…</span>
+  </div>
+</div>
+
+<div class="wa-layout">
+
+  <!-- ── Sidebar ─────────────────────────────────── -->
+  <aside class="wa-sidebar">
+    <div class="wa-nav-section">Overview</div>
+    <div class="wa-nav-item active" data-section="templates" onclick="nav(this)">
+      <span class="nav-icon">📋</span> Templates
+    </div>
+    <div class="wa-nav-item" data-section="send" onclick="nav(this)">
+      <span class="nav-icon">💬</span> Send Message
+    </div>
+    <div class="wa-nav-item" data-section="inbox" onclick="nav(this)" style="position:relative;">
+      <span class="nav-icon">📨</span> Inbox
+      <span id="inboxUnreadBadge" style="display:none;background:#25d366;color:#fff;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:auto;"></span>
+    </div>
+
+    <div class="wa-nav-section">Configuration</div>
+    <div class="wa-nav-item" data-section="settings" onclick="nav(this)">
+      <span class="nav-icon">⚙️</span> WABIS Settings
+    </div>
+    <div class="wa-nav-item" data-section="campaign-types" onclick="nav(this)">
+      <span class="nav-icon">🎯</span> Campaign Types
+    </div>
+    <div class="wa-nav-item" data-section="postback-rules" onclick="nav(this)">
+      <span class="nav-icon">🔗</span> Postback Rules
+    </div>
+    <div class="wa-nav-item" data-section="auto-reply" onclick="nav(this)">
+      <span class="nav-icon">🤖</span> Auto Reply
+    </div>
+
+    <div class="wa-nav-section">Data</div>
+    <div class="wa-nav-item" data-section="subscribers" onclick="nav(this)">
+      <span class="nav-icon">👥</span> Subscribers
+    </div>
+    <div class="wa-nav-item" data-section="webhook" onclick="nav(this)">
+      <span class="nav-icon">🔌</span> Webhook Setup
+    </div>
+  </aside>
+
+  <!-- ── Main ────────────────────────────────────── -->
+  <main class="wa-main">
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: Templates
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section active" id="sec-templates">
+      <div class="page-header">
+        <h1>📋 WhatsApp Templates</h1>
+        <p>Browse your approved WABIS templates. Select one to send with variables filled in.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Approved Templates</h3>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="tplSearch" placeholder="Search templates…" oninput="filterTemplates()" style="padding:5px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:12px;width:200px;outline:none;">
+            <button class="btn btn-outlined btn-sm" onclick="loadTemplates(true)">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="card-body" id="tplContainer">
+          <div class="loading-state">⏳ Loading templates…</div>
+        </div>
+      </div>
+
+      <!-- Send Form (shown when template selected) -->
+      <div class="card" id="tplSendCard" style="display:none;">
+        <div class="card-header">
+          <h3>Send Template: <span id="tplSendName" style="color:#25d366;"></span></h3>
+          <button class="btn btn-outlined btn-sm" onclick="clearSelectedTemplate()">✕ Deselect</button>
+        </div>
+        <div class="card-body">
+          <div class="send-panel">
+            <div class="send-left">
+              <div class="form-group" style="margin-bottom:12px;">
+                <label>Phone Number</label>
+                <div class="phone-input-wrap">
+                  <span class="phone-prefix">+</span>
+                  <input type="text" id="tplPhone" placeholder="91 9876543210" oninput="updatePreview()">
+                </div>
+                <span class="form-hint">Include country code (e.g. 919876543210)</span>
+              </div>
+
+              <div id="tplVarForm" style="display:none;">
+                <div class="var-form">
+                  <div class="var-form-title">📝 Fill Template Variables</div>
+                  <div id="tplVarFields"></div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:8px;margin-top:14px;">
+                <button class="btn btn-green" id="tplSendBtn" onclick="sendSelectedTemplate()">
+                  💬 Send via WhatsApp
+                </button>
+                <button class="btn btn-outlined" onclick="openChatboxForTemplate()">
+                  Open in Chatbox
+                </button>
+              </div>
+            </div>
+
+            <div class="send-right">
+              <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g-500);margin-bottom:8px;">Preview</div>
+              <div id="tplPreviewArea">
+                <div style="color:var(--g-500);font-size:12px;">Select a template to preview</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: Send Message (Quick direct send)
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section" id="sec-send">
+      <div class="page-header">
+        <h1>💬 Send Message</h1>
+        <p>Send a WhatsApp message or template to any number directly.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Quick Send</h3></div>
+        <div class="card-body">
+          <div class="form-grid single">
+            <div class="form-group">
+              <label>Phone Number (with country code)</label>
+              <input type="text" id="qsPhone" placeholder="919876543210">
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea id="qsMessage" rows="4" placeholder="Type your message here…"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button class="btn btn-green" onclick="quickSend()">💬 Send via WABIS API</button>
+            <button class="btn btn-outlined" onclick="quickSendWeb()">🌐 Open WhatsApp Web</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: WABIS Settings
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section" id="sec-settings">
+      <div class="page-header">
+        <h1>⚙️ WABIS Settings</h1>
+        <p>Configure your WABIS / BotSailor API credentials and WhatsApp connection.</p>
+      </div>
+
+      <div class="card" id="settingsCard">
+        <div class="card-header">
+          <h3>API Credentials</h3>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outlined btn-sm" onclick="runDiagnostic()" title="Check configuration & debug WABIS leads">🔍 Diagnostic</button>
+            <button class="btn btn-primary btn-sm" onclick="saveSettings()">💾 Save Settings</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="settings-section">
+            <div class="settings-section-title">Provider</div>
+            <div class="form-group" style="max-width:220px;">
+              <label>Provider</label>
+              <select id="sProvider">
+                <option value="wabis">WABIS / BotSailor</option>
+                <option value="meta">Meta Cloud API</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-title">WABIS / BotSailor</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>API Token</label>
+                <input type="password" id="sWabisApiToken" placeholder="18280|Ws5wnHg…">
+                <span class="form-hint">From WABIS → Account → API Token</span>
+              </div>
+              <div class="form-group">
+                <label>Phone Number ID</label>
+                <input type="text" id="sWabisPhoneId" placeholder="252036884661683">
+                <span class="form-hint">WhatsApp phone_number_id for direct send</span>
+              </div>
+              <div class="form-group" style="grid-column:1/-1;">
+                <label>Bot IDs (optional) — Add multiple for auto-sync</label>
+                <div style="display:flex;gap:8px;margin-bottom:8px;">
+                  <input type="text" id="sBotIdInput" placeholder="e.g. 389699" style="flex:1;padding:8px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px;outline:none;" onkeypress="if(event.key==='Enter'){addWaBotId();event.preventDefault();}">
+                  <button class="btn btn-outlined btn-sm" onclick="addWaBotId()" style="white-space:nowrap;">➕ Add</button>
+                </div>
+                <div id="waBotIdList" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+                <span class="form-hint">From WABIS → Bots → your bot IDs (each will auto-sync every 30s)</span>
+              </div>
+              <div class="form-group">
+                <label>Display Name</label>
+                <input type="text" id="sDisplayName" placeholder="Pureleven Exim WhatsApp">
+              </div>
+              <div class="form-group">
+                <label>Phone Number (display)</label>
+                <input type="text" id="sPhoneNumber" placeholder="+91 98765 43210">
+              </div>
+              <div class="form-group">
+                <label>API Base URL</label>
+                <input type="text" id="sApiBaseUrl" placeholder="https://admin.workpex.com">
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-title">Meta Cloud API (for direct template send)</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Meta Phone Number ID</label>
+                <input type="text" id="sMetaPhoneId" placeholder="252036884661683">
+              </div>
+              <div class="form-group">
+                <label>Meta Access Token</label>
+                <input type="password" id="sMetaToken" placeholder="EAARi25X…">
+                <span class="form-hint">From Meta Business → WhatsApp → API Setup</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn btn-outlined btn-sm" onclick="testConnection()">🔌 Test Connection</button>
+          </div>
+          <div id="testResult" style="margin-top:8px;font-size:12px;display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: Campaign Types
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section" id="sec-campaign-types">
+      <div class="page-header">
+        <h1>🎯 Campaign Types</h1>
+        <p>Define message templates for each business event (Order Confirmed, Shipped, etc.).</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Campaign Types</h3>
+          <button class="btn btn-primary btn-sm" onclick="openCTModal()">+ New Type</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div id="ctTableWrap"><div class="loading-state">⏳ Loading…</div></div>
+        </div>
+      </div>
+
+      <!-- CT Modal -->
+      <div id="ctModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:none;align-items:center;justify-content:center;">
+        <div style="background:var(--surf);border-radius:var(--r-sm);width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-4);">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;">
+            <h3 style="font-size:15px;font-weight:600;" id="ctModalTitle">New Campaign Type</h3>
+            <button onclick="closeCTModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--g-600);">✕</button>
+          </div>
+          <div style="padding:20px;">
+            <input type="hidden" id="ctId">
+            <div class="form-grid" style="margin-bottom:12px;">
+              <div class="form-group">
+                <label>Name *</label>
+                <input type="text" id="ctName" placeholder="Order Confirmed">
+              </div>
+              <div class="form-group">
+                <label>Icon (emoji)</label>
+                <input type="text" id="ctIcon" placeholder="📦" maxlength="4">
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <select id="ctCategory">
+                  <option value="transactional">Transactional</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="utility">Utility</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Trigger Event</label>
+                <select id="ctTrigger">
+                  <option value="manual">Manual</option>
+                  <option value="order_created">Order Created</option>
+                  <option value="order_confirmed">Order Confirmed</option>
+                  <option value="order_packed">Order Packed</option>
+                  <option value="order_shipped">Order Shipped</option>
+                  <option value="order_delivered">Order Delivered</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Description</label>
+              <input type="text" id="ctDesc" placeholder="Sent when order is confirmed">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>WABIS Workflow URL</label>
+              <input type="text" id="ctWorkflowUrl" placeholder="https://admin.workpex.com/wabis/abc123">
+              <span class="form-hint">From WABIS → Flows → Copy Webhook URL</span>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Utility Workflow URL (for 24h window fallback)</label>
+              <input type="text" id="ctUtilityUrl" placeholder="https://admin.workpex.com/wabis/utility123">
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Meta Template Name (optional)</label>
+              <input type="text" id="ctMetaTemplate" placeholder="order_confirmation">
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+              <button class="btn btn-outlined" onclick="closeCTModal()">Cancel</button>
+              <button class="btn btn-primary" onclick="saveCT()">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: Postback Rules
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section" id="sec-postback-rules">
+      <div class="page-header">
+        <h1>🔗 Postback Rules</h1>
+        <p>When a customer taps a WhatsApp button, automatically trigger an action in the CRM.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Postback Rules</h3>
+          <button class="btn btn-primary btn-sm" onclick="openPBModal()">+ New Rule</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div id="pbTableWrap"><div class="loading-state">⏳ Loading…</div></div>
+        </div>
+      </div>
+
+      <!-- PB Modal -->
+      <div id="pbModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;align-items:center;justify-content:center;">
+        <div style="background:var(--surf);border-radius:var(--r-sm);width:460px;box-shadow:var(--shadow-4);">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;">
+            <h3 style="font-size:15px;font-weight:600;" id="pbModalTitle">New Postback Rule</h3>
+            <button onclick="closePBModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--g-600);">✕</button>
+          </div>
+          <div style="padding:20px;">
+            <input type="hidden" id="pbId">
+            <div class="form-grid" style="margin-bottom:12px;">
+              <div class="form-group">
+                <label>Postback ID *</label>
+                <input type="text" id="pbPostbackId" placeholder="68ebb3af11e6c">
+                <span class="form-hint">Exact value from WABIS button config</span>
+              </div>
+              <div class="form-group">
+                <label>Display Name</label>
+                <input type="text" id="pbDisplayName" placeholder="Order Interested">
+              </div>
+              <div class="form-group">
+                <label>Action</label>
+                <select id="pbAction">
+                  <option value="create_lead">Create Lead</option>
+                  <option value="update_status">Update Lead Status</option>
+                  <option value="add_label">Add Label</option>
+                  <option value="ignore">Ignore</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Lead Status</label>
+                <select id="pbLeadStatus">
+                  <option value="new_lead">New Lead</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="remind_later">Remind Later</option>
+                  <option value="success_won">Won</option>
+                  <option value="lost_lead">Lost</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Lead Priority</label>
+                <select id="pbPriority">
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Lead Label</label>
+                <input type="text" id="pbLabel" placeholder="Hot Lead">
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+              <button class="btn btn-outlined" onclick="closePBModal()">Cancel</button>
+              <button class="btn btn-primary" onclick="savePB()">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: Auto Reply
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section" id="sec-auto-reply">
+      <div class="page-header">
+        <h1>🤖 Auto Reply</h1>
+        <p>Automatically reply when a customer sends a message outside business hours.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Auto Reply Settings</h3>
+          <button class="btn btn-primary btn-sm" onclick="saveAutoReply()">💾 Save</button>
+        </div>
+        <div class="card-body">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="arEnabled" style="width:16px;height:16px;accent-color:#25d366;">
+              <span style="font-size:13px;font-weight:500;color:var(--g-900);">Enable auto reply</span>
+            </label>
+          </div>
+          <div class="form-group">
+            <label>Auto Reply Message</label>
+            <textarea id="arMessage" rows="5" placeholder="Thanks for contacting us! We'll get back to you within 2 hours."></textarea>
+            <span class="form-hint">Sent automatically when a new inbound message is received</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: Subscribers
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section" id="sec-subscribers">
+      <div class="page-header">
+        <h1>👥 Subscribers</h1>
+        <p>All WhatsApp contacts who have interacted with your bot.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Subscribers</h3>
+          <input type="text" id="subSearch" placeholder="Search by name or phone…" oninput="filterSubs()" style="padding:5px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:12px;width:220px;outline:none;">
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div id="subTableWrap"><div class="loading-state">⏳ Loading subscribers…</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: Webhook Setup
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section" id="sec-webhook">
+      <div class="page-header">
+        <h1>🔌 Webhook Setup</h1>
+        <p>Configure WABIS to send events to your CRM webhook.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Your Inbound Webhook URL</h3></div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--g-700);margin-bottom:12px;">
+            Paste this URL in <strong>WABIS → Outbound Webhooks → URL</strong> to receive inbound messages and postbacks.
+          </p>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>Webhook URL</label>
+            <div class="copy-row">
+              <input type="text" id="webhookUrl" readonly>
+              <button class="copy-btn" onclick="copyWebhook()">📋 Copy</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Webhook Secret Header</label>
+            <div class="copy-row">
+              <input type="text" id="webhookSecret" readonly>
+              <button class="copy-btn" onclick="copySecret()">📋 Copy</button>
+            </div>
+          </div>
+          <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:var(--r-xs);padding:12px;margin-top:12px;font-size:12px;color:#5d4037;">
+            <strong>⚠️ In WABIS Outbound Webhook config:</strong><br>
+            • Set the header <code>X-Webhook-Secret</code> to the secret value above<br>
+            • Enable: <code>Message Received</code>, <code>Postback</code>, <code>Subscriber Created</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Setup Guide</h3></div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--g-700);margin-bottom:12px;">For step-by-step setup instructions:</p>
+          <a href="/wa-setup-guide.html" class="btn btn-outlined">📖 Open Full Setup Guide →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: Inbox (LinkedIn-style WA Inbox)
+    ═══════════════════════════════════════════════ -->
+    <section class="wa-section" id="sec-inbox">
+      <div class="lm-inbox-body">
+
+        <!-- LEFT: Conversation List -->
+        <div id="lm-sidebar">
+          <div id="lm-sidebar-top">
+            <input type="text" id="lm-search" placeholder="🔍 Search conversations…" oninput="LM.filterConvs(this.value)">
+            <div class="lm-filter-row">
+              <span class="lm-filter-chip active" data-filter="all"     onclick="LM.setFilter('all',this)">All</span>
+              <span class="lm-filter-chip"        data-filter="unread"  onclick="LM.setFilter('unread',this)">Unread</span>
+              <span class="lm-filter-chip"        data-filter="open"    onclick="LM.setFilter('open',this)">24h Open</span>
+              <span class="lm-filter-chip"        data-filter="pending" onclick="LM.setFilter('pending',this)">Pending</span>
+              <span class="lm-filter-chip"        data-filter="today"   onclick="LM.setFilter('today',this)">Today</span>
+            </div>
+          </div>
+          <div class="lm-sync-row">
+            <span id="lm-sync-status">—</span>
+            <button id="lm-sync-btn" onclick="LM.syncAll()">🔄 Refresh</button>
+          </div>
+          <div id="lm-conv-list">
+            <div class="lm-conv-empty">⏳ Loading conversations…</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Chat Area -->
+        <div id="lm-chat" style="display:flex;flex-direction:column;position:relative;">
+          <!-- No chat selected -->
+          <div id="lm-no-chat">
+            <div class="lm-nc-icon">💬</div>
+            <p style="font-size:14px;color:#aaa;">Select a conversation from the left</p>
+            <p style="font-size:12px;color:#bbb;">Conversations are cached locally for 5 days</p>
+          </div>
+
+          <!-- Chat header (hidden until conv selected) -->
+          <div id="lm-chat-hdr" style="display:none;flex-shrink:0;">
+            <button id="lm-mobile-back" class="mobile-only" onclick="LM.showMobileSidebar()" title="Back" style="background:rgba(255,255,255,.15);border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 10px;border-radius:8px;line-height:1;">‹</button>
+            <div class="lm-avatar" id="lm-ch-avatar" style="background:#075e54;">?</div>
+            <div class="lm-chat-hdr-info">
+              <div class="lm-chat-hdr-name" id="lm-ch-name">—</div>
+              <div class="lm-chat-hdr-phone" id="lm-ch-phone">—</div>
+            </div>
+            <span class="lm-chat-win-badge unknown" id="lm-win-badge">⏳ Checking…</span>
+            <button id="lm-chat-refresh" onclick="LM.refreshChat()" title="Refresh">🔄</button>
+            <button style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;margin-left:4px;" onclick="LM.openPopout()" title="Pop out to bubble">⊞</button>
+            <button style="background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;margin-left:4px;" onclick="LM.openInFullChatbox()" title="Open in chatbox">↗</button>
+          </div>
+
+          <!-- Mode bar -->
+          <div id="lm-mode-bar" style="display:none;">
+            <span class="lm-mode-lbl">Send via:</span>
+            <button class="lm-mode-btn active" id="lm-mode-wabis" onclick="LM.setMode('wabis')">🤖 WABIS API</button>
+            <button class="lm-mode-btn"        id="lm-mode-web"   onclick="LM.setMode('web')">🌐 WhatsApp Web</button>
+          </div>
+
+          <!-- 24h warning -->
+          <div id="lm-win-warn">
+            ⚠️ <strong>Outside 24h window</strong> — Free text unavailable.
+            <a onclick="LM.showTab('tpl')">Use a Template instead</a>.
+          </div>
+
+          <!-- Tabs -->
+          <div id="lm-tabs" style="display:none;">
+            <div class="lm-tab active" data-tab="chat"  onclick="LM.showTab('chat')">💬 Chat</div>
+            <div class="lm-tab"       data-tab="tpl"   onclick="LM.showTab('tpl')">📋 Templates</div>
+            <div class="lm-tab"       data-tab="quick" onclick="LM.showTab('quick')">⚡ Quick</div>
+          </div>
+
+          <!-- TAB: Chat messages -->
+          <div id="lm-tab-chat" style="display:flex;flex-direction:column;flex:1;min-height:0;position:relative;">
+            <div id="lm-msgs"><div class="lm-msgs-empty">Select a conversation</div></div>
+            <div class="lm-new-msg-bubble" id="lm-new-bubble" onclick="LM.scrollToBottom()">↓ New messages</div>
+          </div>
+
+          <!-- TAB: Templates -->
+          <div id="lm-tab-tpl">
+            <div class="lm-tpl-hdr">
+              <span style="font-size:13px;font-weight:700;">📋 Templates</span>
+              <button onclick="LM.loadTemplates(true)" style="background:none;border:1px solid #ccc;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">🔄 Refresh</button>
+            </div>
+            <div id="lm-tpl-list"><div style="text-align:center;color:#aaa;padding:20px;font-size:12px;">Loading…</div></div>
+          </div>
+
+          <!-- TAB: Quick replies -->
+          <div id="lm-tab-quick">
+            <div id="lm-quick-list"></div>
+          </div>
+
+          <!-- Compose bar (hidden until conv selected) -->
+          <div id="lm-compose" style="display:none;">
+            <div class="lm-compose-row">
+              <textarea id="lm-input" rows="1" placeholder="Type a message…"
+                oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();LM.send();}"></textarea>
+              <button class="lm-send-btn" id="lm-send-btn" onclick="LM.send()">➤</button>
+            </div>
+            <div class="lm-toolbar">
+              <button class="lm-tool-btn" title="Quick replies" onclick="LM.showTab('quick')">⚡</button>
+              <button class="lm-tool-btn" title="Templates"     onclick="LM.showTab('tpl')">📋</button>
+              <button class="lm-tool-btn" title="Refresh chat"  onclick="LM.refreshChat()">🔄</button>
+              <button class="lm-tool-btn" title="Open full chatbox" onclick="LM.openInFullChatbox()">↗</button>
+              <span style="font-size:10px;color:#aaa;margin-left:auto;align-self:center;" id="lm-cache-info"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Mini bubble popouts (LinkedIn style) -->
+<div id="lm-bubbles"></div>
+<div id="waToast"></div>
+
+<script src="/modules/auth.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════
+   GLOBALS
+══════════════════════════════════════════════════════════ */
+const HOST = '';
+let TOKEN = localStorage.getItem('token') || '';
+let SETTINGS = null;
+let ALL_TEMPLATES = [];
+let SELECTED_TPL  = null;
+window._waBotIds = [];
+
+function tok() { return TOKEN; }
+function getH(json=true) {
+  const h = { 'Authorization': 'Bearer ' + tok() };
+  if (json) h['Content-Type'] = 'application/json';
+  return h;
+}
+async function api(method, path, body) {
+  const opts = { method, headers: getH() };
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const r = await fetch(HOST + path, opts);
+  if (r.status === 401) { logout(); throw new Error('Session expired'); }
+  return r.json();
+}
+function toast(msg, type='info') {
+  const t = document.getElementById('waToast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.className='', 3200);
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function logout() {
+  ['token','type','role','slug','user_id','email','tenant_token'].forEach(k => {
+    localStorage.removeItem(k); sessionStorage.removeItem(k);
+  });
+  window.location.replace('/tenant-login.html');
+}
+
+/* ══════════════════════════════════════════════════════════
+   AUTH CHECK
+══════════════════════════════════════════════════════════ */
+(function() {
+  if (!TOKEN) { window.location.replace('/tenant-login.html'); return; }
+  try {
+    const p = JSON.parse(atob(TOKEN.split('.')[1]));
+    document.getElementById('tenantName').textContent = p.tenant_name || p.slug || 'Tenant';
+  } catch(e) {}
+})();
+
+/* ══════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════ */
+function nav(el) {
+  document.querySelectorAll('.wa-nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.wa-section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const sec = el.dataset.section;
+  document.getElementById('sec-' + sec).classList.add('active');
+
+  // Lazy load
+  if (sec === 'templates')      loadTemplates();
+  if (sec === 'settings')       loadSettings();
+  if (sec === 'campaign-types') loadCampaignTypes();
+  if (sec === 'postback-rules') loadPostbackRules();
+  if (sec === 'subscribers')    loadSubscribers();
+  if (sec === 'webhook')        loadWebhook();
+  if (sec === 'auto-reply')     loadAutoReply();
+  if (sec === 'inbox') {
+    LM.ensureInit();
+    // Mobile: show sidebar when switching to inbox
+    if (window.innerWidth <= 767) LM.showMobileSidebar();
+  }
+}
+
+// Handle URL hash navigation
+function navToHash() {
+  const hash = window.location.hash.replace('#','');
+  const map = { 'settings':'settings', 'templates':'templates', 'send':'send',
+    'campaign-types':'campaign-types', 'postback-rules':'postback-rules',
+    'subscribers':'subscribers', 'webhook':'webhook', 'auto-reply':'auto-reply',
+    'inbox':'inbox' };
+  if (map[hash]) {
+    const el = document.querySelector(`[data-section="${map[hash]}"]`);
+    if (el) nav(el);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', async () => {
+  navToHash();
+  await loadSettingsData();
+  loadTemplates();
+  checkConnection();
+});
+
+async function checkConnection() {
+  try {
+    const d = await api('GET', '/api/wa/settings');
+    const ok = d.wabis_token_set || d.meta_token_set;
+    document.getElementById('connStatusDot').className = 'status-dot ' + (ok ? 'dot-green' : 'dot-amber');
+    document.getElementById('connStatusText').textContent = ok ? 'Connected' : 'Not configured';
+  } catch { }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════════════════════════ */
+async function loadSettingsData() {
+  try {
+    SETTINGS = await api('GET', '/api/wa/settings');
+  } catch(e) {}
+}
+
+async function loadSettings() {
+  if (!SETTINGS) await loadSettingsData();
+  if (!SETTINGS) return;
+  const s = SETTINGS;
+  document.getElementById('sProvider').value    = s.provider || 'wabis';
+  document.getElementById('sDisplayName').value  = s.display_name || '';
+  document.getElementById('sPhoneNumber').value  = s.phone_number || '';
+  document.getElementById('sWabisPhoneId').value = s.wabis_phone_number_id || '';
+  document.getElementById('sApiBaseUrl').value   = s.wabis_api_base_url || 'https://admin.workpex.com';
+  document.getElementById('sMetaPhoneId').value  = s.meta_phone_number_id_masked || '';
+  // tokens are password fields — show placeholder if set
+  document.getElementById('sWabisApiToken').placeholder = s.wabis_api_token_set ? '••••••••••••• (set)' : 'Paste token here';
+  document.getElementById('sMetaToken').placeholder     = s.meta_token_set       ? '••••••••••••• (set)' : 'Paste token here';
+  // Load bot IDs (supports both comma-separated string and array)
+  if (s.wabis_bot_id) {
+    if (typeof s.wabis_bot_id === 'string') {
+      window._waBotIds = s.wabis_bot_id.split(',').map(x => x.trim()).filter(x => x);
+    } else if (Array.isArray(s.wabis_bot_id)) {
+      window._waBotIds = s.wabis_bot_id;
+    }
+  } else {
+    window._waBotIds = [];
+  }
+  renderWaBotIdList();
+}
+
+async function saveSettings() {
+  const body = {
+    provider:              document.getElementById('sProvider').value,
+    display_name:          document.getElementById('sDisplayName').value || null,
+    phone_number:          document.getElementById('sPhoneNumber').value || null,
+    wabis_phone_number_id: document.getElementById('sWabisPhoneId').value || null,
+    wabis_bot_id:          window._waBotIds && window._waBotIds.length > 0 ? window._waBotIds.join(',') : null,
+    wabis_api_base_url:    document.getElementById('sApiBaseUrl').value || null,
+    meta_phone_number_id:  document.getElementById('sMetaPhoneId').value || null,
+  };
+  const apiTokenVal  = document.getElementById('sWabisApiToken').value;
+  const metaTokenVal = document.getElementById('sMetaToken').value;
+  if (apiTokenVal)  body.wabis_api_token  = apiTokenVal;
+  if (metaTokenVal) body.meta_access_token = metaTokenVal;
+
+  try {
+    const d = await api('POST', '/api/wa/settings', body);
+    if (d.id) {
+      SETTINGS = d;
+      toast('Settings saved ✓', 'success');
+      checkConnection();
+    } else {
+      toast('Save failed: ' + (d.detail || JSON.stringify(d)), 'error');
+    }
+  } catch(e) { toast('Network error', 'error'); }
+}
+
+async function saveAutoReply() {
+  const body = {
+    auto_reply_enabled: document.getElementById('arEnabled').checked,
+    auto_reply_message: document.getElementById('arMessage').value || null,
+  };
+  try {
+    const d = await api('POST', '/api/wa/settings', body);
+    if (d.id) { SETTINGS = d; toast('Auto reply saved ✓', 'success'); }
+    else       toast('Save failed', 'error');
+  } catch { toast('Network error', 'error'); }
+}
+
+function loadAutoReply() {
+  if (!SETTINGS) { loadSettingsData().then(() => loadAutoReply()); return; }
+  document.getElementById('arEnabled').checked   = SETTINGS.auto_reply_enabled || false;
+  document.getElementById('arMessage').value      = SETTINGS.auto_reply_message || '';
+}
+
+/* ── BOT ID MANAGEMENT ─────────────────────────── */
+function addWaBotId() {
+  if (!window._waBotIds) window._waBotIds = [];
+  const input = document.getElementById('sBotIdInput');
+  if (!input) return;
+  const botId = input.value.trim();
+  if (!botId) { toast('Please enter a Bot ID', 'error'); return; }
+  if (window._waBotIds.includes(botId)) { 
+    toast('This Bot ID is already added', 'error'); 
+    input.value = '';
+    return; 
+  }
+  window._waBotIds.push(botId);
+  input.value = '';
+  renderWaBotIdList();
+}
+
+function removeWaBotId(botId) {
+  if (!window._waBotIds) return;
+  window._waBotIds = window._waBotIds.filter(id => id !== botId);
+  renderWaBotIdList();
+}
+
+function renderWaBotIdList() {
+  const listEl = document.getElementById('waBotIdList');
+  if (!listEl) return;
+  if (!window._waBotIds) window._waBotIds = [];
+  listEl.innerHTML = window._waBotIds.map(botId => `
+    <span style="background:#e8f5e9;border:1px solid #81c784;color:#2e7d32;padding:4px 10px;border-radius:16px;font-size:12px;display:inline-flex;align-items:center;gap:6px;font-weight:500;">
+      🤖 ${botId}
+      <button onclick="removeWaBotId('${botId}')" style="background:none;border:none;color:#2e7d32;cursor:pointer;padding:0;font-size:14px;line-height:1;">✕</button>
+    </span>
+  `).join('');
+}
+
+async function testConnection() {
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = '🔌 Testing…';
+  const el = document.getElementById('testResult');
+  el.style.display = 'block';
+  el.textContent = 'Testing connection…';
+  try {
+    const d = await api('POST', '/api/wa/settings/test-connection');
+    el.style.color   = d.success ? 'var(--g-green)' : 'var(--g-red)';
+    el.textContent   = (d.success ? '✓ ' : '✗ ') + (d.message || JSON.stringify(d));
+  } catch(e) { el.style.color='var(--g-red)'; el.textContent='Network error: '+e.message; }
+  btn.disabled = false; btn.textContent = '🔌 Test Connection';
+}
+
+async function runDiagnostic() {
+  try {
+    const d = await api('GET', '/api/wa/settings/diagnostic');
+    
+    // Build diagnostic report
+    let html = `
+      <div style="background:#f5f5f5;border-radius:8px;padding:16px;font-family:monospace;font-size:12px;line-height:1.6;max-height:400px;overflow-y:auto;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:10px;">WABIS Configuration Diagnostic</div>
+        <table style="width:100%;font-size:12px;">
+          <tr><td style="padding:4px;">Provider:</td><td style="padding:4px;"><strong>${d.provider}</strong></td></tr>
+          <tr><td style="padding:4px;">API Token:</td><td style="padding:4px;color:${d.has_api_token?'#27ae60':'#e74c3c'};"><strong>${d.has_api_token?'✓ SET':'✗ MISSING'}</strong></td></tr>
+          <tr><td style="padding:4px;">Phone ID:</td><td style="padding:4px;color:${d.has_phone_number_id?'#27ae60':'#e74c3c'};"><strong>${d.has_phone_number_id?'✓ SET':'✗ MISSING'}</strong></td></tr>
+          <tr><td style="padding:4px;">Bot IDs:</td><td style="padding:4px;"><strong>${d.bot_count > 0 ? d.bot_ids.join(', ') : '(none)'}</strong></td></tr>
+          <tr><td style="padding:4px;">Webhook Secret:</td><td style="padding:4px;color:${d.inbound_secret_set?'#27ae60':'#f39c12'};"><strong>${d.inbound_secret_set?'✓ SET':'⚠ MISSING'}</strong></td></tr>
+          <tr style="border-top:1px solid #ccc;"><td style="padding:4px;"><strong>Subscribers:</strong></td><td style="padding:4px;"><strong>${d.subscriber_count}</strong></td></tr>
+          <tr><td style="padding:4px;"><strong>WA Leads:</strong></td><td style="padding:4px;"><strong>${d.whatsapp_leads_count}</strong></td></tr>
+        </table>
+        <div style="margin-top:12px;border-top:1px solid #ccc;padding-top:10px;">
+          ${d.issues.map(issue => `<div style="margin:4px 0;color:#d32f2f;">${issue}</div>`).join('')}
+        </div>
+      </div>
+    `;
+    
+    // Show in a modal or alert
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;display:flex;align-items:center;justify-content:center;';
+    modal.innerHTML = `
+      <div style="background:white;border-radius:8px;width:90%;max-width:600px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,.15);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h3 style="margin:0;font-size:16px;">🔍 WABIS Configuration Diagnostic</h3>
+          <button onclick="this.closest('div').parentNode.remove()" style="background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
+        </div>
+        ${html}
+        <div style="margin-top:16px;text-align:right;">
+          <button class="btn btn-outlined btn-sm" onclick="this.closest('div').parentNode.remove()">Close</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  } catch(e) { toast('Diagnostic error: ' + e.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   WEBHOOK
+══════════════════════════════════════════════════════════ */
+async function loadWebhook() {
+  if (!SETTINGS) await loadSettingsData();
+  if (!SETTINGS) return;
+  document.getElementById('webhookSecret').value = SETTINGS.inbound_secret || '';
+  document.getElementById('webhookUrl').value    = SETTINGS.inbound_webhook_url
+    || (HOST + '/api/wa/inbound/' + (SETTINGS.tenant_id || ''));
+}
+function copyWebhook() { copyField('webhookUrl'); }
+function copySecret()  { copyField('webhookSecret'); }
+function copyField(id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.value).then(() => toast('Copied ✓')).catch(() => {
+    el.select(); document.execCommand('copy'); toast('Copied ✓');
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   TEMPLATES
+══════════════════════════════════════════════════════════ */
+async function loadTemplates(force=false) {
+  const box = document.getElementById('tplContainer');
+  if (!force && ALL_TEMPLATES.length > 0) { renderTemplates(ALL_TEMPLATES); return; }
+  box.innerHTML = '<div class="loading-state">⏳ Loading templates from WABIS…</div>';
+  try {
+    const d = await api('GET', '/api/wa/templates');
+    ALL_TEMPLATES = d.templates || [];
+    renderTemplates(ALL_TEMPLATES);
+  } catch(e) {
+    box.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>Failed to load templates: ${esc(e.message)}</p></div>`;
+  }
+}
+
+function renderTemplates(list) {
+  const box = document.getElementById('tplContainer');
+  const q   = (document.getElementById('tplSearch').value || '').toLowerCase();
+  const filtered = q ? list.filter(t =>
+    (t.template_name||'').toLowerCase().includes(q) ||
+    (t.body_content||'').toLowerCase().includes(q) ||
+    (t.category||'').toLowerCase().includes(q)
+  ) : list;
+
+  if (!filtered.length) {
+    box.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No templates found. <button class="btn btn-outlined btn-sm" onclick="loadTemplates(true)">Refresh</button></p></div>';
+    return;
+  }
+
+  box.innerHTML = `<div class="tpl-grid">${filtered.map((t,i) => {
+    let tj = {}; try { tj = JSON.parse(t.template_json||'{}'); } catch{}
+    const cat = (t.category||tj.category||'').toLowerCase();
+    const catCls = cat.includes('market') ? 'cat-marketing' : cat.includes('util') ? 'cat-utility' : cat.includes('auth') ? 'cat-authentication' : 'cat-utility';
+    const status = t.template_status || 'APPROVED';
+    const lang = tj.language || t.language || 'en';
+    // Extract body from template_json components if available
+    let bodyText = t.body_content || '';
+    try {
+      const comps = tj.components || [];
+      const bodyComp = comps.find(c => c.type === 'BODY');
+      if (bodyComp?.text) bodyText = bodyComp.text;
+    } catch {}
+    const hasVars = /\{\{[0-9]+\}\}/.test(bodyText);
+    return `<div class="tpl-card" onclick="selectTemplate(${i})" id="tpl-card-${i}">
+      <div class="tpl-card-name">
+        ${esc(t.template_name)}
+        <span class="tpl-card-category ${catCls}">${esc(cat||'utility')}</span>
+      </div>
+      <div class="tpl-card-body">${esc(bodyText.slice(0,200))}${bodyText.length>200?'…':''}</div>
+      <div class="tpl-card-footer">
+        <span class="tpl-status-badge tpl-status-${esc(status)}">${esc(status)}</span>
+        <span>🌐 ${esc(lang)}</span>
+        ${hasVars ? '<span style="color:#1565c0;font-weight:600;">Has variables</span>' : ''}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function filterTemplates() {
+  renderTemplates(ALL_TEMPLATES);
+}
+
+function selectTemplate(idx) {
+  SELECTED_TPL = ALL_TEMPLATES[idx];
+  // Highlight selected card
+  document.querySelectorAll('.tpl-card').forEach((c,i) => c.classList.toggle('selected', i===idx));
+
+  // Show send card
+  document.getElementById('tplSendCard').style.display = 'block';
+  document.getElementById('tplSendName').textContent = SELECTED_TPL.template_name;
+
+  // Detect variables
+  let bodyText = SELECTED_TPL.body_content || '';
+  try {
+    const tj = JSON.parse(SELECTED_TPL.template_json || '{}');
+    const comps = tj.components || [];
+    const bodyComp = comps.find(c => c.type === 'BODY');
+    if (bodyComp?.text) bodyText = bodyComp.text;
+    SELECTED_TPL._bodyText = bodyText;
+    SELECTED_TPL._tj = tj;
+  } catch { SELECTED_TPL._bodyText = bodyText; SELECTED_TPL._tj = {}; }
+
+  const varMatches = [...bodyText.matchAll(/\{\{([0-9]+)\}\}/g)];
+  const varNums    = [...new Set(varMatches.map(m => m[1]))].sort((a,b) => +a - +b);
+
+  if (varNums.length > 0) {
+    document.getElementById('tplVarForm').style.display = 'block';
+    document.getElementById('tplVarFields').innerHTML = varNums.map(n =>
+      `<div class="var-row">
+        <span class="var-label">{{${n}}}</span>
+        <input class="var-input" id="var_${n}" placeholder="Value for {{${n}}}" oninput="updatePreview()">
+      </div>`
+    ).join('');
+    SELECTED_TPL._varNums = varNums;
+  } else {
+    document.getElementById('tplVarForm').style.display = 'none';
+    SELECTED_TPL._varNums = [];
+  }
+
+  // Scroll to send card
+  document.getElementById('tplSendCard').scrollIntoView({ behavior:'smooth', block:'start' });
+  updatePreview();
+}
+
+function getFilledBody() {
+  if (!SELECTED_TPL) return '';
+  let body = SELECTED_TPL._bodyText || '';
+  (SELECTED_TPL._varNums || []).forEach(n => {
+    const val = (document.getElementById('var_'+n)?.value || `{{${n}}}`);
+    body = body.replaceAll(`{{${n}}}`, val);
+  });
+  return body;
+}
+
+function updatePreview() {
+  if (!SELECTED_TPL) return;
+  const tj     = SELECTED_TPL._tj || {};
+  const comps  = tj.components || [];
+  const header = comps.find(c => c.type === 'HEADER');
+  const footer = comps.find(c => c.type === 'FOOTER');
+  const buttons= comps.find(c => c.type === 'BUTTONS');
+  const body   = getFilledBody();
+
+  let html = '';
+  if (header) {
+    if (header.format === 'IMAGE') {
+      html += `<div class="preview-header-img">🖼 Image Header</div>`;
+    } else if (header.text) {
+      html += `<div style="font-weight:700;font-size:13px;margin-bottom:6px;">${esc(header.text)}</div>`;
+    }
+  }
+  html += `<div class="preview-bubble">${esc(body)}</div>`;
+  if (footer?.text) html += `<div class="preview-footer-txt">${esc(footer.text)}</div>`;
+  if (buttons?.buttons?.length) {
+    html += `<div class="preview-buttons">${buttons.buttons.map(b =>
+      `<div class="preview-btn">${esc(b.text||b.title||'Button')}</div>`
+    ).join('')}</div>`;
+  }
+  document.getElementById('tplPreviewArea').innerHTML = html;
+}
+
+function clearSelectedTemplate() {
+  SELECTED_TPL = null;
+  document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('tplSendCard').style.display = 'none';
+}
+
+async function sendSelectedTemplate() {
+  if (!SELECTED_TPL) return;
+  const phone = document.getElementById('tplPhone').value.replace(/\D/g,'');
+  if (!phone) { toast('Enter a phone number', 'error'); return; }
+
+  // Build components array for variables
+  const components = [];
+  if ((SELECTED_TPL._varNums || []).length > 0) {
+    const params = SELECTED_TPL._varNums.map(n => ({
+      type: 'text',
+      text: document.getElementById('var_'+n)?.value || ''
+    }));
+    components.push({ type: 'body', parameters: params });
+  }
+
+  // Get access token from template_json
+  let accessToken = '';
+  try { accessToken = SELECTED_TPL._tj.access_token || ''; } catch {}
+
+  const btn = document.getElementById('tplSendBtn');
+  btn.disabled = true; btn.textContent = '⏳ Sending…';
+  try {
+    const d = await api('POST', '/api/wa/send-template-direct', {
+      phone_number:  phone,
+      template_name: SELECTED_TPL.template_name,
+      template_id:   SELECTED_TPL.template_id || '',
+      locale:        SELECTED_TPL._tj?.language || 'en',
+      access_token:  accessToken,
+      body_text:     getFilledBody(),
+      components:    components,
+    });
+    if (d.success) {
+      toast('Template sent ✓', 'success');
+      document.getElementById('tplPhone').value = '';
+    } else {
+      toast('Send failed: ' + (d.message || d.detail || JSON.stringify(d)), 'error');
+    }
+  } catch(e) { toast('Network error: '+e.message, 'error'); }
+  btn.disabled = false; btn.textContent = '💬 Send via WhatsApp';
+}
+
+function openChatboxForTemplate() {
+  const phone = document.getElementById('tplPhone').value.replace(/\D/g,'');
+  if (!phone) { toast('Enter a phone number first', 'error'); return; }
+  // Open chatbox on the orders page — or just redirect with chatbox open
+  toast('Open the WA Chatbox on any page (Orders/Customers/Leads) and use the Templates tab there.', 'info');
+}
+
+/* ══════════════════════════════════════════════════════════
+   QUICK SEND
+══════════════════════════════════════════════════════════ */
+async function quickSend() {
+  const phone = document.getElementById('qsPhone').value.replace(/\D/g,'');
+  const msg   = document.getElementById('qsMessage').value.trim();
+  if (!phone) { toast('Enter a phone number', 'error'); return; }
+  if (!msg)   { toast('Enter a message', 'error'); return; }
+  try {
+    const d = await api('POST', '/api/wa/send-direct', { phone_number: phone, message_text: msg });
+    if (d.success) { toast('Sent ✓', 'success'); document.getElementById('qsMessage').value = ''; }
+    else           toast('Failed: ' + (d.message || d.detail || JSON.stringify(d)), 'error');
+  } catch(e) { toast('Network error: '+e.message, 'error'); }
+}
+function quickSendWeb() {
+  const phone = document.getElementById('qsPhone').value.replace(/\D/g,'');
+  const msg   = document.getElementById('qsMessage').value.trim();
+  if (!phone) { toast('Enter a phone number', 'error'); return; }
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+/* ══════════════════════════════════════════════════════════
+   CAMPAIGN TYPES
+══════════════════════════════════════════════════════════ */
+let CT_LIST = [];
+async function loadCampaignTypes() {
+  const w = document.getElementById('ctTableWrap');
+  w.innerHTML = '<div class="loading-state">⏳ Loading…</div>';
+  try {
+    CT_LIST = await api('GET', '/api/wa/campaign-types');
+    if (!Array.isArray(CT_LIST)) CT_LIST = [];
+    renderCTTable();
+  } catch(e) { w.innerHTML = `<div class="empty-state"><p>Error: ${esc(e.message)}</p></div>`; }
+}
+
+function renderCTTable() {
+  const w = document.getElementById('ctTableWrap');
+  if (!CT_LIST.length) {
+    w.innerHTML = '<div class="empty-state"><div class="icon">🎯</div><p>No campaign types yet. Create one to enable automated messages.</p></div>';
+    return;
+  }
+  w.innerHTML = `<div style="overflow-x:auto;"><table class="ct-table">
+    <thead><tr>
+      <th>Name</th><th>Trigger</th><th>Category</th><th>Workflow URL</th><th>Status</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${CT_LIST.map(ct => `<tr>
+      <td><strong>${esc(ct.icon||'')} ${esc(ct.name)}</strong><br><small style="color:var(--g-500);">${esc(ct.description||'')}</small></td>
+      <td><span style="font-size:11px;background:var(--g-100);padding:2px 8px;border-radius:10px;">${esc(ct.trigger_event)}</span></td>
+      <td>${esc(ct.category||'—')}</td>
+      <td style="font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(ct.wabis_workflow_url||'—')}</td>
+      <td><span style="font-size:11px;background:${ct.is_active?'var(--g-green-lt)':'var(--g-100)'};color:${ct.is_active?'var(--g-green)':'var(--g-500)'};padding:2px 8px;border-radius:10px;">${ct.is_active?'Active':'Inactive'}</span></td>
+      <td>
+        <button class="btn btn-outlined btn-sm" onclick="editCT('${ct.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" style="margin-top:2px;" onclick="deleteCT('${ct.id}')">Delete</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function openCTModal(ct=null) {
+  document.getElementById('ctModal').style.display = 'flex';
+  document.getElementById('ctModalTitle').textContent = ct ? 'Edit Campaign Type' : 'New Campaign Type';
+  document.getElementById('ctId').value           = ct?.id || '';
+  document.getElementById('ctName').value         = ct?.name || '';
+  document.getElementById('ctIcon').value         = ct?.icon || '';
+  document.getElementById('ctDesc').value         = ct?.description || '';
+  document.getElementById('ctCategory').value     = ct?.category || 'transactional';
+  document.getElementById('ctTrigger').value      = ct?.trigger_event || 'manual';
+  document.getElementById('ctWorkflowUrl').value  = ct?.wabis_workflow_url || '';
+  document.getElementById('ctUtilityUrl').value   = ct?.utility_workflow_url || '';
+  document.getElementById('ctMetaTemplate').value = ct?.meta_template_name || '';
+}
+function closeCTModal() { document.getElementById('ctModal').style.display = 'none'; }
+function editCT(id) { openCTModal(CT_LIST.find(c => c.id===id)); }
+
+async function saveCT() {
+  const id   = document.getElementById('ctId').value;
+  const body = {
+    name:               document.getElementById('ctName').value.trim(),
+    icon:               document.getElementById('ctIcon').value.trim() || null,
+    description:        document.getElementById('ctDesc').value.trim() || null,
+    category:           document.getElementById('ctCategory').value,
+    trigger_event:      document.getElementById('ctTrigger').value,
+    wabis_workflow_url: document.getElementById('ctWorkflowUrl').value.trim() || null,
+    utility_workflow_url: document.getElementById('ctUtilityUrl').value.trim() || null,
+    meta_template_name: document.getElementById('ctMetaTemplate').value.trim() || null,
+  };
+  if (!body.name) { toast('Name is required', 'error'); return; }
+  try {
+    const d = id
+      ? await api('PUT',  `/api/wa/campaign-types/${id}`, body)
+      : await api('POST', '/api/wa/campaign-types', body);
+    if (d.id) { toast('Saved ✓', 'success'); closeCTModal(); loadCampaignTypes(); }
+    else       toast('Save failed: '+(d.detail||JSON.stringify(d)), 'error');
+  } catch(e) { toast('Network error: '+e.message, 'error'); }
+}
+
+async function deleteCT(id) {
+  if (!confirm('Delete this campaign type?')) return;
+  try {
+    const r = await fetch(HOST+`/api/wa/campaign-types/${id}`, { method:'DELETE', headers:getH() });
+    if (r.status===204) { toast('Deleted', 'success'); loadCampaignTypes(); }
+    else                toast('Delete failed', 'error');
+  } catch(e) { toast('Network error', 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   POSTBACK RULES
+══════════════════════════════════════════════════════════ */
+let PB_LIST = [];
+async function loadPostbackRules() {
+  const w = document.getElementById('pbTableWrap');
+  w.innerHTML = '<div class="loading-state">⏳ Loading…</div>';
+  try {
+    PB_LIST = await api('GET', '/api/wa/postback-rules');
+    if (!Array.isArray(PB_LIST)) PB_LIST = [];
+    renderPBTable();
+  } catch(e) { w.innerHTML = `<div class="empty-state"><p>Error: ${esc(e.message)}</p></div>`; }
+}
+
+function renderPBTable() {
+  const w = document.getElementById('pbTableWrap');
+  if (!PB_LIST.length) {
+    w.innerHTML = '<div class="empty-state"><div class="icon">🔗</div><p>No postback rules yet. Add rules to auto-handle button taps in WhatsApp.</p></div>';
+    return;
+  }
+  w.innerHTML = `<div style="overflow-x:auto;"><table class="ct-table">
+    <thead><tr>
+      <th>Postback ID</th><th>Display Name</th><th>Action</th><th>Lead Status</th><th>Label</th><th>Active</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${PB_LIST.map(pb => `<tr>
+      <td style="font-family:var(--font-mono);font-size:11px;">${esc(pb.postback_id)}</td>
+      <td>${esc(pb.display_name||'—')}</td>
+      <td><span style="font-size:11px;background:var(--g-blue-lt);color:var(--g-blue-txt);padding:2px 8px;border-radius:10px;">${esc(pb.action)}</span></td>
+      <td>${esc(pb.lead_status||'—')}</td>
+      <td>${esc(pb.lead_label||'—')}</td>
+      <td>${pb.is_active?'✅':'❌'}</td>
+      <td>
+        <button class="btn btn-outlined btn-sm" onclick="editPB('${pb.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" style="margin-top:2px;" onclick="deletePB('${pb.id}')">Delete</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function openPBModal(pb=null) {
+  document.getElementById('pbModal').style.display = 'flex';
+  document.getElementById('pbModalTitle').textContent = pb ? 'Edit Rule' : 'New Postback Rule';
+  document.getElementById('pbId').value         = pb?.id || '';
+  document.getElementById('pbPostbackId').value = pb?.postback_id || '';
+  document.getElementById('pbDisplayName').value= pb?.display_name || '';
+  document.getElementById('pbAction').value     = pb?.action || 'create_lead';
+  document.getElementById('pbLeadStatus').value = pb?.lead_status || 'new_lead';
+  document.getElementById('pbPriority').value   = pb?.lead_priority || 'medium';
+  document.getElementById('pbLabel').value      = pb?.lead_label || '';
+}
+function closePBModal() { document.getElementById('pbModal').style.display = 'none'; }
+function editPB(id) { openPBModal(PB_LIST.find(p => p.id===id)); }
+
+async function savePB() {
+  const id   = document.getElementById('pbId').value;
+  const body = {
+    postback_id:   document.getElementById('pbPostbackId').value.trim(),
+    display_name:  document.getElementById('pbDisplayName').value.trim() || null,
+    action:        document.getElementById('pbAction').value,
+    lead_status:   document.getElementById('pbLeadStatus').value,
+    lead_priority: document.getElementById('pbPriority').value,
+    lead_label:    document.getElementById('pbLabel').value.trim() || null,
+  };
+  if (!body.postback_id) { toast('Postback ID is required', 'error'); return; }
+  try {
+    const d = id
+      ? await api('PUT',  `/api/wa/postback-rules/${id}`, body)
+      : await api('POST', '/api/wa/postback-rules', body);
+    if (d.id) { toast('Saved ✓', 'success'); closePBModal(); loadPostbackRules(); }
+    else       toast('Save failed: '+(d.detail||JSON.stringify(d)), 'error');
+  } catch(e) { toast('Network error: '+e.message, 'error'); }
+}
+
+async function deletePB(id) {
+  if (!confirm('Delete this postback rule?')) return;
+  try {
+    const r = await fetch(HOST+`/api/wa/postback-rules/${id}`, { method:'DELETE', headers:getH() });
+    if (r.status===204) { toast('Deleted', 'success'); loadPostbackRules(); }
+    else                toast('Delete failed', 'error');
+  } catch(e) { toast('Network error', 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SUBSCRIBERS
+══════════════════════════════════════════════════════════ */
+let SUB_LIST = [], SUB_CURSOR = 0, SUB_TOTAL = 0;
+async function loadSubscribers() {
+  const w = document.getElementById('subTableWrap');
+  w.innerHTML = '<div class="loading-state">⏳ Loading…</div>';
+  try {
+    const d = await api('GET', '/api/wa/subscribers?limit=50');
+    SUB_LIST  = Array.isArray(d) ? d : (d.results || []);
+    renderSubTable(SUB_LIST);
+  } catch(e) { w.innerHTML = `<div class="empty-state"><p>Error: ${esc(e.message)}</p></div>`; }
+}
+
+function renderSubTable(list) {
+  const w = document.getElementById('subTableWrap');
+  const q = (document.getElementById('subSearch').value||'').toLowerCase();
+  const filtered = q ? list.filter(s =>
+    (s.name||'').toLowerCase().includes(q) || (s.phone_number||'').includes(q)
+  ) : list;
+
+  if (!filtered.length) {
+    w.innerHTML = '<div class="empty-state"><div class="icon">👥</div><p>No subscribers yet.</p></div>';
+    return;
+  }
+  w.innerHTML = `<div style="overflow-x:auto;"><table class="sub-table">
+    <thead><tr>
+      <th>Name</th><th>Phone</th><th>Labels</th><th>Automation</th><th>Last Seen</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${filtered.map(s => `<tr>
+      <td style="font-weight:600;">${esc(s.name||'—')}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;">${esc(s.phone_number)}</td>
+      <td>${(s.wabis_labels||[]).map(l=>`<span style="background:var(--g-100);font-size:10px;padding:1px 6px;border-radius:8px;margin-right:4px;">${esc(l)}</span>`).join('')||'—'}</td>
+      <td>${s.is_opted_out ? '<span style="font-size:11px;color:#b91c1c;font-weight:700;">Paused</span>' : '<span style="font-size:11px;color:#15803d;font-weight:700;">Active</span>'}</td>
+      <td style="font-size:12px;color:var(--g-600);">${s.last_seen_at?new Date(s.last_seen_at).toLocaleDateString('en-IN'):'—'}</td>
+      <td>
+        <button class="btn btn-outlined btn-sm" onclick="openSubChat('${esc(s.phone_number)}','${esc(s.name||'')}')">💬 Chat</button>
+        ${s.is_opted_out
+          ? `<button class="btn btn-outlined btn-sm" onclick="resumeAutomation('${esc(s.phone_number)}')">Resume</button>`
+          : `<button class="btn btn-outlined btn-sm" onclick="pauseAutomation('${esc(s.phone_number)}')">Pause Auto</button>`}
+      </td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function filterSubs() { renderSubTable(SUB_LIST); }
+
+function openSubChat(phone, name) {
+  // Navigate to orders page and open chatbox for this subscriber
+  window.location.href = `/orders.html#wa:${encodeURIComponent(phone)}:${encodeURIComponent(name)}`;
+}
+
+async function pauseAutomation(phone) {
+  if (!confirm(`Pause automated WhatsApp/email sends for ${phone}?`)) return;
+  try {
+    await api('POST', '/api/message-automation/preferences/cancel', {
+      phone,
+      whatsapp: true,
+      email: true,
+      reason: 'Paused from WhatsApp subscribers screen'
+    });
+    await loadSubscribers();
+  } catch(e) { alert(e.message || 'Failed to pause automation'); }
+}
+
+async function resumeAutomation(phone) {
+  try {
+    await api('POST', '/api/message-automation/preferences/resume', { phone });
+    await loadSubscribers();
+  } catch(e) { alert(e.message || 'Failed to resume automation'); }
+}
+</script>
+
+<!-- WA Chatbox (used by Inbox popout) -->
+<script src="/modules/wa-chatbox.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   INBOX MODULE — LinkedIn-style WhatsApp Inbox
+   Embedded in whatsapp.html as the "Inbox" nav section
+══════════════════════════════════════════════════════════ */
+const LM = (() => {
+'use strict';
+
+const CACHE_TTL_MS  = 5 * 24 * 60 * 60 * 1000;
+const SYNC_INTERVAL = 30000;
+const DB_NAME       = 'lm_cache_v1';
+const DB_VER        = 1;
+const QUICK_DEFAULTS = [
+  { title:'👋 Hi',           text:"Hi! Hope you're doing well 😊" },
+  { title:'📦 Order update', text:"Your order is being processed. We'll update you shortly!" },
+  { title:'✅ Confirmed',    text:'Your order has been confirmed. Thank you!' },
+  { title:'🚚 Shipped',      text:'Your order has been shipped and is on its way!' },
+  { title:'💳 Payment',      text:'Please complete your payment. Let us know if you need help.' },
+  { title:'📞 Callback',     text:'Can we schedule a quick call to discuss this further?' },
+];
+
+let db = null;
+let convs = [];
+let filtered = [];
+let activePhone = null;
+let activeConv = null;
+let mode = 'wabis';
+let filter = 'all';
+let searchQ = '';
+let windowOpen = null;
+let templates = [];
+let syncTimer = null;
+let bubbles = {};
+let lastMsgCount = 0;
+let autoScrollEnabled = true;
+let _initialized = false;
+let _syncing = false;
+let _loadingChat = false;
+
+function lmTok() {
+  return localStorage.getItem('token') || TOKEN || '';
+}
+function lmAuthHdr() {
+  const t = lmTok();
+  return t ? { 'Authorization': 'Bearer ' + t } : {};
+}
+async function lmApiFetch(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json', ...lmAuthHdr() } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(path, opts);
+  return r.json();
+}
+function lmEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function lmCleanPhone(p) {
+  if (!p) return '';
+  let d = p.replace(/\D/g,'');
+  if (d.length===10) d='91'+d;
+  return d;
+}
+function lmFmtTime(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts.includes('T') ? ts : ts.replace(' ','T')+'Z');
+    return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+  } catch { return ''; }
+}
+function lmFmtRelTime(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts.includes('T') ? ts : ts.replace(' ','T')+'Z');
+    const diff = Date.now() - d.getTime();
+    if (diff < 60000) return 'Just now';
+    if (diff < 3600000) return Math.floor(diff/60000)+'m';
+    if (diff < 86400000) return lmFmtTime(ts);
+    const days = Math.floor(diff/86400000);
+    if (days===1) return 'Yesterday';
+    if (days<7) return d.toLocaleDateString('en-IN',{weekday:'short'});
+    return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  } catch { return ''; }
+}
+function lmFmtDate(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts.includes('T') ? ts : ts.replace(' ','T')+'Z');
+    return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  } catch { return ''; }
+}
+function lmParseMsg(raw) {
+  if (!raw) return '';
+  try {
+    const o = typeof raw==='string' ? JSON.parse(raw) : raw;
+    if (o.text?.body) return o.text.body;
+    if (o.template?.name) return `[Template: ${o.template.name}]`;
+    if (o.image) return '📷 Image';
+    if (o.document) return '📄 Document';
+    return JSON.stringify(o).slice(0,80);
+  } catch { return String(raw).slice(0,120); }
+}
+function lmAvatarColor(name) {
+  const colors = ['#075e54','#128c7e','#25d366','#1976d2','#7b1fa2','#c62828','#e65100','#2e7d32'];
+  let hash = 0;
+  for (let i=0; i<(name||'').length; i++) hash = name.charCodeAt(i) + ((hash<<5)-hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+function lmInitials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(' ');
+  return parts.length > 1 ? (parts[0][0]+parts[parts.length-1][0]).toUpperCase() : name[0].toUpperCase();
+}
+
+/* IndexedDB */
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('messages')) {
+        const s = d.createObjectStore('messages', { keyPath: 'phone' });
+        s.createIndex('ts', 'ts');
+      }
+      if (!d.objectStoreNames.contains('convs')) d.createObjectStore('convs', { keyPath: 'phone' });
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+async function cacheGet(store, key) {
+  return new Promise(resolve => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = e => resolve(e.target.result || null);
+    req.onerror   = () => resolve(null);
+  });
+}
+async function cachePut(store, obj) {
+  return new Promise(resolve => {
+    const tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).put(obj);
+    tx.oncomplete = resolve;
+    tx.onerror    = resolve;
+  });
+}
+async function cacheGetAll(store) {
+  return new Promise(resolve => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = e => resolve(e.target.result || []);
+    req.onerror   = () => resolve([]);
+  });
+}
+async function flushOldCache() {
+  const cutoff = Date.now() - CACHE_TTL_MS;
+  for (const st of ['messages','convs']) {
+    const all = await cacheGetAll(st);
+    for (const entry of all) {
+      if (entry.ts < cutoff) {
+        const tx = db.transaction(st,'readwrite');
+        tx.objectStore(st).delete(entry.phone);
+      }
+    }
+  }
+}
+async function saveMessagesToCache(phone, messages) {
+  await cachePut('messages', { phone, messages, ts: Date.now() });
+}
+async function loadMessagesFromCache(phone) {
+  const entry = await cacheGet('messages', phone);
+  if (!entry || Date.now() - entry.ts > CACHE_TTL_MS) return null;
+  return entry.messages;
+}
+
+/* Init */
+async function init() {
+  if (_initialized) return;
+  _initialized = true;
+  db = await openDB();
+  await flushOldCache();
+  if (window.WaChatbox) WaChatbox.init(lmTok());
+
+  // Attach scroll listener now that DOM is ready
+  const msgsEl = document.getElementById('lm-msgs');
+  if (msgsEl) {
+    msgsEl.addEventListener('scroll', function() {
+      const atBottom = this.scrollHeight - this.scrollTop - this.clientHeight < 80;
+      autoScrollEnabled = atBottom;
+      if (atBottom) {
+        document.getElementById('lm-new-bubble')?.classList.remove('show');
+        if (activeConv) activeConv.unread = 0;
+        applyFilter();
+      }
+    }, { passive: true });
+  }
+
+  await syncAll();
+  syncTimer = setInterval(() => syncAll(true), SYNC_INTERVAL);
+}
+
+function ensureInit() {
+  if (!_initialized) init();
+}
+
+/* syncAll */
+async function syncAll(silent=false) {
+  if (_syncing) return;
+  _syncing = true;
+  const btn = document.getElementById('lm-sync-btn');
+  if (btn) btn.style.opacity='0.5';
+  setSyncStatus('🔄 Syncing…');
+
+  try {
+    const r = await fetch('/api/wa/subscribers?limit=200', { headers: lmAuthHdr() });
+    if (!r.ok) throw new Error(`Subscribers API error: ${r.status}`);
+    const data = await r.json();
+    const subs = Array.isArray(data) ? data : (data.subscribers || data.results || []);
+
+    let wabisConvs = [];
+    try {
+      const r2 = await fetch('/api/wa/conversations/inbox?limit=100', { headers: lmAuthHdr() });
+      const d2 = await r2.json();
+      wabisConvs = d2.results || d2.conversations || (Array.isArray(d2) ? d2 : []);
+    } catch {}
+
+    const convMap = {};
+    for (const sub of subs) {
+      const phone = lmCleanPhone(sub.phone_number || '');
+      if (!phone) continue;
+      convMap[phone] = {
+        phone, name: sub.name || phone, labels: sub.wabis_labels || [],
+        last_seen: sub.last_seen_at || '', unread: 0, window_open: null,
+        last_msg: '', last_msg_ts: sub.last_seen_at || '', source: 'subscriber',
+        subscriber_id: sub.id,
+      };
+    }
+    for (const conv of wabisConvs) {
+      const phone = lmCleanPhone(conv.subscriber_phone || conv.phone_number || conv.phone || '');
+      if (!phone) continue;
+      const existing = convMap[phone] || {};
+      convMap[phone] = {
+        ...existing, phone,
+        name:           conv.subscriber_name || conv.name || existing.name || phone,
+        unread:         conv.unread_count || existing.unread || 0,
+        last_msg:       conv.last_message_preview || conv.last_message || existing.last_msg || '',
+        last_msg_ts:    conv.last_message_at || existing.last_msg_ts || '',
+        last_direction: conv.last_message_direction || '',
+        source: 'inbox', conv_id: conv.conversation_id || conv.id,
+      };
+    }
+
+    convs = Object.values(convMap).sort((a,b) => {
+      const ta = new Date(a.last_msg_ts||0).getTime();
+      const tb = new Date(b.last_msg_ts||0).getTime();
+      if (b.unread !== a.unread) return b.unread - a.unread;
+      return tb - ta;
+    });
+
+    await cachePut('convs', { phone: '__all__', convs, ts: Date.now() });
+    applyFilter();
+    updateInboxBadge();
+    setSyncStatus(`✓ ${convs.length} — ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}`);
+
+    if (activePhone) await loadChatMessages(activePhone, true);
+    if (!silent) toast('Synced ' + convs.length + ' conversations', 'success');
+  } catch(e) {
+    console.error('[LM] Sync error:', e);
+    setSyncStatus('⚠ Sync failed');
+    if (!silent) toast('Sync failed: ' + e.message, 'error');
+    const cached = await cacheGet('convs', '__all__');
+    if (cached?.convs) { convs = cached.convs; applyFilter(); }
+  }
+  _syncing = false;
+  if (btn) btn.style.opacity='1';
+}
+
+function setSyncStatus(s) {
+  const el = document.getElementById('lm-sync-status');
+  if (el) el.textContent = s;
+}
+
+function updateInboxBadge() {
+  const unread = convs.filter(c => c.unread > 0).length;
+  const badge = document.getElementById('inboxUnreadBadge');
+  if (!badge) return;
+  if (unread > 0) { badge.style.display='inline'; badge.textContent=unread; }
+  else badge.style.display='none';
+}
+
+/* Filter */
+function setFilter(f, el) {
+  filter = f;
+  document.querySelectorAll('.lm-filter-chip').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  applyFilter();
+}
+function filterConvs(q) { searchQ = q.toLowerCase(); applyFilter(); }
+function applyFilter() {
+  let list = [...convs];
+  if (searchQ) list = list.filter(c =>
+    c.name.toLowerCase().includes(searchQ) || c.phone.includes(searchQ) ||
+    (c.last_msg||'').toLowerCase().includes(searchQ) ||
+    (c.labels||[]).some(l => l.toLowerCase().includes(searchQ))
+  );
+  if (filter==='unread')  list = list.filter(c => c.unread > 0);
+  if (filter==='open')    list = list.filter(c => c.window_open === true);
+  if (filter==='pending') list = list.filter(c => c.last_direction !== 'outbound');
+  if (filter==='today')   list = list.filter(c => {
+    if (!c.last_msg_ts) return false;
+    const d = new Date(c.last_msg_ts.includes('T') ? c.last_msg_ts : c.last_msg_ts.replace(' ','T')+'Z');
+    return d.toDateString() === new Date().toDateString();
+  });
+  filtered = list;
+  renderConvList();
+}
+
+/* Render conversation list */
+function renderConvList() {
+  const box = document.getElementById('lm-conv-list');
+  if (!box) return;
+  if (!filtered.length) {
+    box.innerHTML = `<div class="lm-conv-empty">${searchQ ? '🔍 No results for "'+lmEsc(searchQ)+'"' : '📭 No conversations found'}</div>`;
+    return;
+  }
+  box.innerHTML = filtered.map(c => {
+    const av = `<div class="lm-avatar" style="background:${lmAvatarColor(c.name)};">${lmEsc(lmInitials(c.name))}<div class="lm-avatar-badge ${c.window_open?'show':''}"></div></div>`;
+    const isActive = c.phone === activePhone;
+    const isUnread = c.unread > 0;
+    const preview  = c.last_msg ? lmEsc(String(c.last_msg).slice(0,50)) : '<em style="color:#bbb">No messages yet</em>';
+    const dir = c.last_direction==='outbound' ? '✓ ' : '';
+    const winDot = c.window_open===true ? '<span class="lm-win-dot">24h</span>'
+      : c.window_open===false ? '<span class="lm-win-dot closed">closed</span>' : '';
+    const labelTags = (c.labels||[]).slice(0,2).map(l => `<span class="lm-label-tag">${lmEsc(l)}</span>`).join('');
+    const unreadBadge = isUnread ? `<span class="lm-unread-dot">${c.unread>9?'9+':c.unread}</span>` : '';
+    return `<div class="lm-conv-item ${isActive?'active':''} ${isUnread?'unread':''}" onclick="LM.openConv('${c.phone}')">
+      ${av}
+      <div class="lm-conv-body">
+        <div class="lm-conv-top">
+          <span class="lm-conv-name">${lmEsc(c.name)}</span>
+          <span class="lm-conv-time">${lmFmtRelTime(c.last_msg_ts)}</span>
+        </div>
+        <div class="lm-conv-preview">${dir}${preview}</div>
+        <div class="lm-conv-meta">${winDot}${labelTags}${unreadBadge}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* Open conversation */
+async function openConv(phone) {
+  activePhone = phone;
+  activeConv  = convs.find(c => c.phone === phone);
+  windowOpen  = null;
+  lastMsgCount = 0;
+  autoScrollEnabled = true;
+
+  document.querySelectorAll('.lm-conv-item').forEach(el =>
+    el.classList.toggle('active', el.getAttribute('onclick')?.includes(phone))
+  );
+
+  document.getElementById('lm-no-chat').style.display  = 'none';
+  document.getElementById('lm-chat-hdr').style.display = 'flex';
+  document.getElementById('lm-mode-bar').style.display = 'flex';
+  document.getElementById('lm-tabs').style.display     = 'flex';
+  document.getElementById('lm-compose').style.display  = 'block';
+
+  // Mobile: hide sidebar, show chat pane
+  if (window.innerWidth <= 767) {
+    const sb = document.getElementById('lm-sidebar');
+    if (sb) sb.classList.remove('mobile-show');
+  }
+
+  const name  = activeConv?.name || phone;
+  const color = lmAvatarColor(name);
+  document.getElementById('lm-ch-avatar').style.background = color;
+  document.getElementById('lm-ch-avatar').textContent = lmInitials(name);
+  document.getElementById('lm-ch-name').textContent   = name;
+  document.getElementById('lm-ch-phone').textContent  = '+' + phone;
+
+  const badge = document.getElementById('lm-win-badge');
+  badge.className = 'lm-chat-win-badge unknown';
+  badge.textContent = '⏳ Checking…';
+  document.getElementById('lm-win-warn').style.display = 'none';
+
+  showTab('chat');
+
+  const msgs = document.getElementById('lm-msgs');
+  msgs.innerHTML = '<div class="lm-msgs-empty">⏳ Loading…</div>';
+
+  const cached = await loadMessagesFromCache(phone);
+  if (cached && cached.length) renderMessages(cached, true);
+
+  await loadChatMessages(phone, false);
+}
+
+/* Load chat messages */
+async function loadChatMessages(phone, silent=false) {
+  if (!phone) return;
+  if (_loadingChat && !silent) return;
+  _loadingChat = true;
+  const btn = document.getElementById('lm-chat-refresh');
+  if (btn && !silent) btn.style.opacity='0.5';
+  try {
+    const r = await fetch(`/api/wa/conversation-by-phone?phone=${phone}&limit=60`, { headers: lmAuthHdr() });
+    const d = await r.json();
+    const msgs = d.messages || [];
+    windowOpen = d.window_open;
+    console.log(`[LM] phone=${phone} msgs=${msgs.length} window_open=${windowOpen}`);
+    await saveMessagesToCache(phone, msgs);
+    updateWindowBadge();
+    if (phone === activePhone) {
+      const prevCount = lastMsgCount;
+      renderMessages(msgs, false);
+      if (prevCount > 0 && msgs.length > prevCount && !autoScrollEnabled) {
+        const newCount = msgs.length - prevCount;
+        const inboundNew = msgs.slice(-newCount).filter(m => m.sender!=='bot'&&m.sender!=='agent').length;
+        if (inboundNew > 0) {
+          const bubble = document.getElementById('lm-new-bubble');
+          if (bubble) { bubble.textContent=`↓ ${inboundNew} new message${inboundNew>1?'s':''}`; bubble.classList.add('show'); }
+          updateConvInSidebar(phone, msgs, true);
+        }
+      }
+    }
+    if (msgs.length) updateConvInSidebar(phone, msgs, false);
+    const ci = document.getElementById('lm-cache-info');
+    if (ci) ci.textContent = 'updated ' + new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+  } catch(e) {
+    console.error('[LM] loadChatMessages error:', e);
+    if (!silent) {
+      const cached = await loadMessagesFromCache(phone);
+      if (cached?.length) { renderMessages(cached, false); toast('Using cached messages (offline)', 'info'); }
+      else document.getElementById('lm-msgs').innerHTML = '<div class="lm-msgs-empty">⚠ Could not load messages</div>';
+    }
+  }
+  _loadingChat = false;
+  if (btn) btn.style.opacity='1';
+}
+
+function updateConvInSidebar(phone, msgs, hasNew) {
+  const c = convs.find(x => x.phone===phone);
+  if (!c) return;
+  const last = msgs[msgs.length-1];
+  if (last) {
+    c.last_msg       = lmParseMsg(last.message_content||last.message||'');
+    c.last_msg_ts    = last.conversation_time||last.delivery_status_updated_at||'';
+    c.last_direction = (last.sender==='bot'||last.sender==='agent') ? 'outbound' : 'inbound';
+    if (hasNew) c.unread = (c.unread||0) + 1;
+  }
+  c.window_open = windowOpen;
+  convs.sort((a,b) => new Date(b.last_msg_ts||0) - new Date(a.last_msg_ts||0));
+  applyFilter();
+  updateInboxBadge();
+}
+
+/* Render messages */
+function renderMessages(msgs, fromCache) {
+  const box = document.getElementById('lm-msgs');
+  if (!box) return;
+  if (!msgs.length) {
+    box.innerHTML = '<div class="lm-msgs-empty">📭 No conversation yet<br><small>Send a message to start</small></div>';
+    lastMsgCount = 0; return;
+  }
+  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  const prevCount = lastMsgCount;
+  lastMsgCount = msgs.length;
+
+  const sorted = [...msgs].sort((a,b) => new Date(a.conversation_time||0) - new Date(b.conversation_time||0));
+  let html = '';
+  if (fromCache) {
+    const expiry = new Date(Date.now() + CACHE_TTL_MS);
+    html += `<div class="lm-cache-note">📦 Cached (auto-expires ${expiry.toLocaleDateString('en-IN',{day:'numeric',month:'short'})})</div>`;
+  }
+  let lastDate = '';
+  for (const m of sorted) {
+    const ts      = m.conversation_time || m.delivery_status_updated_at || '';
+    const dateStr = lmFmtDate(ts);
+    if (dateStr && dateStr !== lastDate) { html += `<div class="lm-date-sep">${lmEsc(dateStr)}</div>`; lastDate = dateStr; }
+    const isOut = m.sender==='bot'||m.sender==='agent'||m.sender==='automation';
+    const body  = lmEsc(lmParseMsg(m.message_content||m.message||''));
+    const stat  = m.message_status ? `<span class="lm-msg-status">${lmEsc(m.message_status)}</span>` : '';
+    html += `<div class="lm-msg ${isOut?'lm-msg-out':'lm-msg-in'}">
+      ${!isOut&&m.agent_name?`<div class="lm-msg-sender">${lmEsc(m.agent_name)}</div>`:''}
+      ${body}<div class="lm-msg-time">${lmFmtTime(ts)}${stat}</div>
+    </div>`;
+  }
+  box.innerHTML = html;
+  if (wasAtBottom || prevCount===0) {
+    scrollToBottom();
+    autoScrollEnabled = true;
+    document.getElementById('lm-new-bubble')?.classList.remove('show');
+  } else {
+    autoScrollEnabled = false;
+  }
+}
+
+function scrollToBottom() {
+  const box = document.getElementById('lm-msgs');
+  if (box) box.scrollTop = box.scrollHeight;
+  document.getElementById('lm-new-bubble')?.classList.remove('show');
+  autoScrollEnabled = true;
+  if (activeConv) activeConv.unread = 0;
+  applyFilter();
+}
+
+/* Window badge */
+function updateWindowBadge() {
+  const badge = document.getElementById('lm-win-badge');
+  const warn  = document.getElementById('lm-win-warn');
+  const inp   = document.getElementById('lm-input');
+  if (!badge) return;
+  if (windowOpen === null) {
+    badge.className = 'lm-chat-win-badge unknown';
+    badge.textContent = '⏳ Checking…';
+    if (warn) warn.style.display='none';
+    if (inp) inp.disabled=false;
+  } else if (windowOpen) {
+    badge.className = 'lm-chat-win-badge';
+    badge.textContent = '✅ 24h Window Open';
+    if (warn) warn.style.display='none';
+    if (inp) { inp.disabled=false; inp.placeholder='Type a message…'; }
+  } else {
+    badge.className = 'lm-chat-win-badge closed';
+    badge.textContent = '⛔ Outside 24h Window';
+    if (warn) warn.style.display='flex';
+    if (inp && mode==='wabis') { inp.disabled=true; inp.placeholder='Outside 24h window — use Templates tab'; }
+  }
+}
+
+/* Mode */
+function setMode(m) {
+  mode = m;
+  document.getElementById('lm-mode-wabis').classList.toggle('active', m==='wabis');
+  document.getElementById('lm-mode-web').classList.toggle('active', m==='web');
+  const inp = document.getElementById('lm-input');
+  if (!inp) return;
+  if (m==='web') { inp.disabled=false; inp.placeholder='Type a message (opens WhatsApp Web)…'; }
+  else updateWindowBadge();
+}
+
+/* Tab switcher */
+function showTab(tab) {
+  document.querySelectorAll('.lm-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===tab));
+  document.getElementById('lm-tab-chat').style.display  = tab==='chat'  ? 'flex'  : 'none';
+  document.getElementById('lm-tab-tpl').style.display   = tab==='tpl'   ? 'flex'  : 'none';
+  document.getElementById('lm-tab-quick').style.display = tab==='quick' ? 'block' : 'none';
+  if (tab==='tpl'   && !templates.length) loadTemplates();
+  if (tab==='quick') renderQuickReplies();
+}
+
+/* Send message */
+async function send() {
+  const inp = document.getElementById('lm-input');
+  const msg = (inp?.value||'').trim();
+  if (!msg || !activePhone) return;
+  if (windowOpen===false && mode==='wabis') { toast('24h window closed — use Templates tab','info'); showTab('tpl'); return; }
+  if (mode==='web') { window.open(`https://wa.me/${activePhone}?text=${encodeURIComponent(msg)}`,'_blank'); inp.value=''; inp.style.height='auto'; return; }
+  const btn = document.getElementById('lm-send-btn');
+  if (btn) btn.disabled=true;
+  appendOutMsg(msg);
+  inp.value=''; inp.style.height='auto';
+  try {
+    const r = await lmApiFetch('POST','/api/wa/send-direct',{phone_number:activePhone,message_text:msg});
+    if (r.success) {
+      toast('Sent ✓','success');
+      if (activeConv) { activeConv.last_msg=msg; activeConv.last_msg_ts=new Date().toISOString(); activeConv.last_direction='outbound'; applyFilter(); }
+      setTimeout(() => loadChatMessages(activePhone, true), 2000);
+    } else { toast('Send failed: '+(r.message||'Error'),'error'); }
+  } catch { toast('Network error','error'); }
+  if (btn) btn.disabled=false;
+}
+
+function appendOutMsg(text) {
+  const box = document.getElementById('lm-msgs');
+  const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+  const div = document.createElement('div');
+  div.className = 'lm-msg lm-msg-out';
+  div.innerHTML = `${lmEsc(text)}<div class="lm-msg-time">${now} <span class="lm-msg-status">sending…</span></div>`;
+  box.appendChild(div);
+  scrollToBottom();
+}
+
+async function refreshChat() {
+  if (!activePhone) return;
+  await loadChatMessages(activePhone, false);
+  toast('Refreshed','success');
+}
+
+/* Templates */
+async function loadTemplates(force=false) {
+  if (!force && templates.length) { renderTemplates(); return; }
+  const box = document.getElementById('lm-tpl-list');
+  if (box) box.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-size:12px;">⏳ Loading…</div>';
+  try {
+    const r = await fetch('/api/wa/templates', { headers: lmAuthHdr() });
+    const d = await r.json();
+    templates = d.templates || [];
+    renderTemplates();
+    if (force) toast(templates.length + ' templates loaded','success');
+  } catch { if (box) box.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-size:12px;">⚠ Could not load templates</div>'; }
+}
+function renderTemplates() {
+  const box = document.getElementById('lm-tpl-list');
+  if (!box) return;
+  if (!templates.length) { box.innerHTML = '<div style="text-align:center;color:#aaa;padding:20px;font-size:12px;">No approved templates found.</div>'; return; }
+  box.innerHTML = templates.map((t,i) => {
+    const cat  = t.template_category || 'Utility';
+    const body = t.body_content || '';
+    return `<div class="lm-tpl-card" onclick="LM.sendTemplate(${i})">
+      <div class="lm-tpl-name">${lmEsc(t.template_name||'Template')} <span class="lm-tpl-cat ${cat}">${lmEsc(cat)}</span></div>
+      <div class="lm-tpl-body">${lmEsc(body.slice(0,140))}${body.length>140?'…':''}</div>
+    </div>`;
+  }).join('');
+}
+async function sendTemplate(idx) {
+  const t = templates[idx];
+  if (!t || !activePhone) return;
+  toast('Sending template…','info');
+  let locale='en', accessToken=null;
+  try { const tj = typeof t.template_json==='string' ? JSON.parse(t.template_json) : t.template_json; if (tj?.access_token) accessToken=tj.access_token; if (tj?.language) locale=tj.language; } catch {}
+  try {
+    const r = await lmApiFetch('POST','/api/wa/send-template-direct',{phone_number:activePhone,template_name:t.template_name,template_id:t.template_id,locale,access_token:accessToken,body_text:t.body_content||'',components:[]});
+    if (r.success) { appendOutMsg(`📋 Template: ${t.template_name}`); showTab('chat'); toast('Template sent ✓','success'); }
+    else toast('Failed: '+(r.message||r.detail||'Error'),'error');
+  } catch { toast('Network error','error'); }
+}
+
+/* Quick replies */
+let quickReplies = [];
+function renderQuickReplies() {
+  quickReplies = JSON.parse(localStorage.getItem('waQuickReplies')||'null') || QUICK_DEFAULTS;
+  const box = document.getElementById('lm-quick-list');
+  if (!box) return;
+  box.innerHTML = quickReplies.map((q,i) => `
+    <div class="lm-quick-item" onclick="LM.useQuick(${i})">
+      <span>⚡</span>
+      <div><div class="lm-quick-title">${lmEsc(q.title)}</div><div class="lm-quick-prev">${lmEsc(q.text.slice(0,60))}${q.text.length>60?'…':''}</div></div>
+    </div>`).join('') +
+    `<div class="lm-quick-item" onclick="LM.addQuick()" style="border-style:dashed;color:#aaa;justify-content:center;">＋ Add quick reply</div>`;
+}
+function useQuick(idx) {
+  const q = quickReplies[idx];
+  if (!q) return;
+  const inp = document.getElementById('lm-input');
+  inp.value = q.text;
+  inp.style.height='auto'; inp.style.height=Math.min(inp.scrollHeight,100)+'px';
+  showTab('chat'); inp.focus();
+}
+function addQuick() {
+  const title = prompt('Quick reply title:'); if (!title) return;
+  const text  = prompt('Message text:'); if (!text) return;
+  const saved = JSON.parse(localStorage.getItem('waQuickReplies')||'null') || [...QUICK_DEFAULTS];
+  saved.push({title,text});
+  localStorage.setItem('waQuickReplies', JSON.stringify(saved));
+  renderQuickReplies();
+}
+
+function openInFullChatbox() {
+  if (!activePhone || !window.WaChatbox) return;
+  WaChatbox.open({ phone: activePhone, name: activeConv?.name||activePhone, contextType:'lead' });
+}
+
+/* Popout bubbles */
+function openPopout() {
+  if (!activePhone) return;
+  const phone = activePhone;
+  const name  = activeConv?.name || phone;
+  if (bubbles[phone]) { closeBubble(phone); return; }
+  const id = 'bubble_'+phone;
+  bubbles[phone] = { phone, name, msgs:[], collapsed:false };
+  const wrap = document.createElement('div');
+  wrap.className = 'lm-bubble-window';
+  wrap.id = id;
+  wrap.innerHTML = `
+    <div class="lm-bubble-hdr" onclick="LM.toggleBubble('${phone}')">
+      <div class="lm-avatar" style="width:28px;height:28px;font-size:12px;background:${lmAvatarColor(name)};">${lmEsc(lmInitials(name))}</div>
+      <span class="lm-bubble-hdr-name">${lmEsc(name)}</span>
+      <span class="lm-bubble-badge" id="${id}_badge" style="display:none;">1</span>
+      <button class="lm-bubble-close" onclick="event.stopPropagation();LM.closeBubble('${phone}')" title="Close">✕</button>
+    </div>
+    <div class="lm-bubble-msgs" id="${id}_msgs"><div class="lm-msgs-empty" style="font-size:11px;">Loading…</div></div>
+    <div class="lm-bubble-compose">
+      <textarea class="lm-bubble-input" id="${id}_inp" rows="1" placeholder="Type…"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,60)+'px'"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();LM.sendBubble('${phone}');}"></textarea>
+      <button class="lm-bubble-send" onclick="LM.sendBubble('${phone}')">➤</button>
+    </div>`;
+  document.getElementById('lm-bubbles').appendChild(wrap);
+  loadBubbleMsgs(phone);
+}
+function closeBubble(phone) { const el=document.getElementById('bubble_'+phone); if(el) el.remove(); delete bubbles[phone]; }
+function toggleBubble(phone) { const el=document.getElementById('bubble_'+phone); if(!el) return; el.classList.toggle('collapsed'); bubbles[phone].collapsed=el.classList.contains('collapsed'); }
+async function loadBubbleMsgs(phone) {
+  const id = 'bubble_'+phone;
+  const box = document.getElementById(id+'_msgs');
+  if (!box) return;
+  const cached = await loadMessagesFromCache(phone);
+  if (cached?.length) renderBubbleMsgs(phone, cached);
+  try {
+    const r = await fetch(`/api/wa/conversation-by-phone?phone=${phone}&limit=20`, { headers: lmAuthHdr() });
+    const d = await r.json();
+    if ((d.messages||[]).length) renderBubbleMsgs(phone, d.messages);
+  } catch {}
+}
+function renderBubbleMsgs(phone, msgs) {
+  const id = 'bubble_'+phone;
+  const box = document.getElementById(id+'_msgs');
+  if (!box) return;
+  const sorted = [...msgs].sort((a,b) => new Date(a.conversation_time||0) - new Date(b.conversation_time||0));
+  box.innerHTML = sorted.map(m => {
+    const isOut = m.sender==='bot'||m.sender==='agent'||m.sender==='automation';
+    const body  = lmEsc(lmParseMsg(m.message_content||m.message||''));
+    return `<div class="lm-msg ${isOut?'lm-msg-out':'lm-msg-in'}" style="font-size:12px;padding:5px 9px;">${body}<div class="lm-msg-time">${lmFmtTime(m.conversation_time||'')}</div></div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+  if (bubbles[phone]?.collapsed) {
+    const newIn = msgs.filter(m=>m.sender!=='bot'&&m.sender!=='agent').length;
+    const badge = document.getElementById(id+'_badge');
+    if (badge && newIn>0) { badge.style.display='inline'; badge.textContent=newIn; }
+  }
+}
+async function sendBubble(phone) {
+  const id = 'bubble_'+phone;
+  const inp = document.getElementById(id+'_inp');
+  const msg = (inp?.value||'').trim();
+  if (!msg) return;
+  inp.value=''; inp.style.height='auto';
+  const box = document.getElementById(id+'_msgs');
+  if (box) {
+    const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+    const div = document.createElement('div');
+    div.className = 'lm-msg lm-msg-out'; div.style.fontSize='12px';
+    div.innerHTML = `${lmEsc(msg)}<div class="lm-msg-time">${now}</div>`;
+    box.appendChild(div); box.scrollTop=box.scrollHeight;
+  }
+  try {
+    const r = await lmApiFetch('POST','/api/wa/send-direct',{phone_number:phone,message_text:msg});
+    if (!r.success) toast('Bubble send failed: '+(r.message||'Error'),'error');
+  } catch { toast('Network error','error'); }
+}
+
+/* Mobile: show sidebar (back button) */
+function showMobileSidebar() {
+  const sb = document.getElementById('lm-sidebar');
+  if (sb) sb.classList.add('mobile-show');
+}
+
+return {
+  ensureInit, init, syncAll, setFilter, filterConvs, openConv,
+  scrollToBottom, refreshChat, send, sendTemplate, sendBubble,
+  showTab, setMode, loadTemplates, renderQuickReplies,
+  useQuick, addQuick, openInFullChatbox, openPopout, closeBubble, toggleBubble,
+  showMobileSidebar,
+};
+})();
+</script>
+<script src="/modules/mobile-nav.v4.js?v=20260307"></script>
+</body>
+</html>
