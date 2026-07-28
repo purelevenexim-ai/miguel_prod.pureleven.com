@@ -19,7 +19,7 @@ from decimal import Decimal
 from typing import Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import func, or_, and_
+from sqlalchemy import func, or_, and_, select
 from sqlalchemy.orm import Session, joinedload, selectinload
 from app.core.cache import cache_ttl, invalidate_cache
 from app.core.config import settings
@@ -849,6 +849,8 @@ def list_orders(db: Session, filters: OrderFilters, current_user: Employee) -> d
     #  4 → shipped / out_for_delivery (7+ days)       → pastel blue
     #  5 → everything else
     #  6 → delivered                                  → pastel green, bottom
+    # A separate archive rank moves returned orders whose original order date
+    # is 30+ days old behind every other row.
     # NOTE: case() uses SA 2.0 positional-arg syntax (list form removed in 2.0)
     from sqlalchemy import case
     from datetime import timedelta
@@ -856,16 +858,30 @@ def list_orders(db: Session, filters: OrderFilters, current_user: Employee) -> d
     now_utc    = datetime.now(timezone.utc)
     two_days   = now_utc - timedelta(days=2)
     seven_days = now_utc - timedelta(days=7)
+    thirty_days = now_utc - timedelta(days=30)
     today_start = now_utc.replace(hour=0, minute=0, second=0, microsecond=0)
 
     no_tracking_cond   = or_(Order.tracking_number == None, Order.tracking_number == "")
     active_status_cond = Order.status.notin_([
         OrderStatus.delivered, OrderStatus.cancelled, OrderStatus.returned
     ])
+    returned_at = (
+        select(func.max(OrderStatusHistory.created_at))
+        .where(
+            OrderStatusHistory.order_id == Order.id,
+            OrderStatusHistory.new_status == OrderStatus.returned,
+        )
+        .correlate(Order)
+        .scalar_subquery()
+    )
+    returned_activity_at = func.coalesce(returned_at, Order.created_at)
+    returned_today_cond = and_(
+        Order.status == OrderStatus.returned,
+        returned_activity_at >= today_start,
+    )
 
     group_rank = case(
-        (and_(Order.status == OrderStatus.returned,
-              func.coalesce(Order.updated_at, Order.created_at) >= today_start), 0),
+        (returned_today_cond, 0),
         (and_(no_tracking_cond, Order.created_at < two_days, active_status_cond), 1),
         (and_(Order.status.in_([OrderStatus.draft, OrderStatus.confirmed]),
               Order.created_at >= two_days), 2),
@@ -875,6 +891,21 @@ def list_orders(db: Session, filters: OrderFilters, current_user: Employee) -> d
               func.coalesce(Order.updated_at, Order.created_at) < seven_days), 4),
         (Order.status == OrderStatus.delivered, 6),
         else_=5,
+    )
+
+    # Old returned orders are archival work. Keep a return made today visible
+    # even when the original order is old; from the following day it moves to
+    # the absolute end of the queue.
+    aged_return_rank = case(
+        (
+            and_(
+                Order.status == OrderStatus.returned,
+                Order.created_at < thirty_days,
+                ~returned_today_cond,
+            ),
+            1,
+        ),
+        else_=0,
     )
 
     # Keep extracted migration orders at the bottom of the list regardless of
@@ -898,7 +929,13 @@ def list_orders(db: Session, filters: OrderFilters, current_user: Employee) -> d
             selectinload(Order.payments),
             selectinload(Order.status_history)
         )
-        .order_by(extracted_rank.asc(), group_rank.asc(), Order.created_at.desc())
+        .order_by(
+            aged_return_rank.asc(),
+            extracted_rank.asc(),
+            group_rank.asc(),
+            Order.created_at.desc(),
+            Order.id.desc(),
+        )
         .offset((filters.page - 1) * filters.page_size)
         .limit(filters.page_size)
         .all()
