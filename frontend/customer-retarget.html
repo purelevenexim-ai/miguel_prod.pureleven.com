@@ -252,7 +252,7 @@ const OUTCOMES = [
 const OUTCOME_LABELS = Object.fromEntries([['pending','Not called'],['unlinked','Unlinked'],...OUTCOMES]);
 let currentView='to_contact', currentPage=1, total=0, rows=[], searchTimer=null, currentCustomerId=null;
 let currentCustomerProfile=null, currentWorkspaceOrders=[];
-let selectedCustomerIds=new Set(), templateOptions=[];
+let selectedCustomerIds=new Set(), templateOptions=[], templateRecipientIds=[], templateOpenedFromWorkspace=false;
 const PAGE_SIZE=50;
 
 function logout(){
@@ -370,10 +370,17 @@ function renderPagination(){
 }
 function goPage(p){const pages=Math.ceil(total/PAGE_SIZE);if(p<1||p>pages)return;currentPage=p;loadQueue();window.scrollTo({top:0,behavior:'smooth'})}
 function copyPhone(phone){navigator.clipboard.writeText(phone).then(()=>showToast('Phone number copied')).catch(()=>showToast('Could not copy phone',true))}
-async function openTemplateModal(){
-  if(!selectedCustomerIds.size){showToast('Select at least one customer',true);return}
+async function openTemplateModal(customerIds=null){
+  const directRecipients=Array.isArray(customerIds);
+  const recipients=directRecipients?customerIds:Array.from(selectedCustomerIds);
+  templateRecipientIds=[...new Set(recipients.filter(Boolean).map(String))];
+  templateOpenedFromWorkspace=directRecipients;
+  if(!templateRecipientIds.length){showToast('Select at least one customer',true);return}
   document.getElementById('templateOverlay').classList.add('open');
-  document.getElementById('templateRecipientCopy').textContent=`Choose a template for ${selectedCustomerIds.size} selected customer${selectedCustomerIds.size===1?'':'s'}.`;
+  document.getElementById('templateRecipientCopy').textContent=templateOpenedFromWorkspace&&currentCustomerProfile
+    ?`Choose an approved template for ${currentCustomerProfile.name}.`
+    :`Choose a template for ${templateRecipientIds.length} selected customer${templateRecipientIds.length===1?'':'s'}.`;
+  document.getElementById('sendTemplateBtn').textContent=templateRecipientIds.length===1?'Queue WhatsApp message':'Queue WhatsApp messages';
   document.getElementById('templateConsent').checked=false;
   document.getElementById('templateResult').className='template-result';
   document.getElementById('templateResult').textContent='';
@@ -382,7 +389,13 @@ async function openTemplateModal(){
 }
 function closeTemplateModal(){
   document.getElementById('templateOverlay').classList.remove('open');
+  templateRecipientIds=[];
+  templateOpenedFromWorkspace=false;
   if(!document.getElementById('drawer').classList.contains('open'))document.body.style.overflow='';
+}
+function openWorkspaceTemplate(){
+  if(!currentCustomerId||!currentCustomerProfile?.phone){showToast('Add a valid customer phone number before sending',true);return}
+  openTemplateModal([currentCustomerId]);
 }
 function templateCompatibility(t){
   if((t.status||'').toUpperCase()!=='APPROVED')return 'Template is not approved';
@@ -453,7 +466,7 @@ async function sendBulkTemplate(){
   button.disabled=true;button.textContent='Queueing messages…';
   try{
     const data=await api('/api/customer-retarget/whatsapp/send-template',{method:'POST',body:JSON.stringify({
-      customer_ids:Array.from(selectedCustomerIds),
+      customer_ids:templateRecipientIds,
       template_name:template.name,
       language_code:document.getElementById('bulkLanguage').value,
       header_image_url:imageUrl||null,
@@ -462,12 +475,12 @@ async function sendBulkTemplate(){
     resultEl.className='template-result success';
     resultEl.textContent=`${data.queued} queued${data.skipped?` · ${data.skipped} skipped`:''}. Messages are sent by the WhatsApp delivery worker.`;
     showToast(data.message||'WhatsApp messages queued');
-    clearSelection();
+    if(!templateOpenedFromWorkspace)clearSelection();
     setTimeout(closeTemplateModal,1400);
   }catch(e){
     resultEl.className='template-result error';resultEl.textContent=e.message;
   }finally{
-    button.disabled=false;button.textContent='Queue WhatsApp messages';
+    button.disabled=false;button.textContent=templateRecipientIds.length===1?'Queue WhatsApp message':'Queue WhatsApp messages';
   }
 }
 function openRowById(id){const row=rows.find(item=>String(item.id)===String(id));if(row)openRow(row)}
@@ -490,7 +503,7 @@ function renderWorkspace(d){
   const address=[c.address,c.city,c.state,c.pincode].filter(Boolean).join(', ');
   const missing=c.missing_fields||[];
   document.getElementById('drawerBody').innerHTML=`
-    <div class="hero"><div class="avatar">${esc(initials(c.name))}</div><div><div class="hero-name">${esc(c.name)} ${c.is_old_customer?'<span class="chip interested">Old Customers</span>':''}</div><div class="hero-meta">${esc(c.customer_code)} · ${esc(c.phone||'No phone')}</div><div class="hero-meta">${orders.length} previous order${orders.length===1?'':'s'} · Current outcome: ${esc(outcomeLabel(s.outcome))}${s.next_callback_at?' · Callback '+dateTime(s.next_callback_at):''}</div><div class="workspace-actions"><a class="btn btn-sm" href="tel:${esc(c.phone)}">☎ Call customer</a><button class="btn btn-sm" onclick="viewCustomer()">View full customer</button>${CAN_CREATE_ORDER?'<button class="btn btn-sm btn-primary" onclick="startOrder()">Open full order form →</button>':''}</div></div></div>
+    <div class="hero"><div class="avatar">${esc(initials(c.name))}</div><div><div class="hero-name">${esc(c.name)} ${c.is_old_customer?'<span class="chip interested">Old Customers</span>':''}</div><div class="hero-meta">${esc(c.customer_code)} · ${esc(c.phone||'No phone')}</div><div class="hero-meta">${orders.length} previous order${orders.length===1?'':'s'} · Current outcome: ${esc(outcomeLabel(s.outcome))}${s.next_callback_at?' · Callback '+dateTime(s.next_callback_at):''}</div><div class="workspace-actions"><a class="btn btn-sm" href="tel:${esc(c.phone)}">☎ Call customer</a>${c.phone?'<button class="btn btn-sm" onclick="openWorkspaceTemplate()">💬 Send WhatsApp template</button>':''}<button class="btn btn-sm" onclick="viewCustomer()">View full customer</button>${CAN_CREATE_ORDER?'<button class="btn btn-sm btn-primary" onclick="startOrder()">Open full order form →</button>':''}</div></div></div>
     <div class="workspace-grid">
       <div class="workspace-main">
         <section class="section"><div class="section-head"><div><div class="section-kicker">Confirm before ordering</div>Saved delivery address</div>${missing.length?`<span class="chip no_answer">${missing.length} missing</span>`:'<span class="chip interested">Complete</span>'}</div><div class="section-body"><div class="address-card"><strong>${esc(c.name)}</strong><div class="address-lines">${address?esc(address):'No saved address. Edit the customer details before confirming an order.'}</div><div class="muted">${esc(c.phone||'No phone')}${c.alternate_phone?' · '+esc(c.alternate_phone):''}</div></div></div></section>

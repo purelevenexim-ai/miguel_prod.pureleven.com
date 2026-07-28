@@ -99,6 +99,8 @@ class CustomerRetargetContractTests(unittest.TestCase):
             'aria-current="page"',
             "Saved delivery address",
             "View full customer",
+            "Send WhatsApp template",
+            "openWorkspaceTemplate",
             "Open full order form",
             "Use items in new order",
             "retarget_order_prefill",
