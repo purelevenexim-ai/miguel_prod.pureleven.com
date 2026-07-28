@@ -1,8 +1,7 @@
 /**
- * Adaptive Navigation Handler  v4.2
+ * Adaptive Navigation Handler  v5.0
  * ══════════════════════════════════════════════════════════════════════
- * Provides consistent navigation across ALL pages — sidebar, bottom nav,
- * and nav rail. Matches the tenant-admin.html sidebar exactly.
+ * One canonical tenant navigation across every authenticated application page.
  *
  * v4.2 CHANGES:
  *   - Nav items match tenant-admin sidebar (Employees, Reports, Inventory,
@@ -22,15 +21,15 @@
 (function () {
   'use strict';
 
-  /* ── Navigation Items — matches tenant-admin.html sidebar exactly ── */
+  /* ── Canonical tenant navigation schema ───────────── */
   var NAV_ITEMS = [
     { label: 'Overview',          type: 'heading' },
     { label: 'Dashboard',         href: '/tenant-admin.html',  icon: '📊', key: 'dashboard' },
     { label: 'Management',        type: 'heading', adminOnly: true },
-    { label: 'Employees',         href: '/tenant-admin.html',  icon: '👥', key: 'employees', adminOnly: true },
-    { label: 'Reports',           type: 'heading' },
-    { label: 'Reports',           href: '/tenant-admin.html',  icon: '📈', key: 'reports' },
-    { label: 'Profit Checker',    href: '/profit-loss.html',   icon: '📊', key: 'pl' },
+    { label: 'Employees',         href: '/tenant-admin.html?section=employees', icon: '👥', key: 'employees', section: 'employees', adminOnly: true, elementId: 'nav-employees' },
+    { label: 'Analytics',         type: 'heading' },
+    { label: 'Reports',           href: '/tenant-admin.html?section=reports', icon: '📈', key: 'reports', section: 'reports' },
+    { label: 'Profit & Loss',     href: '/profit-loss.html',   icon: '📉', key: 'pl' },
     { label: 'Business',          type: 'heading' },
     { label: 'Leads',             href: '/leads.html',         icon: '🎯', key: 'leads' },
     { label: 'Customers',         href: '/customers.html',     icon: '🧑‍💼', key: 'customers' },
@@ -38,14 +37,14 @@
     { label: 'Invoices & Labels', href: '/invoices.html',      icon: '📄', key: 'invoices' },
     { label: 'Products',          href: '/products.html',      icon: '🛒', key: 'products' },
     { label: 'Vendors',           href: '/vendors.html',       icon: '🏭', key: 'vendors' },
-    { label: 'Inventory',         href: '/tenant-admin.html',  icon: '📦', key: 'inventory' },
+    { label: 'Inventory',         href: '/products.html?view=inventory', icon: '🗃️', key: 'inventory', view: 'inventory' },
     { label: 'GST & Accounting',  href: '/gst.html',           icon: '🧮', key: 'gst' },
     { label: 'Outreach',          type: 'heading' },
     { label: 'Marketing',         href: '/marketing.html',     icon: '📣', key: 'marketing' },
     { label: 'Customer Retarget', href: '/customer-retarget.html', icon: '📞', key: 'customer-retarget' },
     { label: 'WhatsApp',          href: '/whatsapp.html',      icon: '💬', key: 'whatsapp' },
-    { label: 'Integrations',      type: 'heading', adminOnly: true },
-    { label: 'Shipping Config',   href: '/tenant-admin.html',  icon: '🚚', key: 'shipping', adminOnly: true },
+    { label: 'Administration',    type: 'heading', adminOnly: true },
+    { label: 'Shipping Config',   href: '/tenant-admin.html?section=shipping-config', icon: '🚚', key: 'shipping', section: 'shipping-config', adminOnly: true, elementId: 'nav-shipping' },
     { label: 'Company Settings',  href: '/label-editor.html',  icon: '🎨', key: 'label-editor', adminOnly: true },
   ];
 
@@ -71,8 +70,27 @@
   ];
 
   var currentPath = window.location.pathname;
+  var currentParams = new URLSearchParams(window.location.search);
   var userRole = (localStorage.getItem('role') || '').toLowerCase();
   var tenantSlug = localStorage.getItem('slug') || '';
+
+  function itemIsActive(item) {
+    var target = new URL(item.href, window.location.origin);
+    if (target.pathname !== currentPath) return false;
+    if (item.section) return currentParams.get('section') === item.section;
+    if (item.view) return currentParams.get('view') === item.view;
+    if (target.pathname === '/tenant-admin.html') return !currentParams.get('section');
+    if (target.pathname === '/products.html') return !currentParams.get('view');
+    return true;
+  }
+
+  function activateTenantSection(item, anchor, event) {
+    if (!item.section || currentPath !== '/tenant-admin.html' || typeof window.go !== 'function') return;
+    event.preventDefault();
+    window.history.replaceState({}, '', item.href);
+    currentParams = new URLSearchParams(window.location.search);
+    window.go(item.section, anchor);
+  }
 
   /* ── Selectors ─────────────────────────────────────── */
   function getSidebar() {
@@ -81,15 +99,20 @@
            document.querySelector('aside.mobile-injected-sidebar');
   }
 
-  /* ── Build sidebar if page doesn't have one ─────────── */
+  /* ── Build or normalize the canonical sidebar ─────── */
   function ensureSidebar() {
-    if (getSidebar()) return;
-
-    /* Mark body so CSS knows to add desktop offset for injected sidebar */
-    document.body.classList.add('nav-injected');
-
-    var aside = document.createElement('aside');
-    aside.className = 'sidebar mobile-injected-sidebar';
+    var aside = getSidebar();
+    var isInjected = !aside;
+    document.body.classList.add('canonical-nav-ready');
+    if (!aside) {
+      document.body.classList.add('nav-injected');
+      aside = document.createElement('aside');
+      document.body.insertBefore(aside, document.body.firstChild);
+    }
+    aside.className = 'sidebar mobile-injected-sidebar canonical-sidebar';
+    aside.setAttribute('aria-label', 'Application navigation');
+    aside.setAttribute('data-canonical-nav', 'true');
+    aside.innerHTML = '';
 
     /* Brand header — shows tenant slug */
     var brand = document.createElement('div');
@@ -100,7 +123,7 @@
       '</div>' +
       '<div>' +
         '<div class="brand-name">Miguel CRM</div>' +
-        '<div class="brand-slug" style="font-size:11px;color:var(--md-sys-color-outline,#888);">' +
+        '<div class="brand-slug" id="sidebarSlug">' +
           (tenantSlug ? tenantSlug.toUpperCase() : 'Menu') +
         '</div>' +
       '</div>';
@@ -108,6 +131,7 @@
 
     /* Nav links — matches tenant-admin.html sidebar */
     var nav = document.createElement('nav');
+    nav.id = 'sideNav';
 
     for (var i = 0; i < NAV_ITEMS.length; i++) {
       var item = NAV_ITEMS[i];
@@ -118,15 +142,20 @@
       if (item.type === 'heading') {
         var lbl = document.createElement('div');
         lbl.className = 'nav-label';
+        if (item.label === 'Management') lbl.id = 'nav-mgmt-label';
         lbl.textContent = item.label;
         nav.appendChild(lbl);
       } else {
         var a = document.createElement('a');
         a.href = item.href;
-        a.textContent = item.icon + ' ' + item.label;
-        if (currentPath === item.href) {
+        a.innerHTML = '<span class="canonical-nav-icon">' + item.icon + '</span><span>' + item.label + '</span>';
+        a.dataset.navKey = item.key;
+        if (item.elementId) a.id = item.elementId;
+        if (itemIsActive(item)) {
           a.className = 'active';
+          a.setAttribute('aria-current', 'page');
         }
+        a.addEventListener('click', activateTenantSection.bind(null, item, a));
         nav.appendChild(a);
       }
     }
@@ -165,10 +194,9 @@
     footer.appendChild(logoutBtn);
     aside.appendChild(footer);
 
-    document.body.insertBefore(aside, document.body.firstChild);
-
     /* Fetch user profile to fill in name + email */
     loadNavUserProfile();
+    return isInjected;
   }
 
   /* ── Fetch /tenant/me to fill sidebar user info ────── */
@@ -186,8 +214,10 @@
             var u = JSON.parse(xhr.responseText);
             var nameEl = document.getElementById('nav-empName');
             var emailEl = document.getElementById('nav-empEmail');
+            var roleEl = document.getElementById('nav-empRole');
             if (nameEl && u.full_name) nameEl.textContent = u.full_name;
             if (emailEl && u.email) emailEl.textContent = u.email;
+            if (roleEl && u.role) roleEl.textContent = String(u.role).toUpperCase();
           } catch (_) {}
         }
       };
@@ -212,7 +242,7 @@
       var item = BOTTOM_NAV_ITEMS[i];
       var a = document.createElement('a');
       a.href = item.href;
-      a.className = 'adaptive-bottom-nav-item' + (currentPath === item.href ? ' active' : '');
+      a.className = 'adaptive-bottom-nav-item' + (itemIsActive(item) ? ' active' : '');
       a.setAttribute('aria-label', item.label);
       a.innerHTML =
         '<span class="nav-icon">' + item.icon + '</span>' +
@@ -261,7 +291,7 @@
       var item = RAIL_NAV_ITEMS[i];
       var a = document.createElement('a');
       a.href = item.href;
-      a.className = 'adaptive-nav-rail-item' + (currentPath === item.href ? ' active' : '');
+      a.className = 'adaptive-nav-rail-item' + (itemIsActive(item) ? ' active' : '');
       a.setAttribute('aria-label', item.label);
       a.innerHTML =
         '<span class="nav-icon">' + item.icon + '</span>' +
@@ -330,10 +360,22 @@
 
   /* ── Init ─────────────────────────────────────────── */
   function init() {
+    if (currentPath === '/platform-admin.html' || currentPath === '/platform-login.html') return;
+
     // Build all navigation variants (CSS controls visibility)
     ensureSidebar();
     createBottomNav();
     createNavRail();
+
+    // Open deep-linked dashboard sections after the canonical sidebar exists.
+    var initialSection = currentParams.get('section');
+    if (currentPath === '/tenant-admin.html' && initialSection && typeof window.go === 'function') {
+      var sectionLink = document.querySelector('.canonical-sidebar [data-nav-key="' + initialSection.replace('-config', '') + '"]');
+      if (!sectionLink && initialSection === 'shipping-config') {
+        sectionLink = document.querySelector('.canonical-sidebar [data-nav-key="shipping"]');
+      }
+      window.go(initialSection, sectionLink);
+    }
     // NO hamburger injection — bottom nav "More" replaces it
     attachDismissHandlers();
 

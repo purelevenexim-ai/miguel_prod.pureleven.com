@@ -331,7 +331,7 @@ nav a.active {
   .secondary-stats { grid-template-columns:repeat(3,1fr); }
 }
 </style>
-  <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728">
+  <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728b">
 </head>
 <body>
 
@@ -1888,10 +1888,14 @@ async function loadProfile() {
     const r = await api('GET', '/tenant/me');
     if (r.ok) {
       const u = await r.json();
-      document.getElementById('empName').textContent      = u.full_name;
-      document.getElementById('empEmail').textContent     = u.email;
-      document.getElementById('empRoleBadge').textContent = u.role.toUpperCase();
-      document.getElementById('sidebarSlug').textContent  = SLUG.toUpperCase();
+      const sidebarName = document.getElementById('empName') || document.getElementById('nav-empName');
+      const sidebarEmail = document.getElementById('empEmail') || document.getElementById('nav-empEmail');
+      const sidebarRole = document.getElementById('empRoleBadge') || document.getElementById('nav-empRole');
+      const sidebarSlug = document.getElementById('sidebarSlug');
+      if (sidebarName) sidebarName.textContent = u.full_name;
+      if (sidebarEmail) sidebarEmail.textContent = u.email;
+      if (sidebarRole) sidebarRole.textContent = u.role.toUpperCase();
+      if (sidebarSlug) sidebarSlug.textContent = SLUG.toUpperCase();
       const rb = document.getElementById('topRoleBadge');
       rb.textContent = u.role;
       const roleChip = { admin:'chip-blue', sales:'chip-green', marketing:'chip-amber', support:'chip-purple', operations:'chip-amber' };
@@ -2199,8 +2203,14 @@ const TITLES = { dashboard:'Dashboard', employees:'Employees', reports:'Reports'
 function go(name, el) {
   SECS.forEach(s => document.getElementById(`sec-${s}`).style.display = s === name ? '' : 'none');
   document.getElementById('pageTitle').textContent = TITLES[name] || name;
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-  if (el) el.classList.add('active');
+  document.querySelectorAll('#sideNav a').forEach(a => {
+    a.classList.remove('active');
+    a.removeAttribute('aria-current');
+  });
+  if (el) {
+    el.classList.add('active');
+    el.setAttribute('aria-current', 'page');
+  }
   if (name === 'dashboard') {
     loadDashboardAnalytics();
   }
@@ -2770,6 +2780,6 @@ document.getElementById('shippingModal').addEventListener('click', function(e) {
 
 boot();
 </script>
-<script src="/modules/mobile-nav.v4.js?v=20260307"></script>
+<script src="/modules/mobile-nav.v4.js?v=20260728c"></script>
 </body>
 </html>
