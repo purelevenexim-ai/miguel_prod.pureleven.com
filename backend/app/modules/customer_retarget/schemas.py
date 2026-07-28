@@ -62,3 +62,24 @@ class UnlinkedResolveRequest(BaseModel):
         if bool(self.customer_id) == bool(self.customer):
             raise ValueError("Provide either customer_id or customer details")
         return self
+
+
+class RetargetTemplateBulkSend(BaseModel):
+    customer_ids: list[UUID] = Field(min_length=1, max_length=50)
+    template_name: str = Field(min_length=1, max_length=255)
+    language_code: str = Field(default="en", min_length=2, max_length=20)
+    header_image_url: Optional[str] = Field(default=None, max_length=2000)
+    consent_confirmed: bool = False
+
+    @model_validator(mode="after")
+    def validate_bulk_template_send(self):
+        self.customer_ids = list(dict.fromkeys(self.customer_ids))
+        self.template_name = self.template_name.strip()
+        self.language_code = self.language_code.strip()
+        self.header_image_url = (self.header_image_url or "").strip() or None
+
+        if not self.consent_confirmed:
+            raise ValueError("Confirm that the selected customers permitted WhatsApp messages")
+        if self.header_image_url and not self.header_image_url.startswith("https://"):
+            raise ValueError("Header image URL must use HTTPS")
+        return self

@@ -115,9 +115,11 @@ body.retarget-has-nav{padding-left:240px}
 .workspace-grid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:15px;align-items:start}.workspace-main,.workspace-side{min-width:0}.workspace-side{position:sticky;top:90px}.section{border-color:var(--rt-line);border-radius:14px;box-shadow:0 5px 18px rgba(33,52,86,.035)}.section-head{padding:13px 15px}.section-body{padding:15px}.section-kicker{font-size:9px;color:var(--rt-sub);text-transform:uppercase;letter-spacing:.08em;font-weight:800}.call-card{border-color:#cfe0ff;box-shadow:0 12px 28px rgba(37,99,235,.09)}.call-card .section-head{background:#f5f9ff}.call-phone{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;background:#f7f9fc;border:1px solid var(--rt-line);border-radius:10px;margin-bottom:12px}.call-phone strong{font-size:14px}.outcomes{grid-template-columns:1fr 1fr;gap:8px}.outcome label{min-height:44px;border-radius:9px}.form-grid{grid-template-columns:1fr;gap:10px}.field.full{grid-column:auto}.form-actions .btn-primary{width:100%;min-height:44px}.address-card{border-color:#dfe5ed;background:#f8fafc}.address-lines{font-size:13px;color:#2d3748}.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profile-item{padding:10px 11px;background:#f8fafc;border:1px solid #edf0f4;border-radius:9px}.profile-item label{display:block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#7b8494;margin-bottom:4px}.profile-item div{font-size:12px;color:#273248;overflow-wrap:anywhere}
 .order-list{display:flex;flex-direction:column;gap:10px}.order-item{border:1px solid #e4e8ef;border-radius:12px;padding:13px 14px;background:#fff}.order-item:last-child{border-bottom:1px solid #e4e8ef}.order-title{font-size:13px}.order-amount{font-size:14px}.order-products{color:#4e5969;line-height:1.6}.order-actions{margin-top:10px}.history-item{background:#f8fafc;border-left-color:#8fb2f5;border-radius:0 10px 10px 0;padding:10px 12px}
 .empty-inline{padding:20px;text-align:center;background:#f8fafc;border:1px dashed #d8dee8;border-radius:10px;color:var(--rt-sub);font-size:12px}
+.bulk-bar{display:none;align-items:center;justify-content:space-between;gap:14px;margin:0 20px 12px;padding:11px 12px 11px 15px;border:1px solid #cbdcfb;border-radius:11px;background:linear-gradient(135deg,#f5f9ff,#edf4ff);box-shadow:0 5px 16px rgba(37,99,235,.07)}.bulk-bar.open{display:flex}.bulk-count{font-size:12px;font-weight:800;color:#1748b5}.bulk-copy{font-size:10px;color:var(--rt-sub);margin-top:2px}.select-cell{width:42px;text-align:center}.row-select{width:17px;height:17px;accent-color:var(--rt-brand);cursor:pointer}.row-select:disabled{cursor:not-allowed;opacity:.35}
+.template-overlay{display:none;position:fixed;inset:0;z-index:450;background:rgba(20,29,48,.52);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:18px}.template-overlay.open{display:flex}.template-modal{width:min(620px,100%);max-height:min(760px,92vh);overflow:auto;border:1px solid #dce3ee;border-radius:18px;background:#fff;box-shadow:0 26px 70px rgba(15,23,42,.28)}.template-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 22px;border-bottom:1px solid var(--rt-line)}.template-modal-head h2{margin:0;font-size:19px;letter-spacing:-.02em}.template-modal-head p{margin:5px 0 0;font-size:11px;color:var(--rt-sub)}.template-modal-body{padding:20px 22px}.template-grid{display:grid;grid-template-columns:1fr 180px;gap:12px}.template-note{margin-top:12px;padding:11px 12px;border:1px solid #e5eaf2;border-radius:10px;background:#f8fafc;color:#526071;font-size:11px;line-height:1.5}.template-warning{display:none;margin-top:10px;padding:10px 12px;border:1px solid #f3d3a1;border-radius:9px;background:#fff8e8;color:#8a4b08;font-size:11px}.consent-check{display:flex;align-items:flex-start;gap:9px;margin-top:15px;padding:12px;border:1px solid #dce3ee;border-radius:10px;background:#fff}.consent-check input{width:17px;height:17px;margin-top:1px;accent-color:var(--rt-brand)}.consent-check span{font-size:11px;line-height:1.45;color:#475467}.template-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.template-result{display:none;margin-top:12px;padding:11px 12px;border-radius:9px;font-size:11px}.template-result.success{display:block;background:#edf9f2;color:#116b46;border:1px solid #bde4cc}.template-result.error{display:block;background:#fff1f0;color:#a52a24;border:1px solid #f4c7c3}
 @media(max-width:1180px){.page-intro{grid-template-columns:1fr 260px}.summary{grid-template-columns:repeat(2,1fr)}.workspace-grid{grid-template-columns:1fr 320px}}
 @media(max-width:839px){body.retarget-has-nav{padding-left:72px}.topbar{padding:0 16px}.shell{padding:18px 16px 90px}.page-intro{grid-template-columns:1fr}.coverage-card{max-width:420px}.drawer{width:calc(100vw - 72px)}.workspace-grid{grid-template-columns:1fr}.workspace-side{position:static}.summary{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:599px){body.retarget-has-nav{padding-left:0}.topbar{height:56px}.topbar .subtitle,.topbar .tenant,.topbar .secondary-action{display:none}.shell{padding:12px 10px 90px}.page-intro{padding:20px;border-radius:16px}.page-intro h1{font-size:23px}.coverage-card{display:none}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:12px;min-height:84px}.metric-value{font-size:20px}.queue-head{align-items:flex-start;padding:15px 14px 9px}.queue-head-actions{display:none}.toolbar{padding:8px 14px 12px}.search{min-width:100%}.check{width:100%;justify-content:center}.tabs{padding:9px 12px}.table-meta{padding:10px 14px}.drawer{width:100vw!important;height:94vh!important;max-height:94vh!important}.drawer-body{padding:12px}.hero{padding:16px}.hero-name{font-size:18px}.profile-grid{grid-template-columns:1fr}.outcomes{grid-template-columns:1fr 1fr}.top-actions .btn-primary{padding:8px 10px;font-size:11px}}
+@media(max-width:599px){body.retarget-has-nav{padding-left:0}.topbar{height:56px}.topbar .subtitle,.topbar .tenant,.topbar .secondary-action{display:none}.shell{padding:12px 10px 90px}.page-intro{padding:20px;border-radius:16px}.page-intro h1{font-size:23px}.coverage-card{display:none}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:12px;min-height:84px}.metric-value{font-size:20px}.queue-head{align-items:flex-start;padding:15px 14px 9px}.queue-head-actions{display:none}.toolbar{padding:8px 14px 12px}.search{min-width:100%}.check{width:100%;justify-content:center}.tabs{padding:9px 12px}.table-meta{padding:10px 14px}.drawer{width:100vw!important;height:94vh!important;max-height:94vh!important}.drawer-body{padding:12px}.hero{padding:16px}.hero-name{font-size:18px}.profile-grid{grid-template-columns:1fr}.outcomes{grid-template-columns:1fr 1fr}.top-actions .btn-primary{padding:8px 10px;font-size:11px}.bulk-bar{margin:0 12px 10px;align-items:flex-start;flex-direction:column}.bulk-bar .btn{width:100%}.template-grid{grid-template-columns:1fr}.template-modal-body,.template-modal-head{padding:16px}.template-actions{flex-direction:column-reverse}.template-actions .btn{width:100%}}
 </style>
   <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728b">
 </head>
@@ -186,6 +188,10 @@ body.retarget-has-nav{padding-left:240px}
       <div class="search"><span>⌕</span><input id="searchInput" placeholder="Search customer, phone, order or code…" oninput="debouncedLoad()"></div>
       <label class="check"><input type="checkbox" id="repeatOnly" onchange="resetAndLoad()"> Repeat buyers only</label>
     </div>
+    <div class="bulk-bar" id="bulkBar">
+      <div><div class="bulk-count" id="bulkCount">0 customers selected</div><div class="bulk-copy">Only selected customers with valid WhatsApp numbers will be queued.</div></div>
+      <button class="btn btn-sm btn-primary" onclick="openTemplateModal()">💬 Choose template &amp; send</button>
+    </div>
     <div class="tabs" id="tabs"></div>
     <div class="table-meta"><span id="tableMeta">Loading queue…</span><span>Oldest latest purchase first</span></div>
     <div class="table-wrap" id="tableWrap"><div class="loading">Loading Customer Retarget…</div></div>
@@ -198,6 +204,23 @@ body.retarget-has-nav{padding-left:240px}
   <div class="drawer-head"><div class="drawer-title-wrap"><span class="drawer-eyebrow">Retarget workspace</span><div class="drawer-title" id="drawerTitle">Customer workspace</div></div><button class="icon-btn" onclick="closeDrawer()" aria-label="Close">✕</button></div>
   <div class="drawer-body" id="drawerBody"></div>
 </aside>
+<div class="template-overlay" id="templateOverlay" onclick="if(event.target===this)closeTemplateModal()">
+  <section class="template-modal" role="dialog" aria-modal="true" aria-labelledby="templateModalTitle">
+    <div class="template-modal-head"><div><h2 id="templateModalTitle">Send WhatsApp template</h2><p id="templateRecipientCopy">Choose an approved Meta template for the selected customers.</p></div><button class="icon-btn" onclick="closeTemplateModal()" aria-label="Close">✕</button></div>
+    <div class="template-modal-body">
+      <div class="template-grid">
+        <div class="field"><label>Approved template *</label><select id="bulkTemplate" onchange="handleTemplateChange()"><option value="">Loading templates…</option></select></div>
+        <div class="field"><label>Message language *</label><select id="bulkLanguage"><option value="en">English</option><option value="ml">Malayalam</option></select></div>
+      </div>
+      <div class="field" id="templateImageField" style="display:none;margin-top:12px"><label>Public header image URL *</label><input id="templateImageUrl" type="url" placeholder="https://…/pureleven-products.jpg" oninput="rememberTemplateImage()"></div>
+      <div class="template-warning" id="templateWarning"></div>
+      <div class="template-note"><strong>Safe bulk send:</strong> this queues messages only for the customers you selected. Missing numbers and customers who opted out are skipped and recorded.</div>
+      <label class="consent-check"><input type="checkbox" id="templateConsent"><span>I confirm these customers permitted Pureleven to contact them on WhatsApp and that this approved template is appropriate for them.</span></label>
+      <div class="template-result" id="templateResult"></div>
+      <div class="template-actions"><button class="btn" onclick="closeTemplateModal()">Cancel</button><button class="btn btn-primary" id="sendTemplateBtn" onclick="sendBulkTemplate()">Queue WhatsApp messages</button></div>
+    </div>
+  </section>
+</div>
 <div class="toast" id="toast"></div>
 
 <script src="/modules/auth.js"></script>
@@ -229,6 +252,7 @@ const OUTCOMES = [
 const OUTCOME_LABELS = Object.fromEntries([['pending','Not called'],['unlinked','Unlinked'],...OUTCOMES]);
 let currentView='to_contact', currentPage=1, total=0, rows=[], searchTimer=null, currentCustomerId=null;
 let currentCustomerProfile=null, currentWorkspaceOrders=[];
+let selectedCustomerIds=new Set(), templateOptions=[];
 const PAGE_SIZE=50;
 
 function logout(){
@@ -279,6 +303,7 @@ async function loadQueue(options={}){
   }
   const search=document.getElementById('searchInput').value.trim();
   const repeat=document.getElementById('repeatOnly').checked;
+  clearSelection();
   let url=`/api/customer-retarget/queue?view=${encodeURIComponent(currentView)}&page=${currentPage}&limit=${PAGE_SIZE}&repeat_only=${repeat}`;
   if(search)url+=`&search=${encodeURIComponent(search)}`;
   document.getElementById('tableWrap').innerHTML='<div class="loading">Loading queue…</div>';
@@ -295,14 +320,18 @@ async function loadQueue(options={}){
 function renderTable(){
   if(!rows.length){document.getElementById('tableWrap').innerHTML='<div class="empty">No customers in this view.</div>';return}
   document.getElementById('tableWrap').innerHTML=`<table><thead><tr>
-    <th>#</th><th>Customer & contact</th><th>Purchase context</th><th>Customer value</th><th>Follow-up status</th><th></th>
+    <th class="select-cell"><input class="row-select" id="selectPage" type="checkbox" onchange="toggleSelectPage(this.checked)" aria-label="Select all eligible customers on this page"></th><th>#</th><th>Customer & contact</th><th>Purchase context</th><th>Customer value</th><th>Follow-up status</th><th></th>
   </tr></thead><tbody>${rows.map(rowHtml).join('')}</tbody></table>`;
+  syncSelectionUi();
 }
 function rowHtml(r){
   const missing=(r.missing_fields||[]);
   const repeat=Number(r.order_count)>1;
   const products=(r.latest_products||[]).map(esc).join(' · ');
+  const selectable=r.kind==='customer'&&Boolean(r.customer_id)&&Boolean(r.phone);
+  const selectionId=selectable?String(r.customer_id):'';
   return `<tr class="${r.is_old_customer?'priority-old':''}" onclick="openRowById('${esc(r.id)}')">
+    <td class="select-cell" onclick="event.stopPropagation()"><input class="row-select" type="checkbox" data-customer-id="${esc(selectionId)}" ${selectable?'':`disabled title="${r.kind==='unlinked'?'Resolve this buyer before messaging':'A valid phone number is required'}"`} onchange="toggleCustomerSelection('${esc(selectionId)}',this.checked)" aria-label="Select ${esc(r.name||'customer')}"></td>
     <td class="position">${r.queue_position||''}</td>
     <td><div class="customer"><div class="avatar">${esc(initials(r.name))}</div><div><div class="customer-name">${esc(r.name||'Unknown customer')}</div><div class="muted mono">${esc(r.customer_code||r.latest_order_number||'')}</div><div class="contact-number">${esc(r.phone||'No phone')}</div>${r.alternate_phone?`<div class="muted">${esc(r.alternate_phone)}</div>`:''}${r.is_old_customer?'<div class="old-tag">OLD CUSTOMERS</div>':''}${r.kind==='unlinked'?'<div class="muted" style="color:#7627bb">Shopify buyer not linked</div>':''}<div class="phone-actions" onclick="event.stopPropagation()">${r.phone?`<a class="icon-btn" href="tel:${esc(r.phone)}" title="Call">☎</a><button class="icon-btn" onclick="copyPhone('${esc(r.phone)}')" title="Copy phone">⧉</button>`:''}</div></div></div></td>
     <td><div class="purchase-title">${r.latest_order_date?dateOnly(r.latest_order_date):'Purchase history unavailable'}</div><div class="muted mono">${esc(r.latest_order_number||'')}</div><div class="purchase-products">${products||'No product history available'}</div></td>
@@ -311,6 +340,29 @@ function rowHtml(r){
     <td><button class="btn btn-sm btn-primary row-action" onclick="event.stopPropagation();openRowById('${esc(r.id)}')">${r.kind==='unlinked'?'Resolve buyer':'Open workspace'} →</button></td>
   </tr>`;
 }
+function selectableRows(){return rows.filter(r=>r.kind==='customer'&&r.customer_id&&r.phone)}
+function clearSelection(){selectedCustomerIds.clear();syncSelectionUi()}
+function toggleCustomerSelection(customerId,checked){
+  if(!customerId)return;
+  if(checked)selectedCustomerIds.add(customerId);else selectedCustomerIds.delete(customerId);
+  syncSelectionUi();
+}
+function toggleSelectPage(checked){
+  selectableRows().forEach(r=>{const id=String(r.customer_id);if(checked)selectedCustomerIds.add(id);else selectedCustomerIds.delete(id)});
+  syncSelectionUi();
+}
+function syncSelectionUi(){
+  document.querySelectorAll('.row-select[data-customer-id]').forEach(input=>{if(input.dataset.customerId)input.checked=selectedCustomerIds.has(input.dataset.customerId)});
+  const eligible=selectableRows();
+  const selectedOnPage=eligible.filter(r=>selectedCustomerIds.has(String(r.customer_id))).length;
+  const pageToggle=document.getElementById('selectPage');
+  if(pageToggle){pageToggle.checked=eligible.length>0&&selectedOnPage===eligible.length;pageToggle.indeterminate=selectedOnPage>0&&selectedOnPage<eligible.length;pageToggle.disabled=!eligible.length}
+  const count=selectedCustomerIds.size;
+  const bar=document.getElementById('bulkBar');
+  if(bar)bar.classList.toggle('open',count>0);
+  const countEl=document.getElementById('bulkCount');
+  if(countEl)countEl.textContent=`${count} customer${count===1?'':'s'} selected`;
+}
 function renderPagination(){
   const pages=Math.ceil(total/PAGE_SIZE);const el=document.getElementById('pagination');
   if(pages<=1){el.innerHTML='';return}
@@ -318,6 +370,106 @@ function renderPagination(){
 }
 function goPage(p){const pages=Math.ceil(total/PAGE_SIZE);if(p<1||p>pages)return;currentPage=p;loadQueue();window.scrollTo({top:0,behavior:'smooth'})}
 function copyPhone(phone){navigator.clipboard.writeText(phone).then(()=>showToast('Phone number copied')).catch(()=>showToast('Could not copy phone',true))}
+async function openTemplateModal(){
+  if(!selectedCustomerIds.size){showToast('Select at least one customer',true);return}
+  document.getElementById('templateOverlay').classList.add('open');
+  document.getElementById('templateRecipientCopy').textContent=`Choose a template for ${selectedCustomerIds.size} selected customer${selectedCustomerIds.size===1?'':'s'}.`;
+  document.getElementById('templateConsent').checked=false;
+  document.getElementById('templateResult').className='template-result';
+  document.getElementById('templateResult').textContent='';
+  document.body.style.overflow='hidden';
+  if(!templateOptions.length)await loadTemplateOptions();
+}
+function closeTemplateModal(){
+  document.getElementById('templateOverlay').classList.remove('open');
+  if(!document.getElementById('drawer').classList.contains('open'))document.body.style.overflow='';
+}
+function templateCompatibility(t){
+  if((t.status||'').toUpperCase()!=='APPROVED')return 'Template is not approved';
+  if((t.parameter_format||'').toUpperCase()==='UNKNOWN')return 'Template parameters cannot be mapped safely';
+  if((t.parameter_format||'').toUpperCase()==='POSITIONAL'&&(t.body_parameters||[]).length>1)return 'Template requires additional customer-specific values';
+  if((t.button_parameters||[]).length)return 'Dynamic website-button parameters are not supported here';
+  return '';
+}
+async function loadTemplateOptions(){
+  const select=document.getElementById('bulkTemplate');
+  select.innerHTML='<option value="">Loading approved templates…</option>';
+  select.disabled=true;
+  try{
+    const data=await api('/api/message-automation/available-whatsapp-templates');
+    templateOptions=(data||[]).filter(t=>(t.status||'').toUpperCase()==='APPROVED');
+    if(!templateOptions.length){
+      select.innerHTML='<option value="">No approved templates available</option>';
+      document.getElementById('templateWarning').style.display='block';
+      document.getElementById('templateWarning').textContent='Create and approve the template in Meta, then refresh this page.';
+      return;
+    }
+    select.innerHTML='<option value="">Choose a template…</option>'+templateOptions.map((t,index)=>{
+      const issue=templateCompatibility(t);
+      const suffix=[t.category,t.language,t.has_media_header?'image header':null].filter(Boolean).join(' · ');
+      return `<option value="${index}" ${issue?'disabled':''}>${esc(t.name)}${suffix?' — '+esc(suffix):''}${issue?' — incompatible':''}</option>`;
+    }).join('');
+    select.disabled=false;
+  }catch(e){
+    select.innerHTML='<option value="">Could not load templates</option>';
+    document.getElementById('templateWarning').style.display='block';
+    document.getElementById('templateWarning').textContent=e.message;
+  }
+}
+function selectedTemplateOption(){
+  const value=document.getElementById('bulkTemplate').value;
+  return value===''?null:templateOptions[Number(value)];
+}
+function handleTemplateChange(){
+  const template=selectedTemplateOption();
+  const imageField=document.getElementById('templateImageField');
+  const warning=document.getElementById('templateWarning');
+  imageField.style.display=template?.has_media_header?'flex':'none';
+  if(template?.has_media_header&&!document.getElementById('templateImageUrl').value){
+    document.getElementById('templateImageUrl').value=localStorage.getItem('retarget_template_image_url')||'';
+  }
+  const issue=template?templateCompatibility(template):'';
+  warning.style.display=issue?'block':'none';
+  warning.textContent=issue;
+  if(template?.language){
+    const primary=String(template.language).toLowerCase().split(/[_-]/)[0];
+    if(['en','ml'].includes(primary))document.getElementById('bulkLanguage').value=primary;
+  }
+}
+function rememberTemplateImage(){
+  const url=document.getElementById('templateImageUrl').value.trim();
+  if(url.startsWith('https://'))localStorage.setItem('retarget_template_image_url',url);
+}
+async function sendBulkTemplate(){
+  const template=selectedTemplateOption();
+  const resultEl=document.getElementById('templateResult');
+  if(!template){resultEl.className='template-result error';resultEl.textContent='Choose an approved template.';return}
+  const issue=templateCompatibility(template);
+  if(issue){resultEl.className='template-result error';resultEl.textContent=issue;return}
+  if(!document.getElementById('templateConsent').checked){resultEl.className='template-result error';resultEl.textContent='Confirm WhatsApp permission before sending.';return}
+  const imageUrl=document.getElementById('templateImageUrl').value.trim();
+  if(template.has_media_header&&!imageUrl){resultEl.className='template-result error';resultEl.textContent='Add the public HTTPS image URL required by this template.';return}
+  const button=document.getElementById('sendTemplateBtn');
+  button.disabled=true;button.textContent='Queueing messages…';
+  try{
+    const data=await api('/api/customer-retarget/whatsapp/send-template',{method:'POST',body:JSON.stringify({
+      customer_ids:Array.from(selectedCustomerIds),
+      template_name:template.name,
+      language_code:document.getElementById('bulkLanguage').value,
+      header_image_url:imageUrl||null,
+      consent_confirmed:true
+    })});
+    resultEl.className='template-result success';
+    resultEl.textContent=`${data.queued} queued${data.skipped?` · ${data.skipped} skipped`:''}. Messages are sent by the WhatsApp delivery worker.`;
+    showToast(data.message||'WhatsApp messages queued');
+    clearSelection();
+    setTimeout(closeTemplateModal,1400);
+  }catch(e){
+    resultEl.className='template-result error';resultEl.textContent=e.message;
+  }finally{
+    button.disabled=false;button.textContent='Queue WhatsApp messages';
+  }
+}
 function openRowById(id){const row=rows.find(item=>String(item.id)===String(id));if(row)openRow(row)}
 function openDrawer(){document.getElementById('overlay').classList.add('open');document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden'}
 function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';currentCustomerId=null}

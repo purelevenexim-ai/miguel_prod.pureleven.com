@@ -42,6 +42,7 @@ class CustomerRetargetContractTests(unittest.TestCase):
         )
         self.assertIn('@router.get("/{customer_id}")', source)
         self.assertIn('@router.post("/{customer_id}/calls"', source)
+        self.assertIn('@router.post("/whatsapp/send-template"', source)
 
     def test_all_required_outcomes_exist(self):
         source = MODEL.read_text()
@@ -69,9 +70,26 @@ class CustomerRetargetContractTests(unittest.TestCase):
             "Save &amp; next customer",
             "Create and link customer",
             "/api/customer-retarget/queue",
+            "/api/customer-retarget/whatsapp/send-template",
+            "/api/message-automation/available-whatsapp-templates",
             "/api/customers/${currentCustomerId}",
+            "Choose template &amp; send",
+            "toggleSelectPage",
+            "consent_confirmed:true",
         ]:
             self.assertIn(marker, html)
+
+    def test_bulk_template_send_is_tenant_scoped_and_audited(self):
+        source = SERVICE.read_text()
+        for marker in [
+            "queue_retarget_template",
+            "Customer.tenant_id == current_user.tenant_id",
+            "preference_blocks",
+            "queue_manual_retarget_template",
+            "current_user.id",
+            "db.commit()",
+        ]:
+            self.assertIn(marker, source)
 
     def test_retarget_handoff_and_navigation_are_present(self):
         html = PAGE.read_text()

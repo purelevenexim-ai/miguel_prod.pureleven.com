@@ -9,6 +9,7 @@ from app.models.employee import Employee, RoleEnum
 from app.modules.customer_retarget import service
 from app.modules.customer_retarget.schemas import (
     RetargetCallCreate,
+    RetargetTemplateBulkSend,
     UnlinkedResolveRequest,
 )
 
@@ -54,6 +55,19 @@ def resolve_unlinked_buyer(
         db,
         current_user,
         shopify_order_id,
+        data,
+    )
+
+
+@router.post("/whatsapp/send-template", status_code=202)
+async def send_retarget_template(
+    data: RetargetTemplateBulkSend,
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(retarget_roles),
+):
+    return await service.queue_retarget_template(
+        db,
+        current_user,
         data,
     )
 

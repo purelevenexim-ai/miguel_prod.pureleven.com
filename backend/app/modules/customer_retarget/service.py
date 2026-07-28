@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 import re
 from typing import Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi import HTTPException
 from sqlalchemy import and_, case, exists, func, or_
@@ -26,12 +26,14 @@ from app.models.order import Order, OrderStatus
 from app.models.shopify_order import ShopifyOrder, ShopifyOrderStatus
 from app.modules.customer_retarget.schemas import (
     RetargetCallCreate,
+    RetargetTemplateBulkSend,
     UnlinkedResolveRequest,
 )
 from app.modules.customers.service import (
     generate_customer_code,
     get_customer_orders,
 )
+from app.modules.message_automation import service as message_automation_service
 
 
 FOLLOW_UP_OUTCOMES = (
@@ -55,6 +57,13 @@ VALID_VIEWS = {
     "all",
 }
 OLD_CUSTOMERS_TAG = "Old Customers"
+RETARGET_TEMPLATE_VARIABLES = {
+    "customer_name",
+    "name",
+    "phone",
+    "website_url",
+    "whatsapp_link",
+}
 
 
 def _phone_key(value: Optional[str]) -> str:
@@ -103,6 +112,132 @@ def _missing_fields(customer: Customer) -> list[str]:
     if not (customer.pincode or "").strip():
         missing.append("pincode")
     return missing
+
+
+async def queue_retarget_template(
+    db: Session,
+    current_user: Employee,
+    data: RetargetTemplateBulkSend,
+) -> dict:
+    template_info = await message_automation_service.resolve_manual_whatsapp_template(
+        db,
+        current_user.tenant_id,
+        template_name=data.template_name,
+        language_code=data.language_code,
+    )
+    if template_info is None:
+        raise HTTPException(
+            status_code=422,
+            detail="The selected template and language are not approved or are unavailable",
+        )
+
+    template_json = template_info.get("template_json") or {}
+    parameter_format, body_parameters = message_automation_service._template_parameter_summary(
+        data.template_name,
+        template_json,
+    )
+    if parameter_format == "POSITIONAL" and len(body_parameters) > 1:
+        raise HTTPException(
+            status_code=422,
+            detail="This template needs more than the customer-name value and cannot be bulk sent from Customer Retarget",
+        )
+    if parameter_format == "NAMED":
+        unsupported = [
+            value for value in body_parameters
+            if value not in RETARGET_TEMPLATE_VARIABLES
+        ]
+        if unsupported:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Template requires unsupported values: {', '.join(unsupported)}",
+            )
+    if message_automation_service._template_button_parameter_summary(template_json):
+        raise HTTPException(
+            status_code=422,
+            detail="Templates with dynamic website-button values are not supported here; use a static website URL",
+        )
+
+    has_media_header = message_automation_service._template_has_media_header(template_json)
+    if has_media_header and not data.header_image_url:
+        raise HTTPException(
+            status_code=422,
+            detail="This template requires a public HTTPS header image URL",
+        )
+
+    customers = (
+        db.query(Customer)
+        .filter(
+            Customer.tenant_id == current_user.tenant_id,
+            Customer.id.in_(data.customer_ids),
+        )
+        .all()
+    )
+    customers_by_id = {customer.id: customer for customer in customers}
+    batch_id = uuid4()
+    queued = []
+    skipped = []
+
+    for customer_id in data.customer_ids:
+        customer = customers_by_id.get(customer_id)
+        if customer is None:
+            skipped.append({"customer_id": str(customer_id), "reason": "Customer not found"})
+            continue
+
+        phone = message_automation_service.normalize_phone_e164(customer.phone)
+        if not phone:
+            skipped.append(
+                {"customer_id": str(customer.id), "name": customer.name, "reason": "Missing valid phone"}
+            )
+            continue
+        if message_automation_service.preference_blocks(
+            db,
+            current_user.tenant_id,
+            phone,
+            "whatsapp",
+        ):
+            skipped.append(
+                {"customer_id": str(customer.id), "name": customer.name, "reason": "WhatsApp opted out"}
+            )
+            continue
+
+        task = message_automation_service.queue_manual_retarget_template(
+            db,
+            tenant_id=current_user.tenant_id,
+            customer=customer,
+            template_name=data.template_name,
+            language_code=data.language_code,
+            header_image_url=data.header_image_url,
+            employee_id=current_user.id,
+            batch_id=batch_id,
+        )
+        if task is None:
+            skipped.append(
+                {"customer_id": str(customer.id), "name": customer.name, "reason": "Messaging automation unavailable"}
+            )
+            continue
+        queued.append(
+            {
+                "task_id": str(task.id),
+                "customer_id": str(customer.id),
+                "name": customer.name,
+                "phone": phone,
+            }
+        )
+
+    db.commit()
+    return {
+        "batch_id": str(batch_id),
+        "template_name": data.template_name,
+        "language_code": template_info.get("locale") or data.language_code,
+        "requested": len(data.customer_ids),
+        "queued": len(queued),
+        "skipped": len(skipped),
+        "queued_customers": queued,
+        "skipped_customers": skipped,
+        "message": (
+            f"{len(queued)} WhatsApp message{'s' if len(queued) != 1 else ''} queued for sending"
+        ),
+    }
 
 
 def _order_aggregate_subquery(db: Session, tenant_id: UUID):

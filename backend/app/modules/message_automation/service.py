@@ -44,6 +44,7 @@ SENT = "sent"
 FAILED = "failed"
 CANCELLED = "cancelled"
 SKIPPED = "skipped"
+RETARGET_MANUAL_TEMPLATE_KEY = "customer_retarget_manual"
 TERMINAL_ORDER_STATUSES = {OrderStatus.delivered, OrderStatus.returned, OrderStatus.cancelled}
 DEFAULT_ADMIN_PHONE = "+919447744583"
 WABIS_TEMPLATE_CACHE_TTL = timedelta(minutes=10)
@@ -57,7 +58,10 @@ TEMPLATE_BINDING_KEYS = (
 
 _WABIS_TEMPLATE_CACHE: dict[str, dict[str, Any]] = {}
 
-WHATSAPP_TEMPLATE_REQUIRED_KEYS = set(TEMPLATE_BINDING_KEYS)
+WHATSAPP_TEMPLATE_REQUIRED_KEYS = {
+    *TEMPLATE_BINDING_KEYS,
+    RETARGET_MANUAL_TEMPLATE_KEY,
+}
 
 ORDER_WHATSAPP_JOURNEY_KEYS = (
     "order_created",
@@ -434,6 +438,16 @@ def normalize_phone_e164(value: Optional[str]) -> str:
 
 def whatsapp_send_phone(value: str) -> str:
     return normalize_phone_e164(value).lstrip("+")
+
+
+def _language_matches(requested: str | None, actual: str | None) -> bool:
+    requested_code = str(requested or "").strip().lower().replace("-", "_")
+    actual_code = str(actual or "").strip().lower().replace("-", "_")
+    if not requested_code:
+        return True
+    if requested_code == actual_code:
+        return True
+    return requested_code.split("_", 1)[0] == actual_code.split("_", 1)[0]
 
 
 def _normalize_url(value: Optional[str]) -> str:
@@ -1514,12 +1528,61 @@ def _auto_meta_components_from_template_json(template_json: dict[str, Any], vari
     return [{"type": "body", "parameters": _named_template_parameters(body_fields, variables)}]
 
 
+def _manual_meta_components_from_template_json(
+    template_json: dict[str, Any],
+    variables: dict[str, Any],
+) -> list[dict[str, Any]]:
+    parameter_format, body_fields = _body_parameter_mapping_from_template_json(template_json)
+    if parameter_format == "named" and isinstance(body_fields, dict):
+        return [{"type": "body", "parameters": _named_template_parameters(body_fields, variables)}]
+    if parameter_format == "none":
+        return []
+
+    body_text = ""
+    for component in _template_components(template_json):
+        if str(component.get("type") or "").lower() == "body":
+            body_text = str(component.get("text") or "")
+            break
+    positional_parameters = sorted(
+        {int(value) for value in re.findall(r"{{\s*(\d+)\s*}}", body_text)}
+    )
+    if not positional_parameters:
+        return []
+    if positional_parameters != list(range(1, len(positional_parameters) + 1)):
+        raise ValueError("Template body parameters must be sequential")
+
+    configured_values = list(variables.get("body_parameter_values") or [])
+    values: list[str] = []
+    for index in range(len(positional_parameters)):
+        if index == 0:
+            values.append(str(variables.get("customer_name") or "Customer"))
+        elif index < len(configured_values):
+            values.append(str(configured_values[index] or ""))
+        else:
+            raise ValueError(
+                "This template needs additional body values and is not compatible with Customer Retarget bulk send"
+            )
+    return [{"type": "body", "parameters": _template_parameters(values)}]
+
+
 def _template_parameter_summary(template_name: str, template_json: dict[str, Any]) -> tuple[str, list[str]]:
     parameter_format, body_fields = _body_parameter_mapping_from_template_json(template_json)
     if parameter_format is not None:
         if parameter_format == "named" and isinstance(body_fields, dict):
             return "NAMED", list(body_fields.keys())
-        return parameter_format.upper(), []
+        if parameter_format == "none":
+            return "NONE", []
+
+    body_text = ""
+    for component in _template_components(template_json):
+        if str(component.get("type") or "").lower() == "body":
+            body_text = str(component.get("text") or "")
+            break
+    positional_parameters = sorted(
+        {int(value) for value in re.findall(r"{{\s*(\d+)\s*}}", body_text)}
+    )
+    if positional_parameters:
+        return "POSITIONAL", [f"{{{{{value}}}}}" for value in positional_parameters]
 
     spec = WHATSAPP_TEMPLATE_SPECS.get(template_name)
     if spec is None:
@@ -1771,6 +1834,7 @@ async def _meta_templates_by_name(
     settings_row: Any,
     candidate_names: list[str],
     approved_templates: dict[str, dict[str, Any]],
+    language_code: str | None = None,
 ) -> dict[str, dict[str, Any]]:
     asset_id = _normalize_meta_template_asset_id(getattr(settings_row, "meta_template_asset_id", None))
     access_token = _meta_template_access_token(settings_row, approved_templates)
@@ -1793,6 +1857,8 @@ async def _meta_templates_by_name(
                 if str(row.get("name") or "").strip() != template_name:
                     continue
                 if str(row.get("status") or "").upper() != "APPROVED":
+                    continue
+                if language_code and not _language_matches(language_code, row.get("language")):
                     continue
                 resolved[template_name] = _meta_template_row_to_info(row, access_token)
                 break
@@ -1873,7 +1939,116 @@ async def available_whatsapp_templates(db: Session, tenant_id: uuid.UUID) -> lis
     return options
 
 
+async def resolve_manual_whatsapp_template(
+    db: Session,
+    tenant_id: uuid.UUID,
+    *,
+    template_name: str,
+    language_code: str,
+) -> dict[str, Any] | None:
+    runtime_settings = _runtime_template_settings(db, tenant_id)
+    approved_templates = await _approved_wabis_templates(runtime_settings)
+    meta_templates = await _meta_templates_by_name(
+        runtime_settings,
+        [template_name],
+        approved_templates,
+        language_code=language_code,
+    )
+    template_info = meta_templates.get(template_name)
+    if template_info:
+        return template_info
+
+    approved_info = approved_templates.get(template_name)
+    if approved_info and _language_matches(language_code, approved_info.get("locale")):
+        return approved_info
+    return None
+
+
+def queue_manual_retarget_template(
+    db: Session,
+    *,
+    tenant_id: uuid.UUID,
+    customer: Customer,
+    template_name: str,
+    language_code: str,
+    header_image_url: str | None,
+    employee_id: uuid.UUID,
+    batch_id: uuid.UUID,
+) -> MessageAutomationTask | None:
+    normalized_phone = normalize_phone_e164(customer.phone)
+    if not normalized_phone:
+        return None
+
+    links = tenant_links(db, tenant_id)
+    customer_name = (customer.name or "").strip() or (
+        "സുഹൃത്തേ" if _language_matches("ml", language_code) else "Customer"
+    )
+    payload = {
+        "manual_template_name": template_name,
+        "manual_language_code": language_code,
+        "manual_header_image_url": header_image_url,
+        "manual_employee_id": str(employee_id),
+        "manual_batch_id": str(batch_id),
+        "customer_name": customer_name,
+        "name": customer_name,
+        "phone": normalized_phone,
+        **links,
+    }
+    return _queue_task(
+        db,
+        tenant_id=tenant_id,
+        channel="whatsapp",
+        template_key=RETARGET_MANUAL_TEMPLATE_KEY,
+        event_type="customer_retarget_manual",
+        dedupe_key=f"customer-retarget:{batch_id}:{customer.id}:{template_name}:{language_code}",
+        scheduled_at=now_utc(),
+        body=f"WhatsApp template: {template_name}",
+        customer_id=customer.id,
+        recipient_phone_e164=normalized_phone,
+        recipient_name=customer_name,
+        payload=payload,
+    )
+
+
 async def _resolve_whatsapp_template(settings_row: Any, task: MessageAutomationTask) -> dict[str, Any] | None:
+    if task.template_key == RETARGET_MANUAL_TEMPLATE_KEY:
+        variables = dict(task.payload or {})
+        template_name = str(variables.get("manual_template_name") or "").strip()
+        language_code = str(variables.get("manual_language_code") or "en").strip()
+        if not template_name:
+            return None
+
+        approved_templates = await _approved_wabis_templates(settings_row)
+        meta_templates = await _meta_templates_by_name(
+            settings_row,
+            [template_name],
+            approved_templates,
+            language_code=language_code,
+        )
+        template_info = meta_templates.get(template_name)
+        if template_info is None:
+            approved_info = approved_templates.get(template_name)
+            if approved_info and _language_matches(language_code, approved_info.get("locale")):
+                template_info = approved_info
+        if template_info is None:
+            return None
+
+        template_json = template_info.get("template_json") or {}
+        components = _manual_meta_components_from_template_json(template_json, variables)
+        header_component = _header_component_from_template(
+            template_json,
+            media_url=variables.get("manual_header_image_url"),
+        )
+        if _template_has_media_header(template_json) and header_component is None:
+            raise ValueError("This template requires a public HTTPS header image URL")
+        if header_component:
+            components = [header_component, *components]
+        return {
+            **template_info,
+            "locale": template_info.get("locale") or language_code,
+            "components": components,
+        }
+
     desired_template = TEMPLATES.get(task.template_key)
     selected_template_name = _configured_template_name(settings_row, task.template_key)
     candidate_names = _unique_template_names(
@@ -1979,6 +2154,13 @@ def _log_whatsapp_outbound(
     message_type: WaMessageType,
     result: dict[str, Any],
 ) -> None:
+    employee_id = None
+    raw_employee_id = (task.payload or {}).get("manual_employee_id")
+    if raw_employee_id:
+        try:
+            employee_id = uuid.UUID(str(raw_employee_id))
+        except (TypeError, ValueError):
+            employee_id = None
     message_row = WaMessage(
         tenant_id=task.tenant_id,
         conversation_id=conversation.id,
@@ -1989,6 +2171,7 @@ def _log_whatsapp_outbound(
         status=WaMessageStatus.sent if result.get("success") else WaMessageStatus.failed,
         sent_at=now_utc(),
         failed_reason=None if result.get("success") else result.get("message"),
+        sent_by_employee_id=employee_id,
         raw_payload=result.get("raw_response") or result,
     )
     db.add(message_row)
