@@ -15,10 +15,12 @@ see the deploy notes for that session.
 """
 
 from pathlib import Path
+from types import SimpleNamespace
 import unittest
 
 from app.modules.customer_retarget.service import (
     RETARGET_REPLY_ATTRIBUTION_DAYS,
+    _campaign_message_lifecycle,
     _phone_variants,
 )
 
@@ -56,6 +58,68 @@ class ReplyAttributionWindowTests(unittest.TestCase):
         self.assertEqual(RETARGET_REPLY_ATTRIBUTION_DAYS, 7)
 
 
+class CampaignLifecycleTests(unittest.TestCase):
+    def task(self, status="sent"):
+        return SimpleNamespace(status=status, error_reason=None)
+
+    def message(
+        self,
+        status,
+        *,
+        delivered_at=None,
+        read_at=None,
+        failed_reason=None,
+    ):
+        return SimpleNamespace(
+            status=SimpleNamespace(value=status),
+            delivered_at=delivered_at,
+            read_at=read_at,
+            failed_reason=failed_reason,
+        )
+
+    def test_delivery_is_presented_as_delivered_and_received(self):
+        result = _campaign_message_lifecycle(
+            self.task(),
+            self.message("delivered"),
+            None,
+        )
+        self.assertTrue(result["sent"])
+        self.assertTrue(result["delivered"])
+        self.assertTrue(result["received"])
+        self.assertFalse(result["opened"])
+        self.assertTrue(result["not_replied"])
+
+    def test_read_and_reply_advance_engagement(self):
+        read_at = object()
+        replied_at = object()
+        result = _campaign_message_lifecycle(
+            self.task(),
+            self.message("read", read_at=read_at),
+            replied_at,
+        )
+        self.assertEqual(result["lifecycle_status"], "replied")
+        self.assertTrue(result["opened"])
+        self.assertTrue(result["replied"])
+        self.assertFalse(result["not_replied"])
+
+    def test_provider_failure_is_not_delivered(self):
+        result = _campaign_message_lifecycle(
+            self.task(),
+            self.message(
+                "failed",
+                failed_reason="(#131049) Not delivered",
+            ),
+            None,
+        )
+        self.assertEqual(result["lifecycle_status"], "not_delivered")
+        self.assertTrue(result["not_delivered"])
+        self.assertFalse(result["sent"])
+        self.assertEqual(
+            result["failure_reason"],
+            "(#131049) Not delivered",
+        )
+
+
 class CampaignTrackerTenantIsolationContractTests(unittest.TestCase):
     """
     Every campaign query must be scoped by current_user.tenant_id — a batch_id
@@ -89,19 +153,30 @@ class CampaignTrackerTenantIsolationContractTests(unittest.TestCase):
 class CampaignTrackerFailureStateTests(unittest.TestCase):
     def test_reply_is_only_attributed_to_successfully_sent_tasks(self):
         source = SERVICE.read_text()
-        self.assertIn('if task.status == "sent" and task.sent_at:', source)
+        self.assertIn('task.status == "sent" and task.sent_at', source)
 
     def test_reply_window_is_bounded_not_open_ended(self):
         source = SERVICE.read_text()
-        self.assertIn("window_end = task.sent_at + timedelta(days=RETARGET_REPLY_ATTRIBUTION_DAYS)", source)
-        self.assertIn("task.sent_at < ts <= window_end", source)
+        self.assertIn(
+            "timedelta(days=RETARGET_REPLY_ATTRIBUTION_DAYS)",
+            source,
+        )
+        self.assertIn(
+            "task.sent_at < timestamp <= window_end",
+            source,
+        )
 
     def test_delivery_and_read_are_never_fabricated(self):
         source = SERVICE.read_text()
-        # None (not False) when no wa_messages row has reported a status yet.
-        self.assertIn("delivery_status = wa_message.status.value if wa_message else None", source)
-        self.assertIn("is_read = bool(wa_message.read_at) if wa_message else None", source)
-        self.assertIn('"read_receipts_tracked": False', source)
+        self.assertIn(
+            "wa_message.status.value if wa_message else None",
+            source,
+        )
+        self.assertIn(
+            'delivered = delivery_status in {"delivered", "read"}',
+            source,
+        )
+        self.assertIn('delivery_status == "read"', source)
 
 
 class CampaignTrackerPaginationContractTests(unittest.TestCase):
@@ -164,7 +239,7 @@ class CampaignMessageLedgerContractTests(unittest.TestCase):
             "MessageAutomationTask.tenant_id == current_user.tenant_id",
             "MessageAutomationTask.created_at >= range_start",
             "MessageAutomationTask.created_at < range_end",
-            "MessageAutomationTask.status == selected_status",
+            "_campaign_status_matches(message, selected_status)",
             "WaMessage.tenant_id == current_user.tenant_id",
             '"provider_message_id": task.provider_message_id',
             '"header_image_url": payload.get(',
@@ -204,9 +279,13 @@ class CampaignMessageLedgerContractTests(unittest.TestCase):
             service_source,
         )
         for marker in [
-            "META ACCEPTED",
-            "Meta accepted",
-            "does not prove the customer received",
+            "SENT",
+            "DELIVERED",
+            "OPENED",
+            "REPLIED",
+            "NOT REPLIED",
+            "NOT DELIVERED",
+            "does not prove receipt",
             "Leave blank to use the approved Meta",
         ]:
             self.assertIn(marker, page_source)
@@ -234,14 +313,17 @@ class MetaStatusWebhookSecurityContractTests(unittest.TestCase):
             "signature must be verified before status updates are applied",
         )
 
-    def test_missing_app_secret_fails_closed(self):
+    def test_missing_app_secret_uses_restricted_stored_message_match(self):
         source = WA_ROUTER.read_text()
-        self.assertIn("if not row.meta_app_secret:", source)
-        # the fail-closed branch must not call apply_meta_status_update
-        skip_branch_start = source.index("if not row.meta_app_secret:")
-        skip_branch_end = source.index("elif not MetaProvider.verify_signature")
-        skip_branch = source[skip_branch_start:skip_branch_end]
-        self.assertNotIn("apply_meta_status_update", skip_branch)
+        for marker in [
+            "def _restricted_meta_status_entries(",
+            "callback_phone_id not in expected_phone_ids",
+            "WaMessage.provider_message_id.in_(provider_ids)",
+            "WaMessage.direction == WaMessageDirection.outbound",
+            "known_recipient[-10:] != callback_recipient[-10:]",
+            'verification_mode = "stored-message-match"',
+        ]:
+            self.assertIn(marker, source)
 
     def test_app_secret_is_configurable_but_not_returned(self):
         schemas_source = WA_SCHEMAS.read_text()

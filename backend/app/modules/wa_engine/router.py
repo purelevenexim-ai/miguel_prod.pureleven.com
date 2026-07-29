@@ -22,7 +22,16 @@ from app.core.auth.tenant import get_current_tenant_user, require_roles
 from app.database.session import get_db
 from app.models.employee import RoleEnum
 from app.models.lead import Lead  # For fetching linked lead data
-from app.models.wa_engine import WaSettings, WaSubscriber, WaConversation, WaCampaign, WaCampaignRecipient, WaOutboundWebhook
+from app.models.wa_engine import (
+    WaCampaign,
+    WaCampaignRecipient,
+    WaConversation,
+    WaMessage,
+    WaMessageDirection,
+    WaOutboundWebhook,
+    WaSettings,
+    WaSubscriber,
+)
 from app.modules.wa_engine import schemas, service
 from app.modules.wa_engine.providers.meta import MetaProvider
 from app.modules.wa_engine.providers.wabis import WabisProvider
@@ -47,6 +56,102 @@ def _safe_meta_status_diagnostics(statuses: List[Dict[str, Any]]) -> List[Dict[s
             "error_title": str(error.get("title") or error.get("message") or "")[:240],
         })
     return diagnostics
+
+
+def _restricted_meta_status_entries(
+    db: Session,
+    tenant_id: uuid.UUID,
+    settings: WaSettings,
+    raw: Dict[str, Any],
+    statuses: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Match unsigned callbacks to outbound messages without trusting payload data.
+
+    This fallback exists for WABIS-managed Meta apps where the app owner keeps
+    the HMAC App Secret. A callback is eligible only when its sender phone ID,
+    unguessable provider message ID, tenant, direction, and recipient all match
+    an outbound message already stored by Miguel.
+    """
+    try:
+        value = raw["entry"][0]["changes"][0]["value"]
+        callback_phone_id = str(
+            (value.get("metadata") or {}).get("phone_number_id") or ""
+        ).strip()
+    except (IndexError, KeyError, TypeError, AttributeError):
+        return []
+
+    expected_phone_ids = {
+        str(value).strip()
+        for value in (
+            settings.meta_phone_number_id,
+            settings.wabis_phone_number_id,
+        )
+        if str(value or "").strip()
+    }
+    if (
+        not callback_phone_id
+        or callback_phone_id not in expected_phone_ids
+    ):
+        return []
+
+    provider_ids = {
+        str(entry.get("id") or "").strip()
+        for entry in statuses
+        if isinstance(entry, dict) and entry.get("id")
+    }
+    if not provider_ids:
+        return []
+
+    known_rows = (
+        db.query(
+            WaMessage.provider_message_id,
+            WaSubscriber.phone_number,
+        )
+        .join(
+            WaConversation,
+            WaConversation.id == WaMessage.conversation_id,
+        )
+        .join(
+            WaSubscriber,
+            WaSubscriber.id == WaConversation.subscriber_id,
+        )
+        .filter(
+            WaMessage.tenant_id == tenant_id,
+            WaMessage.direction == WaMessageDirection.outbound,
+            WaMessage.provider_message_id.in_(provider_ids),
+        )
+        .all()
+    )
+    known_recipient_by_provider_id = {
+        provider_message_id: "".join(
+            character
+            for character in (phone_number or "")
+            if character.isdigit()
+        )
+        for provider_message_id, phone_number in known_rows
+    }
+
+    matched: List[Dict[str, Any]] = []
+    for entry in statuses:
+        provider_message_id = str(entry.get("id") or "").strip()
+        known_recipient = known_recipient_by_provider_id.get(
+            provider_message_id
+        )
+        callback_recipient = "".join(
+            character
+            for character in str(entry.get("recipient_id") or "")
+            if character.isdigit()
+        )
+        if not known_recipient:
+            continue
+        if (
+            callback_recipient
+            and known_recipient[-10:] != callback_recipient[-10:]
+        ):
+            continue
+        matched.append(entry)
+    return matched
 
 
 # ─────────────────────────────────────────────────────────────
@@ -1323,29 +1428,63 @@ async def inbound_webhook(
     # since template sends always go directly through Meta's Graph API (see
     # message_automation/service.py _send_meta_template). A payload never mixes
     # messages[] and statuses[], so handling this first and returning is safe.
-    # Fail closed: without a verified signature we do not touch any data.
+    # Prefer Meta HMAC verification. For WABIS-managed apps whose App Secret
+    # is not shared with Miguel, accept only callbacks that match an exact
+    # stored outbound message, sender phone ID, tenant, and recipient.
     status_entries = MetaProvider.parse_statuses(raw)
     if status_entries:
-        if not row.meta_app_secret:
-            log.warning(
-                "Inbound webhook: Meta status callback for tenant %s but no meta_app_secret "
-                "is configured — skipping. Configure it in WA Settings to enable read receipts. "
-                "Unverified diagnostics=%s",
-                tenant_id,
-                _safe_meta_status_diagnostics(status_entries),
+        verified_entries: List[Dict[str, Any]] = []
+        verification_mode = ""
+        if (
+            row.meta_app_secret
+            and MetaProvider.verify_signature(
+                body_bytes,
+                x_hub_signature_256,
+                row.meta_app_secret,
             )
-        elif not MetaProvider.verify_signature(body_bytes, x_hub_signature_256, row.meta_app_secret):
+        ):
+            verified_entries = status_entries
+            verification_mode = "hmac"
+        else:
+            verified_entries = _restricted_meta_status_entries(
+                db,
+                tenant_id,
+                row,
+                raw,
+                status_entries,
+            )
+            if verified_entries:
+                verification_mode = "stored-message-match"
+
+        if not verified_entries:
+            reason = (
+                "no meta_app_secret is configured"
+                if not row.meta_app_secret
+                else "the Meta signature is invalid"
+            )
             log.warning(
-                "Inbound webhook: invalid Meta signature for tenant %s status callback. "
+                "Inbound webhook: Meta status callback for tenant %s skipped because %s "
+                "and it did not match a stored outbound message. "
                 "Unverified diagnostics=%s",
                 tenant_id,
+                reason,
                 _safe_meta_status_diagnostics(status_entries),
             )
         else:
             try:
-                updated = service.apply_meta_status_update(db, tenant_id, status_entries)
+                updated = service.apply_meta_status_update(
+                    db,
+                    tenant_id,
+                    verified_entries,
+                )
                 db.commit()
-                log.info("Inbound webhook: applied %d Meta status update(s) for tenant %s", updated, tenant_id)
+                log.info(
+                    "Inbound webhook: applied %d Meta status update(s) for tenant %s "
+                    "using %s verification",
+                    updated,
+                    tenant_id,
+                    verification_mode,
+                )
             except Exception:
                 log.exception("Error applying Meta status updates for tenant %s", tenant_id)
                 db.rollback()

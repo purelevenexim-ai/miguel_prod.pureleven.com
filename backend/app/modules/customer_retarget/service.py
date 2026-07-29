@@ -34,6 +34,7 @@ from app.models.wa_engine import (
     WaConversation,
     WaMessage,
     WaMessageDirection,
+    WaSettings,
     WaSubscriber,
 )
 from app.modules.customer_retarget.schemas import (
@@ -89,6 +90,12 @@ CAMPAIGN_MESSAGE_STATUSES = {
     "all",
     "pending",
     "sent",
+    "delivered",
+    "received",
+    "opened",
+    "replied",
+    "not_replied",
+    "not_delivered",
     "failed",
     "skipped",
     "cancelled",
@@ -834,11 +841,7 @@ def list_retarget_messages(
         MessageAutomationTask.created_at >= range_start,
         MessageAutomationTask.created_at < range_end,
     ]
-    if selected_status != "all":
-        filters.append(MessageAutomationTask.status == selected_status)
-
     query = db.query(MessageAutomationTask).filter(*filters)
-    total = query.count()
     page = max(1, page)
     limit = max(1, min(limit, 200))
     tasks = (
@@ -846,8 +849,6 @@ def list_retarget_messages(
             MessageAutomationTask.created_at.desc(),
             MessageAutomationTask.id.desc(),
         )
-        .offset((page - 1) * limit)
-        .limit(limit)
         .all()
     )
 
@@ -868,48 +869,59 @@ def list_retarget_messages(
             .all()
         }
 
-    messages = []
+    reply_times = _retarget_reply_times(
+        db,
+        current_user.tenant_id,
+        tasks,
+    )
+    all_messages = []
     for task in tasks:
         payload = dict(task.payload or {})
         wa_message = wa_by_provider_id.get(task.provider_message_id)
-        messages.append(
-            {
-                "id": str(task.id),
-                "batch_id": str(payload.get("manual_batch_id") or ""),
-                "customer_id": (
-                    str(task.customer_id) if task.customer_id else None
-                ),
-                "customer_name": task.recipient_name or "",
-                "phone": task.recipient_phone_e164 or "",
-                "template_name": str(
-                    payload.get("manual_template_name") or ""
-                ),
-                "language_code": str(
-                    payload.get("manual_language_code") or "en"
-                ),
-                "task_status": task.status,
-                "delivery_status": (
-                    wa_message.status.value if wa_message else None
-                ),
-                "read_at": (
-                    wa_message.read_at if wa_message else None
-                ),
-                "created_at": task.created_at,
-                "scheduled_at": task.scheduled_at,
-                "sent_at": task.sent_at,
-                "attempts": task.attempts,
-                "max_attempts": task.max_attempts,
-                "provider_message_id": task.provider_message_id,
-                "error_reason": task.error_reason,
-                "body": task.body,
-                "header_image_url": payload.get(
-                    "manual_header_image_url"
-                ),
-                "customer_name_variable": payload.get("customer_name"),
-                "website_url": payload.get("website_url"),
-                "whatsapp_link": payload.get("whatsapp_link"),
-            }
+        lifecycle = _campaign_message_lifecycle(
+            task,
+            wa_message,
+            reply_times.get(task.id),
         )
+        all_messages.append({
+            "id": str(task.id),
+            "batch_id": str(payload.get("manual_batch_id") or ""),
+            "customer_id": (
+                str(task.customer_id) if task.customer_id else None
+            ),
+            "customer_name": task.recipient_name or "",
+            "phone": task.recipient_phone_e164 or "",
+            "template_name": str(
+                payload.get("manual_template_name") or ""
+            ),
+            "language_code": str(
+                payload.get("manual_language_code") or "en"
+            ),
+            "task_status": task.status,
+            **lifecycle,
+            "created_at": task.created_at,
+            "scheduled_at": task.scheduled_at,
+            "sent_at": task.sent_at,
+            "attempts": task.attempts,
+            "max_attempts": task.max_attempts,
+            "provider_message_id": task.provider_message_id,
+            "error_reason": lifecycle["failure_reason"],
+            "body": task.body,
+            "header_image_url": payload.get(
+                "manual_header_image_url"
+            ),
+            "customer_name_variable": payload.get("customer_name"),
+            "website_url": payload.get("website_url"),
+            "whatsapp_link": payload.get("whatsapp_link"),
+        })
+
+    filtered_messages = [
+        message for message in all_messages
+        if _campaign_status_matches(message, selected_status)
+    ]
+    total = len(filtered_messages)
+    start = (page - 1) * limit
+    messages = filtered_messages[start:start + limit]
 
     return {
         "messages": messages,
@@ -939,6 +951,187 @@ def _phone_variants(value: Optional[str]) -> set[str]:
 
 
 RETARGET_REPLY_ATTRIBUTION_DAYS = 7
+
+
+def _retarget_reply_times(
+    db: Session,
+    tenant_id: UUID,
+    tasks: list[MessageAutomationTask],
+) -> dict[UUID, datetime]:
+    """Return the first attributable inbound reply time for each sent task."""
+    sent_tasks = [
+        task for task in tasks
+        if task.status == "sent" and task.sent_at
+    ]
+    all_variants: set[str] = set()
+    for task in sent_tasks:
+        all_variants |= _phone_variants(task.recipient_phone_e164)
+    if not all_variants:
+        return {}
+
+    subscribers = (
+        db.query(WaSubscriber)
+        .filter(
+            WaSubscriber.tenant_id == tenant_id,
+            WaSubscriber.phone_number.in_(all_variants),
+        )
+        .all()
+    )
+    subscriber_by_variant = {
+        variant: subscriber
+        for subscriber in subscribers
+        for variant in _phone_variants(subscriber.phone_number)
+    }
+    if not subscribers:
+        return {}
+
+    conversations = (
+        db.query(WaConversation)
+        .filter(
+            WaConversation.tenant_id == tenant_id,
+            WaConversation.subscriber_id.in_(
+                [subscriber.id for subscriber in subscribers]
+            ),
+        )
+        .all()
+    )
+    conversation_by_subscriber_id = {
+        conversation.subscriber_id: conversation
+        for conversation in conversations
+    }
+    if not conversations:
+        return {}
+
+    inbound_times_by_conversation: dict[UUID, list[datetime]] = {}
+    inbound_rows = (
+        db.query(WaMessage.conversation_id, WaMessage.sent_at)
+        .filter(
+            WaMessage.tenant_id == tenant_id,
+            WaMessage.conversation_id.in_(
+                [conversation.id for conversation in conversations]
+            ),
+            WaMessage.direction == WaMessageDirection.inbound,
+        )
+        .all()
+    )
+    for conversation_id, sent_at in inbound_rows:
+        if sent_at:
+            inbound_times_by_conversation.setdefault(
+                conversation_id,
+                [],
+            ).append(sent_at)
+
+    reply_times: dict[UUID, datetime] = {}
+    for task in sent_tasks:
+        subscriber = next(
+            (
+                subscriber_by_variant[variant]
+                for variant in _phone_variants(task.recipient_phone_e164)
+                if variant in subscriber_by_variant
+            ),
+            None,
+        )
+        if subscriber is None:
+            continue
+        conversation = conversation_by_subscriber_id.get(subscriber.id)
+        if conversation is None:
+            continue
+        window_end = (
+            task.sent_at
+            + timedelta(days=RETARGET_REPLY_ATTRIBUTION_DAYS)
+        )
+        candidate_times = [
+            timestamp
+            for timestamp in inbound_times_by_conversation.get(
+                conversation.id,
+                [],
+            )
+            if task.sent_at < timestamp <= window_end
+        ]
+        if candidate_times:
+            reply_times[task.id] = min(candidate_times)
+    return reply_times
+
+
+def _campaign_message_lifecycle(
+    task: MessageAutomationTask,
+    wa_message: Optional[WaMessage],
+    replied_at: Optional[datetime],
+) -> dict:
+    """
+    Convert provider/task events into the customer-facing message lifecycle.
+
+    WhatsApp exposes one `delivered` event when the message reaches the
+    recipient's WhatsApp account. The UI presents that as
+    "Delivered / Received" rather than inventing a second provider event.
+    """
+    delivery_status = (
+        wa_message.status.value if wa_message else None
+    )
+    not_delivered = (
+        task.status == "failed" or delivery_status == "failed"
+    )
+    sent = task.status == "sent" and not not_delivered
+    delivered = delivery_status in {"delivered", "read"}
+    opened = bool(
+        delivery_status == "read"
+        or (wa_message and wa_message.read_at)
+    )
+    replied = replied_at is not None
+
+    if not_delivered:
+        lifecycle_status = "not_delivered"
+    elif replied:
+        lifecycle_status = "replied"
+    elif opened:
+        lifecycle_status = "opened"
+    elif delivered:
+        lifecycle_status = "delivered"
+    elif sent:
+        lifecycle_status = "sent"
+    else:
+        lifecycle_status = task.status
+
+    return {
+        "lifecycle_status": lifecycle_status,
+        "sent": sent,
+        "delivered": delivered,
+        "received": delivered,
+        "opened": opened,
+        "replied": replied,
+        "not_replied": sent and not replied,
+        "not_delivered": not_delivered,
+        "delivery_status": delivery_status,
+        "delivered_at": (
+            wa_message.delivered_at if wa_message else None
+        ),
+        "opened_at": (
+            wa_message.read_at if wa_message else None
+        ),
+        "replied_at": replied_at,
+        "failure_reason": (
+            (wa_message.failed_reason if wa_message else None)
+            or task.error_reason
+        ),
+    }
+
+
+def _campaign_status_matches(message: dict, selected_status: str) -> bool:
+    if selected_status == "all":
+        return True
+    if selected_status == "failed":
+        return bool(message["not_delivered"])
+    if selected_status in {
+        "sent",
+        "delivered",
+        "received",
+        "opened",
+        "replied",
+        "not_replied",
+        "not_delivered",
+    }:
+        return bool(message[selected_status])
+    return message["task_status"] == selected_status
 
 
 def get_retarget_campaign_detail(
@@ -1012,98 +1205,55 @@ def get_retarget_campaign_detail(
         )
         wa_by_provider_id = {row.provider_message_id: row for row in wa_rows}
 
-    # ---- reply detection: phone -> subscriber -> conversation -> inbound messages ----
-    # Only tasks that actually sent are eligible for reply attribution.
-    sent_tasks = [task for task in tasks if task.status == "sent"]
-    all_variants: set[str] = set()
-    for task in sent_tasks:
-        all_variants |= _phone_variants(task.recipient_phone_e164)
-
-    subscribers = (
-        db.query(WaSubscriber)
-        .filter(
-            WaSubscriber.tenant_id == current_user.tenant_id,
-            WaSubscriber.phone_number.in_(all_variants),
-        )
-        .all()
-        if all_variants
-        else []
+    reply_times = _retarget_reply_times(
+        db,
+        current_user.tenant_id,
+        tasks,
     )
-    subscriber_by_variant = {row.phone_number: row for row in subscribers}
-
-    conversations = (
-        db.query(WaConversation)
-        .filter(
-            WaConversation.tenant_id == current_user.tenant_id,
-            WaConversation.subscriber_id.in_([row.id for row in subscribers]),
-        )
-        .all()
-        if subscribers
-        else []
-    )
-    conversation_by_subscriber_id = {row.subscriber_id: row for row in conversations}
-
-    inbound_times_by_conversation: dict[UUID, list[datetime]] = {}
-    if conversations:
-        inbound_rows = (
-            db.query(WaMessage.conversation_id, WaMessage.sent_at)
-            .filter(
-                WaMessage.tenant_id == current_user.tenant_id,
-                WaMessage.conversation_id.in_([row.id for row in conversations]),
-                WaMessage.direction == WaMessageDirection.inbound,
-            )
-            .all()
-        )
-        for conversation_id, sent_at in inbound_rows:
-            inbound_times_by_conversation.setdefault(conversation_id, []).append(sent_at)
-
     recipients = []
     for task in tasks:
-        wa_message = wa_by_provider_id.get(task.provider_message_id) if task.provider_message_id else None
-        delivery_status = wa_message.status.value if wa_message else None
-        is_read = bool(wa_message.read_at) if wa_message else None
-
-        replied = False
-        replied_at = None
-        if task.status == "sent" and task.sent_at:
-            subscriber = None
-            for variant in _phone_variants(task.recipient_phone_e164):
-                if variant in subscriber_by_variant:
-                    subscriber = subscriber_by_variant[variant]
-                    break
-            if subscriber:
-                conversation = conversation_by_subscriber_id.get(subscriber.id)
-                if conversation:
-                    window_end = task.sent_at + timedelta(days=RETARGET_REPLY_ATTRIBUTION_DAYS)
-                    candidate_times = [
-                        ts for ts in inbound_times_by_conversation.get(conversation.id, [])
-                        if task.sent_at < ts <= window_end
-                    ]
-                    if candidate_times:
-                        replied = True
-                        replied_at = min(candidate_times)
-
-        recipients.append(
-            {
-                "customer_id": str(task.customer_id) if task.customer_id else None,
-                "name": task.recipient_name or "",
-                "phone": task.recipient_phone_e164 or "",
-                "status": task.status,
-                "error_reason": task.error_reason,
-                "sent_at": task.sent_at,
-                "delivery_status": delivery_status,
-                "read": is_read,
-                "replied": replied,
-                "replied_at": replied_at,
-            }
+        wa_message = (
+            wa_by_provider_id.get(task.provider_message_id)
+            if task.provider_message_id
+            else None
         )
+        lifecycle = _campaign_message_lifecycle(
+            task,
+            wa_message,
+            reply_times.get(task.id),
+        )
+        recipients.append({
+            "customer_id": (
+                str(task.customer_id) if task.customer_id else None
+            ),
+            "name": task.recipient_name or "",
+            "phone": task.recipient_phone_e164 or "",
+            "status": task.status,
+            "error_reason": lifecycle["failure_reason"],
+            "sent_at": task.sent_at,
+            **lifecycle,
+            "read": lifecycle["opened"],
+        })
+
+    wa_settings = (
+        db.query(WaSettings)
+        .filter(WaSettings.tenant_id == current_user.tenant_id)
+        .first()
+    )
 
     return {
         "batch_id": batch_id,
         "template_name": summary_row.template_name or "",
         "language_code": summary_row.language_code or "en",
         "sent_at": summary_row.sent_at,
-        "read_receipts_tracked": False,
+        "read_receipts_tracked": bool(
+            wa_settings
+            and (
+                wa_settings.meta_app_secret
+                or wa_settings.meta_phone_number_id
+                or wa_settings.wabis_phone_number_id
+            )
+        ),
         "reply_attribution_days": RETARGET_REPLY_ATTRIBUTION_DAYS,
         "recipients": recipients,
         "page": page,

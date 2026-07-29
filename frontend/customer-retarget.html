@@ -118,6 +118,7 @@ body.retarget-has-nav{padding-left:240px}
 .order-list{display:flex;flex-direction:column;gap:10px}.order-item{border:1px solid #e4e8ef;border-radius:12px;padding:13px 14px;background:#fff}.order-item:last-child{border-bottom:1px solid #e4e8ef}.order-title{font-size:13px}.order-amount{font-size:14px}.order-products{color:#4e5969;line-height:1.6}.order-actions{margin-top:10px}.history-item{background:#f8fafc;border-left-color:#8fb2f5;border-radius:0 10px 10px 0;padding:10px 12px}
 .empty-inline{padding:20px;text-align:center;background:#f8fafc;border:1px dashed #d8dee8;border-radius:10px;color:var(--rt-sub);font-size:12px}
 .status-pill{display:inline-flex;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.message-lifecycle{display:flex;align-items:center;gap:5px;flex-wrap:wrap;max-width:330px}.message-lifecycle .status-pill{padding:4px 7px;font-size:9px}.lifecycle-time{margin-top:5px;color:#7b8494;font-size:9px;line-height:1.4}.lifecycle-help{margin-top:5px;color:#697386;font-size:9px;line-height:1.35}
 #campaignPanel select{height:38px;border:1px solid #dfe4ec;border-radius:10px;padding:0 10px;background:#fff;font-size:12px;max-width:320px}
 #campaignBody .table-wrap{min-height:0}
 .campaign-filters{display:flex;align-items:end;justify-content:space-between;gap:14px;padding:13px 20px;border-top:1px solid var(--rt-line);border-bottom:1px solid var(--rt-line);background:#fafbfd}.campaign-quick-ranges{display:flex;gap:7px;flex-wrap:wrap}.range-btn{min-height:36px;padding:7px 12px;border:1px solid #dfe4ec;border-radius:9px;background:#fff;color:#536073;font:inherit;font-size:11px;font-weight:800;cursor:pointer}.range-btn.active{border-color:#9bbafb;background:#eaf2ff;color:#1748b5}.campaign-custom-range{display:flex;align-items:end;gap:8px;flex-wrap:wrap}.campaign-custom-range label{display:flex;flex-direction:column;gap:4px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#7b8494}.campaign-custom-range input{height:36px;border:1px solid #dfe4ec;border-radius:9px;background:#fff;padding:0 9px;color:#273248}.campaign-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:18px 20px 10px}.campaign-stat{padding:13px 14px;border:1px solid #e4e9f1;border-radius:12px;background:#fff}.campaign-stat-value{font-size:21px;font-weight:850;letter-spacing:-.02em}.campaign-stat-label{margin-top:4px;color:#7b8494;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.campaign-section{margin:10px 20px 18px;border:1px solid #e4e9f1;border-radius:13px;overflow:hidden;background:#fff}.campaign-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-bottom:1px solid #e8ecf2}.campaign-section-title{font-size:13px;font-weight:820}.campaign-section-copy{font-size:10px;color:var(--rt-sub);margin-top:3px}.daily-rate{display:flex;align-items:center;gap:8px;min-width:130px}.daily-rate-track{width:72px;height:6px;border-radius:99px;background:#e8edf4;overflow:hidden}.daily-rate-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#2563eb,#18a173)}.message-detail{min-width:260px;padding:11px 12px;border:1px solid #e4e9f1;border-radius:10px;background:#f8fafc;color:#465266;font-size:10px;line-height:1.55}.message-detail strong{color:#253047}.message-detail-row{margin-top:7px;overflow-wrap:anywhere}.message-detail-row:first-child{margin-top:0}.message-detail-image{display:block;width:120px;max-height:80px;object-fit:cover;margin-top:8px;border:1px solid #dfe5ed;border-radius:8px}.message-details summary{color:#1748b5;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}.message-status-filter{height:36px!important;min-width:120px}
@@ -416,17 +417,40 @@ let campaignList=[],campaignDetailPage=1,campaignRangeDays=7,campaignMessagePage
 const CAMPAIGN_STATUS_STYLE={
   sent:['SENT','#e8f0fe','#174ea6'],
   delivered:['DELIVERED','#e6f4ea','#137333'],
-  read:['READ','#e6f4ea','#137333'],
-  failed:['FAILED','#fce8e6','#a50e0e'],
+  received:['RECEIVED','#e6f4ea','#137333'],
+  opened:['OPENED','#e0f2fe','#075985'],
+  replied:['REPLIED','#dcfce7','#166534'],
+  not_replied:['NOT REPLIED','#f1f3f4','#5f6368'],
+  not_delivered:['NOT DELIVERED','#fce8e6','#a50e0e'],
+  failed:['NOT DELIVERED','#fce8e6','#a50e0e'],
   pending:['PENDING','#fff3cd','#855d00'],
   skipped:['SKIPPED','#f1f3f4','#5f6368'],
   cancelled:['CANCELLED','#f1f3f4','#5f6368']
 };
-function campaignStatusBadge(status,deliveryStatus){
-  const effective=deliveryStatus||status;
-  if(effective==='sent')return '<span class="status-pill" style="background:#e8f0fe;color:#174ea6">META ACCEPTED</span>';
-  const [label,bg,fg]=CAMPAIGN_STATUS_STYLE[effective]||[String(effective||'—').toUpperCase(),'#f1f3f4','#5f6368'];
+function lifecyclePill(status){
+  const [label,bg,fg]=CAMPAIGN_STATUS_STYLE[status]||[String(status||'—').toUpperCase(),'#f1f3f4','#5f6368'];
   return `<span class="status-pill" style="background:${bg};color:${fg}">${esc(label)}</span>`;
+}
+function campaignLifecycleHtml(message){
+  if(message.not_delivered||message.task_status==='failed'||message.status==='failed'){
+    return `<div class="message-lifecycle">${lifecyclePill('not_delivered')}</div>${message.failure_reason||message.error_reason?`<div class="lifecycle-help">${esc(message.failure_reason||message.error_reason)}</div>`:''}`;
+  }
+  const taskStatus=message.task_status||message.status;
+  if(!message.sent){
+    return `<div class="message-lifecycle">${lifecyclePill(taskStatus||'pending')}</div>`;
+  }
+  const pills=[lifecyclePill('sent')];
+  if(message.delivered){
+    pills.push(lifecyclePill('delivered'));
+    pills.push(lifecyclePill('received'));
+  }
+  if(message.opened) pills.push(lifecyclePill('opened'));
+  pills.push(lifecyclePill(message.replied?'replied':'not_replied'));
+  const times=[];
+  if(message.delivered_at)times.push(`Received ${dateTime(message.delivered_at)}`);
+  if(message.opened_at)times.push(`Opened ${dateTime(message.opened_at)}`);
+  if(message.replied_at)times.push(`Replied ${dateTime(message.replied_at)}`);
+  return `<div class="message-lifecycle">${pills.join('')}</div>${times.length?`<div class="lifecycle-time">${times.map(esc).join(' · ')}</div>`:''}`;
 }
 function localDateValue(date){
   const copy=new Date(date.getTime()-date.getTimezoneOffset()*60000);
@@ -483,7 +507,7 @@ function campaignOverviewHtml(data){
       <div class="table-wrap"><table style="min-width:760px"><thead><tr><th>Date</th><th>Campaigns</th><th>Recipients</th><th>Meta accepted</th><th>Failed</th><th>Pending</th><th>Acceptance rate</th></tr></thead><tbody>${dailyRows||'<tr><td colspan="7" class="muted" style="padding:22px;text-align:center">No campaign activity in this date range.</td></tr>'}</tbody></table></div>
     </section>
     <section class="campaign-section">
-      <div class="campaign-section-head"><div><div class="campaign-section-title">All campaign messages</div><div class="campaign-section-copy">Every recipient message in this date range, across all campaigns.</div></div><select class="message-status-filter" id="campaignMessageStatus" onchange="changeCampaignMessageStatus(this.value)"><option value="all">All statuses</option><option value="sent">Meta accepted</option><option value="failed">Failed</option><option value="pending">Pending</option><option value="skipped">Skipped</option><option value="cancelled">Cancelled</option></select></div>
+      <div class="campaign-section-head"><div><div class="campaign-section-title">All campaign messages</div><div class="campaign-section-copy">Follow every message from sending through delivery, opening and reply.</div></div><select class="message-status-filter" id="campaignMessageStatus" onchange="changeCampaignMessageStatus(this.value)"><option value="all">All statuses</option><option value="sent">Sent</option><option value="delivered">Delivered / Received</option><option value="opened">Opened</option><option value="replied">Replied</option><option value="not_replied">Not replied</option><option value="not_delivered">Not delivered</option><option value="pending">Pending</option><option value="skipped">Skipped</option><option value="cancelled">Cancelled</option></select></div>
       <div id="campaignMessagesBody"><div class="loading">Loading all messages…</div></div>
     </section>
     <section class="campaign-section">
@@ -525,12 +549,12 @@ async function loadCampaignMessages(page=1){
       <td><strong>${dateTime(message.sent_at||message.created_at)}</strong><div class="muted">${message.sent_at?'Accepted by Meta':'Created / queued'}</div></td>
       <td><strong>${esc(message.customer_name||'—')}</strong><div class="mono muted">${esc(message.phone||'—')}</div></td>
       <td><strong>${esc(message.template_name||'—')}</strong><div class="muted">${esc(message.language_code||'—')}</div></td>
-      <td>${campaignStatusBadge(message.task_status,message.delivery_status)}${message.read_at?'<div class="muted">Read '+dateTime(message.read_at)+'</div>':''}</td>
+      <td>${campaignLifecycleHtml(message)}</td>
       <td>${campaignMessageDetails(message)}</td>
     </tr>`).join('');
     const totalPages=Math.max(1,Math.ceil((data.total||0)/(data.limit||50)));
     const pager=totalPages>1?`<div class="pagination"><button class="btn btn-sm" ${campaignMessagePage<=1?'disabled':''} onclick="loadCampaignMessages(${campaignMessagePage-1})">← Previous</button><span>${Number(data.total).toLocaleString('en-IN')} messages · Page ${campaignMessagePage} of ${totalPages}</span><button class="btn btn-sm" ${campaignMessagePage>=totalPages?'disabled':''} onclick="loadCampaignMessages(${campaignMessagePage+1})">Next →</button></div>`:`<div class="table-meta"><span>${Number(data.total||0).toLocaleString('en-IN')} message${Number(data.total)===1?'':'s'}</span><span>${esc(campaignMessageStatus==='all'?'All statuses':campaignMessageStatus)}</span></div>`;
-    body.innerHTML=`<div class="table-wrap"><table style="min-width:980px"><thead><tr><th>Date &amp; time</th><th>Customer</th><th>Template</th><th>Status</th><th>Message details</th></tr></thead><tbody>${rowsHtml||'<tr><td colspan="5" class="muted" style="padding:22px;text-align:center">No messages match this date range and status.</td></tr>'}</tbody></table></div>${pager}`;
+    body.innerHTML=`<div class="table-wrap"><table style="min-width:1080px"><thead><tr><th>Date &amp; time</th><th>Customer</th><th>Template</th><th>Delivery &amp; engagement</th><th>Message details</th></tr></thead><tbody>${rowsHtml||'<tr><td colspan="5" class="muted" style="padding:22px;text-align:center">No messages match this date range and status.</td></tr>'}</tbody></table></div>${pager}`;
   }catch(e){
     body.innerHTML=`<div class="error-state">Could not load all messages.<br><small>${esc(e.message)}</small></div>`;
   }
@@ -571,18 +595,18 @@ async function loadCampaignDetail(batchId,page){
   body.innerHTML='<div class="loading">Loading…</div>';
   try{
     const d=await api(`/api/customer-retarget/whatsapp/campaigns/${encodeURIComponent(batchId)}?page=${campaignDetailPage}&limit=25`);
-    const noteHtml=d.read_receipts_tracked?'':'<div class="template-note" style="margin:0 20px 12px"><strong>Delivery tracking is not configured:</strong> “Meta accepted” means Meta accepted the API request; it does not prove the customer received the message. Configure the Meta status webhook and App Secret to receive delivered, read, and failed updates.</div>';
+    const noteHtml=d.read_receipts_tracked?'<div class="template-note" style="margin:0 20px 12px"><strong>Live lifecycle tracking:</strong> Delivered and Received represent Meta’s delivery event. Opened represents Meta’s read event. Replies are attributed for 7 days after sending.</div>':'<div class="template-note" style="margin:0 20px 12px"><strong>Delivery tracking unavailable:</strong> Sent means Meta accepted the API request; it does not prove receipt.</div>';
     const rowsHtml=d.recipients.map(r=>`
       <tr>
         <td>${esc(r.name||'—')}</td>
         <td class="mono">${esc(r.phone||'—')}</td>
-        <td>${campaignStatusBadge(r.status,r.delivery_status)}${r.error_reason?`<div class="muted" style="margin-top:4px;max-width:280px;white-space:normal">${esc(r.error_reason)}</div>`:''}</td>
-        <td>${r.read===null||r.read===undefined?'<span class="muted">Not tracked</span>':(r.read?'✓ Yes':'— No')}</td>
-        <td>${r.replied?`✓ Yes<div class="muted" style="margin-top:2px">${dateTime(r.replied_at)}</div>`:'— No'}</td>
+        <td>${campaignLifecycleHtml({...r,task_status:r.status})}</td>
+        <td>${r.opened?'✓ Opened':'— Not opened'}</td>
+        <td>${r.replied?`✓ Replied<div class="muted" style="margin-top:2px">${dateTime(r.replied_at)}</div>`:'— Not replied'}</td>
       </tr>`).join('');
     const totalPages=Math.max(1,Math.ceil((d.total_recipients||0)/(d.limit||25)));
     const pagerHtml=totalPages>1?`<div class="pagination"><button class="btn btn-sm" ${campaignDetailPage<=1?'disabled':''} onclick="loadCampaignDetail('${esc(batchId)}',${campaignDetailPage-1})">← Previous</button><span>Page ${campaignDetailPage} of ${totalPages}</span><button class="btn btn-sm" ${campaignDetailPage>=totalPages?'disabled':''} onclick="loadCampaignDetail('${esc(batchId)}',${campaignDetailPage+1})">Next →</button></div>`:'';
-    body.innerHTML=`<div style="padding:14px 20px"><strong>${esc(d.template_name)}</strong><div class="muted">${esc(d.language_code)} · Submitted ${dateTime(d.sent_at)} · ${d.total_recipients} recipient${d.total_recipients!==1?'s':''}</div></div>${noteHtml}<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Phone</th><th>Status</th><th>Read</th><th>Replied</th></tr></thead><tbody>${rowsHtml||'<tr><td colspan="5" class="muted" style="padding:20px;text-align:center">No recipients in this batch</td></tr>'}</tbody></table></div>${pagerHtml}`;
+    body.innerHTML=`<div style="padding:14px 20px"><strong>${esc(d.template_name)}</strong><div class="muted">${esc(d.language_code)} · Submitted ${dateTime(d.sent_at)} · ${d.total_recipients} recipient${d.total_recipients!==1?'s':''}</div></div>${noteHtml}<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Phone</th><th>Delivery &amp; engagement</th><th>Opened</th><th>Reply</th></tr></thead><tbody>${rowsHtml||'<tr><td colspan="5" class="muted" style="padding:20px;text-align:center">No recipients in this batch</td></tr>'}</tbody></table></div>${pagerHtml}`;
   }catch(e){
     body.innerHTML=`<div class="error-state">Could not load campaign details.<br><small>${esc(e.message)}</small></div>`;
   }

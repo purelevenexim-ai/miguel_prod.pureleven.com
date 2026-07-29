@@ -1000,7 +1000,26 @@ def apply_meta_status_update(
             message.status = WaMessageStatus.failed
             errors = entry.get("errors") or []
             if errors:
-                message.failed_reason = str(errors[0].get("title") or errors[0].get("message") or "").strip() or message.failed_reason
+                error = errors[0]
+                code = str(error.get("code") or "").strip()
+                title = str(
+                    error.get("title")
+                    or error.get("message")
+                    or ""
+                ).strip()
+                details = str(
+                    (error.get("error_data") or {}).get("details")
+                    or ""
+                ).strip()
+                parts = [
+                    f"(#{code})" if code else "",
+                    title,
+                    f"— {details}" if details and details != title else "",
+                ]
+                message.failed_reason = (
+                    " ".join(part for part in parts if part).strip()
+                    or message.failed_reason
+                )
             changed = True
         else:
             new_status = WaMessageStatus(raw_status)
@@ -1607,4 +1626,3 @@ async def _fire_outbound_webhooks(
             except Exception as exc:
                 log.warning("Failed to update webhook stats: %s", exc)
                 db.rollback()
-
