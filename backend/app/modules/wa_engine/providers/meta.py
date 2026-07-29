@@ -160,6 +160,24 @@ class MetaProvider(WaProviderBase):
     # ------------------------------------------------------------------
 
     @classmethod
+    def parse_statuses(cls, raw: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Extract message-status callbacks (sent/delivered/read/failed) from a
+        Meta webhook POST body. These arrive in entry → changes → value →
+        statuses[], as a separate webhook delivery from messages[] — a
+        message send and its later delivery/read receipt are never in the
+        same payload.
+        """
+        try:
+            entry  = raw.get("entry", [{}])[0]
+            change = entry.get("changes", [{}])[0]
+            value  = change.get("value", {})
+            statuses = value.get("statuses", [])
+        except (IndexError, AttributeError):
+            return []
+        return statuses if isinstance(statuses, list) else []
+
+    @classmethod
     def parse_inbound(cls, raw: Dict[str, Any]) -> Optional[InboundMessage]:
         """
         Parse a Meta webhook POST body.  Meta sends batched events inside

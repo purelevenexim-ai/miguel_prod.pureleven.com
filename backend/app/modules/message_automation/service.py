@@ -1649,13 +1649,22 @@ def _template_health_details(template_name: str, template_json: dict[str, Any]) 
     }
 
 
-def _template_has_media_header(template_json: dict[str, Any]) -> bool:
+MEDIA_HEADER_FORMATS = {"image", "video", "document"}
+
+
+def _template_header_format(template_json: dict[str, Any]) -> str | None:
+    """Return 'image' | 'video' | 'document' if this template has a media header, else None."""
     for component in _template_components(template_json):
         if str(component.get("type") or "").lower() != "header":
             continue
-        if str(component.get("format") or "").lower() == "image":
-            return True
-    return False
+        header_format = str(component.get("format") or "").lower()
+        if header_format in MEDIA_HEADER_FORMATS:
+            return header_format
+    return None
+
+
+def _template_has_media_header(template_json: dict[str, Any]) -> bool:
+    return _template_header_format(template_json) is not None
 
 
 def _build_meta_components(template_name: str, variables: dict[str, Any], *, template_json: dict[str, Any] | None = None) -> list[dict[str, Any]]:
@@ -1707,28 +1716,24 @@ def _header_component_from_template(
     for component in _template_components(template_json):
         if str(component.get("type") or "").lower() != "header":
             continue
-        if str(component.get("format") or "").lower() != "image":
+        header_format = str(component.get("format") or "").lower()
+        if header_format not in MEDIA_HEADER_FORMATS:
             continue
+
         configured_media_url = str(media_url or "").strip()
-        if configured_media_url:
-            return {
-                "type": "header",
-                "parameters": [
-                    {
-                        "type": "image",
-                        "image": {"link": configured_media_url},
-                    }
-                ],
-            }
-        header_handles = ((component.get("example") or {}).get("header_handle") or [])
-        if not header_handles:
-            return None
+        link = configured_media_url
+        if not link:
+            header_handles = ((component.get("example") or {}).get("header_handle") or [])
+            if not header_handles:
+                return None
+            link = header_handles[0]
+
         return {
             "type": "header",
             "parameters": [
                 {
-                    "type": "image",
-                    "image": {"link": header_handles[0]},
+                    "type": header_format,
+                    header_format: {"link": link},
                 }
             ],
         }
@@ -1928,6 +1933,7 @@ async def available_whatsapp_templates(db: Session, tenant_id: uuid.UUID) -> lis
                 "source": ",".join(sources) if sources else "unknown",
                 "app_visible": template_name in approved_templates,
                 "has_media_header": _template_has_media_header(template_json),
+                "header_format": _template_header_format(template_json),
                 "parameter_format": health_details["parameter_format"],
                 "body_parameters": health_details["body_parameters"],
                 "button_parameters": health_details["button_parameters"],
@@ -2039,8 +2045,9 @@ async def _resolve_whatsapp_template(settings_row: Any, task: MessageAutomationT
             template_json,
             media_url=variables.get("manual_header_image_url"),
         )
-        if _template_has_media_header(template_json) and header_component is None:
-            raise ValueError("This template requires a public HTTPS header image URL")
+        header_format = _template_header_format(template_json)
+        if header_format and header_component is None:
+            raise ValueError(f"This template requires a public HTTPS header {header_format} URL")
         if header_component:
             components = [header_component, *components]
         return {

@@ -72,6 +72,27 @@ async def send_retarget_template(
     )
 
 
+@router.get("/whatsapp/campaigns")
+def list_retarget_campaigns(
+    page: int = Query(1, ge=1),
+    limit: int = Query(25, ge=1, le=200),
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(retarget_roles),
+):
+    return service.list_retarget_campaigns(db, current_user, page=page, limit=limit)
+
+
+@router.get("/whatsapp/campaigns/{batch_id}")
+def get_retarget_campaign_detail(
+    batch_id: str,
+    page: int = Query(1, ge=1),
+    limit: int = Query(25, ge=1, le=200),
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(retarget_roles),
+):
+    return service.get_retarget_campaign_detail(db, current_user, batch_id, page=page, limit=limit)
+
+
 @router.get("/{customer_id}")
 def get_customer_workspace(
     customer_id: UUID,

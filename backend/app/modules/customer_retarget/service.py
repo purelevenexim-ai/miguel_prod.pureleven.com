@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import re
 from typing import Optional
@@ -22,8 +22,15 @@ from app.models.customer_retarget import (
     RetargetOutcome,
 )
 from app.models.employee import Employee
+from app.models.message_automation import MessageAutomationTask
 from app.models.order import Order, OrderStatus
 from app.models.shopify_order import ShopifyOrder, ShopifyOrderStatus
+from app.models.wa_engine import (
+    WaConversation,
+    WaMessage,
+    WaMessageDirection,
+    WaSubscriber,
+)
 from app.modules.customer_retarget.schemas import (
     RetargetCallCreate,
     RetargetTemplateBulkSend,
@@ -160,11 +167,11 @@ async def queue_retarget_template(
             detail="Templates with dynamic website-button values are not supported here; use a static website URL",
         )
 
-    has_media_header = message_automation_service._template_has_media_header(template_json)
-    if has_media_header and not data.header_image_url:
+    header_format = message_automation_service._template_header_format(template_json)
+    if header_format and not data.header_image_url:
         raise HTTPException(
             status_code=422,
-            detail="This template requires a public HTTPS header image URL",
+            detail=f"This template requires a public HTTPS header {header_format} URL",
         )
 
     customers = (
@@ -240,6 +247,263 @@ async def queue_retarget_template(
         "message": (
             f"{len(queued)} WhatsApp message{'s' if len(queued) != 1 else ''} queued for sending"
         ),
+    }
+
+
+def _retarget_batch_column():
+    return MessageAutomationTask.payload["manual_batch_id"].astext
+
+
+def list_retarget_campaigns(
+    db: Session,
+    current_user: Employee,
+    *,
+    page: int = 1,
+    limit: int = 25,
+) -> dict:
+    """
+    Discover WhatsApp Customer Retarget bulk-send batches.
+    There is no dedicated campaign table for this feature — each bulk send from
+    the "Send WhatsApp template" modal stamps a batch_id into
+    message_automation_tasks.payload['manual_batch_id']; a "campaign" here is
+    just that batch grouping.
+    """
+    batch_col = _retarget_batch_column()
+    template_col = MessageAutomationTask.payload["manual_template_name"].astext
+    language_col = MessageAutomationTask.payload["manual_language_code"].astext
+
+    base_query = (
+        db.query(
+            batch_col.label("batch_id"),
+            func.min(template_col).label("template_name"),
+            func.min(language_col).label("language_code"),
+            func.min(MessageAutomationTask.created_at).label("sent_at"),
+            func.count(MessageAutomationTask.id).label("recipient_count"),
+            func.sum(case((MessageAutomationTask.status == "sent", 1), else_=0)).label("sent_count"),
+            func.sum(case((MessageAutomationTask.status == "failed", 1), else_=0)).label("failed_count"),
+            func.sum(case((MessageAutomationTask.status == "pending", 1), else_=0)).label("pending_count"),
+        )
+        .filter(
+            MessageAutomationTask.tenant_id == current_user.tenant_id,
+            MessageAutomationTask.template_key == message_automation_service.RETARGET_MANUAL_TEMPLATE_KEY,
+            batch_col.isnot(None),
+        )
+        .group_by(batch_col)
+    )
+    total = base_query.count()
+
+    page = max(1, page)
+    limit = max(1, min(limit, 200))
+    rows = (
+        base_query.order_by(func.min(MessageAutomationTask.created_at).desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
+    return {
+        "campaigns": [
+            {
+                "batch_id": row.batch_id,
+                "template_name": row.template_name or "",
+                "language_code": row.language_code or "en",
+                "sent_at": row.sent_at,
+                "recipient_count": row.recipient_count,
+                "sent_count": row.sent_count or 0,
+                "failed_count": row.failed_count or 0,
+                "pending_count": row.pending_count or 0,
+            }
+            for row in rows
+        ],
+        "page": page,
+        "limit": limit,
+        "total": total,
+    }
+
+
+def _phone_variants(value: Optional[str]) -> set[str]:
+    digits = re.sub(r"\D", "", value or "")
+    if not digits:
+        return set()
+    variants = {digits, f"+{digits}"}
+    if len(digits) == 12 and digits.startswith("91"):
+        variants.add(digits[2:])
+    elif len(digits) == 10:
+        variants.add(f"91{digits}")
+        variants.add(f"+91{digits}")
+    return variants
+
+
+RETARGET_REPLY_ATTRIBUTION_DAYS = 7
+
+
+def get_retarget_campaign_detail(
+    db: Session,
+    current_user: Employee,
+    batch_id: str,
+    *,
+    page: int = 1,
+    limit: int = 25,
+) -> dict:
+    """
+    Real, backend-driven results for one Customer Retarget WhatsApp batch.
+
+    Data honesty notes:
+    - `status` / `error_reason` come straight from message_automation_tasks —
+      this is the true send outcome from Meta's synchronous API response
+      (e.g. a real Meta error like "#132012 Parameter format does not match").
+    - `delivery_status` / `read` come from wa_messages, joined by the exact
+      provider_message_id Meta returned at send time, and populated by the
+      Meta statuses[] webhook handler. If that webhook hasn't reported a
+      status yet for a message, these are None ("Not tracked"), not False —
+      we never fabricate a delivery/read result.
+    - `replied` is computed for real: an inbound WhatsApp message recorded
+      for that customer's phone within RETARGET_REPLY_ATTRIBUTION_DAYS of
+      their message actually being sent. Only tasks that were actually
+      sent (status == 'sent') are eligible — a reply can't be attributed to
+      a message that never reached the customer.
+    """
+    batch_col = _retarget_batch_column()
+    base_filters = (
+        MessageAutomationTask.tenant_id == current_user.tenant_id,
+        MessageAutomationTask.template_key == message_automation_service.RETARGET_MANUAL_TEMPLATE_KEY,
+        batch_col == batch_id,
+    )
+
+    summary_row = (
+        db.query(
+            func.min(MessageAutomationTask.payload["manual_template_name"].astext).label("template_name"),
+            func.min(MessageAutomationTask.payload["manual_language_code"].astext).label("language_code"),
+            func.min(MessageAutomationTask.created_at).label("sent_at"),
+            func.count(MessageAutomationTask.id).label("total"),
+        )
+        .filter(*base_filters)
+        .first()
+    )
+    if not summary_row or not summary_row.total:
+        raise HTTPException(status_code=404, detail="Campaign batch not found")
+
+    page = max(1, page)
+    limit = max(1, min(limit, 200))
+    tasks = (
+        db.query(MessageAutomationTask)
+        .filter(*base_filters)
+        .order_by(MessageAutomationTask.created_at.asc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
+
+    # ---- delivery/read status, joined by the exact Meta message id ----
+    provider_ids = [task.provider_message_id for task in tasks if task.provider_message_id]
+    wa_by_provider_id: dict[str, WaMessage] = {}
+    if provider_ids:
+        wa_rows = (
+            db.query(WaMessage)
+            .filter(
+                WaMessage.tenant_id == current_user.tenant_id,
+                WaMessage.provider_message_id.in_(provider_ids),
+            )
+            .all()
+        )
+        wa_by_provider_id = {row.provider_message_id: row for row in wa_rows}
+
+    # ---- reply detection: phone -> subscriber -> conversation -> inbound messages ----
+    # Only tasks that actually sent are eligible for reply attribution.
+    sent_tasks = [task for task in tasks if task.status == "sent"]
+    all_variants: set[str] = set()
+    for task in sent_tasks:
+        all_variants |= _phone_variants(task.recipient_phone_e164)
+
+    subscribers = (
+        db.query(WaSubscriber)
+        .filter(
+            WaSubscriber.tenant_id == current_user.tenant_id,
+            WaSubscriber.phone_number.in_(all_variants),
+        )
+        .all()
+        if all_variants
+        else []
+    )
+    subscriber_by_variant = {row.phone_number: row for row in subscribers}
+
+    conversations = (
+        db.query(WaConversation)
+        .filter(
+            WaConversation.tenant_id == current_user.tenant_id,
+            WaConversation.subscriber_id.in_([row.id for row in subscribers]),
+        )
+        .all()
+        if subscribers
+        else []
+    )
+    conversation_by_subscriber_id = {row.subscriber_id: row for row in conversations}
+
+    inbound_times_by_conversation: dict[UUID, list[datetime]] = {}
+    if conversations:
+        inbound_rows = (
+            db.query(WaMessage.conversation_id, WaMessage.sent_at)
+            .filter(
+                WaMessage.tenant_id == current_user.tenant_id,
+                WaMessage.conversation_id.in_([row.id for row in conversations]),
+                WaMessage.direction == WaMessageDirection.inbound,
+            )
+            .all()
+        )
+        for conversation_id, sent_at in inbound_rows:
+            inbound_times_by_conversation.setdefault(conversation_id, []).append(sent_at)
+
+    recipients = []
+    for task in tasks:
+        wa_message = wa_by_provider_id.get(task.provider_message_id) if task.provider_message_id else None
+        delivery_status = wa_message.status.value if wa_message else None
+        is_read = bool(wa_message.read_at) if wa_message else None
+
+        replied = False
+        replied_at = None
+        if task.status == "sent" and task.sent_at:
+            subscriber = None
+            for variant in _phone_variants(task.recipient_phone_e164):
+                if variant in subscriber_by_variant:
+                    subscriber = subscriber_by_variant[variant]
+                    break
+            if subscriber:
+                conversation = conversation_by_subscriber_id.get(subscriber.id)
+                if conversation:
+                    window_end = task.sent_at + timedelta(days=RETARGET_REPLY_ATTRIBUTION_DAYS)
+                    candidate_times = [
+                        ts for ts in inbound_times_by_conversation.get(conversation.id, [])
+                        if task.sent_at < ts <= window_end
+                    ]
+                    if candidate_times:
+                        replied = True
+                        replied_at = min(candidate_times)
+
+        recipients.append(
+            {
+                "customer_id": str(task.customer_id) if task.customer_id else None,
+                "name": task.recipient_name or "",
+                "phone": task.recipient_phone_e164 or "",
+                "status": task.status,
+                "error_reason": task.error_reason,
+                "sent_at": task.sent_at,
+                "delivery_status": delivery_status,
+                "read": is_read,
+                "replied": replied,
+                "replied_at": replied_at,
+            }
+        )
+
+    return {
+        "batch_id": batch_id,
+        "template_name": summary_row.template_name or "",
+        "language_code": summary_row.language_code or "en",
+        "sent_at": summary_row.sent_at,
+        "read_receipts_tracked": False,
+        "reply_attribution_days": RETARGET_REPLY_ATTRIBUTION_DAYS,
+        "recipients": recipients,
+        "page": page,
+        "limit": limit,
+        "total_recipients": summary_row.total,
     }
 
 

@@ -577,6 +577,11 @@ body { background:var(--bg-page); }
                 <input type="password" id="sMetaToken" placeholder="EAARi25X…">
                 <span class="form-hint">From Meta Business → WhatsApp → API Setup</span>
               </div>
+              <div class="form-group">
+                <label>Meta App Secret</label>
+                <input type="password" id="sMetaAppSecret" autocomplete="new-password" placeholder="Paste App Secret">
+                <span class="form-hint">Required to securely verify delivery and read-receipt webhooks. The saved value is never displayed.</span>
+              </div>
             </div>
           </div>
 
@@ -1096,6 +1101,7 @@ async function loadSettings() {
   // tokens are password fields — show placeholder if set
   document.getElementById('sWabisApiToken').placeholder = s.wabis_api_token_set ? '••••••••••••• (set)' : 'Paste token here';
   document.getElementById('sMetaToken').placeholder     = s.meta_token_set       ? '••••••••••••• (set)' : 'Paste token here';
+  document.getElementById('sMetaAppSecret').placeholder = s.meta_app_secret_set  ? '••••••••••••• (set)' : 'Paste App Secret';
   // Load bot IDs (supports both comma-separated string and array)
   if (s.wabis_bot_id) {
     if (typeof s.wabis_bot_id === 'string') {
@@ -1121,8 +1127,10 @@ async function saveSettings() {
   };
   const apiTokenVal  = document.getElementById('sWabisApiToken').value;
   const metaTokenVal = document.getElementById('sMetaToken').value;
+  const metaSecretVal = document.getElementById('sMetaAppSecret').value;
   if (apiTokenVal)  body.wabis_api_token  = apiTokenVal;
   if (metaTokenVal) body.meta_access_token = metaTokenVal;
+  if (metaSecretVal) body.meta_app_secret = metaSecretVal;
 
   try {
     const d = await api('POST', '/api/wa/settings', body);

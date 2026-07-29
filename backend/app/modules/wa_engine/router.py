@@ -1280,6 +1280,7 @@ async def inbound_webhook(
     request:    Request,
     db: Session = Depends(get_db),
     x_webhook_secret: Optional[str] = Header(None, alias="X-Webhook-Secret"),
+    x_hub_signature_256: Optional[str] = Header(None, alias="X-Hub-Signature-256"),
 ):
     """
     Unified inbound webhook.
@@ -1295,16 +1296,42 @@ async def inbound_webhook(
         log.warning("Inbound webhook: unknown tenant_id=%s", tenant_id)
         return {"status": "ignored"}
 
-    if row.inbound_secret and x_webhook_secret:
-        if x_webhook_secret != row.inbound_secret:
-            log.warning("Inbound webhook: bad secret for tenant %s", tenant_id)
-            return {"status": "ignored"}
-
     try:
         raw: Dict[str, Any] = json.loads(body_bytes)
     except Exception:
         log.warning("Inbound webhook: non-JSON body from tenant %s", tenant_id)
         return {"status": "ignored"}
+
+    # ── Meta message-status callbacks (delivered/read/failed) ──────────────
+    # These arrive in Meta's native webhook shape regardless of wa_settings.provider,
+    # since template sends always go directly through Meta's Graph API (see
+    # message_automation/service.py _send_meta_template). A payload never mixes
+    # messages[] and statuses[], so handling this first and returning is safe.
+    # Fail closed: without a verified signature we do not touch any data.
+    status_entries = MetaProvider.parse_statuses(raw)
+    if status_entries:
+        if not row.meta_app_secret:
+            log.warning(
+                "Inbound webhook: Meta status callback for tenant %s but no meta_app_secret "
+                "is configured — skipping. Configure it in WA Settings to enable read receipts.",
+                tenant_id,
+            )
+        elif not MetaProvider.verify_signature(body_bytes, x_hub_signature_256, row.meta_app_secret):
+            log.warning("Inbound webhook: invalid Meta signature for tenant %s status callback", tenant_id)
+        else:
+            try:
+                updated = service.apply_meta_status_update(db, tenant_id, status_entries)
+                db.commit()
+                log.info("Inbound webhook: applied %d Meta status update(s) for tenant %s", updated, tenant_id)
+            except Exception:
+                log.exception("Error applying Meta status updates for tenant %s", tenant_id)
+                db.rollback()
+        return {"status": "ok"}
+
+    if row.inbound_secret and x_webhook_secret:
+        if x_webhook_secret != row.inbound_secret:
+            log.warning("Inbound webhook: bad secret for tenant %s", tenant_id)
+            return {"status": "ignored"}
 
     inbound = None
     if row.provider.value == "meta":
@@ -1362,6 +1389,7 @@ def _build_settings_response(
     resp.wabis_token_set      = bool(row.wabis_access_token)
     resp.wabis_api_token_set  = bool(row.wabis_api_token)
     resp.meta_token_set       = bool(row.meta_access_token)
+    resp.meta_app_secret_set  = bool(row.meta_app_secret)
     resp.inbound_webhook_url  = f"{base}/api/wa/inbound/{row.tenant_id}"
     if row.meta_phone_number_id:
         pid = row.meta_phone_number_id
@@ -1551,4 +1579,3 @@ def _webhook_to_dict(row: WaOutboundWebhook) -> dict:
         "total_failed":   row.total_failed  or 0,
         "created_at":     row.created_at.isoformat()     if row.created_at     else None,
     }
-

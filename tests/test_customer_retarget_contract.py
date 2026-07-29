@@ -43,6 +43,8 @@ class CustomerRetargetContractTests(unittest.TestCase):
         self.assertIn('@router.get("/{customer_id}")', source)
         self.assertIn('@router.post("/{customer_id}/calls"', source)
         self.assertIn('@router.post("/whatsapp/send-template"', source)
+        self.assertIn('@router.get("/whatsapp/campaigns")', source)
+        self.assertIn('@router.get("/whatsapp/campaigns/{batch_id}")', source)
 
     def test_all_required_outcomes_exist(self):
         source = MODEL.read_text()
@@ -121,6 +123,23 @@ class CustomerRetargetContractTests(unittest.TestCase):
             "Send ${campaignLabel} template",
         ]:
             self.assertIn(marker, html)
+
+    def test_campaign_results_are_a_separate_in_page_destination(self):
+        html = PAGE.read_text()
+        for marker in [
+            'id="queuePageTab"',
+            'id="campaignPageTab"',
+            'id="queuePage"',
+            'id="campaignResultsPage" hidden',
+            "setRetargetPage('campaigns')",
+            "#campaign-results",
+            "refreshRetargetPage",
+        ]:
+            self.assertIn(marker, html)
+        self.assertIn(
+            '<div class="retarget-page" id="campaignResultsPage" hidden>',
+            html,
+        )
 
     def test_retarget_handoff_and_navigation_are_present(self):
         html = PAGE.read_text()

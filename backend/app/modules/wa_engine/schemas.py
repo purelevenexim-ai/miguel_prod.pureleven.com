@@ -40,6 +40,7 @@ class WaSettingsSave(BaseModel):
     meta_access_token:          Optional[str] = None
     meta_api_version:           Optional[str] = "v19.0"
     meta_webhook_verify_token:  Optional[str] = None
+    meta_app_secret:            Optional[str] = None
 
     # Auto-reply
     auto_reply_enabled: bool = False
@@ -66,6 +67,7 @@ class WaSettingsResponse(BaseModel):
     meta_phone_number_id_masked: Optional[str] = None
     meta_api_version:            Optional[str]
     meta_token_set:              bool = False
+    meta_app_secret_set:         bool = False
     meta_webhook_verify_token:   Optional[str]
 
     # Inbound webhook info

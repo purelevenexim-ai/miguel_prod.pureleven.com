@@ -40,6 +40,7 @@ class AvailableWhatsAppTemplateResponse(BaseModel):
     source: str
     app_visible: bool = False
     has_media_header: bool = False
+    header_format: Optional[str] = None
     parameter_format: str = "NONE"
     body_parameters: list[str] = Field(default_factory=list)
     button_parameters: list[str] = Field(default_factory=list)

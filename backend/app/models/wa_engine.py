@@ -152,6 +152,11 @@ class WaSettings(Base):
     meta_access_token     = Column(Text,         nullable=True)
     meta_api_version      = Column(String(20),   nullable=True, default="v19.0")
     meta_webhook_verify_token = Column(String(255), nullable=True)
+    # App Secret from Meta App Dashboard → Settings → Basic. Used to verify the
+    # X-Hub-Signature-256 header on incoming webhooks (HMAC-SHA256 of the raw
+    # body). Required before we will process Meta message-status callbacks
+    # (delivered/read receipts) — see wa_engine/router.py inbound_webhook().
+    meta_app_secret = Column(Text, nullable=True)
 
     # ── Shared inbound webhook security ───────────────────────
     # Unique secret per tenant — generated on first save

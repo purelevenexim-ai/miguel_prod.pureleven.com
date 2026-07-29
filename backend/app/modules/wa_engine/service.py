@@ -948,6 +948,80 @@ async def send_order_notification(
 # Inbound Webhook Processor
 # ─────────────────────────────────────────────────────────────
 
+_STATUS_RANK = {
+    WaMessageStatus.pending: 0,
+    WaMessageStatus.sent: 1,
+    WaMessageStatus.delivered: 2,
+    WaMessageStatus.read: 3,
+}
+
+
+def apply_meta_status_update(
+    db: Session,
+    tenant_id: uuid.UUID,
+    statuses: List[Dict[str, Any]],
+) -> int:
+    """
+    Apply Meta Cloud API message-status callbacks (delivered/read/failed) to
+    wa_messages, matched by provider_message_id. Called from the inbound
+    webhook after signature verification — see wa_engine/router.py.
+
+    Never regresses an already-recorded status (e.g. a late 'delivered'
+    callback arriving after we already recorded 'read' is ignored for the
+    status/rank, but delivered_at is still backfilled if it was missing).
+    Returns the number of wa_messages rows actually updated, for logging/tests.
+    """
+    updated = 0
+    for entry in statuses:
+        provider_message_id = str(entry.get("id") or "").strip()
+        raw_status = str(entry.get("status") or "").strip().lower()
+        if not provider_message_id or raw_status not in {"sent", "delivered", "read", "failed"}:
+            continue
+
+        message = (
+            db.query(WaMessage)
+            .filter(
+                WaMessage.tenant_id == tenant_id,
+                WaMessage.provider_message_id == provider_message_id,
+            )
+            .first()
+        )
+        if message is None:
+            continue
+
+        raw_timestamp = entry.get("timestamp")
+        try:
+            event_at = datetime.fromtimestamp(int(raw_timestamp), tz=timezone.utc) if raw_timestamp else _now()
+        except (TypeError, ValueError):
+            event_at = _now()
+
+        changed = False
+        if raw_status == "failed":
+            message.status = WaMessageStatus.failed
+            errors = entry.get("errors") or []
+            if errors:
+                message.failed_reason = str(errors[0].get("title") or errors[0].get("message") or "").strip() or message.failed_reason
+            changed = True
+        else:
+            new_status = WaMessageStatus(raw_status)
+            if _STATUS_RANK[new_status] > _STATUS_RANK.get(message.status, -1):
+                message.status = new_status
+                changed = True
+            if raw_status == "delivered" and message.delivered_at is None:
+                message.delivered_at = event_at
+                changed = True
+            if raw_status == "read" and message.read_at is None:
+                message.read_at = event_at
+                if message.delivered_at is None:
+                    message.delivered_at = event_at
+                changed = True
+
+        if changed:
+            updated += 1
+
+    return updated
+
+
 async def process_inbound(
     db: Session,
     tenant_id: uuid.UUID,
