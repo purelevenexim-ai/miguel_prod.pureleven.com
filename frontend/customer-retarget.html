@@ -181,7 +181,7 @@ body.retarget-has-nav{padding-left:240px}
   <section class="summary" id="summary"></section>
   <section class="panel">
     <div class="queue-head">
-      <div><div class="queue-title" id="queueTitle">To Contact</div><div class="queue-subtitle">Old customers first, then oldest latest purchase date.</div></div>
+      <div><div class="queue-title" id="queueTitle">To Contact</div><div class="queue-subtitle" id="queueSubtitle">Old customers first, then oldest latest purchase date.</div></div>
       <div class="queue-head-actions"><button class="btn btn-sm" onclick="loadQueue()">Refresh queue</button><button class="btn btn-sm btn-primary" onclick="startNextCustomer()">Work next customer</button></div>
     </div>
     <div class="toolbar">
@@ -189,8 +189,8 @@ body.retarget-has-nav{padding-left:240px}
       <label class="check"><input type="checkbox" id="repeatOnly" onchange="resetAndLoad()"> Repeat buyers only</label>
     </div>
     <div class="bulk-bar" id="bulkBar">
-      <div><div class="bulk-count" id="bulkCount">0 customers selected</div><div class="bulk-copy">Only selected customers with valid WhatsApp numbers will be queued.</div></div>
-      <button class="btn btn-sm btn-primary" onclick="openTemplateModal()">💬 Choose template &amp; send</button>
+      <div><div class="bulk-count" id="bulkCount">0 customers selected</div><div class="bulk-copy" id="bulkCopy">Only selected customers with valid WhatsApp numbers will be queued.</div></div>
+      <button class="btn btn-sm btn-primary" id="bulkSendBtn" onclick="openTemplateModal()">💬 Choose template &amp; send</button>
     </div>
     <div class="tabs" id="tabs"></div>
     <div class="table-meta"><span id="tableMeta">Loading queue…</span><span>Oldest latest purchase first</span></div>
@@ -242,9 +242,13 @@ document.querySelectorAll('.admin-nav').forEach(el => { el.style.display = ROLE 
 
 const VIEWS = [
   ['to_contact','To Contact','☎'],['premium','Premium Customers','♛'],['high_value','High Value Purchase','₹'],['follow_up','Follow-up / Overdue','↻'],['interested','Interested','★'],
-  ['purchased_again','Purchased Again','✓'],['closed','Not Interested / Closed','—'],['risk','Risk Customers','!'],
+  ['not_interested','Not Interested','—'],['purchased_again','Purchased Again','✓'],['closed','All Closed Outcomes','◌'],['risk','Risk Customers','!'],
   ['missing_details','Missing Details','◇'],['unlinked','Unlinked Orders','↗'],['all','All Customers','☰']
 ];
+const VIEW_DESCRIPTIONS = {
+  interested:'Interested campaign audience — follow up with a direct product or reorder offer.',
+  not_interested:'Not Interested campaign audience — use a separate, low-pressure re-engagement offer.'
+};
 const OUTCOMES = [
   ['no_answer','No answer'],['callback','Callback requested'],['interested','Interested'],['purchased_again','Purchased again'],
   ['not_interested','Not interested'],['purchased_elsewhere','Purchased elsewhere'],['invalid_number','Invalid number'],['risk','Bad experience / Risk']
@@ -272,6 +276,7 @@ function renderTabs(){
   document.getElementById('tabs').innerHTML=VIEWS.map(([id,label,icon])=>`<button class="tab ${id===currentView?'active':''}" onclick="setView('${id}')"><span>${icon}</span> ${esc(label)}</button>`).join('');
   const active=VIEWS.find(([id])=>id===currentView);
   document.getElementById('queueTitle').textContent=active?active[1]:'Customer queue';
+  document.getElementById('queueSubtitle').textContent=VIEW_DESCRIPTIONS[currentView]||'Old customers first, then oldest latest purchase date.';
 }
 function setView(view){currentView=view;currentPage=1;renderTabs();loadQueue()}
 function resetAndLoad(){currentPage=1;loadQueue()}
@@ -362,6 +367,11 @@ function syncSelectionUi(){
   if(bar)bar.classList.toggle('open',count>0);
   const countEl=document.getElementById('bulkCount');
   if(countEl)countEl.textContent=`${count} customer${count===1?'':'s'} selected`;
+  const campaignLabel=currentView==='interested'?'Interested campaign':currentView==='not_interested'?'Not Interested campaign':'WhatsApp campaign';
+  const copyEl=document.getElementById('bulkCopy');
+  if(copyEl)copyEl.textContent=`${campaignLabel} audience · only selected customers with valid WhatsApp numbers will be queued.`;
+  const sendEl=document.getElementById('bulkSendBtn');
+  if(sendEl)sendEl.textContent=`💬 Send ${campaignLabel} template`;
 }
 function renderPagination(){
   const pages=Math.ceil(total/PAGE_SIZE);const el=document.getElementById('pagination');
@@ -379,7 +389,7 @@ async function openTemplateModal(customerIds=null){
   document.getElementById('templateOverlay').classList.add('open');
   document.getElementById('templateRecipientCopy').textContent=templateOpenedFromWorkspace&&currentCustomerProfile
     ?`Choose an approved template for ${currentCustomerProfile.name}.`
-    :`Choose a template for ${templateRecipientIds.length} selected customer${templateRecipientIds.length===1?'':'s'}.`;
+    :`Choose a template for ${templateRecipientIds.length} selected customer${templateRecipientIds.length===1?'':'s'} in the ${currentView==='interested'?'Interested':currentView==='not_interested'?'Not Interested':'current'} audience.`;
   document.getElementById('sendTemplateBtn').textContent=templateRecipientIds.length===1?'Queue WhatsApp message':'Queue WhatsApp messages';
   document.getElementById('templateConsent').checked=false;
   document.getElementById('templateResult').className='template-result';

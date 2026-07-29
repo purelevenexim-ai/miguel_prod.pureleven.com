@@ -66,6 +66,7 @@ class CustomerRetargetContractTests(unittest.TestCase):
             "Premium Customers",
             "High Value Purchase",
             "Follow-up / Overdue",
+            "Not Interested",
             "Risk Customers",
             "Unlinked Orders",
             "Old Customers",
@@ -104,6 +105,22 @@ class CustomerRetargetContractTests(unittest.TestCase):
             'aggregate.c.lifetime_value > Decimal("1500")',
         ]:
             self.assertIn(marker, source)
+
+    def test_interested_campaign_audiences_are_separate(self):
+        source = SERVICE.read_text()
+        html = PAGE.read_text()
+        for marker in [
+            '"not_interested"',
+            'view == "not_interested"',
+            "== RetargetOutcome.not_interested",
+        ]:
+            self.assertIn(marker, source)
+        for marker in [
+            "Interested campaign",
+            "Not Interested campaign",
+            "Send ${campaignLabel} template",
+        ]:
+            self.assertIn(marker, html)
 
     def test_retarget_handoff_and_navigation_are_present(self):
         html = PAGE.read_text()

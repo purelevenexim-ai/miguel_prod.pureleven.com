@@ -51,6 +51,7 @@ VALID_VIEWS = {
     "high_value",
     "follow_up",
     "interested",
+    "not_interested",
     "purchased_again",
     "closed",
     "risk",
@@ -1068,6 +1069,11 @@ def get_queue(
     elif view == "interested":
         query = query.filter(
             CustomerRetargetState.current_outcome == RetargetOutcome.interested
+        )
+    elif view == "not_interested":
+        query = query.filter(
+            CustomerRetargetState.current_outcome
+            == RetargetOutcome.not_interested
         )
     elif view == "purchased_again":
         query = query.filter(
