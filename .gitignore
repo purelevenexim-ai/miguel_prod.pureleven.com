@@ -1,0 +1,120 @@
+# ═══════════════════════════════════════════════════════════════════════
+# GIT IGNORE CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════
+# This file prevents sensitive files from being committed to GitHub
+
+# ─── Environment Variables ────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.backup
+.env.prod
+.env.uat
+.env.dev
+
+# ─── IDE / Editor ──────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-workspace
+.vscode-server/
+
+# ─── Python ───────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.venv/
+venv/
+ENV/
+env/
+.env.venv
+
+# ─── Node.js ───────────────────────────────────────────────────────
+node_modules/
+npm-debug.log
+yarn-error.log
+.npm
+.yarn
+
+# ─── Database ──────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+backup*.sql
+dump*.sql
+*.dump
+
+# ─── Docker ───────────────────────────────────────────────────────
+.docker/
+.dockerignore
+docker-compose.override.yml
+
+# ─── Logs ───────────────────────────────────────────────────────
+logs/
+*.log
+*.log.*
+
+# ─── Temporary Files ───────────────────────────────────────────────
+temp/
+tmp/
+*.tmp
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ─── SSH Keys ───────────────────────────────────────────────────
+*.pem
+*.key
+*.pub
+id_rsa
+id_rsa.pub
+known_hosts
+authorized_keys
+
+# ─── Credentials & Secrets ───────────────────────────────────────
+secrets/
+credentials/
+*.jks
+*.p12
+*.pfx
+
+# ─── OS Files ───────────────────────────────────────────────────
+Thumbs.db
+.DS_Store
+*.exe
+*.bat
+
+# ─── Backup Files ───────────────────────────────────────────────
+*.bak
+*.backup
+*~
+*.old
+
+# ─── IDE Configuration (with sensitive data) ───────────────────────
+.vscode/settings.json
+.vscode/launch.json

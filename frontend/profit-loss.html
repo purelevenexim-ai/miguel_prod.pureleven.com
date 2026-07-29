@@ -1,0 +1,3761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Profit Checker — Miguel CRM</title>
+<link rel="stylesheet" href="/ds.css?v=20260228">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<link rel="stylesheet" href="/styles/mobile.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+body { background: var(--bg-page); margin: 0; }
+.topbar {
+  background: var(--surf); border-bottom: 1px solid var(--bdr);
+  padding: 0 20px; height: 48px; display: flex; align-items: center;
+  gap: 12px; position: sticky; top: 0; z-index: 50;
+  box-shadow: var(--shadow-1);
+}
+.content { padding: 16px 20px; max-width: 1400px; }
+.tab-bar { display: flex; gap: 4px; padding: 12px 0 0; border-bottom: 2px solid var(--bdr); margin-bottom: 20px; }
+.tab-btn {
+  padding: 8px 18px; border: none; background: none; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: var(--g-600); font-family: var(--font);
+  border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all var(--t);
+  border-radius: var(--r-xs) var(--r-xs) 0 0;
+}
+.tab-btn:hover { color: var(--g-900); background: var(--g-50); }
+.tab-btn.active { color: var(--md-sys-color-primary); border-bottom-color: var(--md-sys-color-primary); font-weight: 600; }
+.stat-strip { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.stat-card {
+  flex: 1; min-width: 160px;
+  background: var(--surf); border: 1px solid var(--bdr); border-radius: var(--r-sm);
+  padding: 14px 16px; border-left: 3px solid var(--bdr);
+}
+.stat-card.blue   { border-left-color: var(--g-blue); }
+.stat-card.green  { border-left-color: var(--g-green); }
+.stat-card.amber  { border-left-color: var(--g-amber); }
+.stat-card.purple { border-left-color: var(--g-purple); }
+.stat-val { font-size: 22px; font-weight: 700; color: var(--g-900); line-height: 1.2; font-family: var(--font); }
+.stat-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--g-600); margin-top: 4px; }
+.stat-sub { font-size: 10px; color: var(--g-600); margin-top: 3px; line-height: 1.2; }
+.panel { background: var(--surf); border: 1px solid var(--bdr); border-radius: var(--r-sm); overflow: hidden; margin-bottom: 18px; }
+.panel-header { padding: 12px 16px; border-bottom: 1px solid var(--bdr); display: flex; align-items: center; justify-content: space-between; }
+.panel-header h3 { font-size: 14px; font-weight: 600; color: var(--g-900); margin: 0; }
+.panel-body { padding: 16px; }
+.charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.chart-panel { background: var(--surf); border: 1px solid #e7ebf1; border-radius: 15px; padding: 16px 18px; box-shadow:0 6px 22px rgba(25,40,70,.045); }
+.chart-panel h4 { font-size: 14px; font-weight: 700; color: var(--g-900); margin: 0 0 12px; letter-spacing:-.01em; }
+canvas { max-height: 240px; }
+.toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid var(--bdr); background: var(--g-50); }
+.toolbar select { padding: 4px 8px; border: 1px solid var(--bdr); border-radius: var(--r-xs); font-size: 12px; background: #fff; font-family: var(--font); color: var(--g-900); height: 28px; }
+.toolbar input[type=date] { padding: 4px 8px; border: 1px solid var(--bdr); border-radius: var(--r-xs); font-size: 12px; background: #fff; font-family: var(--font); height: 28px; }
+.lbl { font-size: 11px; font-weight: 600; color: var(--g-600); white-space: nowrap; }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { background: var(--g-50); padding: 7px 10px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--g-600); border-bottom: 1px solid var(--bdr); white-space: nowrap; }
+td { padding: 7px 10px; border-bottom: 1px solid var(--bdr); color: var(--g-800); font-size: 13px; }
+tbody tr:hover td { background: var(--g-50); }
+.num { text-align: right; font-family: var(--font-mono); font-size: 12px; }
+.pos { color: var(--g-green); font-weight: 600; }
+.neg { color: var(--g-red); font-weight: 600; }
+.mono { font-family: var(--font-mono); font-size: 11px; color: var(--g-700); }
+.chip-status { display: inline-block; padding: 2px 8px; border-radius: var(--r-pill); font-size: 10px; font-weight: 600; }
+.chip-delivered { background: #dcfce7; color: #15803d; }
+.chip-pending   { background: #fef9c3; color: #a16207; }
+.chip-cancelled { background: #fee2e2; color: #b91c1c; }
+.chip-confirmed { background: #dbeafe; color: #1d4ed8; }
+.empty-state   { text-align: center; color: var(--g-500); padding: 40px 20px; font-size: 13px; }
+.loading-state { text-align: center; color: var(--g-600); padding: 32px; font-size: 13px; }
+.err-banner { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; border-radius: var(--r-sm); padding: 10px 14px; font-size: 12px; margin-bottom: 14px; display: none; }
+.info-notice { background: #eff6ff; border: 1px solid #93c5fd; border-radius: var(--r-sm); padding: 10px 14px; font-size: 12px; color: #1d4ed8; margin-bottom: 14px; }
+.margin-bar  { height: 6px; border-radius: 3px; background: var(--g-100); margin-top: 4px; overflow: hidden; }
+.margin-fill { height: 100%; border-radius: 3px; background: var(--g-green); }
+.margin-fill.low { background: var(--g-red); }
+.margin-fill.mid { background: var(--g-amber); }
+/* Cost breakdown tooltip */
+.cost-tooltip-wrap { position: relative; }
+.cost-tooltip {
+  position: absolute; left: 0; bottom: calc(100% + 8px);
+  background: #1e293b; color: #f1f5f9; border-radius: 8px;
+  padding: 10px 14px; font-size: 11px; min-width: 210px; z-index: 200;
+  pointer-events: none; opacity: 0; transition: opacity .15s;
+  white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.35);
+  line-height: 1.6;
+}
+.cost-tooltip.show { opacity: 1; pointer-events: auto; }
+.ct-row { display: flex; justify-content: space-between; gap: 20px; }
+.ct-row.ct-sep { border-top: 1px solid rgba(255,255,255,.18); margin-top: 4px; padding-top: 5px; font-weight: 600; }
+.ct-info-btn { cursor: pointer; color: var(--g-500); font-size: 11px; margin-left: 4px; vertical-align: middle; user-select: none; }
+.ct-info-btn:hover { color: var(--g-800); }
+/* Data quality warning */
+.dq-warning { background: #fff7ed; border: 1px solid #fb923c; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #9a3412; margin-bottom: 10px; display: none; }
+.recalc-btn { padding: 6px 14px; background: #fb923c; color: #fff; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+.recalc-btn:hover { background: #ea580c; }
+.recalc-btn:active { background: #c2410c; }
+.recalc-btn:disabled { background: #d97706; cursor: not-allowed; opacity: 0.7; }
+/* Reconciliation table */
+.recon-tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.recon-tbl th { background: var(--g-50); padding: 8px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--g-600); border-bottom: 1px solid var(--bdr); }
+.recon-tbl td { padding: 9px 12px; border-bottom: 1px solid var(--bdr); color: var(--g-800); vertical-align: middle; }
+.recon-tbl td small { color: var(--g-500); font-size: 11px; margin-left: 4px; }
+.recon-tbl tr:last-child td { border-bottom: none; }
+.recon-tbl tr.recon-green td { background: #f0fdf4; }
+.recon-tbl tr.recon-orange td { background: #fff7ed; }
+.recon-tbl tr.recon-blue td { background: #eff6ff; font-weight: 600; }
+.recon-tbl tr.recon-red td { background: #fef2f2; }
+.recon-tbl tr.recon-yellow td { background: #fefce8; }
+.recon-tbl tr.recon-grey td { background: var(--g-50); }
+.recon-tbl tr.recon-avg td { background: var(--g-50); font-size: 12px; border-top: 1px solid var(--bdr); }
+.recon-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.recon-dot.green { background: #16a34a; }
+.recon-dot.orange { background: #ea580c; }
+.recon-dot.blue { background: #2563eb; }
+.recon-dot.red { background: #dc2626; }
+.recon-dot.yellow { background: #ca8a04; }
+.recon-dot.grey { background: #6b7280; }
+.calc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; padding:0 4px 12px; }
+.calc-card { background: var(--g-50); border: 1px solid var(--bdr); border-radius: var(--r-sm); padding: 10px; }
+.calc-card h4 { margin: 0 0 8px; font-size: 12px; color: var(--g-700); letter-spacing: .02em; text-transform: uppercase; }
+.calc-card label { font-size: 12px; color: var(--g-600); }
+.calc-card input, .calc-card select {
+  width: 100%; height: 30px; padding: 4px 8px; margin-top: 4px;
+  border: 1px solid var(--bdr); border-radius: var(--r-xs); background: #fff;
+  font-family: var(--font); font-size: 13px;
+}
+.summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin-top: 10px; }
+.summary-card { background: var(--surf); border: 1px solid var(--bdr); border-radius: var(--r-sm); padding: 10px 12px; }
+.summary-card .k { color: var(--g-600); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+.summary-card .v { color: var(--g-900); font-size: 18px; font-weight: 700; margin-top: 4px; }
+/* ── Filter bar ──────────────────────────────────────────── */
+.filter-bar {
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  border-radius: var(--r-sm);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.filter-chip .lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--g-600);
+  white-space: nowrap;
+}
+.filter-chip select,
+.filter-chip input[type=text],
+.filter-chip input[type=date] {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--bdr);
+  border-radius: var(--r-xs);
+  font-size: 12px;
+  background: var(--g-50);
+  font-family: var(--font);
+  color: var(--g-900);
+}
+.filter-chip input[type=text] { width: 130px; }
+.filter-chip input[type=date] { width: 130px; }
+.filter-sep { width: 1px; height: 18px; background: var(--bdr); margin: 0 2px; flex-shrink: 0; }
+.filter-actions { margin-left: auto; display: flex; gap: 6px; flex-shrink: 0; }
+.filter-active-bar {
+  display: none;
+  padding: 6px 14px;
+  background: var(--g-100);
+  border-top: 1px solid var(--bdr);
+  font-size: 11px;
+  color: var(--g-700);
+}
+.filter-debug-bar {
+  display: block;
+  padding: 6px 14px;
+  background: #eef2ff;
+  border-top: 1px solid var(--bdr);
+  font-size: 11px;
+  color: #3730a3;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+/* ── Recon table responsive ───────────────────────────────── */
+.recon-card-list { display: none; }
+
+@media (max-width: 599px) {
+  /* Reconciliation: hide table, show cards */
+  #reconPanel .tbl-wrap { display: none; }
+  .recon-card-list { display: block; }
+  .rcn-card {
+    display: flex;
+    align-items: center;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--bdr);
+    gap: 8px;
+  }
+  .rcn-card:last-child { border-bottom: none; }
+  .rcn-card .rcn-label {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    color: var(--g-800);
+    font-weight: 500;
+  }
+  .rcn-card .rcn-label small { display: none; }
+  .rcn-card .rcn-cnt {
+    font-size: 12px;
+    color: var(--g-700);
+    font-family: var(--font-mono);
+    text-align: right;
+    min-width: 32px;
+  }
+  .rcn-card .rcn-rev {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    text-align: right;
+    min-width: 64px;
+  }
+  .rcn-card.rc-green  { background: #f0fdf4; }
+  .rcn-card.rc-orange { background: #fff7ed; }
+  .rcn-card.rc-blue   { background: #eff6ff; }
+  .rcn-card.rc-red    { background: #fef2f2; }
+  .rcn-card.rc-yellow { background: #fefce8; }
+  .rcn-card.rc-grey   { background: var(--g-50); }
+  .rcn-card.rc-avg    { background: var(--g-50); border-top: 1px solid var(--bdr); }
+}
+
+/* ── Mobile compact ≤599px ────────────────────────────────── */
+@media (max-width:599px) {
+  .topbar { padding:0 12px; height:48px; gap:8px; }
+  .content { padding:10px 12px; }
+
+  /* Tabs: scroll */
+  .tab-bar { gap:0; overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:14px; }
+  .tab-btn { padding:8px 12px; font-size:12px; flex-shrink:0; }
+
+  /* Stats: 2-col grid */
+  .stat-strip { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:12px; }
+  .stat-card { min-width:0; padding:10px 12px; }
+  .stat-val { font-size:16px; }
+  .stat-lbl { font-size:9px; }
+  .stat-sub { font-size:8px; }
+
+  /* Charts: single col */
+  .charts-grid { grid-template-columns:1fr; gap:10px; }
+  .chart-panel { padding:10px 12px; }
+  canvas { max-height:200px; }
+
+  /* Filter bar mobile */
+  .filter-controls { padding:8px 10px; gap:8px; }
+  .filter-chip select,
+  .filter-chip input[type=date],
+  .filter-chip input[type=text] { font-size:11px; height:32px; }
+  .filter-sep { display:none; }
+  .filter-actions { margin-left:0; width:100%; }
+  .filter-actions .btn { flex:1; }
+
+  /* Panels */
+  .panel { border-radius:10px; margin-bottom:12px; }
+  .panel-header { padding:10px 12px; }
+  .panel-header h3 { font-size:13px; }
+  .panel-body { padding:12px; }
+
+  /* Table scroll */
+  .tbl-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .tbl-wrap table { min-width:500px; }
+}
+
+/* ── Mobile medium 600-839px ─────────────────────────────── */
+@media (min-width:600px) and (max-width:839px) {
+  .content { padding:14px 16px; }
+  .stat-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .charts-grid { grid-template-columns:1fr; }
+}
+</style>
+  <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728b">
+</head>
+<body>
+
+  <div class="topbar">
+  <a href="/tenant-admin.html" class="gs-back-btn" style="white-space:nowrap;text-decoration:none">&#8592; Dashboard</a>
+  <div>
+    <div style="font-size:15px;font-weight:600;color:var(--g-900);font-family:var(--font)">📊 Profit Checker</div>
+    <div style="font-size:11px;color:var(--g-600);font-family:var(--font)" id="tenantName">Loading&hellip;</div>
+  </div>
+  <div style="flex:1"></div>
+  <button class="btn btn-ghost btn-sm" onclick="location.reload()" title="Refresh data" style="color:var(--g-600);cursor:pointer">🔄 Refresh</button>
+  <button class="btn btn-ghost btn-sm" onclick="logout()" style="color:var(--g-600)">Logout</button>
+</div><div class="content">
+  <div class="err-banner" id="errBanner"></div>
+
+  <div class="info-notice" id="lossMakerBanner" style="display:none;position:sticky;top:52px;z-index:40;background:#fff7ed;border-color:#fb923c;color:#9a3412"></div>
+
+  <div class="info-notice" id="infoBanner" style="display:none;margin:0 0 14px 0">
+    <strong>ℹ️ Data Updated:</strong> <span id="lastRefresh">Just now</span> — <strong>Realized Revenue</strong> = orders placed in this period that are now delivered. <strong>In Transit</strong> = orders placed in this period not yet delivered. Use filters to narrow by date.
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="overview"   onclick="switchTab('overview',this)">&#128202; Overview</button>
+    <button class="tab-btn"        data-tab="revenue"    onclick="switchTab('revenue',this)">&#128200; Revenue</button>
+    <button class="tab-btn"        data-tab="products"   onclick="switchTab('products',this)">&#128717; Products</button>
+    <button class="tab-btn"        data-tab="monthly"    onclick="switchTab('monthly',this)">📊 Profit Checker</button>
+    <button class="tab-btn"        data-tab="customers"  onclick="switchTab('customers',this)">&#128101; Customers</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="tab-overview">
+    <!-- FILTERS BAR -->
+    <div class="filter-bar" id="filterPanel">
+      <div class="filter-controls">
+        <!-- Period -->
+        <div class="filter-chip">
+          <span class="lbl">Period</span>
+          <select id="filterPeriod" onchange="onFilterPeriodChange()">
+            <option value="custom">Custom Range</option>
+            <option value="today">Today</option>
+            <option value="7days">Last 7 days</option>
+            <option value="thismonth" selected>This Month</option>
+            <option value="lastmonth">Last Month</option>
+            <option value="monthminus2">Month Before Last</option>
+            <option value="lastquarter">Last Quarter</option>
+            <option value="thisyear">This Year</option>
+            <option value="lastyear">Last Year</option>
+          </select>
+        </div>
+        <!-- Custom date range (shown only when "Custom" selected) -->
+        <div class="filter-chip" id="customDateRange" style="display:none">
+          <input type="date" id="filterFromDate" onchange="applyFilters()" title="From date">
+          <span style="font-size:11px;color:var(--g-500)">→</span>
+          <input type="date" id="filterToDate" onchange="applyFilters()" title="To date">
+        </div>
+
+        <div class="filter-sep"></div>
+
+        <!-- Product -->
+        <div class="filter-chip">
+          <select id="filterProduct" onchange="applyFilters()">
+            <option value="">All Products</option>
+          </select>
+        </div>
+
+        <!-- Status -->
+        <div class="filter-chip">
+          <select id="filterStatus" onchange="applyFilters()">
+            <option value="">All Statuses</option>
+            <option value="delivered">Delivered</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="shipped">Shipped</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <!-- Order# search -->
+        <div class="filter-chip">
+          <input type="text" id="filterOrder" placeholder="Order #" onchange="applyFilters()">
+        </div>
+
+        <!-- Actions -->
+        <div class="filter-actions">
+          <button class="btn btn-filled btn-sm" onclick="applyFilters()">Apply</button>
+          <button class="btn btn-outlined btn-sm" onclick="clearFilters()">Clear</button>
+        </div>
+      </div>
+      <!-- Active filters pill -->
+      <div class="filter-active-bar" id="activeFiltersDisplay">
+        <strong>Active:</strong> <span id="activeFiltersList"></span>
+      </div>
+      <div class="filter-debug-bar" id="debugPayloadDisplay" style="display:none">
+        <strong>Debug:</strong> <span id="debugPayloadText">Waiting for first overview load...</span>
+      </div>
+    </div>
+
+    <div class="stat-strip">
+      <div class="stat-card blue">
+        <div class="stat-val" id="ovRevenue">&#8377;&mdash;</div>
+        <div class="stat-lbl">Realized Revenue</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-val" id="ovOutstanding">&#8377;&mdash;</div>
+        <div class="stat-sub" id="ovOutstandingBreakup">Profit &#8377;&mdash; + Tax &#8377;&mdash;</div>
+        <div class="stat-sub"><a href="#" onclick="openOverviewOverheadEditor();return false;" style="font-size:11px;color:var(--g-blue);text-decoration:none">Edit overheads</a></div>
+        <div class="cost-tooltip-wrap">
+          <div class="stat-lbl">Net Profit (Incl. Tax)<span class="ct-info-btn" id="costTooltipBtn" title="Cost breakdown">&#9432;</span></div>
+          <div class="cost-tooltip" id="costTooltip">
+            <div class="ct-row"><span>Revenue</span><span id="ctRevenue">&#8377;&mdash;</span></div>
+            <div class="ct-row"><span>&#8722; Product Cost</span><span id="ctProductCost">&#8377;&mdash;</span></div>
+            <div class="ct-row"><span>&#8722; Shipping</span><span id="ctShipping">&#8377;&mdash;</span></div>
+            <div class="ct-row"><span>&#8722; Packaging</span><span id="ctPackaging">&#8377;&mdash;</span></div>
+            <div class="ct-row"><span>&#8722; Gateway Fee</span><span id="ctGateway">&#8377;&mdash;</span></div>
+            <div class="ct-row"><span>&#8722; RTO Expected Loss</span><span id="ctRtoLoss">&#8377;&mdash;</span></div>
+            <div class="ct-row"><span>&#8722; User Overheads</span><span id="ctOverheads">&#8377;&mdash;</span></div>
+            <div class="ct-row ct-sep"><span>= Net Profit</span><span id="ctNetProfit">&#8377;&mdash;</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-val" id="ovOrders">&mdash;</div>
+        <div class="stat-lbl">Realized Margin</div>
+      </div>
+      <div class="stat-card" style="border-left-color:#6366f1;">
+        <div class="stat-val" id="ovOrdersTotal">&mdash;</div>
+        <div class="stat-lbl">Profit / Delivered</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-val" id="ovProducts">&mdash;</div>
+        <div class="stat-lbl">Loss-Making SKUs</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-val" id="ovCustomers">&mdash;</div>
+        <div class="stat-lbl">Delivered Orders</div>
+      </div>
+      <div class="stat-card" style="border-left-color:#ea580c;">
+        <div class="stat-val" id="ovPipeline">&mdash;</div>
+        <div class="stat-sub" id="ovPipelineSub">&#8377;&mdash; in transit</div>
+        <div class="stat-lbl">In Transit (Not Delivered)</div>
+      </div>
+    </div>
+
+    <div class="panel" id="overviewOverheadPanel" style="margin-top:8px;">
+      <div class="panel-header">
+        <div style="display:flex;justify-content:space-between;align-items:center;width:100%;flex-wrap:wrap;gap:12px">
+          <h3 style="margin:0">💰 Monthly Costs</h3>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input type="month" id="ovOverheadMonth" onchange="loadOverviewOverheadUI()" style="height:32px;padding:6px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:14px;font-weight:500;">
+            <button class="btn btn-outlined btn-sm" onclick="loadOverviewOverheadUI()" title="Reset to last saved values">↻ Reset</button>
+            <button class="btn btn-filled btn-sm" id="ovOverheadSaveBtn" onclick="saveOverviewOverheadUI()" style="background:var(--g-blue);color:white;border:none;cursor:pointer;">✓ Save</button>
+          </div>
+        </div>
+      </div>
+      
+      <div style="padding:12px;background:var(--md-sys-color-surface-container-low);border-bottom:1px solid var(--bdr);">
+        <div style="font-size:13px;color:var(--g-700);margin:0">All costs default to ₹0 unless you enter and save a value. Changes apply only to the selected month.</div>
+      </div>
+
+      <!-- Variable Costs Section -->
+      <div style="padding:16px;border-bottom:1px solid var(--bdr);">
+        <div style="font-size:12px;font-weight:600;color:var(--g-700);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Per-Order Variable Costs</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+          <div>
+            <label style="font-size:13px;color:var(--g-900);font-weight:500;display:block;margin-bottom:6px">Shipping <span style="font-size:11px;color:var(--g-600);font-weight:normal">(actual spend)</span></label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--g-600);font-size:12px">₹</span>
+              <input id="ovShippingCost" type="number" step="0.01" value="0" placeholder="0" style="flex:1;padding:8px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px">
+            </div>
+            <div style="font-size:11px;color:var(--g-500);margin-top:4px">Total shipping cost paid in this month</div>
+          </div>
+          
+          <div>
+            <label style="font-size:13px;color:var(--g-900);font-weight:500;display:block;margin-bottom:6px">Payment Gateway Fee</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--g-600);font-size:12px">₹</span>
+              <input id="ovGatewayFee" type="number" step="0.01" value="0" placeholder="0" style="flex:1;padding:8px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px">
+            </div>
+            <div style="font-size:11px;color:var(--g-500);margin-top:4px">Leave at 0 until explicitly configured</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fixed Overhead Section -->
+      <div style="padding:16px;">
+        <div style="font-size:12px;font-weight:600;color:var(--g-700);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Monthly Fixed Overhead</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:16px">
+          <div>
+            <label style="font-size:13px;color:var(--g-900);font-weight:500;display:block;margin-bottom:6px">Advertising</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--g-600);font-size:12px">₹</span>
+              <input id="ovAdsMonthly" type="number" step="0.01" value="0" placeholder="0" style="flex:1;padding:8px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px">
+            </div>
+          </div>
+          
+          <div>
+            <label style="font-size:13px;color:var(--g-900);font-weight:500;display:block;margin-bottom:6px">Dispatch & Logistics</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--g-600);font-size:12px">₹</span>
+              <input id="ovDispatchMonthly" type="number" step="0.01" value="0" placeholder="0" style="flex:1;padding:8px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px">
+            </div>
+          </div>
+          
+          <div>
+            <label style="font-size:13px;color:var(--g-900);font-weight:500;display:block;margin-bottom:6px">Miscellaneous</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--g-600);font-size:12px">₹</span>
+              <input id="ovMiscMonthly" type="number" step="0.01" value="0" placeholder="0" style="flex:1;padding:8px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px">
+            </div>
+          </div>
+          
+          <div>
+            <label style="font-size:13px;color:var(--g-900);font-weight:500;display:block;margin-bottom:6px">Other Fixed Costs</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--g-600);font-size:12px">₹</span>
+              <input id="ovOtherFixedMonthly" type="number" step="0.01" value="0" placeholder="0" style="flex:1;padding:8px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px">
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Overhead Summary -->
+        <div style="background:var(--md-sys-color-primary-container);border-radius:var(--r-sm);padding:12px;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--g-900);font-weight:600">Total Monthly Overhead</span>
+            <span style="font-size:15px;font-weight:700;color:var(--md-sys-color-primary)" id="ovTotalOverhead">₹ 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dqWarning" class="dq-warning" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div style="flex:1"><strong>&#9888; Data Quality:</strong> <span id="dqCount">0</span> delivered orders have missing product cost &mdash; profit may be overstated. Add missing products to the catalog with correct cost prices.</div>
+      <button id="recalcBtn" class="recalc-btn" title="Recalculate profit postings for all orders">Recalculate</button>
+    </div>
+    <div id="staleWarning" class="dq-warning" style="display:none;border-color:#ef4444;background:#fef2f2;color:#991b1b">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <span><strong>&#9888; Stale Shipments:</strong> <span id="staleCount">0</span> orders shipped &gt;30 days ago (total <span id="staleRevenue">&#8377;&mdash;</span>) have never been marked delivered &mdash; may be lost or returned.</span>
+        <button onclick="toggleStaleDetails()" id="staleDetailsBtn" style="background:none;border:1px solid #ef4444;border-radius:4px;padding:2px 10px;font-size:11px;color:#991b1b;cursor:pointer;white-space:nowrap">Show orders &#9660;</button>
+      </div>
+      <div id="staleOrdersList" style="display:none;margin-top:10px;overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:480px">
+          <thead><tr style="border-bottom:1px solid #fca5a5">
+            <th style="text-align:left;padding:4px 8px;font-weight:600;color:#7f1d1d">Order #</th>
+            <th style="text-align:left;padding:4px 8px;font-weight:600;color:#7f1d1d">Customer</th>
+            <th style="text-align:left;padding:4px 8px;font-weight:600;color:#7f1d1d">Phone</th>
+            <th style="text-align:right;padding:4px 8px;font-weight:600;color:#7f1d1d">Amount</th>
+            <th style="text-align:left;padding:4px 8px;font-weight:600;color:#7f1d1d">Ordered On</th>
+            <th style="text-align:left;padding:4px 8px;font-weight:600;color:#7f1d1d">Tracking</th>
+          </tr></thead>
+          <tbody id="staleOrdersBody"><tr><td colspan="6" style="padding:8px;color:#991b1b;text-align:center">Loading&hellip;</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Reconciliation Table -->
+    <div class="panel" id="reconPanel">
+      <div class="panel-header">
+        <h3>&#128203; Order Reconciliation</h3>
+        <span style="font-size:11px;color:var(--g-500)">Refreshes on every page load</span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="recon-tbl">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th style="text-align:right">Orders</th>
+              <th style="text-align:right">Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="recon-green">
+              <td><span class="recon-dot green"></span> <strong>Realized Revenue</strong> <small>(delivered in period)</small></td>
+              <td style="text-align:right" id="rcnDelivCnt">&mdash;</td>
+              <td style="text-align:right" id="rcnDelivRev">&mdash;</td>
+            </tr>
+            <tr class="recon-orange">
+              <td><span class="recon-dot orange"></span> <strong>In Transit</strong> <small>(placed in period, not yet delivered)</small></td>
+              <td style="text-align:right" id="rcnPipeCnt">&mdash;</td>
+              <td style="text-align:right" id="rcnPipeRev">&mdash;</td>
+            </tr>
+            <tr class="recon-blue">
+              <td><span class="recon-dot blue"></span> <strong>All Active Orders</strong> <small>(realized + in transit)</small></td>
+              <td style="text-align:right" id="rcnActiveCnt">&mdash;</td>
+              <td style="text-align:right" id="rcnActiveRev">&mdash;</td>
+            </tr>
+            <tr class="recon-red">
+              <td><span class="recon-dot red"></span> Shipped &gt;7 days, not delivered</td>
+              <td style="text-align:right" id="rcnShip7Cnt">&mdash;</td>
+              <td style="text-align:right" id="rcnShip7Rev">&mdash;</td>
+            </tr>
+            <tr class="recon-yellow">
+              <td><span class="recon-dot yellow"></span> No status update in 2+ days</td>
+              <td style="text-align:right" id="rcnStale2Cnt">&mdash;</td>
+              <td style="text-align:right" id="rcnStale2Rev">&mdash;</td>
+            </tr>
+            <tr class="recon-grey">
+              <td><span class="recon-dot grey"></span> Returned (placed in period)</td>
+              <td style="text-align:right" id="rcnRetCnt">&mdash;</td>
+              <td style="text-align:right" id="rcnRetRev">&mdash;</td>
+            </tr>
+            <tr class="recon-avg">
+              <td><strong>Avg Order Value</strong> <small>(delivered in period)</small></td>
+              <td style="text-align:right">&mdash;</td>
+              <td style="text-align:right" id="rcnAvgVal">&mdash;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Mobile card view (hidden on desktop via CSS) -->
+      <div class="recon-card-list">
+        <div class="rcn-card rc-green">
+          <span class="recon-dot green"></span>
+          <span class="rcn-label"><strong>Realized Revenue</strong> <small>(delivered)</small></span>
+          <span class="rcn-cnt" id="rcnDelivCntM">&mdash;</span>
+          <span class="rcn-rev" id="rcnDelivRevM">&mdash;</span>
+        </div>
+        <div class="rcn-card rc-orange">
+          <span class="recon-dot orange"></span>
+          <span class="rcn-label"><strong>In Transit</strong></span>
+          <span class="rcn-cnt" id="rcnPipeCntM">&mdash;</span>
+          <span class="rcn-rev" id="rcnPipeRevM">&mdash;</span>
+        </div>
+        <div class="rcn-card rc-blue">
+          <span class="recon-dot blue"></span>
+          <span class="rcn-label"><strong>All Active Orders</strong></span>
+          <span class="rcn-cnt" id="rcnActiveCntM">&mdash;</span>
+          <span class="rcn-rev" id="rcnActiveRevM">&mdash;</span>
+        </div>
+        <div class="rcn-card rc-red">
+          <span class="recon-dot red"></span>
+          <span class="rcn-label">Shipped &gt;7 days, not delivered</span>
+          <span class="rcn-cnt" id="rcnShip7CntM">&mdash;</span>
+          <span class="rcn-rev" id="rcnShip7RevM">&mdash;</span>
+        </div>
+        <div class="rcn-card rc-yellow">
+          <span class="recon-dot yellow"></span>
+          <span class="rcn-label">No update in 2+ days</span>
+          <span class="rcn-cnt" id="rcnStale2CntM">&mdash;</span>
+          <span class="rcn-rev" id="rcnStale2RevM">&mdash;</span>
+        </div>
+        <div class="rcn-card rc-grey">
+          <span class="recon-dot grey"></span>
+          <span class="rcn-label">Returned</span>
+          <span class="rcn-cnt" id="rcnRetCntM">&mdash;</span>
+          <span class="rcn-rev" id="rcnRetRevM">&mdash;</span>
+        </div>
+        <div class="rcn-card rc-avg">
+          <span class="rcn-label"><strong>Avg Order Value</strong></span>
+          <span class="rcn-cnt"></span>
+          <span class="rcn-rev" id="rcnAvgValM">&mdash;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-panel">
+        <h4>&#128200; Monthly Revenue Trend (12 months)</h4>
+        <canvas id="chartRevenue"></canvas>
+      </div>
+      <div class="chart-panel">
+        <h4>&#127873; Top Products by Revenue</h4>
+        <canvas id="chartProducts"></canvas>
+      </div>
+      <div class="chart-panel">
+        <h4>&#128201; Net P&amp;L Trend (Delivered)</h4>
+        <canvas id="chartNetPnl"></canvas>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <h3>&#128101; Top Customers by Spending</h3>
+        <button class="btn btn-outlined btn-sm" onclick="loadOverview()">&#8635; Refresh</button>
+      </div>
+      <div class="tbl-wrap" id="ovCustomersTable"><div class="loading-state">Loading&hellip;</div></div>
+    </div>
+  </div>
+
+  <!-- REVENUE -->
+  <div id="tab-revenue" style="display:none">
+    <div class="chart-panel" style="margin-bottom:16px;">
+      <h4>📊 Revenue vs Outstanding (Monthly)</h4>
+      <canvas id="chartRevenueTab"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <h3>📈 Monthly Revenue Breakdown</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="revMonths" onchange="loadRevenueTab()">
+            <option value="6">Last 6 months</option>
+            <option value="12" selected>Last 12 months</option>
+            <option value="24">Last 24 months</option>
+          </select>
+          <button class="btn btn-outlined btn-sm" onclick="loadRevenueTab()">&#8635; Refresh</button>
+        </div>
+      </div>
+      <div class="tbl-wrap" id="revenueTable"><div class="loading-state">Loading&hellip;</div></div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div id="tab-products" style="display:none">
+    <div class="info-notice">
+      &#9432;&nbsp; <strong>Gross profit</strong> prefers <strong>weighted purchase cost</strong> from received POs,
+      and falls back to catalog <strong>Cost Price</strong> where purchase history is unavailable.
+      <a href="/products.html" style="color:#1d4ed8;font-weight:600">Set cost prices &rarr;</a>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <h3>&#127873; Product Profitability</h3>
+        <button class="btn btn-outlined btn-sm" onclick="loadProductsTab()">&#8635; Refresh</button>
+      </div>
+      <div class="tbl-wrap" id="productsTable"><div class="loading-state">Loading&hellip;</div></div>
+    </div>
+    <div class="panel" style="margin-top:14px;" id="rawCostUpdaterPanel">
+      <div class="panel-header">
+        <h3>&#9997;&#65039; Update Raw Costs This Month</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:12px;color:var(--g-600)">Set current cost price per product without leaving this page.</span>
+          <button class="btn btn-outlined btn-sm" onclick="loadRawCostUpdater()">&#8635; Refresh</button>
+        </div>
+      </div>
+      <div class="tbl-wrap" id="rawCostUpdaterTable"><div class="loading-state">Loading&hellip;</div></div>
+    </div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="panel-header">
+        <h3>&#128308; Low Margin Alerts</h3>
+        <div style="font-size:12px;color:var(--g-600)">Below configured threshold</div>
+      </div>
+      <div class="tbl-wrap" id="lowMarginTable"><div class="loading-state">Loading&hellip;</div></div>
+    </div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="panel-header">
+        <h3>&#129504; Auto Pricing Suggestions</h3>
+        <div style="font-size:12px;color:var(--g-600)">Backend margin engine output</div>
+      </div>
+      <div class="tbl-wrap" id="pricingSuggestionsTable"><div class="loading-state">Loading&hellip;</div></div>
+    </div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="panel-header">
+        <h3>&#128230; Monthly Purchase Suggestions</h3>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label style="font-size:12px;color:var(--g-600)">Horizon</label>
+          <select id="recoHorizonDays" onchange="loadPurchaseRecommendations()">
+            <option value="30" selected>30 days</option>
+            <option value="45">45 days</option>
+            <option value="60">60 days</option>
+          </select>
+          <label style="font-size:12px;color:var(--g-600)">Safety</label>
+          <select id="recoSafetyDays" onchange="loadPurchaseRecommendations()">
+            <option value="7">7 days</option>
+            <option value="10" selected>10 days</option>
+            <option value="15">15 days</option>
+          </select>
+          <button class="btn btn-outlined btn-sm" onclick="loadPurchaseRecommendations()">&#8635; Refresh</button>
+        </div>
+      </div>
+      <div class="tbl-wrap" id="purchaseRecoTable"><div class="loading-state">Loading&hellip;</div></div>
+      <div style="padding:10px 4px 0;font-size:11px;color:var(--g-600)">
+        Use your actual India Post monthly billing statement values in Monthly Loss and Profit tab for final costing.
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="panel-header">
+        <h3>&#9881;&#65039; Profit Config</h3>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-outlined btn-sm" id="profitCfgReloadBtn" onclick="loadProfitConfigUI()">&#8635; Reload</button>
+          <button class="btn btn-filled btn-sm" id="profitCfgSaveBtn" onclick="saveProfitConfigUI()">Save Rules</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;padding:0 4px 12px;">
+        <div><label style="font-size:12px;color:var(--g-600)">Box Small</label><input id="cfgBoxSmall" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Box Large</label><input id="cfgBoxLarge" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Large Min Items</label><input id="cfgBoxMinItems" type="number" step="1" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Large Min Weight (g)</label><input id="cfgBoxMinWeight" type="number" step="1" value="0"></div>
+
+        <div><label style="font-size:12px;color:var(--g-600)">Pouch <=250g</label><input id="cfgPouch250" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Pouch <=500g</label><input id="cfgPouch500" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Pouch <=1000g</label><input id="cfgPouch1000" type="number" step="0.01" value="0"></div>
+
+        <div><label style="font-size:12px;color:var(--g-600)">Sticker / Order</label><input id="cfgStickerOrder" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Sticker / Item</label><input id="cfgStickerItem" type="number" step="0.01" value="0"></div>
+
+        <div><label style="font-size:12px;color:var(--g-600)">Gateway Fee %</label><input id="cfgGatewayPct" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">RTO Loss %</label><input id="cfgRtoPct" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Platform Fee % <span style="font-size:10px;color:var(--g-500)">(Meesho/Amazon)</span></label><input id="cfgPlatformFeePct" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Extra Packaging / Order <span style="font-size:10px;color:var(--g-500)">(tape, bubble wrap)</span></label><input id="cfgPackagingExtra" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Target Margin %</label><input id="cfgTargetMarginPct" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Low Margin Alert %</label><input id="cfgLowMarginThreshold" type="number" step="0.01" value="0"></div>
+      </div>
+      <div id="profitCfgHint" style="padding:0 6px 10px;font-size:12px;color:var(--g-600)">Rules are tenant-level and auto-applied in order profit posting.</div>
+    </div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="panel-header">
+        <h3>&#128197; Monthly Overheads</h3>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="month" id="cfgOverheadMonth" onchange="loadProfitOverheadUI()" style="height:28px;padding:4px 8px;border:1px solid var(--bdr);border-radius:var(--r-xs);">
+          <button class="btn btn-outlined btn-sm" id="profitOhReloadBtn" onclick="loadProfitOverheadUI()">&#8635; Reload</button>
+          <button class="btn btn-filled btn-sm" id="profitOhSaveBtn" onclick="saveProfitOverheadUI()">Save Month</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:0 4px 12px;">
+        <div><label style="font-size:12px;color:var(--g-600)">Ads (Monthly)</label><input id="cfgAdsMonthly" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Dispatch (Monthly)</label><input id="cfgDispatchMonthly" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Misc (Monthly)</label><input id="cfgMiscMonthly" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Other Fixed (Monthly)</label><input id="cfgOtherFixedMonthly" type="number" step="0.01" value="0"></div>
+      </div>
+      <div style="padding:0 6px 10px;font-size:12px;color:var(--g-600)">These values are allocated across monthly orders for net P&amp;L.</div>
+    </div>
+    <div class="panel" style="margin-top:14px;">
+      <div class="panel-header">
+        <h3>&#129514; Quick Profit Calculator</h3>
+        <button class="btn btn-outlined btn-sm" onclick="calcProfitPreview()">Calculate</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:0 4px 12px;">
+        <div><label style="font-size:12px;color:var(--g-600)">Selling Price</label><input id="ppSelling" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Product Cost</label><input id="ppProductCost" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Items</label><input id="ppItems" type="number" step="1" value="1"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Weight (g)</label><input id="ppWeight" type="number" step="1" value="100"></div>
+
+        <div><label style="font-size:12px;color:var(--g-600)">Box Small</label><input id="ppBoxSmall" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Box Large</label><input id="ppBoxLarge" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Pouch Total</label><input id="ppPouch" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Sticker Total</label><input id="ppSticker" type="number" step="0.01" value="0"></div>
+
+        <div><label style="font-size:12px;color:var(--g-600)">Shipping</label><input id="ppShipping" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Ads Allocated</label><input id="ppAds" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Dispatch Cost</label><input id="ppDispatch" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Misc Cost</label><input id="ppMisc" type="number" step="0.01" value="0"></div>
+
+        <div><label style="font-size:12px;color:var(--g-600)">Gateway %</label><input id="ppGatewayPct" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">RTO %</label><input id="ppRtoPct" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Platform Fee %</label><input id="ppPlatformFeePct" type="number" step="0.01" value="0"></div>
+        <div><label style="font-size:12px;color:var(--g-600)">Extra Packaging</label><input id="ppPackagingExtra" type="number" step="0.01" value="0"></div>
+      </div>
+      <div class="tbl-wrap" id="profitPreviewTable"><div class="empty-state">Enter values and click Calculate.</div></div>
+    </div>
+  </div>
+
+  <!-- PROFIT CHECKER -->
+  <div id="tab-monthly" style="display:none">
+    <div style="border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:var(--g-50)">
+      <h3 style="margin:0;flex:1 1 auto">&#128202; Profit Checker</h3>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;border:1px solid var(--bdr);border-radius:var(--r-xs);overflow:hidden">
+          <button id="pcTypeMon" class="btn btn-sm btn-filled" onclick="pcSetPeriodType('monthly')" style="border-radius:0;border:0">Month</button>
+          <button id="pcTypeQtr" class="btn btn-sm btn-outlined" onclick="pcSetPeriodType('quarterly')" style="border-radius:0;border:0;border-left:1px solid var(--bdr)">Quarter</button>
+          <button id="pcTypeYr"  class="btn btn-sm btn-outlined" onclick="pcSetPeriodType('yearly')" style="border-radius:0;border:0;border-left:1px solid var(--bdr)">Year</button>
+        </div>
+        <button class="btn btn-outlined btn-sm" onclick="pcNavPeriod(-1)">&#8592;</button>
+        <span id="pcPeriodLabel" style="font-weight:600;min-width:90px;text-align:center">&mdash;</span>
+        <button class="btn btn-outlined btn-sm" onclick="pcNavPeriod(1)">&#8594;</button>
+        <button id="pcComputeBtn" class="btn btn-filled btn-sm" onclick="pcComputeSnapshot()">&#8635; Compute</button>
+      </div>
+    </div>
+    <div id="pcAlertsPanel" style="padding:0 16px;display:none"></div>
+    <div id="pcSummaryCards" style="padding:12px 16px 0"></div>
+    <div id="pcGroupsAccordion" style="padding:8px 16px 8px"><div class="loading-state">Loading&hellip;</div></div>
+    <div id="pcCarryFwdSection" style="display:none;padding:0 16px 12px">
+      <h4 style="margin-bottom:8px">&#128230; Inventory Carry-Forward</h4>
+      <div id="pcCarryFwdTable"></div>
+    </div>
+    <div id="pcCostSuggestSection" style="display:none;padding:0 16px 16px">
+      <h4 style="margin-bottom:8px">&#128161; WAC Cost Update Suggestions</h4>
+      <div id="pcCostSuggestions"></div>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS -->
+  <div id="tab-customers" style="display:none">
+    <div class="panel">
+      <div class="panel-header">
+        <h3>&#128101; Customer Lifetime Value</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="customersLimit" onchange="loadCustomersTab()">
+            <option value="10">Top 10</option>
+            <option value="20" selected>Top 20</option>
+            <option value="50">Top 50</option>
+          </select>
+          <button class="btn btn-outlined btn-sm" onclick="loadCustomersTab()">&#8635; Refresh</button>
+        </div>
+      </div>
+      <div class="tbl-wrap" id="customersTable"><div class="loading-state">Loading&hellip;</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/modules/auth.js"></script>
+<script>
+'use strict';
+
+// ── HOST ─────────────────────────────────────────────────────────────────────
+const HOST = '';  // Relative URLs to support both HTTP and HTTPS
+
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+let TOKEN = localStorage.getItem('token');
+
+function getH() {
+  return {
+    'Authorization': 'Bearer ' + localStorage.getItem('token'),
+    'Content-Type': 'application/json'
+  };
+}
+
+function handleAuthError(status) {
+  if (status === 401) { logout(); }
+}
+
+function logout() {
+  ['token','type','role','slug','user_id','email','tenant_token'].forEach(k => {
+    localStorage.removeItem(k); sessionStorage.removeItem(k);
+  });
+  window.location.replace('/tenant-login.html');
+}
+
+(function checkAuth() {
+  if (!TOKEN || localStorage.getItem('type') !== 'tenant') {
+    window.location.replace('/tenant-login.html');
+    return;
+  }
+  document.getElementById('tenantName').textContent = localStorage.getItem('slug') || 'Tenant';
+})();
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function fmtINR(val) {
+  var n = parseFloat(val) || 0;
+  if (n >= 10000000) return '\u20b9' + (n / 10000000).toFixed(2) + 'Cr';
+  if (n >= 100000)   return '\u20b9' + (n / 100000).toFixed(1) + 'L';
+  return '\u20b9' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+}
+function fmtNum(val) {
+  return (parseFloat(val) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+}
+function fmtDate(dt) {
+  if (!dt) return '\u2014';
+  return new Date(dt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function showErr(msg) {
+  var el = document.getElementById('errBanner');
+  el.textContent = '\u26a0\ufe0f ' + msg;
+  el.style.display = '';
+  setTimeout(function(){ el.style.display = 'none'; }, 8000);
+}
+function statusChip(status) {
+  var cls = 'chip-pending';
+  if (status === 'delivered') cls = 'chip-delivered';
+  else if (status === 'cancelled') cls = 'chip-cancelled';
+  else if (status === 'confirmed') cls = 'chip-confirmed';
+  return '<span class="chip-status ' + cls + '">' + esc(status || '\u2014') + '</span>';
+}
+
+// ── CHART INSTANCES ────────────────────────────────────────────────────────────
+var chartRevenue  = null;
+var chartProducts = null;
+var chartRevenueTab = null;
+var chartNetPnl = null;
+var profitOverheadCache = [];
+var productPerfRows = [];
+var monthlyRevenueRows = [];
+var monthlyNetRows = [];
+var monthlyCalcLast = null;
+var profitCfgState = {
+  targetMarginPct: 0,
+  lowMarginThresholdPct: 0
+};
+
+// ── FILTER STATE & HELPERS ─────────────────────────────────────────────────────
+var filters = {
+  fromDate: null,
+  toDate: null,
+  product: null,
+  orderId: null,
+  status: null
+};
+var allProducts = [];
+
+function getFilterDateRange() {
+  var period = document.getElementById('filterPeriod').value;
+  var today  = new Date();
+  var pad    = function(n) { return String(n).padStart(2,'0'); };
+  var fmt    = function(d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); };
+  var todayStr = fmt(today);
+  var result = { from: null, to: todayStr, label: '' };
+
+  if (period === 'custom') {
+    result.from = document.getElementById('filterFromDate').value || null;
+    result.to   = document.getElementById('filterToDate').value || todayStr;
+    result.label = result.from && result.to ? result.from + ' to ' + result.to : 'Custom range';
+    return result;
+  }
+  
+  var d = new Date(today);
+  if (period === 'today') {
+    result.from = todayStr;
+    result.label = 'Today';
+  } else if (period === '7days') {
+    d.setDate(today.getDate() - 6);
+    result.from = fmt(d);
+    result.label = 'Last 7 days';
+  } else if (period === 'thismonth') {
+    d.setDate(1);
+    result.from = fmt(d);
+    result.label = 'This month';
+  } else if (period === 'lastmonth') {
+    d.setMonth(today.getMonth() - 1);
+    d.setDate(1);
+    var lastDayOfPrevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+    result.from = fmt(d);
+    result.to = fmt(lastDayOfPrevMonth);
+    result.label = 'Last month';
+  } else if (period === 'monthminus2') {
+    d.setMonth(today.getMonth() - 2);
+    d.setDate(1);
+    var lastDayOfMinus2 = new Date(today.getFullYear(), today.getMonth() - 1, 0);
+    result.from = fmt(d);
+    result.to = fmt(lastDayOfMinus2);
+    result.label = 'Month before last';
+  } else if (period === 'thisquarter') {
+    var q = Math.floor(today.getMonth() / 3);
+    d.setMonth(q * 3);
+    d.setDate(1);
+    result.from = fmt(d);
+    result.label = 'This quarter (Q' + (q+1) + ')';
+  } else if (period === 'lastquarter') {
+    var q = Math.floor(today.getMonth() / 3) - 1;
+    if (q < 0) { q = 3; d.setFullYear(today.getFullYear() - 1); }
+    d.setMonth(q * 3);
+    d.setDate(1);
+    var nextQ = new Date(d);
+    nextQ.setMonth(d.getMonth() + 3);
+    nextQ.setDate(0);
+    result.from = fmt(d);
+    result.to = fmt(nextQ);
+    result.label = 'Last quarter';
+  } else if (period === 'thisyear') {
+    d.setMonth(0);
+    d.setDate(1);
+    result.from = fmt(d);
+    result.label = 'This year';
+  } else if (period === 'lastyear') {
+    d.setFullYear(today.getFullYear() - 1);
+    d.setMonth(0);
+    d.setDate(1);
+    var yearEnd = new Date(today.getFullYear(), 0, 0);
+    result.from = fmt(d);
+    result.to = fmt(yearEnd);
+    result.label = 'Last year';
+  }
+  return result;
+}
+
+function onFilterPeriodChange() {
+  var isCustom = document.getElementById('filterPeriod').value === 'custom';
+  document.getElementById('customDateRange').style.display = isCustom ? 'flex' : 'none';
+  if (!isCustom) {
+    var range = getFilterDateRange();
+    if (range.from) document.getElementById('filterFromDate').value = range.from;
+    if (range.to)   document.getElementById('filterToDate').value = range.to;
+    applyFilters();
+  }
+}
+
+function applyFilters() {
+  var range = getFilterDateRange();
+  filters.fromDate = range.from;
+  filters.toDate   = range.to;
+  filters.product  = document.getElementById('filterProduct').value || null;
+  filters.orderId  = document.getElementById('filterOrder').value || null;
+  filters.status   = document.getElementById('filterStatus').value || null;
+
+  // Display active filters
+  var activeFilters = [];
+  if (range.label) activeFilters.push(range.label);
+  if (filters.product) activeFilters.push('Product: ' + (allProducts.find(p => p.id === filters.product)?.name || filters.product));
+  if (filters.orderId) activeFilters.push('Order: ' + esc(filters.orderId));
+  if (filters.status) activeFilters.push('Status: ' + filters.status);
+
+  var displayEl = document.getElementById('activeFiltersDisplay');
+  if (activeFilters.length > 0) {
+    document.getElementById('activeFiltersList').textContent = activeFilters.join(' · ');
+    displayEl.style.display = 'block';
+  } else {
+    displayEl.style.display = 'none';
+  }
+
+  // Reload whichever tab is currently visible
+  if (currentTab === 'overview' || !currentTab) {
+    loadOverview();
+  } else {
+    // Force-reload non-overview tab so it picks up new filters
+    tabsLoaded[currentTab] = false;
+    if (currentTab === 'revenue')   loadRevenueTab();
+    if (currentTab === 'products')  loadProductsTab();
+    if (currentTab === 'customers') loadCustomersTab();
+  }
+}
+
+function clearFilters() {
+  document.getElementById('filterPeriod').value = 'thismonth';
+  document.getElementById('filterProduct').value = '';
+  document.getElementById('filterOrder').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('customDateRange').style.display = 'none';
+  document.getElementById('activeFiltersDisplay').style.display = 'none';
+  filters = { fromDate: null, toDate: null, product: null, orderId: null, status: null };
+  applyFilters();
+}
+
+function _debugFilterSummary() {
+  var parts = [];
+  parts.push('from=' + (filters.fromDate || 'auto'));
+  parts.push('to=' + (filters.toDate || 'auto'));
+  if (filters.status)  parts.push('status=' + filters.status);
+  if (filters.product) parts.push('product=' + filters.product);
+  if (filters.orderId) parts.push('order=' + filters.orderId);
+  return parts.join(' | ');
+}
+
+var overviewDebugEnabled = new URLSearchParams(window.location.search).get('debug') === '1';
+
+function setDebugPayloadText(text) {
+  if (!overviewDebugEnabled) return;
+  var panel = document.getElementById('debugPayloadDisplay');
+  var el = document.getElementById('debugPayloadText');
+  if (!panel || !el) return;
+  panel.style.display = 'block';
+  el.textContent = text;
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+var tabsLoaded = {};
+var currentTab = 'overview';
+
+// Cost breakdown tooltip toggle
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('costTooltipBtn');
+    var tip = document.getElementById('costTooltip');
+    if (!btn || !tip) return;
+    btn.addEventListener('mouseenter', function() { tip.classList.add('show'); });
+    btn.addEventListener('mouseleave', function(e) {
+      if (!tip.contains(e.relatedTarget)) tip.classList.remove('show');
+    });
+    tip.addEventListener('mouseleave', function() { tip.classList.remove('show'); });
+    btn.addEventListener('click', function(e) { e.stopPropagation(); tip.classList.toggle('show'); });
+    document.addEventListener('click', function() { tip.classList.remove('show'); });
+  });
+})();
+
+// Recalculate button handler
+document.addEventListener('DOMContentLoaded', function() {
+  // Add real-time overhead total calculation
+  var overheadFieldIds = ['ovAdsMonthly', 'ovDispatchMonthly', 'ovMiscMonthly', 'ovOtherFixedMonthly'];
+  overheadFieldIds.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', function() {
+        updateOverheadTotal();
+      });
+    }
+  });
+
+  var recalcBtn = document.getElementById('recalcBtn');
+  if (recalcBtn) {
+    recalcBtn.addEventListener('click', async function() {
+      if (!confirm('This will recalculate profit postings for all orders. Continue?')) return;
+      var btn = this;
+      var origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Recalculating...';
+      try {
+        var r = await fetch('/api/reports/profit/recalculate', {
+          method: 'POST',
+          headers: getH(),
+          body: JSON.stringify({ from_month: '2026-03', to_month: '2026-04' })
+        });
+        if (r.ok) {
+          var res = await r.json();
+          alert('Recalculation complete! ' + (res.processed || 0) + ' orders updated.');
+          // Reload overview
+          setTimeout(function() { loadOverview(); }, 500);
+        } else {
+          alert('Error: ' + (await r.text()));
+        }
+      } catch (e) {
+        alert('Request failed: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    });
+  }
+});
+
+function switchTab(tab, el) {
+  currentTab = tab;
+  ['overview','revenue','products','monthly','customers'].forEach(function(t) {
+    document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  el.classList.add('active');
+  if (!tabsLoaded[tab]) {
+    tabsLoaded[tab] = true;
+    if (tab === 'revenue')   loadRevenueTab();
+    if (tab === 'products')  loadProductsTab();
+    if (tab === 'monthly')   loadProfitCheckerTab();
+    if (tab === 'customers') loadCustomersTab();
+  }
+}
+
+// ── OVERVIEW ──────────────────────────────────────────────────────────────────
+async function loadProductsForFilter() {
+  try {
+    var r = await fetch(HOST + '/api/products?page=1&page_size=500', { headers: getH() });
+    if (r.ok) {
+      var data = await r.json();
+      allProducts = data.items || data.products || data.results || [];
+      var sel = document.getElementById('filterProduct');
+      var html = '<option value="">All Products</option>';
+      allProducts.forEach(function(p) {
+        html += '<option value="' + p.id + '">' + esc(p.name) + '</option>';
+      });
+      sel.innerHTML = html;
+    }
+  } catch(e) { /* silently fail, products dropdown optional */ }
+}
+
+async function loadOverview() {
+  setDebugPayloadText('loading | ' + _debugFilterSummary());
+  syncOverviewOverheadMonthToFilters();
+  loadOverviewOverheadUI();
+  ['ovRevenue','ovOutstanding','ovOrders','ovProducts','ovCustomers','ovPipeline'].forEach(function(id) {
+    document.getElementById(id).textContent = '\u2026';
+  });
+  ['ctRevenue','ctProductCost','ctShipping','ctPackaging','ctGateway','ctRtoLoss','ctOverheads','ctNetProfit'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = '\u20b9\u2014';
+  });
+  document.getElementById('ovPipelineSub').textContent = '\u2014';
+  document.getElementById('ovOutstandingBreakup').textContent = 'Profit \u20b9\u2014 + Tax \u20b9\u2014';
+  document.getElementById('ovCustomersTable').innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+
+  try {
+    // Build query params based on filters
+    var params = '';
+    if (filters.fromDate) params += '&from=' + filters.fromDate;
+    if (filters.toDate)   params += '&to=' + filters.toDate;
+    if (filters.status)   params += '&status=' + filters.status;
+
+    // 1. Dashboard stats — try with filters first, fallback to unfiltered
+    var dashUrl = '/api/reports/dashboard' + (params ? '?' + params.substring(1) : '');
+    var r1 = await fetch(dashUrl, { headers: getH() });
+    if (r1.status === 401) { handleAuthError(401); return; }
+    var dash = {};
+    if (r1.ok) {
+      dash = await r1.json();
+    } else {
+      // Fallback: get unfiltered dashboard if filtered endpoint doesn't work
+      r1 = await fetch('/api/reports/dashboard', { headers: getH() });
+      if (r1.ok) dash = await r1.json();
+      else throw new Error('Dashboard API returned ' + r1.status);
+    }
+
+    // Update timestamp banner with current time
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2, '0');
+    var m = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('infoBanner').style.display = 'block';
+    document.getElementById('lastRefresh').textContent = h + ':' + m;
+
+    // 2. Revenue trend chart — use filter dates for months
+    var months = 12;
+    if (filters.fromDate && filters.toDate) {
+      var start = new Date(filters.fromDate);
+      var end = new Date(filters.toDate);
+      months = Math.ceil((end - start) / (1000 * 60 * 60 * 24 * 30));
+    }
+    var revUrl = '/api/reports/revenue?months=' + Math.max(1, months) + (params ? '&' + params.substring(1) : '');
+    var r2 = await fetch(revUrl, { headers: getH() });
+    if (r2.status === 401) { handleAuthError(401); return; }
+    if (r2.ok) {
+      var rev = await r2.json();
+      renderRevenueChart(rev.by_month || []);
+    }
+
+    // 2b. Net P&L trend (realized delivered orders) — pass date range when set
+    var pnlQs = 'months=' + Math.max(1, months);
+    if (filters.fromDate) pnlQs += '&from=' + filters.fromDate;
+    if (filters.toDate)   pnlQs += '&to='   + filters.toDate;
+    var rp = await fetch('/api/reports/profit/net-monthly?' + pnlQs, { headers: getH() });
+    if (rp.ok) {
+      var pnl = await rp.json();
+      var debugSource = 'net-monthly';
+      renderNetPnlChart(pnl.by_month || []);
+
+      var realizedRevenue = parseFloat(pnl.total_realized_revenue) || 0;
+      var netProfit = parseFloat(pnl.total_net_profit) || 0;
+      var taxAmount = parseFloat(pnl.total_tax_amount) || 0;
+      var profitAmount = netProfit - taxAmount;
+      var realizedMargin = parseFloat(pnl.realized_margin_pct) || 0;
+      var delivered = parseFloat(pnl.delivered_count) || parseFloat(dash.orders_delivered) || 0;
+      var profitPerDelivered = delivered > 0 ? (netProfit / delivered) : 0;
+
+      document.getElementById('ovRevenue').textContent = fmtINR(realizedRevenue);
+      document.getElementById('ovOutstanding').textContent = fmtINR(netProfit);
+      document.getElementById('ovOutstanding').className = 'stat-val ' + (netProfit >= 0 ? 'pos' : 'neg');
+      document.getElementById('ovOutstandingBreakup').textContent = 'Profit ' + fmtINR(profitAmount) + ' + Tax ' + fmtINR(taxAmount);
+      document.getElementById('ovOrders').textContent = fmtNum(realizedMargin) + '%';
+      document.getElementById('ovOrdersTotal').textContent = fmtINR(profitPerDelivered);
+      document.getElementById('ovCustomers').textContent = delivered > 0 ? delivered : (dash.orders_delivered != null ? dash.orders_delivered : '\u2014');
+
+      // Cost breakdown tooltip values
+      var totProdCost = parseFloat(pnl.total_product_cost) || 0;
+      var totShipCost = parseFloat(pnl.total_shipping_cost) || 0;
+      var totPackCost = parseFloat(pnl.total_packaging_cost) || 0;
+      var totAds     = parseFloat(pnl.total_ads_allocated) || 0;
+      var totDispatch = parseFloat(pnl.total_dispatch_allocated) || 0;
+      var totMisc    = parseFloat(pnl.total_misc_allocated) || 0;
+      var totOtherFx = parseFloat(pnl.total_other_fixed_allocated) || 0;
+      var totGateway = parseFloat(pnl.total_gateway_fee) || 0;
+      var totRtoLoss = parseFloat(pnl.total_rto_expected_loss) || 0;
+      var totFixed    = parseFloat(pnl.total_fixed_cost) || 0;
+      var totVar      = parseFloat(pnl.total_variable_cost) || 0;
+      var userOverheads = totAds + totDispatch + totMisc + totOtherFx;
+      document.getElementById('ctRevenue').textContent     = fmtINR(realizedRevenue);
+      document.getElementById('ctProductCost').textContent = fmtINR(totProdCost);
+      document.getElementById('ctShipping').textContent    = fmtINR(totShipCost);
+      document.getElementById('ctPackaging').textContent   = fmtINR(totPackCost);
+      document.getElementById('ctGateway').textContent     = fmtINR(totGateway);
+      document.getElementById('ctRtoLoss').textContent     = fmtINR(totRtoLoss);
+      document.getElementById('ctOverheads').textContent   = fmtINR(userOverheads);
+      document.getElementById('ctNetProfit').textContent   = fmtINR(netProfit);
+
+      // Data quality warning
+      var zeroCost = parseInt(pnl.zero_cost_orders) || 0;
+      var dqEl = document.getElementById('dqWarning');
+      document.getElementById('dqCount').textContent = zeroCost;
+      dqEl.style.display = zeroCost > 0 ? 'block' : 'none';
+
+      // In Transit stat card
+      var pipelineOrders  = parseInt(pnl.pipeline_orders) || 0;
+      var pipelineRevenue = parseFloat(pnl.pipeline_revenue) || 0;
+      document.getElementById('ovPipeline').textContent    = pipelineOrders > 0 ? pipelineOrders + ' orders' : '\u2014';
+      document.getElementById('ovPipelineSub').textContent = pipelineRevenue > 0 ? fmtINR(pipelineRevenue) + ' in transit' : 'None pending';
+
+      // Stale shipped warning (tenant-wide, not date-filtered)
+      var staleCount   = parseInt(pnl.stale_shipped_count) || 0;
+      var staleRevenue = parseFloat(pnl.stale_shipped_revenue) || 0;
+      var staleEl = document.getElementById('staleWarning');
+      document.getElementById('staleCount').textContent   = staleCount;
+      document.getElementById('staleRevenue').textContent = fmtINR(staleRevenue);
+      staleEl.style.display = staleCount > 0 ? 'block' : 'none';
+
+      // Reconciliation table
+      var ship7Cnt  = parseInt(pnl.shipped_7plus_count) || 0;
+      var ship7Rev  = parseFloat(pnl.shipped_7plus_revenue) || 0;
+      var stl2Cnt   = parseInt(pnl.stale_2days_count) || 0;
+      var stl2Rev   = parseFloat(pnl.stale_2days_revenue) || 0;
+      var retCnt    = parseInt(pnl.returned_count) || 0;
+      var retRev    = parseFloat(pnl.returned_revenue) || 0;
+      var avgVal    = parseFloat(pnl.avg_order_value) || 0;
+      var activeCnt = (parseInt(pnl.delivered_count) || 0) + pipelineOrders;
+      var activeRev = realizedRevenue + pipelineRevenue;
+      document.getElementById('rcnDelivCnt').textContent  = delivered > 0 ? delivered : '\u2014';
+      document.getElementById('rcnDelivRev').textContent  = realizedRevenue > 0 ? fmtINR(realizedRevenue) : '\u2014';
+      document.getElementById('rcnPipeCnt').textContent   = pipelineOrders > 0 ? pipelineOrders : '\u2014';
+      document.getElementById('rcnPipeRev').textContent   = pipelineRevenue > 0 ? fmtINR(pipelineRevenue) : '\u2014';
+      document.getElementById('rcnActiveCnt').textContent = activeCnt > 0 ? activeCnt : '\u2014';
+      document.getElementById('rcnActiveRev').textContent = activeRev > 0 ? fmtINR(activeRev) : '\u2014';
+      document.getElementById('rcnShip7Cnt').textContent  = ship7Cnt > 0 ? ship7Cnt : '\u2014';
+      document.getElementById('rcnShip7Rev').textContent  = ship7Rev > 0 ? fmtINR(ship7Rev) : '\u2014';
+      document.getElementById('rcnStale2Cnt').textContent = stl2Cnt > 0 ? stl2Cnt : '\u2014';
+      document.getElementById('rcnStale2Rev').textContent = stl2Rev > 0 ? fmtINR(stl2Rev) : '\u2014';
+      document.getElementById('rcnRetCnt').textContent    = retCnt > 0 ? retCnt : '0';
+      document.getElementById('rcnRetRev').textContent    = retCnt > 0 ? fmtINR(retRev) : '\u2014';
+      document.getElementById('rcnAvgVal').textContent    = avgVal > 0 ? fmtINR(avgVal) : '\u2014';
+      // Mirror to mobile cards
+      document.getElementById('rcnDelivCntM').textContent  = delivered > 0 ? delivered : '\u2014';
+      document.getElementById('rcnDelivRevM').textContent  = realizedRevenue > 0 ? fmtINR(realizedRevenue) : '\u2014';
+      document.getElementById('rcnPipeCntM').textContent   = pipelineOrders > 0 ? pipelineOrders : '\u2014';
+      document.getElementById('rcnPipeRevM').textContent   = pipelineRevenue > 0 ? fmtINR(pipelineRevenue) : '\u2014';
+      document.getElementById('rcnActiveCntM').textContent = activeCnt > 0 ? activeCnt : '\u2014';
+      document.getElementById('rcnActiveRevM').textContent = activeRev > 0 ? fmtINR(activeRev) : '\u2014';
+      document.getElementById('rcnShip7CntM').textContent  = ship7Cnt > 0 ? ship7Cnt : '\u2014';
+      document.getElementById('rcnShip7RevM').textContent  = ship7Rev > 0 ? fmtINR(ship7Rev) : '\u2014';
+      document.getElementById('rcnStale2CntM').textContent = stl2Cnt > 0 ? stl2Cnt : '\u2014';
+      document.getElementById('rcnStale2RevM').textContent = stl2Rev > 0 ? fmtINR(stl2Rev) : '\u2014';
+      document.getElementById('rcnRetCntM').textContent    = retCnt > 0 ? retCnt : '0';
+      document.getElementById('rcnRetRevM').textContent    = retCnt > 0 ? fmtINR(retRev) : '\u2014';
+      document.getElementById('rcnAvgValM').textContent    = avgVal > 0 ? fmtINR(avgVal) : '\u2014';
+
+      setDebugPayloadText(
+        'source=' + debugSource
+        + ' | qs=' + pnlQs
+        + ' | ' + _debugFilterSummary()
+        + ' | rev=' + realizedRevenue.toFixed(2)
+        + ' | var=' + totVar.toFixed(2)
+        + ' | fix=' + totFixed.toFixed(2)
+        + ' | gateway=' + totGateway.toFixed(2)
+        + ' | rto=' + totRtoLoss.toFixed(2)
+        + ' | net=' + netProfit.toFixed(2)
+        + ' | tax=' + taxAmount.toFixed(2)
+        + ' | delivered=' + delivered
+      );
+    } else {
+      // Fallback if net endpoint unavailable
+      document.getElementById('ovRevenue').textContent = fmtINR(dash.delivered_revenue || dash.total_revenue);
+      document.getElementById('ovOutstanding').textContent = fmtINR(dash.total_outstanding);
+      document.getElementById('ovOutstandingBreakup').textContent = 'Profit \u20b9\u2014 + Tax \u20b9\u2014';
+      document.getElementById('ovOrders').textContent = dash.orders_delivered != null ? dash.orders_delivered : (dash.total_orders || '\u2014');
+      document.getElementById('ovOrdersTotal').textContent = dash.total_orders || '\u2014';
+      document.getElementById('ovCustomers').textContent = dash.total_customers || '\u2014';
+      setDebugPayloadText(
+        'source=dashboard-fallback'
+        + ' | ' + _debugFilterSummary()
+        + ' | delivered_revenue=' + (parseFloat(dash.delivered_revenue || dash.total_revenue || 0)).toFixed(2)
+        + ' | outstanding=' + (parseFloat(dash.total_outstanding || 0)).toFixed(2)
+      );
+    }
+
+    // 3. Top products chart — with optional product + date filters
+    var prodUrl = '/api/reports/products' + (params ? '?' + params.substring(1) : '');
+    var r3 = await fetch(prodUrl, { headers: getH() });
+    if (r3.ok) {
+      var prod = await r3.json();
+      var allResults = (prod.results || []);
+      var results = allResults;
+      // Client-side filtering for single product (product_id is a UUID string)
+      if (filters.product) {
+        results = allResults.filter(function(p) {
+          return String(p.product_id || '') === filters.product || String(p.id || '') === filters.product;
+        });
+      }
+
+      // Product filtering is chart-only on the overview tab.
+      // Keep headline KPI cards bound to net-monthly so one financial source owns them.
+
+      var lossCount = results.filter(function(p){ return p.gross_profit != null && parseFloat(p.gross_profit) < 0; }).length;
+      document.getElementById('ovProducts').textContent = lossCount;
+
+      renderLossMakerBanner(results);
+      renderProductsChart(results);
+    }
+
+    // 4. Top customers table on overview — with optional filters
+    var custUrl = '/api/reports/customers/top?limit=10' + (params ? '&' + params.substring(1) : '');
+    var r4 = await fetch(custUrl, { headers: getH() });
+    if (r4.ok) {
+      var cdata = await r4.json();
+      var results = (cdata.results || []);
+      // Client-side filtering for order number
+      if (filters.orderId) {
+        // Note: customer endpoint doesn't include order numbers, so this is a limitation
+        // In a real scenario, you'd need a dedicated orders endpoint with customer filters
+      }
+      renderOverviewCustomers(results);
+    } else {
+      document.getElementById('ovCustomersTable').innerHTML = '<div class="empty-state">Customer data unavailable.</div>';
+    }
+
+  } catch (ex) {
+    setDebugPayloadText('error=' + ex.message + ' | ' + _debugFilterSummary());
+    showErr(ex.message);
+  }
+}
+
+// ── STALE ORDERS DETAIL ───────────────────────────────────────────────────────
+var _staleDetailsOpen = false;
+async function toggleStaleDetails() {
+  var panel = document.getElementById('staleOrdersList');
+  var btn   = document.getElementById('staleDetailsBtn');
+  _staleDetailsOpen = !_staleDetailsOpen;
+  panel.style.display = _staleDetailsOpen ? 'block' : 'none';
+  btn.textContent    = _staleDetailsOpen ? 'Hide orders \u25b2' : 'Show orders \u25bc';
+  if (!_staleDetailsOpen) return;
+
+  var tbody = document.getElementById('staleOrdersBody');
+  tbody.innerHTML = '<tr><td colspan="6" style="padding:8px;text-align:center">Loading\u2026</td></tr>';
+
+  try {
+    // 30 days ago
+    var cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 30);
+    var pad = function(n) { return String(n).padStart(2,'0'); };
+    var cutoffStr = cutoff.getFullYear() + '-' + pad(cutoff.getMonth()+1) + '-' + pad(cutoff.getDate());
+
+    var r = await fetch('/api/orders?status=shipped&created_before=' + cutoffStr + '&page=1&page_size=50', { headers: getH() });
+    if (!r.ok) throw new Error('API error ' + r.status);
+    var data = await r.json();
+    var orders = (data.items || data.orders || data.results || []);
+
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="padding:8px;text-align:center;color:#991b1b">No stale orders found.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = orders.map(function(o) {
+      var cust = o.customer_name || '\u2014';
+      var phone = o.customer_phone || o.delivery_phone || '\u2014';
+      var tracking = o.tracking_number || '\u2014';
+      var amount = o.total_amount ? fmtINR(o.total_amount) : '\u2014';
+      var createdOn = o.created_at ? o.created_at.slice(0,10) : '\u2014';
+      return '<tr style="border-bottom:1px solid #fca5a5">'
+        + '<td style="padding:5px 8px;font-family:var(--font-mono);font-size:11px;font-weight:600">' + esc(o.order_number || o.id) + '</td>'
+        + '<td style="padding:5px 8px;font-size:12px">' + esc(cust) + '</td>'
+        + '<td style="padding:5px 8px;font-family:var(--font-mono);font-size:11px">' + esc(phone) + '</td>'
+        + '<td style="padding:5px 8px;text-align:right;font-weight:600;font-size:12px">' + amount + '</td>'
+        + '<td style="padding:5px 8px;font-size:11px;color:#7f1d1d">' + createdOn + '</td>'
+        + '<td style="padding:5px 8px;font-family:var(--font-mono);font-size:11px">' + esc(tracking) + '</td>'
+        + '</tr>';
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:8px;text-align:center;color:#991b1b">Failed to load: ' + esc(e.message) + '</td></tr>';
+  }
+}
+
+function renderOverviewCustomers(customers) {
+  if (!customers.length) {
+    document.getElementById('ovCustomersTable').innerHTML = '<div class="empty-state">No customer data yet.</div>';
+    return;
+  }
+  var rows = customers.map(function(c, i) {
+    var spent = parseFloat(c.total_spent) || 0;
+    var avg   = c.order_count > 0 ? spent / c.order_count : 0;
+    return '<tr>'
+      + '<td style="font-weight:600;color:var(--g-600);font-size:12px">#' + (i+1) + '</td>'
+      + '<td><strong>' + esc(c.name) + '</strong></td>'
+      + '<td style="font-size:12px">' + esc(c.city || '\u2014') + '</td>'
+      + '<td style="font-size:12px">' + esc(c.phone || '\u2014') + '</td>'
+      + '<td class="num">' + (c.order_count || 0) + '</td>'
+      + '<td class="num" style="font-weight:700">' + fmtINR(spent) + '</td>'
+      + '<td class="num">' + (avg > 0 ? fmtINR(avg) : '\u2014') + '</td>'
+      + '</tr>';
+  }).join('');
+  document.getElementById('ovCustomersTable').innerHTML =
+    '<table><thead><tr>'
+    + '<th>#</th><th>Customer</th><th>City</th><th>Phone</th>'
+    + '<th class="num">Orders</th><th class="num">Total Spent</th><th class="num">Avg/Order</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function renderRevenueChart(byMonth) {
+  var ctx = document.getElementById('chartRevenue');
+  if (!ctx) return;
+  if (chartRevenue) { chartRevenue.destroy(); chartRevenue = null; }
+  if (!byMonth.length) {
+    ctx.parentElement.innerHTML += '<div class="empty-state" style="padding:20px">No revenue data yet.</div>';
+    return;
+  }
+  var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function fmtMonth(m) {
+    // "2026-03" → "Mar '26"
+    var parts = m.split('-');
+    if (parts.length === 2) {
+      var mo = parseInt(parts[1], 10) - 1;
+      return monthNames[mo] + " \u2019" + parts[0].slice(2);
+    }
+    return m;
+  }
+  var chartCtx = ctx.getContext('2d');
+  var revenueGradient = chartCtx.createLinearGradient(0, 0, 0, 260);
+  revenueGradient.addColorStop(0, 'rgba(37,99,235,.28)');
+  revenueGradient.addColorStop(1, 'rgba(37,99,235,0)');
+  var dueGradient = chartCtx.createLinearGradient(0, 0, 0, 260);
+  dueGradient.addColorStop(0, 'rgba(245,158,11,.15)');
+  dueGradient.addColorStop(1, 'rgba(245,158,11,0)');
+  chartRevenue = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: byMonth.map(function(m){ return fmtMonth(m.month); }),
+      datasets: [
+        {
+          label: 'Revenue',
+          data: byMonth.map(function(m){ return parseFloat(m.revenue) || 0; }),
+          backgroundColor: revenueGradient,
+          borderColor: '#2563eb',
+          borderWidth: 2,
+          tension: .35,
+          fill: true,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+        },
+        {
+          label: 'Outstanding',
+          data: byMonth.map(function(m){ return parseFloat(m.outstanding) || 0; }),
+          backgroundColor: dueGradient,
+          borderColor: '#f59e0b',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true,
+          pointRadius: 0,
+          pointHoverRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', align:'end', labels: { font: { size: 11 }, usePointStyle: true, boxWidth:7 } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              var v = ctx.parsed.y || 0;
+              return ctx.dataset.label + ': \u20b9' + v.toLocaleString('en-IN');
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(v) {
+              if (v >= 10000000) return '\u20b9' + (v/10000000).toFixed(1) + 'Cr';
+              if (v >= 100000) return '\u20b9' + (v/100000).toFixed(1) + 'L';
+              if (v >= 1000) return '\u20b9' + (v/1000).toFixed(0) + 'K';
+              return '\u20b9' + v.toLocaleString('en-IN');
+            }
+          },
+          grid: { color: '#edf1f6' },
+          border: { display:false }
+        },
+        x: { grid: { display: false }, border:{display:false} }
+      }
+    }
+  });
+}
+
+function renderNetPnlChart(byMonth) {
+  var ctx = document.getElementById('chartNetPnl');
+  if (!ctx) return;
+  if (chartNetPnl) { chartNetPnl.destroy(); chartNetPnl = null; }
+  if (!byMonth.length) return;
+
+  var labels = byMonth.map(function(m){ return m.month; });
+  var profits = byMonth.map(function(m){ return parseFloat(m.net_profit) || 0; });
+  var margins = byMonth.map(function(m){ return parseFloat(m.realized_margin_pct) || 0; });
+
+  chartNetPnl = new Chart(ctx, {
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Net Profit',
+          data: profits,
+          backgroundColor: profits.map(function(v){ return v >= 0 ? 'rgba(22,163,74,.75)' : 'rgba(220,38,38,.75)'; }),
+          borderRadius: 6,
+          yAxisID: 'y'
+        },
+        {
+          type: 'line',
+          label: 'Margin %',
+          data: margins,
+          borderColor: '#1d4ed8',
+          backgroundColor: 'rgba(29,78,216,.15)',
+          tension: 0.35,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        y: {
+          position: 'left',
+          grid: { color: 'rgba(0,0,0,.06)' },
+          ticks: {
+            callback: function(v){ return '\u20b9' + Number(v).toLocaleString('en-IN'); }
+          }
+        },
+        y1: {
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          ticks: { callback: function(v){ return v + '%'; } }
+        }
+      }
+    }
+  });
+}
+
+function renderLossMakerBanner(products) {
+  var el = document.getElementById('lossMakerBanner');
+  if (!el) return;
+  var losses = (products || []).filter(function(p){
+    return p.gross_profit != null && parseFloat(p.gross_profit) < 0;
+  }).sort(function(a,b){ return parseFloat(a.gross_profit) - parseFloat(b.gross_profit); });
+
+  if (!losses.length) {
+    el.style.display = 'none';
+    return;
+  }
+
+  var top = losses.slice(0, 5).map(function(p){
+    var gp = parseFloat(p.gross_profit) || 0;
+    return esc(p.name) + ' (' + fmtINR(gp) + ')';
+  }).join(' | ');
+
+  var actions = [
+    'Review suggested price for loss SKUs',
+    'Check pouch/box/sticker values in Profit Config',
+    'Verify latest purchase costs are received in PO',
+    'Review shipping and RTO assumptions',
+    'Reduce ads on persistent negative-margin SKUs'
+  ];
+
+  el.innerHTML = '<strong>⚠️ Loss-Maker Alert:</strong> ' + losses.length + ' SKU(s) negative margin. '
+    + '<div style="margin-top:6px"><strong>Top 5:</strong> ' + top + '</div>'
+    + '<div style="margin-top:6px"><strong>Urgent Actions:</strong> ' + actions.join(' • ') + '</div>';
+  el.style.display = 'block';
+}
+
+function renderProductsChart(products) {
+  var ctx = document.getElementById('chartProducts');
+  if (!ctx) return;
+  if (chartProducts) { chartProducts.destroy(); chartProducts = null; }
+  var top = products.slice(0, 8);
+  if (!top.length) {
+    ctx.parentElement.innerHTML += '<div class="empty-state" style="padding:20px">No product data yet.</div>';
+    return;
+  }
+  var colors = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16'];
+  chartProducts = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: top.map(function(p){ return p.name.length > 18 ? p.name.slice(0,16)+'…' : p.name; }),
+      datasets: [{
+        label: 'Revenue',
+        data: top.map(function(p){ return parseFloat(p.revenue) || 0; }),
+        backgroundColor: top.map(function(_, i){ return colors[i % colors.length]; }),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          ticks: {
+            callback: function(v) {
+              if (v >= 100000) return '\u20b9' + (v/100000).toFixed(1) + 'L';
+              return '\u20b9' + v.toLocaleString('en-IN');
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// ── REVENUE TAB ────────────────────────────────────────────────────────────────
+async function loadRevenueTab() {
+  document.getElementById('revenueTable').innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  var months = document.getElementById('revMonths').value;
+  try {
+    var revQs = 'months=' + months;
+    if (filters.fromDate) revQs += '&from=' + filters.fromDate;
+    if (filters.toDate)   revQs += '&to='   + filters.toDate;
+    var r = await fetch('/api/reports/revenue?' + revQs, { headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Revenue API returned ' + r.status);
+    var data = await r.json();
+    var byMonth = data.by_month || [];
+    renderRevenueTabChart(byMonth);
+    renderRevenueTable(byMonth);
+  } catch (ex) {
+    document.getElementById('revenueTable').innerHTML = '<div class="empty-state">\u26a0\ufe0f ' + esc(ex.message) + '</div>';
+    showErr(ex.message);
+  }
+}
+
+function renderRevenueTabChart(byMonth) {
+  var ctx = document.getElementById('chartRevenueTab');
+  if (!ctx) return;
+  if (chartRevenueTab) { chartRevenueTab.destroy(); chartRevenueTab = null; }
+  if (!byMonth.length) {
+    ctx.parentElement.querySelector('h4').insertAdjacentHTML('afterend', '<div class="empty-state" style="padding:20px">No revenue data to chart.</div>');
+    return;
+  }
+  var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function fmtMonth(m) {
+    var parts = m.split('-');
+    if (parts.length === 2) {
+      var mo = parseInt(parts[1], 10) - 1;
+      return monthNames[mo] + " \u2019" + parts[0].slice(2);
+    }
+    return m;
+  }
+  var chartCtx = ctx.getContext('2d');
+  var revenueGradient = chartCtx.createLinearGradient(0, 0, 0, 260);
+  revenueGradient.addColorStop(0, 'rgba(16,185,129,.26)');
+  revenueGradient.addColorStop(1, 'rgba(16,185,129,0)');
+  chartRevenueTab = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: byMonth.map(function(m){ return fmtMonth(m.month); }),
+      datasets: [
+        {
+          label: 'Revenue',
+          data: byMonth.map(function(m){ return parseFloat(m.revenue) || 0; }),
+          backgroundColor: revenueGradient,
+          borderColor: '#10b981',
+          borderWidth: 2,
+          tension:.35,
+          fill:true,
+          pointRadius:0,
+          pointHoverRadius:4,
+          order: 2
+        },
+        {
+          label: 'Collected',
+          data: byMonth.map(function(m){ return parseFloat(m.collected) || 0; }),
+          backgroundColor: 'rgba(59,130,246,0.1)',
+          borderColor: '#3b82f6',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointBackgroundColor: '#3b82f6',
+          order: 1
+        },
+        {
+          label: 'Outstanding',
+          data: byMonth.map(function(m){ return parseFloat(m.outstanding) || 0; }),
+          type: 'line',
+          backgroundColor: 'rgba(245,158,11,0.1)',
+          borderColor: '#f59e0b',
+          borderWidth: 2,
+          borderDash: [5, 3],
+          tension: 0.4,
+          fill: false,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointBackgroundColor: '#f59e0b',
+          order: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 12 }, usePointStyle: true, pointStyle: 'circle' } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              var v = ctx.parsed.y || 0;
+              return ctx.dataset.label + ': \u20b9' + v.toLocaleString('en-IN');
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(v) {
+              if (v >= 10000000) return '\u20b9' + (v/10000000).toFixed(1) + 'Cr';
+              if (v >= 100000) return '\u20b9' + (v/100000).toFixed(1) + 'L';
+              if (v >= 1000)  return '\u20b9' + (v/1000).toFixed(0) + 'K';
+              return '\u20b9' + v.toLocaleString('en-IN');
+            }
+          },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderRevenueTable(byMonth) {
+  if (!byMonth.length) {
+    document.getElementById('revenueTable').innerHTML = '<div class="empty-state">No revenue data found.</div>';
+    return;
+  }
+  var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function fmtMonth(m) {
+    var parts = m.split('-');
+    if (parts.length === 2) {
+      var mo = parseInt(parts[1], 10) - 1;
+      return monthNames[mo] + ' ' + parts[0];
+    }
+    return m;
+  }
+  var totalRev = 0, totalCollected = 0, totalOrders = 0, totalOut = 0;
+  var rows = byMonth.map(function(m) {
+    var rev = parseFloat(m.revenue) || 0;
+    var collected = parseFloat(m.collected) || 0;
+    var out = parseFloat(m.outstanding) || 0;
+    var oc  = parseInt(m.order_count) || 0;
+    totalRev    += rev;
+    totalCollected += collected;
+    totalOrders += oc;
+    totalOut    += out;
+    return '<tr>'
+      + '<td style="font-weight:600">' + esc(fmtMonth(m.month)) + '</td>'
+      + '<td class="num">' + oc + '</td>'
+      + '<td class="num" style="font-weight:600">' + fmtINR(rev) + '</td>'
+      + '<td class="num pos">' + fmtINR(collected) + '</td>'
+      + '<td class="num neg">' + (out > 0 ? fmtINR(out) : '\u2014') + '</td>'
+      + '<td class="num">' + (oc > 0 ? fmtINR(rev/oc) : '\u2014') + '</td>'
+      + '</tr>';
+  }).join('');
+
+  var totRow = '<tr style="background:var(--g-50);font-weight:700">'
+    + '<td>TOTAL</td>'
+    + '<td class="num">' + totalOrders + '</td>'
+    + '<td class="num">' + fmtINR(totalRev) + '</td>'
+    + '<td class="num pos">' + fmtINR(totalCollected) + '</td>'
+    + '<td class="num neg">' + (totalOut > 0 ? fmtINR(totalOut) : '\u2014') + '</td>'
+    + '<td class="num">' + (totalOrders > 0 ? fmtINR(totalRev/totalOrders) : '\u2014') + '</td>'
+    + '</tr>';
+
+  document.getElementById('revenueTable').innerHTML =
+    '<table><thead><tr>'
+    + '<th>Month</th><th class="num">Orders</th><th class="num">Revenue</th>'
+    + '<th class="num">Collected</th><th class="num">Outstanding</th><th class="num">Avg/Order</th>'
+    + '</tr></thead><tbody>' + rows + totRow + '</tbody></table>';
+}
+
+// ── PRODUCTS TAB ───────────────────────────────────────────────────────────────
+async function loadProductsTab() {
+  document.getElementById('productsTable').innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  document.getElementById('lowMarginTable').innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  document.getElementById('pricingSuggestionsTable').innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  document.getElementById('purchaseRecoTable').innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  try {
+    // Product performance — pass active date filters
+    var prodTabQs = '';
+    if (filters.fromDate) prodTabQs += (prodTabQs ? '&' : '?') + 'from=' + filters.fromDate;
+    if (filters.toDate)   prodTabQs += (prodTabQs ? '&' : '?') + 'to='   + filters.toDate;
+    if (filters.product)  prodTabQs += (prodTabQs ? '&' : '?') + 'product_id=' + filters.product;
+    var r1 = await fetch('/api/reports/products' + prodTabQs, { headers: getH() });
+    if (r1.status === 401) { handleAuthError(401); return; }
+    if (!r1.ok) throw new Error('Products API returned ' + r1.status);
+    var perfData = await r1.json();
+    var results = perfData.results || [];
+    productPerfRows = results;
+
+    renderProductsTable(results);
+    renderLowMarginAlerts(results);
+    await loadRawCostUpdater();
+    await loadPricingSuggestions();
+    await loadPurchaseRecommendations();
+    await loadProfitConfigUI();
+    await loadProfitOverheadUI();
+  } catch (ex) {
+    document.getElementById('productsTable').innerHTML = '<div class="empty-state">\u26a0\ufe0f ' + esc(ex.message) + '</div>';
+    showErr(ex.message);
+  }
+}
+
+function roleCanEditProfitConfig() {
+  var role = (localStorage.getItem('role') || '').toLowerCase();
+  return role === 'admin' || role === 'operations';
+}
+
+function setProfitConfigEditableState() {
+  var canEdit = roleCanEditProfitConfig();
+  var ids = [
+    'cfgBoxSmall','cfgBoxLarge','cfgBoxMinItems','cfgBoxMinWeight',
+    'cfgPouch250','cfgPouch500','cfgPouch1000',
+    'cfgStickerOrder','cfgStickerItem','cfgGatewayPct','cfgRtoPct','cfgPlatformFeePct','cfgPackagingExtra','cfgTargetMarginPct','cfgLowMarginThreshold',
+    'cfgOverheadMonth','cfgAdsMonthly','cfgDispatchMonthly','cfgMiscMonthly','cfgOtherFixedMonthly',
+    'ovOverheadMonth','ovShippingCost','ovGatewayFee','ovAdsMonthly','ovDispatchMonthly','ovMiscMonthly','ovOtherFixedMonthly'
+  ];
+  ids.forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.disabled = !canEdit;
+  });
+
+  var save1 = document.getElementById('profitCfgSaveBtn');
+  var save2 = document.getElementById('profitOhSaveBtn');
+  var save3 = document.getElementById('ovOverheadSaveBtn');
+  if (save1) save1.style.display = canEdit ? '' : 'none';
+  if (save2) save2.style.display = canEdit ? '' : 'none';
+  if (save3) save3.style.display = canEdit ? '' : 'none';
+
+  var hint = document.getElementById('profitCfgHint');
+  if (hint && !canEdit) {
+    hint.textContent = 'View-only mode: only Admin/Operations can edit profit rules.';
+  }
+}
+
+function currentYm() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2, '0');
+}
+
+function nv(id, def) {
+  var el = document.getElementById(id);
+  if (!el) return def;
+  var n = parseFloat(el.value);
+  return isNaN(n) ? def : n;
+}
+
+function _monthShift(base, delta) {
+  var d = new Date(base.getFullYear(), base.getMonth() + delta, 1);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+
+function overviewOverheadMonthFromFilters() {
+  if (filters && filters.fromDate && String(filters.fromDate).length >= 7) {
+    return String(filters.fromDate).slice(0, 7);
+  }
+  var periodEl = document.getElementById('filterPeriod');
+  var period = periodEl ? periodEl.value : 'thismonth';
+  var now = new Date();
+  if (period === 'lastmonth') return _monthShift(now, -1);
+  if (period === 'monthminus2') return _monthShift(now, -2);
+  return currentYm();
+}
+
+function syncOverviewOverheadMonthToFilters() {
+  var m = document.getElementById('ovOverheadMonth');
+  if (!m) return;
+  var target = overviewOverheadMonthFromFilters();
+  if (target) m.value = target;
+}
+
+async function loadOverviewOverheadUI() {
+  try {
+    var m = document.getElementById('ovOverheadMonth');
+    if (!m) return;
+    if (!m.value) m.value = overviewOverheadMonthFromFilters();
+
+    var r = await fetch('/api/reports/profit/monthly-overheads?months=36', { headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Monthly overhead API returned ' + r.status);
+    var rows = await r.json();
+    profitOverheadCache = rows || [];
+
+    var row = profitOverheadCache.find(function(x){ return x.month === m.value; });
+    document.getElementById('ovShippingCost').value = row ? row.shipping_cost : 0;
+    document.getElementById('ovGatewayFee').value = row ? row.gateway_fee : 0;
+    document.getElementById('ovAdsMonthly').value = row ? row.ads_cost : 0;
+    document.getElementById('ovDispatchMonthly').value = row ? row.dispatch_cost : 0;
+    document.getElementById('ovMiscMonthly').value = row ? row.misc_cost : 0;
+    document.getElementById('ovOtherFixedMonthly').value = row ? row.other_fixed_cost : 0;
+    
+    updateOverheadTotal();
+  } catch (ex) {
+    showErr(ex.message);
+  }
+}
+
+function updateOverheadTotal() {
+  var ads = nv('ovAdsMonthly', 0);
+  var dispatch = nv('ovDispatchMonthly', 0);
+  var misc = nv('ovMiscMonthly', 0);
+  var other = nv('ovOtherFixedMonthly', 0);
+  var total = ads + dispatch + misc + other;
+  
+  var totalEl = document.getElementById('ovTotalOverhead');
+  if (totalEl) {
+    totalEl.textContent = '₹ ' + Math.round(total * 100) / 100;
+  }
+}
+
+async function saveOverviewOverheadUI() {
+  if (!roleCanEditProfitConfig()) {
+    showErr('Only Admin/Operations can update monthly overheads.');
+    return;
+  }
+
+  var monthEl = document.getElementById('ovOverheadMonth');
+  var month = monthEl ? (monthEl.value || '').trim() : '';
+  if (!month) {
+    showErr('Select month before saving overheads.');
+    return;
+  }
+
+  var payload = {
+    month: month,
+    shipping_cost: nv('ovShippingCost', 0),
+    gateway_fee: nv('ovGatewayFee', 0),
+    ads_cost: nv('ovAdsMonthly', 0),
+    dispatch_cost: nv('ovDispatchMonthly', 0),
+    misc_cost: nv('ovMiscMonthly', 0),
+    other_fixed_cost: nv('ovOtherFixedMonthly', 0)
+  };
+
+  try {
+    var r = await fetch('/api/reports/profit/monthly-overheads', {
+      method: 'PUT',
+      headers: getH(),
+      body: JSON.stringify(payload)
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Save monthly overhead failed: ' + r.status);
+    await loadOverviewOverheadUI();
+    await loadProfitOverheadUI();
+    await loadOverview();
+  } catch (ex) {
+    showErr(ex.message);
+  }
+}
+
+function openOverviewOverheadEditor() {
+  syncOverviewOverheadMonthToFilters();
+  loadOverviewOverheadUI();
+  var panel = document.getElementById('overviewOverheadPanel');
+  if (panel && panel.scrollIntoView) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function loadProfitConfigUI() {
+  try {
+    setProfitConfigEditableState();
+    var r = await fetch('/api/reports/profit/config', { headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Profit config API returned ' + r.status);
+    var d = await r.json();
+
+    var b = d.box_rule || {};
+    document.getElementById('cfgBoxSmall').value = b.small_cost != null ? b.small_cost : 0;
+    document.getElementById('cfgBoxLarge').value = b.large_cost != null ? b.large_cost : 0;
+    document.getElementById('cfgBoxMinItems').value = b.large_min_items != null ? b.large_min_items : 0;
+    document.getElementById('cfgBoxMinWeight').value = b.large_min_weight_grams != null ? b.large_min_weight_grams : 0;
+
+    var slabs = d.pouch_slabs || [];
+    function slabCost(max) {
+      var row = slabs.find(function(s){ return parseFloat(s.max_grams) === max; });
+      return row ? row.cost : 0;
+    }
+    document.getElementById('cfgPouch250').value = slabCost(250);
+    document.getElementById('cfgPouch500').value = slabCost(500);
+    document.getElementById('cfgPouch1000').value = slabCost(1000);
+
+    var st = d.sticker_rule || {};
+    document.getElementById('cfgStickerOrder').value = st.per_order != null ? st.per_order : 0;
+    document.getElementById('cfgStickerItem').value = st.per_item != null ? st.per_item : 0;
+
+    var fee = d.fee_rule || {};
+    document.getElementById('cfgGatewayPct').value = fee.gateway_fee_pct != null ? fee.gateway_fee_pct : 0;
+    document.getElementById('cfgRtoPct').value = fee.rto_loss_pct != null ? fee.rto_loss_pct : 0;
+    document.getElementById('cfgPlatformFeePct').value = fee.platform_fee_pct != null ? fee.platform_fee_pct : 0;
+    document.getElementById('cfgPackagingExtra').value = fee.packaging_extra_per_order != null ? fee.packaging_extra_per_order : 0;
+    document.getElementById('cfgTargetMarginPct').value = fee.target_margin_pct != null ? fee.target_margin_pct : 0;
+    document.getElementById('cfgLowMarginThreshold').value = fee.low_margin_threshold_pct != null ? fee.low_margin_threshold_pct : 0;
+    profitCfgState.targetMarginPct = parseFloat(document.getElementById('cfgTargetMarginPct').value) || 0;
+    profitCfgState.lowMarginThresholdPct = parseFloat(document.getElementById('cfgLowMarginThreshold').value) || 0;
+
+    // Keep quick calculator defaults aligned with persisted rules.
+    document.getElementById('ppBoxSmall').value = document.getElementById('cfgBoxSmall').value;
+    document.getElementById('ppBoxLarge').value = document.getElementById('cfgBoxLarge').value;
+    document.getElementById('ppGatewayPct').value = document.getElementById('cfgGatewayPct').value;
+    document.getElementById('ppRtoPct').value = document.getElementById('cfgRtoPct').value;
+    document.getElementById('ppPlatformFeePct').value = document.getElementById('cfgPlatformFeePct').value;
+    document.getElementById('ppPackagingExtra').value = document.getElementById('cfgPackagingExtra').value;
+
+    if (productPerfRows.length) {
+      renderProductsTable(productPerfRows);
+      renderLowMarginAlerts(productPerfRows);
+    }
+  } catch (ex) {
+    showErr(ex.message);
+  }
+}
+
+async function saveProfitConfigUI() {
+  if (!roleCanEditProfitConfig()) {
+    showErr('Only Admin/Operations can update profit config.');
+    return;
+  }
+  var payload = {
+    box_rule: {
+      small_cost: nv('cfgBoxSmall', 0),
+      large_cost: nv('cfgBoxLarge', 0),
+      large_min_items: Math.max(0, Math.floor(nv('cfgBoxMinItems', 0))),
+      large_min_weight_grams: nv('cfgBoxMinWeight', 0)
+    },
+    pouch_slabs: [
+      { max_grams: 250, cost: nv('cfgPouch250', 0) },
+      { max_grams: 500, cost: nv('cfgPouch500', 0) },
+      { max_grams: 1000, cost: nv('cfgPouch1000', 0) }
+    ],
+    sticker_rule: {
+      per_order: nv('cfgStickerOrder', 0),
+      per_item: nv('cfgStickerItem', 0)
+    },
+    fee_rule: {
+      gateway_fee_pct: nv('cfgGatewayPct', 0),
+      rto_loss_pct: nv('cfgRtoPct', 0),
+      platform_fee_pct: nv('cfgPlatformFeePct', 0),
+      packaging_extra_per_order: nv('cfgPackagingExtra', 0),
+      target_margin_pct: nv('cfgTargetMarginPct', 0),
+      low_margin_threshold_pct: nv('cfgLowMarginThreshold', 0)
+    },
+    note: 'Updated from profit-loss page'
+  };
+
+  try {
+    var r = await fetch('/api/reports/profit/config', {
+      method: 'PATCH',
+      headers: getH(),
+      body: JSON.stringify(payload)
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Save profit config failed: ' + r.status);
+    await loadProfitConfigUI();
+  } catch (ex) {
+    showErr(ex.message);
+  }
+}
+
+async function loadProfitOverheadUI() {
+  try {
+    var m = document.getElementById('cfgOverheadMonth');
+    if (m && !m.value) m.value = currentYm();
+
+    var r = await fetch('/api/reports/profit/monthly-overheads?months=24', { headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Monthly overhead API returned ' + r.status);
+    var rows = await r.json();
+    profitOverheadCache = rows || [];
+
+    var month = m ? m.value : currentYm();
+    var row = profitOverheadCache.find(function(x){ return x.month === month; });
+    document.getElementById('cfgAdsMonthly').value = row ? row.ads_cost : 0;
+    document.getElementById('cfgDispatchMonthly').value = row ? row.dispatch_cost : 0;
+    document.getElementById('cfgMiscMonthly').value = row ? row.misc_cost : 0;
+    document.getElementById('cfgOtherFixedMonthly').value = row ? row.other_fixed_cost : 0;
+
+    // Optional calculator defaults from monthly totals (manual per-order allocation still user controlled)
+    document.getElementById('ppAds').value = row ? row.ads_cost : document.getElementById('ppAds').value;
+    document.getElementById('ppDispatch').value = row ? row.dispatch_cost : document.getElementById('ppDispatch').value;
+    document.getElementById('ppMisc').value = row ? row.misc_cost : document.getElementById('ppMisc').value;
+  } catch (ex) {
+    showErr(ex.message);
+  }
+}
+
+async function saveProfitOverheadUI() {
+  if (!roleCanEditProfitConfig()) {
+    showErr('Only Admin/Operations can update monthly overheads.');
+    return;
+  }
+  var month = (document.getElementById('cfgOverheadMonth').value || '').trim();
+  if (!month) {
+    showErr('Select month before saving overheads.');
+    return;
+  }
+  var payload = {
+    month: month,
+    ads_cost: nv('cfgAdsMonthly', 0),
+    dispatch_cost: nv('cfgDispatchMonthly', 0),
+    misc_cost: nv('cfgMiscMonthly', 0),
+    other_fixed_cost: nv('cfgOtherFixedMonthly', 0)
+  };
+
+  try {
+    var r = await fetch('/api/reports/profit/monthly-overheads', {
+      method: 'PUT',
+      headers: getH(),
+      body: JSON.stringify(payload)
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Save monthly overhead failed: ' + r.status);
+    await loadProfitOverheadUI();
+    await loadOverviewOverheadUI();
+    await loadOverview();
+  } catch (ex) {
+    showErr(ex.message);
+  }
+}
+
+function renderProductsTable(products) {
+  if (!products.length) {
+    document.getElementById('productsTable').innerHTML = '<div class="empty-state">No product performance data yet.</div>';
+    return;
+  }
+  var canApply = roleCanEditProfitConfig();
+  var rows = products.map(function(p) {
+    var revenue    = parseFloat(p.revenue) || 0;
+    var unitPrice  = parseFloat(p.unit_price) || 0;
+    var unitsSold  = parseFloat(p.units_sold) || 0;
+    var costPrice = p.cost_price != null ? parseFloat(p.cost_price) : null;
+    var hasCost = costPrice !== null && costPrice > 0;
+
+    var totalCost = p.total_cost != null ? parseFloat(p.total_cost) : (hasCost ? costPrice * unitsSold : null);
+    var grossProfit = p.gross_profit != null ? parseFloat(p.gross_profit) : (hasCost && totalCost != null ? revenue - totalCost : null);
+    var margin = p.margin_pct != null ? parseFloat(p.margin_pct) : (hasCost && revenue > 0 && grossProfit != null ? (grossProfit / revenue * 100) : null);
+    var targetMargin = parseFloat(profitCfgState.targetMarginPct || 25);
+    var suggestedPrice = null;
+    if (hasCost && unitsSold > 0 && totalCost !== null) {
+      var unitCost = totalCost / unitsSold;
+      suggestedPrice = unitCost * (1 + targetMargin / 100);
+    } else if (hasCost) {
+      suggestedPrice = costPrice * (1 + targetMargin / 100);
+    }
+
+    var profitCell = grossProfit !== null
+      ? '<span class="' + (grossProfit >= 0 ? 'pos' : 'neg') + '">' + fmtINR(grossProfit) + '</span>'
+      : '<span style="color:var(--g-400)">\u2014</span>';
+
+    var marginCell = margin !== null
+      ? '<div style="font-size:11px;font-weight:600;color:' + (margin >= 0 ? 'var(--g-green)' : 'var(--g-red)') + '">'
+        + margin.toFixed(1) + '%</div>'
+        + '<div class="margin-bar"><div class="margin-fill ' + (margin >= 40 ? '' : margin >= 20 ? 'mid' : 'low')
+        + '" style="width:' + Math.min(Math.abs(margin),100).toFixed(1) + '%"></div></div>'
+      : '<span style="color:var(--g-400);font-size:11px">No cost set</span>';
+
+    var suggestedCell = suggestedPrice !== null
+      ? '<div style="font-weight:700;color:var(--g-blue)">' + fmtINR(suggestedPrice) + '</div>'
+        + '<div style="font-size:11px;color:var(--g-600)">\u0394 ' + fmtINR(suggestedPrice - unitPrice) + '</div>'
+      : '<span style="color:var(--g-400)">\u2014</span>';
+
+    var productId = p.id != null ? String(p.id) : (p.product_id != null ? String(p.product_id) : '');
+    var canApplyForRow = canApply && suggestedPrice !== null && productId && !productId.startsWith('sku:') && !productId.startsWith('name:');
+    var actionCell = canApplyForRow
+      ? '<button class="btn btn-sm btn-outlined js-apply-suggested-price" data-id="' + esc(productId) + '" data-price="' + String(suggestedPrice.toFixed(2)) + '">Apply</button>'
+      : '<span style="color:var(--g-400);font-size:11px">\u2014</span>';
+
+    return '<tr>'
+      + '<td><strong>' + esc(p.name) + '</strong>'
+      + (p.product_code ? '<br><span class="mono">' + esc(p.product_code) + '</span>' : '')
+      + '</td>'
+      + '<td style="font-size:11px">' + esc(p.category || '\u2014') + '</td>'
+      + '<td class="num">' + (p.times_ordered || 0) + '</td>'
+      + '<td class="num">' + fmtNum(unitsSold) + '</td>'
+      + '<td class="num">' + fmtINR(unitPrice) + '</td>'
+      + '<td class="num">' + (hasCost ? fmtINR(costPrice) : '<span style="color:var(--g-400)">Not set</span>') + '</td>'
+      + '<td class="num" style="font-weight:700">' + fmtINR(revenue) + '</td>'
+        + '<td class="num">' + (totalCost !== null ? fmtINR(totalCost) : '<span style="color:var(--g-400)">\u2014</span>') + '</td>'
+      + '<td class="num">' + profitCell + '</td>'
+      + '<td style="min-width:90px">' + marginCell + '</td>'
+        + '<td class="num" style="min-width:120px">' + suggestedCell + '</td>'
+        + '<td class="num" style="min-width:90px">' + actionCell + '</td>'
+      + '</tr>';
+  }).join('');
+
+  document.getElementById('productsTable').innerHTML =
+    '<table><thead><tr>'
+    + '<th>Product</th><th>Category</th>'
+    + '<th class="num">Orders</th><th class="num">Units Sold</th>'
+    + '<th class="num">Sell Price</th><th class="num">Cost Price</th>'
+    + '<th class="num">Revenue</th><th class="num">Est. Cost</th>'
+    + '<th class="num">Est. Profit</th><th>Margin</th><th class="num">Suggested Price</th><th class="num">Action</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table>';
+
+  var buttons = document.querySelectorAll('.js-apply-suggested-price');
+  buttons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      applySuggestedPrice(btn);
+    });
+  });
+}
+
+async function applySuggestedPrice(btn) {
+  if (!btn) return;
+  if (!roleCanEditProfitConfig()) {
+    showErr('Only Admin/Operations can apply suggested price.');
+    return;
+  }
+
+  var productId = btn.getAttribute('data-id') || '';
+  if (!productId || productId.startsWith('sku:') || productId.startsWith('name:')) {
+    showErr('Suggested price can only be applied to real product records.');
+    return;
+  }
+
+  var suggestedPrice = parseFloat(btn.getAttribute('data-price') || '0');
+  if (!isFinite(suggestedPrice) || suggestedPrice <= 0) {
+    showErr('Invalid suggested price.');
+    return;
+  }
+
+  var oldText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Applying...';
+  try {
+    var r = await fetch('/api/products/' + encodeURIComponent(productId), {
+      method: 'PATCH',
+      headers: getH(),
+      body: JSON.stringify({ unit_price: suggestedPrice })
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Apply price failed: ' + r.status);
+
+    btn.textContent = 'Applied';
+    setTimeout(function(){ loadProductsTab(); }, 250);
+  } catch (ex) {
+    btn.disabled = false;
+    btn.textContent = oldText;
+    showErr(ex.message);
+  }
+}
+
+function renderLowMarginAlerts(rows) {
+  var el = document.getElementById('lowMarginTable');
+  if (!el) return;
+  var threshold = parseFloat(profitCfgState.lowMarginThresholdPct || 0);
+  var data = (rows || []).map(function(p){
+    var margin = p.margin_pct != null ? parseFloat(p.margin_pct) : null;
+    return {
+      name: p.name,
+      code: p.product_code,
+      margin: margin,
+      revenue: parseFloat(p.revenue) || 0,
+      profit: p.gross_profit != null ? parseFloat(p.gross_profit) : null
+    };
+  }).filter(function(x){
+    return x.margin !== null && x.margin < threshold;
+  }).sort(function(a,b){ return a.margin - b.margin; });
+
+  if (!data.length) {
+    el.innerHTML = '<div class="empty-state">No low-margin SKUs below ' + fmtNum(threshold) + '%.</div>';
+    return;
+  }
+
+  var body = data.slice(0, 20).map(function(r){
+    return '<tr>'
+      + '<td><strong>' + esc(r.name) + '</strong>' + (r.code ? '<br><span class="mono">' + esc(r.code) + '</span>' : '') + '</td>'
+      + '<td class="num" style="color:var(--g-red);font-weight:700">' + fmtNum(r.margin) + '%</td>'
+      + '<td class="num">' + fmtINR(r.revenue) + '</td>'
+      + '<td class="num">' + (r.profit != null ? fmtINR(r.profit) : '\u2014') + '</td>'
+      + '</tr>';
+  }).join('');
+
+  el.innerHTML = '<table><thead><tr>'
+    + '<th>Product</th><th class="num">Margin</th><th class="num">Revenue</th><th class="num">Profit</th>'
+    + '</tr></thead><tbody>' + body + '</tbody></table>';
+}
+
+async function loadPricingSuggestions() {
+  var table = document.getElementById('pricingSuggestionsTable');
+  if (!table) return;
+  table.innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  try {
+    var r = await fetch('/api/reports/profit/pricing-suggestions?limit=200', { headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Pricing suggestions API returned ' + r.status);
+    var data = await r.json();
+    renderPricingSuggestions(data.results || []);
+  } catch (ex) {
+    table.innerHTML = '<div class="empty-state">\u26a0\ufe0f ' + esc(ex.message) + '</div>';
+  }
+}
+
+function renderPricingSuggestions(rows) {
+  var table = document.getElementById('pricingSuggestionsTable');
+  if (!table) return;
+  if (!rows || !rows.length) {
+    table.innerHTML = '<div class="empty-state">No pricing suggestions yet.</div>';
+    return;
+  }
+
+  var filtered = rows.filter(function(r){ return r.severity !== 'ok'; }).slice(0, 30);
+  if (!filtered.length) {
+    table.innerHTML = '<div class="empty-state">No warning or critical pricing suggestions right now.</div>';
+    return;
+  }
+
+  var body = filtered.map(function(r){
+    var sev = r.severity || 'ok';
+    var sevColor = sev === 'critical' ? 'var(--g-red)' : (sev === 'warning' ? 'var(--g-amber)' : 'var(--g-600)');
+    var canApply = roleCanEditProfitConfig() && r.suggested_price != null && r.product_id && !String(r.product_id).startsWith('sku:') && !String(r.product_id).startsWith('name:');
+    var action = canApply
+      ? '<button class="btn btn-sm btn-outlined js-apply-suggested-price" data-id="' + esc(String(r.product_id)) + '" data-price="' + parseFloat(r.suggested_price).toFixed(2) + '">Apply</button>'
+      : '<span style="color:var(--g-400);font-size:11px">\u2014</span>';
+
+    return '<tr>'
+      + '<td><strong>' + esc(r.name) + '</strong>' + (r.product_code ? '<br><span class="mono">' + esc(r.product_code) + '</span>' : '') + '</td>'
+      + '<td class="num">' + fmtINR(r.unit_price) + '</td>'
+      + '<td class="num">' + (r.unit_cost != null ? fmtINR(r.unit_cost) : '\u2014') + '</td>'
+      + '<td class="num">' + (r.current_margin_pct != null ? fmtNum(r.current_margin_pct) + '%' : '\u2014') + '</td>'
+      + '<td class="num" style="font-weight:700">' + (r.suggested_price != null ? fmtINR(r.suggested_price) : '\u2014') + '</td>'
+      + '<td class="num">' + (r.suggested_delta != null ? fmtINR(r.suggested_delta) : '\u2014') + '</td>'
+      + '<td style="font-size:11px;color:' + sevColor + ';font-weight:700">' + esc(sev.toUpperCase()) + '</td>'
+      + '<td class="num" style="min-width:90px">' + action + '</td>'
+      + '</tr>';
+  }).join('');
+
+  table.innerHTML = '<table><thead><tr>'
+    + '<th>Product</th><th class="num">Current Price</th><th class="num">Unit Cost</th>'
+    + '<th class="num">Margin</th><th class="num">Suggested</th><th class="num">Delta</th>'
+    + '<th>Severity</th><th class="num">Action</th>'
+    + '</tr></thead><tbody>' + body + '</tbody></table>';
+
+  var buttons = table.querySelectorAll('.js-apply-suggested-price');
+  buttons.forEach(function(btn){
+    btn.addEventListener('click', function(){ applySuggestedPrice(btn); });
+  });
+}
+
+async function loadRawCostUpdater() {
+  var table = document.getElementById('rawCostUpdaterTable');
+  if (!table) return;
+  if (!roleCanEditProfitConfig()) {
+    table.innerHTML = '<div class="empty-state" style="color:var(--g-600)">View-only \u2014 Admin/Operations can update raw costs.</div>';
+    return;
+  }
+  table.innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  try {
+    var r = await fetch('/api/reports/products', { headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Products API returned ' + r.status);
+    var data = await r.json();
+    renderRawCostUpdater(data.results || []);
+  } catch (ex) {
+    table.innerHTML = '<div class="empty-state">\u26a0\ufe0f ' + esc(ex.message) + '</div>';
+  }
+}
+
+function renderRawCostUpdater(rows) {
+  var table = document.getElementById('rawCostUpdaterTable');
+  if (!rows || !rows.length) {
+    table.innerHTML = '<div class="empty-state">No product data.</div>';
+    return;
+  }
+  var sorted = rows.slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
+  var body = sorted.map(function(p) {
+    var pid = p.product_id != null ? String(p.product_id) : (p.id != null ? String(p.id) : '');
+    var currentCost = p.cost_price != null ? parseFloat(p.cost_price) : null;
+    var safe = pid.replace(/[^a-zA-Z0-9_-]/g, '_');
+    return '<tr>'
+      + '<td><strong>' + esc(p.name) + '</strong></td>'
+      + '<td class="mono" style="font-size:12px">' + esc(p.product_code || '\u2014') + '</td>'
+      + '<td class="num" id="rcd_' + safe + '">' + (currentCost != null ? fmtINR(currentCost) : '\u2014') + '</td>'
+      + '<td><input id="rci_' + safe + '" data-pid="' + pid + '" data-cur="' + (currentCost != null ? currentCost : '') + '" type="number" step="0.01" min="0" placeholder="\u20b9 new cost" style="width:110px;height:28px;padding:4px 8px;border:1px solid var(--bdr);border-radius:var(--r-xs);font-size:13px"></td>'
+      + '<td class="num" id="rcdelta_' + safe + '" style="font-size:12px;color:var(--g-600)">\u2014</td>'
+      + '<td><button class="btn btn-outlined btn-sm" id="rcbtn_' + safe + '" onclick="applyRawCost(\'' + pid + '\',\'rci_' + safe + '\',\'rcd_' + safe + '\', this)" style="font-size:11px">Apply</button></td>'
+      + '</tr>';
+  }).join('');
+
+  table.innerHTML = '<table><thead><tr>'
+    + '<th>Product</th><th>SKU</th><th class="num">Current Cost</th>'
+    + '<th class="num">New Cost</th><th class="num">&Delta;%</th><th>Action</th>'
+    + '</tr></thead><tbody>' + body + '</tbody></table>';
+
+  sorted.forEach(function(p) {
+    var pid = p.product_id != null ? String(p.product_id) : (p.id != null ? String(p.id) : '');
+    var safe = pid.replace(/[^a-zA-Z0-9_-]/g, '_');
+    var inputEl = document.getElementById('rci_' + safe);
+    var deltaEl = document.getElementById('rcdelta_' + safe);
+    var currentCost = p.cost_price != null ? parseFloat(p.cost_price) : null;
+    if (inputEl && deltaEl) {
+      inputEl.addEventListener('input', function() {
+        var newVal = parseFloat(inputEl.value);
+        if (isNaN(newVal) || newVal <= 0 || currentCost == null || currentCost <= 0) {
+          deltaEl.textContent = '\u2014'; deltaEl.style.color = 'var(--g-600)'; return;
+        }
+        var pct = ((newVal - currentCost) / currentCost * 100).toFixed(1);
+        deltaEl.textContent = (parseFloat(pct) >= 0 ? '+' : '') + pct + '%';
+        deltaEl.style.color = parseFloat(pct) > 5 ? 'var(--g-red)' : parseFloat(pct) < -5 ? 'var(--g-green)' : 'var(--g-600)';
+      });
+    }
+  });
+}
+
+async function applyRawCost(productId, inputElemId, displayElemId, btn) {
+  if (!productId) { showErr('No product ID \u2014 cannot update cost.'); return; }
+  var inputEl = document.getElementById(inputElemId);
+  if (!inputEl) return;
+  var newCost = parseFloat(inputEl.value);
+  if (isNaN(newCost) || newCost < 0) { showErr('Enter a valid positive cost value.'); return; }
+  btn.disabled = true;
+  btn.textContent = '\u2026';
+  try {
+    var r = await fetch('/api/products/' + productId, {
+      method: 'PATCH',
+      headers: getH(),
+      body: JSON.stringify({ cost_price: newCost })
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (r.status === 403) { showErr('Permission denied \u2014 Admin/Operations only.'); btn.disabled = false; btn.textContent = 'Apply'; return; }
+    if (!r.ok) throw new Error('PATCH cost failed: ' + r.status);
+    btn.textContent = '\u2713 Saved';
+    btn.style.cssText += ';background:var(--g-green);color:#fff;border-color:var(--g-green)';
+    var dispEl = document.getElementById(displayElemId);
+    if (dispEl) dispEl.textContent = fmtINR(newCost);
+    inputEl.value = '';
+    var deltaEl = inputEl.closest('tr') && inputEl.closest('tr').querySelector('[id^="rcdelta_"]');
+    if (deltaEl) { deltaEl.textContent = '\u2014'; deltaEl.style.color = 'var(--g-600)'; }
+    // Refresh profitability table in background after a moment
+    setTimeout(function(){
+      btn.textContent = 'Apply';
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+      btn.disabled = false;
+      loadProductsTab();
+    }, 1400);
+  } catch (ex) {
+    btn.disabled = false;
+    btn.textContent = 'Apply';
+    showErr(ex.message);
+  }
+}
+
+async function loadPurchaseRecommendations() {
+  var table = document.getElementById('purchaseRecoTable');
+  if (!table) return;
+  table.innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  try {
+    var horizon = parseInt(document.getElementById('recoHorizonDays').value || '30', 10);
+    var safety = parseInt(document.getElementById('recoSafetyDays').value || '10', 10);
+    var url = '/api/reports/purchase/recommendations?horizon_days=' + horizon + '&safety_days=' + safety + '&lookback_days=30';
+    var r = await fetch(url, { headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Purchase recommendations API returned ' + r.status);
+    var data = await r.json();
+    renderPurchaseRecommendations(data.results || []);
+  } catch (ex) {
+    table.innerHTML = '<div class="empty-state">\u26a0\ufe0f ' + esc(ex.message) + '</div>';
+  }
+}
+
+function renderPurchaseRecommendations(rows) {
+  var table = document.getElementById('purchaseRecoTable');
+  if (!rows || !rows.length) {
+    table.innerHTML = '<div class="empty-state">No recommendation data yet.</div>';
+    return;
+  }
+
+  var filtered = rows.filter(function(r) {
+    return (parseFloat(r.recommended_purchase) || 0) > 0 || (parseFloat(r.daily_usage) || 0) > 0;
+  });
+  if (!filtered.length) filtered = rows;
+  filtered = filtered.slice(0, 25);
+
+  var totalBudget = 0;
+  var body = filtered.map(function(r) {
+    var rec = parseFloat(r.recommended_purchase) || 0;
+    var days = r.days_remaining != null ? parseFloat(r.days_remaining) : null;
+    var cost = r.current_unit_cost != null ? parseFloat(r.current_unit_cost) : null;
+    var budget = (rec > 0 && cost != null) ? rec * cost : null;
+    if (budget != null) totalBudget += budget;
+
+    var sig = r.price_signal || null;
+    var sigLabel, sigColor;
+    if (sig === 'high_price_buy_conservative') {
+      sigLabel = '&#128308; High &mdash; buy conservative';
+      sigColor = 'var(--g-amber)';
+    } else if (sig === 'low_price_bulk_opportunity') {
+      sigLabel = '&#128994; Low &mdash; bulk opportunity!';
+      sigColor = 'var(--g-green)';
+    } else if (sig === 'normal_price') {
+      sigLabel = '&#9898; Normal';
+      sigColor = 'var(--g-500)';
+    } else {
+      sigLabel = '&mdash;';
+      sigColor = 'var(--g-500)';
+    }
+
+    var daysColor = days != null && days < 7 ? 'var(--g-red)' : (days != null && days < 15 ? 'var(--g-amber)' : 'inherit');
+    return '<tr>'
+      + '<td><strong>' + esc(r.name) + '</strong>'
+      + (r.product_code ? '<br><span class="mono">' + esc(r.product_code) + '</span>' : '')
+      + '</td>'
+      + '<td style="font-size:12px">' + esc(r.unit || '\u2014') + '</td>'
+      + '<td class="num">' + fmtNum(r.stock_on_hand) + '</td>'
+      + '<td class="num">' + fmtNum(r.daily_usage) + '</td>'
+      + '<td class="num">' + fmtNum(r.target_stock) + '</td>'
+      + '<td class="num" style="font-weight:700;color:' + (rec > 0 ? 'var(--g-red)' : 'var(--g-green)') + '">' + fmtNum(rec) + '</td>'
+      + '<td class="num" style="color:' + daysColor + '">' + (days != null ? fmtNum(days) : '\u2014') + '</td>'
+      + '<td class="num">' + (cost != null ? fmtINR(cost) : '\u2014') + '</td>'
+      + '<td class="num" style="font-weight:700;color:' + (budget != null ? 'var(--g-800)' : 'var(--g-500)') + '">' + (budget != null ? fmtINR(budget) : '\u2014') + '</td>'
+      + '<td style="font-size:11px;color:' + sigColor + ';font-weight:600">' + sigLabel + '</td>'
+      + '</tr>';
+  }).join('');
+
+  var footer = '<tfoot><tr style="background:var(--g-50);font-weight:700">'
+    + '<td colspan="8" style="text-align:right;padding-right:12px;font-size:12px">Total Purchase Budget:</td>'
+    + '<td class="num" style="color:var(--g-800)">' + fmtINR(totalBudget) + '</td>'
+    + '<td></td>'
+    + '</tr></tfoot>';
+
+  table.innerHTML = '<table><thead><tr>'
+    + '<th>Product</th><th>Unit</th>'
+    + '<th class="num">Stock</th><th class="num">Daily Use</th>'
+    + '<th class="num">Target</th><th class="num">Buy Now</th>'
+    + '<th class="num">Days Left</th><th class="num">Unit Cost</th>'
+    + '<th class="num">Est. Budget</th><th>Price Signal</th>'
+    + '</tr></thead><tbody>' + body + '</tbody>' + footer + '</table>';
+}
+
+async function calcProfitPreview() {
+  var out = document.getElementById('profitPreviewTable');
+  if (!out) return;
+  out.innerHTML = '<div class="loading-state">Calculating&hellip;</div>';
+
+  function nv(id, def) {
+    var el = document.getElementById(id);
+    if (!el) return def;
+    var n = parseFloat(el.value);
+    return isNaN(n) ? def : n;
+  }
+
+  var payload = {
+    selling_price: nv('ppSelling', 0),
+    product_cost: nv('ppProductCost', 0),
+    total_items: Math.max(1, Math.floor(nv('ppItems', 1))),
+    total_weight_grams: nv('ppWeight', 0),
+    box_small_cost: nv('ppBoxSmall', 0),
+    box_large_cost: nv('ppBoxLarge', 0),
+    pouch_cost_total: nv('ppPouch', 0),
+    sticker_cost_total: nv('ppSticker', 0),
+    shipping_cost: nv('ppShipping', 0),
+    ads_allocated: nv('ppAds', 0),
+    dispatch_cost: nv('ppDispatch', 0),
+    misc_cost: nv('ppMisc', 0),
+    gateway_fee_pct: nv('ppGatewayPct', 0),
+    rto_loss_pct: nv('ppRtoPct', 0),
+    platform_fee_pct: nv('ppPlatformFeePct', 0),
+    packaging_extra_per_order: nv('ppPackagingExtra', 0)
+  };
+
+  try {
+    var r = await fetch('/api/reports/profit/cost-preview', {
+      method: 'POST',
+      headers: getH(),
+      body: JSON.stringify(payload)
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Profit calculator API returned ' + r.status);
+    var d = await r.json();
+
+    out.innerHTML = '<table><thead><tr>'
+      + '<th>Box</th><th>Packaging</th><th>Gateway Fee</th><th>RTO Expected</th>'
+      + '<th>Platform Fee</th><th>Total Cost</th><th>Profit</th><th>Margin</th>'
+      + '</tr></thead><tbody><tr>'
+      + '<td class="num">' + fmtINR(d.box_cost) + '</td>'
+      + '<td class="num">' + fmtINR(d.packaging_cost) + '</td>'
+      + '<td class="num">' + fmtINR(d.gateway_fee) + '</td>'
+      + '<td class="num">' + fmtINR(d.rto_expected_loss) + '</td>'
+      + '<td class="num">' + fmtINR(d.platform_fee != null ? d.platform_fee : 0) + '</td>'
+      + '<td class="num">' + fmtINR(d.total_cost) + '</td>'
+      + '<td class="num" style="font-weight:700;color:' + ((parseFloat(d.profit) || 0) >= 0 ? 'var(--g-green)' : 'var(--g-red)') + '">' + fmtINR(d.profit) + '</td>'
+      + '<td class="num" style="font-weight:700">' + fmtNum(d.margin_pct) + '%</td>'
+      + '</tr></tbody></table>';
+  } catch (ex) {
+    out.innerHTML = '<div class="empty-state">\u26a0\ufe0f ' + esc(ex.message) + '</div>';
+  }
+}
+
+// ── PROFIT CHECKER ───────────────────────────────────────────────────────────
+var pcState = { periodType: 'monthly', period: null };
+
+function pcInitPeriod(type) {
+  var d = new Date(), y = d.getFullYear(), m = d.getMonth() + 1;
+  if (type === 'monthly')   return y + '-' + String(m).padStart(2,'0');
+  if (type === 'quarterly') return y + '-Q' + Math.ceil(m / 3);
+  return String(y);
+}
+
+function pcSetPeriodType(type) {
+  pcState.periodType = type;
+  pcState.period = pcInitPeriod(type);
+  var map = { Mon: 'monthly', Qtr: 'quarterly', Yr: 'yearly' };
+  Object.keys(map).forEach(function(k) {
+    var b = document.getElementById('pcType' + k);
+    if (b) b.className = 'btn btn-sm ' + (map[k] === type ? 'btn-filled' : 'btn-outlined');
+  });
+  pcUpdatePeriodLabel();
+  loadProfitCheckerTab();
+}
+
+function pcNavPeriod(dir) {
+  var type = pcState.periodType, p = pcState.period || pcInitPeriod(type);
+  if (type === 'monthly') {
+    var parts = p.split('-'), y = +parts[0], m = +parts[1] + dir;
+    if (m > 12) { m = 1; y++; } else if (m < 1) { m = 12; y--; }
+    pcState.period = y + '-' + String(m).padStart(2,'0');
+  } else if (type === 'quarterly') {
+    var parts = p.split('-Q'), y = +parts[0], q = +parts[1] + dir;
+    if (q > 4) { q = 1; y++; } else if (q < 1) { q = 4; y--; }
+    pcState.period = y + '-Q' + q;
+  } else {
+    pcState.period = String(+p + dir);
+  }
+  pcUpdatePeriodLabel();
+  loadProfitCheckerTab();
+}
+
+function pcUpdatePeriodLabel() {
+  var el = document.getElementById('pcPeriodLabel');
+  if (!el) return;
+  var p = pcState.period || '', type = pcState.periodType;
+  var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if (type === 'monthly') {
+    var parts = p.split('-');
+    el.textContent = mo[(+parts[1] || 1) - 1] + ' ' + (parts[0] || '');
+  } else if (type === 'quarterly') {
+    el.textContent = p.replace('-Q', ' Q');
+  } else {
+    el.textContent = p;
+  }
+}
+
+function pcMonthParam() {
+  var p = pcState.period, type = pcState.periodType;
+  if (type === 'monthly')   return p;
+  if (type === 'quarterly') {
+    var parts = p.split('-Q'), q = +parts[1];
+    return parts[0] + '-' + String((q - 1) * 3 + 1).padStart(2,'0');
+  }
+  return p + '-01';
+}
+
+async function loadProfitCheckerTab() {
+  if (!pcState.period) {
+    pcState.period = pcInitPeriod(pcState.periodType);
+    pcSetPeriodType(pcState.periodType);
+    return;
+  }
+  pcUpdatePeriodLabel();
+  var period = pcState.period, ptype = pcState.periodType, month = pcMonthParam();
+  var accEl = document.getElementById('pcGroupsAccordion');
+  if (accEl) accEl.innerHTML = '<div class="loading-state">Loading\u2026</div>';
+  try {
+    var gRes = await fetch('/api/profit-checker/groups', { headers: getH() });
+    if (gRes.status === 401) { handleAuthError(401); return; }
+    var groups = gRes.ok ? await gRes.json() : [];
+
+    var aRes = await fetch('/api/profit-checker/alerts?month=' + month, { headers: getH() });
+    var alerts = aRes.ok ? await aRes.json() : [];
+    pcRenderAlerts(alerts);
+
+    var [eRes, pRes, sRes] = await Promise.all([
+      fetch('/api/profit-checker/entries?month=' + month, { headers: getH() }),
+      fetch('/api/profit-checker/purchases-for-month?month=' + month, { headers: getH() }),
+      fetch('/api/profit-checker/summary?period=' + encodeURIComponent(period) + '&period_type=' + ptype, { headers: getH() })
+    ]);
+    var entries   = eRes.ok ? await eRes.json() : [];
+    var purchases = pRes.ok ? await pRes.json() : [];
+    var snap      = sRes.ok ? await sRes.json() : null;
+
+    pcRenderSummary(snap);
+    pcRenderGroups(groups, entries, purchases);
+
+    if (ptype === 'monthly') {
+      var [cfRes, csRes] = await Promise.all([
+        fetch('/api/profit-checker/carry-forward?month=' + month, { headers: getH() }),
+        fetch('/api/profit-checker/cost-suggestions', { headers: getH() })
+      ]);
+      pcRenderCarryForward(cfRes.ok ? await cfRes.json() : []);
+      pcRenderCostSuggestions(csRes.ok ? await csRes.json() : []);
+    } else {
+      var cfSec = document.getElementById('pcCarryFwdSection');
+      var csSec = document.getElementById('pcCostSuggestSection');
+      if (cfSec) cfSec.style.display = 'none';
+      if (csSec) csSec.style.display = 'none';
+    }
+  } catch (ex) {
+    showErr(ex.message);
+    if (accEl) accEl.innerHTML = '<div class="empty-state">\u26a0\ufe0f ' + esc(ex.message) + '</div>';
+  }
+}
+
+function pcRenderAlerts(alerts) {
+  var el = document.getElementById('pcAlertsPanel');
+  if (!el) return;
+  var active = (alerts || []).filter(function(a) { return !a.is_dismissed; });
+  if (!active.length) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  var colors  = { critical: '#fee2e2', warning: '#fffbeb', info: '#eff6ff' };
+  var borders = { critical: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
+  el.innerHTML = active.slice(0, 5).map(function(a) {
+    var c = colors[a.severity]  || colors.info;
+    var b = borders[a.severity] || borders.info;
+    return '<div style="background:' + c + ';border-left:4px solid ' + b + ';padding:10px 14px;border-radius:var(--r-xs);margin:10px 0;display:flex;align-items:flex-start;gap:10px">'
+      + '<div style="flex:1;font-size:13px">' + esc(a.message) + '</div>'
+      + '<button class="btn btn-outlined btn-sm" onclick="pcDismissAlert(\'' + esc(String(a.id)) + '\')" style="flex-shrink:0;font-size:11px">Dismiss</button>'
+      + '</div>';
+  }).join('');
+}
+
+function pcRenderSummary(snap) {
+  var el = document.getElementById('pcSummaryCards');
+  if (!el) return;
+  if (!snap) {
+    el.innerHTML = '<div style="padding:8px 0;font-size:13px;color:var(--g-600)">Click \u21bb Compute to generate P&amp;L summary for this period.</div>';
+    return;
+  }
+  var revenue  = parseFloat(snap.sales_revenue != null ? snap.sales_revenue : snap.revenue) || 0;
+  var cost     = parseFloat(snap.total_expense != null ? snap.total_expense : snap.total_cost) || 0;
+  var profit   = parseFloat(snap.net_profit) || 0;
+  var margin   = parseFloat(snap.margin_pct) || 0;
+  var courier  = parseFloat(snap.courier_material_cost) || 0;
+  var packing  = parseFloat(snap.packaging_cost) || 0;
+  var shipping = parseFloat(snap.shipping_cost) || 0;
+  var gateway  = parseFloat(snap.gateway_fee) || 0;
+  var rto      = parseFloat(snap.rto_loss) || 0;
+  el.innerHTML = '<div class="summary-grid">'
+    + '<div class="summary-card"><div class="k">Revenue</div><div class="v">'      + fmtINR(revenue) + '</div></div>'
+    + '<div class="summary-card"><div class="k">Total Cost</div><div class="v">'    + fmtINR(cost)    + '</div></div>'
+    + '<div class="summary-card"><div class="k">Net Profit/Loss</div><div class="v ' + (profit >= 0 ? 'pos' : 'neg') + '">' + fmtINR(profit) + '</div></div>'
+    + '<div class="summary-card"><div class="k">Net Margin</div><div class="v '     + (margin >= 0 ? 'pos' : 'neg') + '">' + fmtNum(margin) + '%</div></div>'
+    + '</div>'
+    + '<div style="margin-top:8px;font-size:12px;color:var(--g-700)">'
+    + 'Packing: <strong>' + fmtINR(packing) + '</strong>'
+    + '&nbsp;&nbsp;|&nbsp;&nbsp;Courier: <strong>' + fmtINR(courier) + '</strong>'
+    + (shipping > 0 ? '&nbsp;&nbsp;|&nbsp;&nbsp;Shipping: <strong>' + fmtINR(shipping) + '</strong>' : '')
+    + (gateway  > 0 ? '&nbsp;&nbsp;|&nbsp;&nbsp;Gateway Fee: <strong>' + fmtINR(gateway) + '</strong>' : '')
+    + (rto      > 0 ? '&nbsp;&nbsp;|&nbsp;&nbsp;RTO Loss: <strong>' + fmtINR(rto) + '</strong>' : '')
+    + '</div>';
+}
+
+function pcGroupIcon(type) {
+  var icons = { product_purchases: '\u{1F4E6}', packing: '\u{1F4EB}', salary_ops: '\u{1F465}', ads_marketing: '\u{1F4E2}', custom: '\u{1F3F7}' };
+  return icons[type] || '\u{1F4CB}';
+}
+
+function pcRenderGroups(groups, entries, purchases) {
+  var el = document.getElementById('pcGroupsAccordion');
+  if (!el) return;
+  if (!groups || !groups.length) {
+    el.innerHTML = '<div class="empty-state">No groups found. <button class="btn btn-sm btn-outlined" onclick="pcSeedGroups()">Seed Defaults</button></div>';
+    return;
+  }
+  var entryMap = {};
+  (entries || []).forEach(function(e) {
+    if (!entryMap[e.group_id]) entryMap[e.group_id] = [];
+    entryMap[e.group_id].push(e);
+  });
+  var html = groups.map(function(g) {
+    var groupEntries = entryMap[g.id] || [];
+    var isPurchases  = g.group_type === 'product_purchases';
+    var icon         = pcGroupIcon(g.group_type);
+    var total        = 0;
+    var contentHtml  = '';
+
+    if (isPurchases) {
+      if (purchases && purchases.length) {
+        var rows = purchases.map(function(p) {
+          total += parseFloat(p.total_value) || 0;
+          var warn = p.cost_changed ? '<span title="Cost differs from previous PO" style="color:var(--g-amber);font-size:11px"> \u26a0\ufe0f</span>' : '';
+          return '<tr>'
+            + '<td>' + esc(p.product_name) + warn + '</td>'
+            + '<td class="num">' + fmtNum(p.qty_received) + (p.unit ? ' ' + esc(p.unit) : '') + '</td>'
+            + '<td class="num">' + fmtINR(p.unit_cost)    + '</td>'
+            + '<td class="num">' + fmtINR(p.total_value)  + '</td>'
+            + '<td><button class="btn btn-outlined btn-sm" onclick="pcOpenMapModal(\'' + esc(String(p.product_id)) + '\',\'' + esc(p.product_name) + '\')" style="font-size:11px">Map</button></td>'
+            + '</tr>';
+        }).join('');
+        contentHtml = '<div class="tbl-wrap"><table>'
+          + '<thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Unit Cost</th><th class="num">Total</th><th>Variants</th></tr></thead>'
+          + '<tbody>' + rows + '</tbody></table></div>';
+      } else {
+        contentHtml = '<div style="padding:8px;font-size:13px;color:var(--g-600)">No purchase orders received this period.</div>';
+      }
+      if (groupEntries.length) {
+        groupEntries.forEach(function(e) { total += parseFloat(e.amount) || 0; });
+        contentHtml += pcEntryRowsHtml(groupEntries, g.id, g.group_type, g.sub_type);
+      }
+    } else {
+      groupEntries.forEach(function(e) { total += parseFloat(e.amount) || 0; });
+      contentHtml = groupEntries.length
+        ? pcEntryRowsHtml(groupEntries, g.id, g.group_type, g.sub_type)
+        : '<div style="padding:8px;font-size:13px;color:var(--g-500)">No entries this period. Click + Add to record an expense.</div>';
+    }
+
+    var totalBadge = total > 0 ? '<span style="font-size:13px;font-weight:700;color:var(--g-red)">' + fmtINR(total) + '</span>' : '';
+    var addBtn = '<button class="btn btn-outlined btn-sm" onclick="event.stopPropagation();pcOpenAddEntryModal(\'' + esc(String(g.id)) + '\',\'' + esc(g.name) + '\',\'' + esc(g.group_type || '') + '\',\'' + esc(g.sub_type || '') + '\')" style="font-size:11px">+ Add</button>';
+
+    return '<div class="pc-group" id="pcg_' + esc(String(g.id)) + '" style="border:1px solid var(--bdr);border-radius:var(--r-sm);margin-bottom:10px;overflow:hidden">'
+      + '<div onclick="pcToggleGroup(\'' + esc(String(g.id)) + '\')" style="display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer;background:var(--g-50);user-select:none">'
+      + '<span style="font-size:15px">' + icon + '</span>'
+      + '<strong style="flex:1">' + esc(g.name) + '</strong>'
+      + totalBadge + '&nbsp;'
+      + addBtn
+      + '<span id="pcg_arr_' + esc(String(g.id)) + '" style="font-size:12px;color:var(--g-500);margin-left:4px">\u25bc</span>'
+      + '</div>'
+      + '<div id="pcg_body_' + esc(String(g.id)) + '" style="padding:10px 14px;background:#fff">'
+      + contentHtml
+      + '</div>'
+      + '</div>';
+  }).join('');
+  html += '<button class="btn btn-outlined btn-sm" onclick="pcAddGroup()" style="margin-top:4px">+ Add New Group</button>';
+  el.innerHTML = html;
+}
+
+function pcEntryRowsHtml(entries, groupId, groupType, subType) {
+  if (!entries || !entries.length) return '';
+  var rows = entries.map(function(e) {
+    var qtyLabel = '';
+    if (e.quantity && e.unit_cost) {
+      qtyLabel = '<span style="font-size:11px;color:var(--g-600)"> (' + fmtNum(e.quantity) + ' × ' + fmtINR(e.unit_cost) + ')</span>';
+    }
+    var rateLabel = '';
+    if (e.consumption_rate) {
+      rateLabel = '<span style="font-size:11px;color:var(--g-teal)"> [' + fmtNum(e.consumption_rate) + '/unit]</span>';
+    }
+    var categoryLabel = '';
+    if (e.applicable_categories && e.applicable_categories.length) {
+      categoryLabel = '<div style="font-size:11px;color:var(--g-blue);margin-top:4px">Applies to: ' + esc(e.applicable_categories.join(', ')) + '</div>';
+    }
+    var entryJson = JSON.stringify({
+      id: e.id, group_id: e.group_id, description: e.description || e.label || '',
+      amount: e.amount, quantity: e.quantity, unit_cost: e.unit_cost,
+      group_type: groupType || '', sub_type: subType || '',
+      product_id: e.product_id, applicable_categories: e.applicable_categories || [],
+      consumption_rate: e.consumption_rate, note: e.note
+    }).replace(/</g,'\\u003c').replace(/'/g,"\\'");
+    return '<tr>'
+      + '<td>' + esc(e.description || e.label || '\u2014') + qtyLabel + rateLabel + categoryLabel + '</td>'
+      + '<td class="num" style="font-weight:600">' + fmtINR(e.amount) + '</td>'
+      + '<td style="font-size:12px;color:var(--g-500)">' + esc(e.note || '') + '</td>'
+      + '<td style="white-space:nowrap">'
+      + '<button class="btn btn-ghost btn-sm" onclick="pcOpenEditEntryModal(' + entryJson + ')" style="font-size:11px;padding:2px 6px">Edit</button> '
+      + '<button class="btn btn-ghost btn-sm" onclick="pcDeleteEntry(\'' + esc(String(e.id)) + '\',\'' + esc(String(groupId)) + '\')" style="font-size:11px;padding:2px 6px;color:var(--g-red)">Del</button>'
+      + '</td>'
+      + '</tr>';
+  }).join('');
+  return '<div class="tbl-wrap"><table>'
+    + '<thead><tr><th>Description</th><th class="num">Amount</th><th>Notes</th><th></th></tr></thead>'
+    + '<tbody>' + rows + '</tbody></table></div>';
+}
+
+function pcToggleGroup(groupId) {
+  var body  = document.getElementById('pcg_body_' + groupId);
+  var arrow = document.getElementById('pcg_arr_'  + groupId);
+  if (!body) return;
+  var visible = body.style.display !== 'none';
+  body.style.display = visible ? 'none' : '';
+  if (arrow) arrow.textContent = visible ? '\u25b6' : '\u25bc';
+}
+
+function pcRenderCarryForward(rows) {
+  var sec = document.getElementById('pcCarryFwdSection');
+  var tbl = document.getElementById('pcCarryFwdTable');
+  if (!sec || !tbl) return;
+  if (!rows || !rows.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  var body = rows.map(function(r) {
+    return '<tr>'
+      + '<td><strong>' + esc(r.product_name) + '</strong></td>'
+      + '<td class="num">' + fmtNum(r.purchased_qty) + (r.unit ? ' ' + esc(r.unit) : '') + '</td>'
+      + '<td class="num">' + fmtNum(r.sold_qty) + '</td>'
+      + '<td class="num" style="font-weight:700">' + fmtNum(r.remaining_qty) + '</td>'
+      + '<td class="num">' + fmtINR(r.carry_value) + '</td>'
+      + '</tr>';
+  }).join('');
+  tbl.innerHTML = '<table><thead><tr>'
+    + '<th>Product</th><th class="num">Purchased</th><th class="num">Sold</th><th class="num">Remaining</th><th class="num">Value</th>'
+    + '</tr></thead><tbody>' + body + '</tbody></table>';
+}
+
+function pcRenderCostSuggestions(rows) {
+  var sec = document.getElementById('pcCostSuggestSection');
+  var cnt = document.getElementById('pcCostSuggestions');
+  if (!sec || !cnt) return;
+  var actionable = (rows || []).filter(function(r) { return Math.abs(parseFloat(r.diff_pct) || 0) > 2; });
+  if (!actionable.length) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+  cnt.innerHTML = actionable.slice(0, 10).map(function(r) {
+    var diff = parseFloat(r.diff_pct) || 0;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--bdr);border-radius:var(--r-xs);margin-bottom:8px;background:var(--g-50)">'
+      + '<div style="flex:1">'
+      + '<strong style="font-size:13px">' + esc(r.product_name) + '</strong>'
+      + '<div style="font-size:12px;color:var(--g-600)">Catalog: ' + fmtINR(r.catalog_cost) + ' \u2192 WAC: ' + fmtINR(r.wac_cost) + ' (' + (diff > 0 ? '+' : '') + fmtNum(diff) + '%)</div>'
+      + '</div>'
+      + '<button class="btn btn-outlined btn-sm" onclick="pcApplyCostSuggestion(\'' + esc(String(r.product_id)) + '\')" style="font-size:11px">Update Cost</button>'
+      + '</div>';
+  }).join('');
+}
+
+async function pcComputeSnapshot() {
+  var btn = document.getElementById('pcComputeBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Computing\u2026'; }
+  var period = pcState.period, ptype = pcState.periodType;
+  try {
+    var r = await fetch('/api/profit-checker/summary', {
+      method: 'POST',
+      headers: getH(),
+      body: JSON.stringify({ period: period, period_type: ptype })
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Compute snapshot failed: ' + r.status);
+    var snap = await r.json();
+    pcRenderSummary(snap);
+    var aRes = await fetch('/api/profit-checker/alerts?month=' + pcMonthParam(), { headers: getH() });
+    if (aRes.ok) pcRenderAlerts(await aRes.json());
+  } catch (ex) {
+    showErr(ex.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '\u21bb Compute'; }
+  }
+}
+
+// ── Product cache for entry modal picker ─────────────────────
+var pcProductCache = [];
+var pcCategoryCache = [];
+async function pcEnsureProductCache() {
+  if (pcProductCache.length) return;
+  try {
+    var r = await fetch('/api/products?page=1&page_size=500', { headers: getH() });
+    if (r.ok) {
+      var d = await r.json();
+      pcProductCache = d.items || d.products || d.results || [];
+    }
+  } catch(e) { /* silently fail */ }
+}
+
+async function pcEnsureCategoryCache() {
+  if (pcCategoryCache.length) return;
+  try {
+    var r = await fetch('/api/products/categories', { headers: getH() });
+    if (r.ok) pcCategoryCache = await r.json();
+  } catch (e) { /* silently fail */ }
+}
+
+function pcPurchaseFilterType() {
+  var sel = document.getElementById('pcModalProductType');
+  var val = sel ? sel.value : 'specific';
+  if (val === 'specific') return 'sellable';
+  if (val === 'bulk') return 'raw_material';
+  return null;
+}
+
+function pcFilteredProducts(filterType, categoryFilter) {
+  var list = filterType
+    ? pcProductCache.filter(function(p) { return (p.item_type || 'sellable') === filterType; })
+    : pcProductCache.slice();
+  if (categoryFilter) {
+    list = list.filter(function(p) { return String(p.category || '') === categoryFilter; });
+  }
+  return list.sort(function(a, b) {
+    var catA = String(a.category || 'Uncategorized');
+    var catB = String(b.category || 'Uncategorized');
+    if (catA !== catB) return catA.localeCompare(catB);
+    return String(a.name || '').localeCompare(String(b.name || ''));
+  });
+}
+
+function pcBuildPurchaseCategoryOptions(filterType) {
+  var seen = {};
+  var categories = [];
+  pcFilteredProducts(filterType, '').forEach(function(p) {
+    var category = String(p.category || '').trim();
+    var key = category.toLowerCase();
+    if (!category || seen[key]) return;
+    seen[key] = true;
+    categories.push(category);
+  });
+  pcCategoryCache.forEach(function(category) {
+    var value = String(category || '').trim();
+    var key = value.toLowerCase();
+    if (!value || seen[key]) return;
+    seen[key] = true;
+    categories.push(value);
+  });
+  categories.sort(function(a, b) { return a.localeCompare(b); });
+
+  var opts = '<option value="">\u2014 all categories \u2014</option>';
+  categories.forEach(function(category) {
+    opts += '<option value="' + esc(category) + '">' + esc(category) + '</option>';
+  });
+  return opts;
+}
+
+function pcBuildProductOptions(filterType, categoryFilter) {
+  var opts = '<option value="">\u2014 select product (optional) \u2014</option>';
+  var list = pcFilteredProducts(filterType, categoryFilter || '');
+  if (!list.length) return opts;
+
+  if (categoryFilter) {
+    list.forEach(function(p) {
+      opts += '<option value="' + esc(String(p.id)) + '">' + esc(p.name) + (p.sku ? ' [' + esc(p.sku) + ']' : '') + '</option>';
+    });
+    return opts;
+  }
+
+  var grouped = {};
+  list.forEach(function(p) {
+    var group = String(p.category || 'Uncategorized') || 'Uncategorized';
+    if (!grouped[group]) grouped[group] = [];
+    grouped[group].push(p);
+  });
+  Object.keys(grouped).sort(function(a, b) { return a.localeCompare(b); }).forEach(function(group) {
+    opts += '<optgroup label="' + esc(group) + '">';
+    grouped[group].forEach(function(p) {
+      opts += '<option value="' + esc(String(p.id)) + '">' + esc(p.name) + (p.sku ? ' [' + esc(p.sku) + ']' : '') + '</option>';
+    });
+    opts += '</optgroup>';
+  });
+  return opts;
+}
+
+function pcApplyPurchaseDirectory(preferredProductId, preferredCategory) {
+  var catSel = document.getElementById('pcModalPurchaseCategory');
+  var prodSel = document.getElementById('pcModalProductId');
+  if (!catSel || !prodSel) return;
+
+  var wantedCategory = preferredCategory || catSel.value || '';
+  var filter = pcPurchaseFilterType();
+  catSel.innerHTML = pcBuildPurchaseCategoryOptions(filter);
+  if (wantedCategory && Array.from(catSel.options).some(function(opt) { return opt.value === wantedCategory; })) {
+    catSel.value = wantedCategory;
+  } else {
+    catSel.value = '';
+  }
+  prodSel.innerHTML = pcBuildProductOptions(filter, catSel.value || '');
+
+  var wantedProduct = preferredProductId || '';
+  if (wantedProduct && Array.from(prodSel.options).some(function(opt) { return opt.value === wantedProduct; })) {
+    prodSel.value = wantedProduct;
+  } else {
+    prodSel.value = '';
+  }
+}
+
+function pcOnProductTypeChange() {
+  var sel = document.getElementById('pcModalProductType');
+  if (!sel) return;
+  pcSetPurchaseType(sel.value || 'specific');
+}
+
+function pcPurchaseCategoryChanged() {
+  var currentProductId = document.getElementById('pcModalProductId') ? document.getElementById('pcModalProductId').value : '';
+  var currentCategory = document.getElementById('pcModalPurchaseCategory') ? document.getElementById('pcModalPurchaseCategory').value : '';
+  pcApplyPurchaseDirectory(currentProductId, currentCategory);
+}
+
+function pcSplitCategoryTag(noteText) {
+  var raw = String(noteText || '');
+  var m = raw.match(/^\[Category:\s*([^\]]+)\]\s*(.*)$/i);
+  if (!m) return { category: '', note: raw };
+  return { category: String(m[1] || '').trim(), note: String(m[2] || '').trim() };
+}
+
+function pcSetPurchaseType(type) {
+  document.getElementById('pcModalProductType').value = type;
+  // Update button active states
+  var btns = { specific: 'pcPTypeSpecific', bulk: 'pcPTypeBulk', generic: 'pcPTypeGeneric' };
+  Object.keys(btns).forEach(function(k) {
+    var el = document.getElementById(btns[k]);
+    if (!el) return;
+    var isActive = k === type;
+    el.style.background = isActive ? 'var(--g-blue)' : '#fff';
+    el.style.color = isActive ? '#fff' : 'var(--g-800)';
+    el.style.fontWeight = isActive ? '600' : '400';
+  });
+  // Show/hide product dropdown
+  var prodAll = document.getElementById('pcModalSecProductAll');
+  var prodSel = document.getElementById('pcModalProductId');
+  var catSel = document.getElementById('pcModalPurchaseCategory');
+  if (type === 'generic') {
+    if (prodAll) prodAll.style.display = 'none';
+    if (prodSel) { prodSel.value = ''; }
+    if (catSel) { catSel.value = ''; }
+  } else {
+    if (prodAll) prodAll.style.display = '';
+    pcApplyPurchaseDirectory('', '');
+  }
+}
+
+function pcProductSelected() {
+  var prodSel = document.getElementById('pcModalProductId');
+  var descEl  = document.getElementById('pcEntryDesc');
+  var catSel  = document.getElementById('pcModalPurchaseCategory');
+  if (!prodSel) return;
+  var selected = pcProductCache.find(function(p) { return p.id === prodSel.value; });
+  if (selected && catSel && selected.category && Array.from(catSel.options).some(function(opt) { return opt.value === selected.category; })) {
+    catSel.value = selected.category;
+  }
+  if (selected && descEl && !descEl.value) descEl.value = selected.name;
+}
+
+function pcRenderCategoryOptions(selectedCategories) {
+  var wrap = document.getElementById('pcModalCategoryOptions');
+  var empty = document.getElementById('pcModalCategoryEmpty');
+  if (!wrap) return;
+  var selected = {};
+  (selectedCategories || []).forEach(function(cat) { selected[String(cat)] = true; });
+  if (!pcCategoryCache.length) {
+    wrap.innerHTML = '';
+    if (empty) empty.style.display = '';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  wrap.innerHTML = pcCategoryCache.map(function(cat, idx) {
+    var id = 'pcCat_' + idx;
+    var checked = selected[cat] ? ' checked' : '';
+    return '<label for="' + id + '" style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--bdr);border-radius:var(--r-pill);font-size:12px;background:#fff;cursor:pointer">'
+      + '<input id="' + id + '" type="checkbox" value="' + esc(cat) + '"' + checked + ' style="margin:0">'
+      + '<span>' + esc(cat) + '</span>'
+      + '</label>';
+  }).join('');
+}
+
+function pcSelectedCategories() {
+  return Array.from(document.querySelectorAll('#pcModalCategoryOptions input[type="checkbox"]:checked')).map(function(el) {
+    return el.value;
+  });
+}
+
+function pcAutoCalcAmount() {
+  var qty  = parseFloat(document.getElementById('pcModalQty').value)      || 0;
+  var cost = parseFloat(document.getElementById('pcModalUnitCost').value)  || 0;
+  var amtEl = document.getElementById('pcEntryAmount');
+  if (qty > 0 && cost > 0 && amtEl) amtEl.value = (qty * cost).toFixed(2);
+}
+
+function pcModalShowFields(groupType, subType) {
+  var isPurchase = groupType === 'product_purchase';
+  var isPacking  = groupType === 'packaging' && subType === 'packing_material';
+  var isCourier  = groupType === 'packaging' && subType === 'courier_material';
+  var showProd   = isPurchase;
+  var showCats   = isPacking;
+  var showQty    = isPurchase || isPacking || isCourier;
+  var showRate   = isPacking  || isCourier;
+  var showType   = isPurchase;
+
+  var s = function(id, show) { var e = document.getElementById(id); if (e) e.style.display = show ? '' : 'none'; };
+  s('pcModalSecProductType', showType);
+  s('pcModalSecProduct',     showProd && !showType);
+  s('pcModalSecProductAll',  showProd);
+  s('pcModalSecCategories',  showCats);
+  s('pcModalSecQty',         showQty);
+  s('pcModalSecRate',        showRate);
+
+  var rateLbl = document.getElementById('pcModalRateLabel');
+  if (rateLbl) rateLbl.textContent = isCourier
+    ? 'Usage rate per Order dispatched (e.g. 0.5 = half a tape roll/order)'
+    : 'Usage rate per Product Unit sold (e.g. 1 = one pouch per 100g pack sold)';
+}
+
+async function pcOpenAddEntryModal(groupId, groupName, groupType, subType) {
+  groupType = groupType || '';
+  subType   = subType   || '';
+  document.getElementById('pcEntryId').value         = '';
+  document.getElementById('pcEntryGroupId').value    = groupId;
+  document.getElementById('pcEntryGroupType').value  = groupType;
+  document.getElementById('pcEntrySubType').value    = subType;
+  document.getElementById('pcEntryDesc').value       = '';
+  document.getElementById('pcEntryAmount').value     = '';
+  document.getElementById('pcEntryNotes').value      = '';
+  document.getElementById('pcModalQty').value        = '';
+  document.getElementById('pcModalUnitCost').value   = '';
+  document.getElementById('pcModalRate').value       = '';
+  document.getElementById('pcModalPurchaseCategory').value = '';
+  document.getElementById('pcModalProductId').value  = '';
+  document.getElementById('pcModalProductType').value = 'specific';
+  document.getElementById('pcEntryModalTitle').textContent = 'Add Expense \u2014 ' + groupName;
+
+  await Promise.all([pcEnsureProductCache(), pcEnsureCategoryCache()]);
+  pcModalShowFields(groupType, subType);
+  pcRenderCategoryOptions([]);
+
+  if (groupType === 'product_purchase') {
+    pcSetPurchaseType('specific');
+  }
+
+  document.getElementById('pcEntryModal').classList.add('open');
+  setTimeout(function() { document.getElementById('pcEntryDesc').focus(); }, 80);
+}
+
+async function pcOpenEditEntryModal(entry) {
+  var groupType = entry.group_type || '';
+  var subType = entry.sub_type || '';
+  var taggedNote = pcSplitCategoryTag(entry.note || '');
+  await Promise.all([pcEnsureProductCache(), pcEnsureCategoryCache()]);
+  document.getElementById('pcEntryId').value         = entry.id    || '';
+  document.getElementById('pcEntryGroupId').value    = entry.group_id || '';
+  document.getElementById('pcEntryGroupType').value  = groupType;
+  document.getElementById('pcEntrySubType').value    = subType;
+  document.getElementById('pcEntryDesc').value       = entry.description || '';
+  document.getElementById('pcEntryAmount').value     = parseFloat(entry.amount) || 0;
+  document.getElementById('pcEntryNotes').value      = taggedNote.note || '';
+  document.getElementById('pcModalQty').value        = entry.quantity || '';
+  document.getElementById('pcModalUnitCost').value   = entry.unit_cost || '';
+  document.getElementById('pcModalRate').value       = entry.consumption_rate || '';
+  document.getElementById('pcModalPurchaseCategory').value = '';
+  document.getElementById('pcModalProductType').value = 'generic';
+
+  pcModalShowFields(groupType, subType);
+  pcRenderCategoryOptions(entry.applicable_categories || []);
+
+  // Pre-populate purchase directory selectors
+  if (groupType === 'product_purchase' && pcProductCache.length) {
+    var picked = pcProductCache.find(function(p) { return String(p.id) === String(entry.product_id || ''); });
+    var purchaseType = 'generic';
+    if (entry.product_id) {
+      purchaseType = (picked && (picked.item_type || 'sellable') === 'raw_material') ? 'bulk' : 'specific';
+    }
+    pcSetPurchaseType(purchaseType);
+    if (purchaseType !== 'generic') {
+      var defaultCategory = taggedNote.category || (picked ? String(picked.category || '') : '');
+      pcApplyPurchaseDirectory(entry.product_id || '', defaultCategory);
+    }
+  }
+
+  document.getElementById('pcEntryModalTitle').textContent = 'Edit Expense';
+  document.getElementById('pcEntryModal').classList.add('open');
+  setTimeout(function() { document.getElementById('pcEntryAmount').focus(); }, 80);
+}
+
+async function pcSaveEntry() {
+  var id      = document.getElementById('pcEntryId').value.trim();
+  var groupId = document.getElementById('pcEntryGroupId').value;
+  var groupType = document.getElementById('pcEntryGroupType').value || '';
+  var subType = document.getElementById('pcEntrySubType').value || '';
+  var desc    = document.getElementById('pcEntryDesc').value.trim();
+  var amount  = parseFloat(document.getElementById('pcEntryAmount').value) || 0;
+  var notes   = document.getElementById('pcEntryNotes').value.trim();
+  var purchaseCategoryEl = document.getElementById('pcModalPurchaseCategory');
+  var purchaseCategory = (groupType === 'product_purchase' && purchaseCategoryEl) ? String(purchaseCategoryEl.value || '').trim() : '';
+  var qty     = parseFloat(document.getElementById('pcModalQty').value)      || null;
+  var ucost   = parseFloat(document.getElementById('pcModalUnitCost').value)  || null;
+  var rate    = parseFloat(document.getElementById('pcModalRate').value)      || null;
+  var isPacking = groupType === 'packaging' && subType === 'packing_material';
+  var isCourier = groupType === 'packaging' && subType === 'courier_material';
+  var selectedCategories = isPacking ? pcSelectedCategories() : [];
+  // Product ID: purchase entries only
+  var prodSelEl = document.getElementById('pcModalProductId');
+  var productId = (groupType === 'product_purchase' && prodSelEl && prodSelEl.style.display !== 'none') ? (prodSelEl.value || null) : null;
+  var baseNotes = notes.replace(/^\[Category:\s*[^\]]+\]\s*/i, '').trim();
+  var finalNotes = baseNotes;
+  if (groupType === 'product_purchase' && purchaseCategory && !productId) {
+    finalNotes = '[Category: ' + purchaseCategory + ']' + (baseNotes ? ' ' + baseNotes : '');
+  }
+  // Auto-compute amount from qty × unit_cost if amount is zero/empty
+  if ((!amount || amount <= 0) && qty && ucost) amount = qty * ucost;
+  if (!desc)       { showErr('Description is required.'); return; }
+  if (amount <= 0) { showErr('Amount must be greater than 0.'); return; }
+  if (isPacking && !selectedCategories.length) { showErr('Select at least one applicable category for packing material.'); return; }
+  if (isCourier && selectedCategories.length) { showErr('Courier material does not use categories.'); return; }
+  var month   = pcMonthParam();
+  var payload = { group_id: groupId, description: desc, amount: amount, month: month };
+  if (finalNotes) payload.note = finalNotes;
+  if (qty)       payload.quantity = qty;
+  if (ucost)     payload.unit_cost = ucost;
+  if (productId) payload.product_id = productId;
+  if (selectedCategories.length) payload.applicable_categories = selectedCategories;
+  if (rate)      payload.consumption_rate = rate;
+  try {
+    var url    = id ? '/api/profit-checker/entries/' + id : '/api/profit-checker/entries';
+    var method = id ? 'PUT' : 'POST';
+    var r = await fetch(url, { method: method, headers: getH(), body: JSON.stringify(payload) });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Save entry failed: ' + r.status);
+    document.getElementById('pcEntryModal').classList.remove('open');
+    loadProfitCheckerTab();
+  } catch (ex) { showErr(ex.message); }
+}
+
+async function pcDeleteEntry(entryId) {
+  if (!confirm('Delete this expense entry?')) return;
+  try {
+    var r = await fetch('/api/profit-checker/entries/' + entryId, { method: 'DELETE', headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Delete entry failed: ' + r.status);
+    loadProfitCheckerTab();
+  } catch (ex) { showErr(ex.message); }
+}
+
+async function pcOpenMapModal(productId, productName) {
+  document.getElementById('pcMapSourceId').value    = productId;
+  document.getElementById('pcMapModalTitle').textContent = 'Map \u201c' + productName + '\u201d to Variants';
+  document.getElementById('pcMapRatio').value       = '1';
+  var sel = document.getElementById('pcMapTargetId');
+  sel.innerHTML = '<option value="">Loading\u2026</option>';
+  try {
+    var r = await fetch('/api/products?page=1&page_size=500', { headers: getH() });
+    if (r.ok) {
+      var data = await r.json();
+      var products = (data.items || data.products || data.results || []).filter(function(p) {
+        return String(p.id) !== productId;
+      });
+      sel.innerHTML = '<option value="">\u2014 select variant \u2014</option>'
+        + products.map(function(p) {
+          return '<option value="' + esc(String(p.id)) + '">' + esc(p.name) + '</option>';
+        }).join('');
+    }
+  } catch (e) { sel.innerHTML = '<option value="">Could not load products</option>'; }
+  document.getElementById('pcMapModal').classList.add('open');
+}
+
+async function pcSaveProductMap() {
+  var sourceId = document.getElementById('pcMapSourceId').value;
+  var targetId = document.getElementById('pcMapTargetId').value;
+  var ratio    = parseFloat(document.getElementById('pcMapRatio').value) || 1;
+  if (!targetId) { showErr('Select a target variant product.'); return; }
+  try {
+    var r = await fetch('/api/profit-checker/product-maps', {
+      method: 'POST', headers: getH(),
+      body: JSON.stringify({ source_product_id: sourceId, target_product_id: targetId, conversion_ratio: ratio })
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Save map failed: ' + r.status);
+    document.getElementById('pcMapModal').classList.remove('open');
+    loadProfitCheckerTab();
+  } catch (ex) { showErr(ex.message); }
+}
+
+async function pcDismissAlert(alertId) {
+  try {
+    var r = await fetch('/api/profit-checker/alerts/' + alertId + '/dismiss', { method: 'POST', headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Dismiss alert failed: ' + r.status);
+    var aRes = await fetch('/api/profit-checker/alerts?month=' + pcMonthParam(), { headers: getH() });
+    if (aRes.ok) pcRenderAlerts(await aRes.json());
+  } catch (ex) { showErr(ex.message); }
+}
+
+async function pcApplyCostSuggestion(productId) {
+  if (!confirm('Update catalog cost to weighted average cost?')) return;
+  try {
+    var r = await fetch('/api/profit-checker/cost-suggestions/' + productId + '/apply', { method: 'POST', headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Apply cost suggestion failed: ' + r.status);
+    var csRes = await fetch('/api/profit-checker/cost-suggestions', { headers: getH() });
+    if (csRes.ok) pcRenderCostSuggestions(await csRes.json());
+  } catch (ex) { showErr(ex.message); }
+}
+
+async function pcSeedGroups() {
+  try {
+    var r = await fetch('/api/profit-checker/groups/seed', { method: 'POST', headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Seed groups failed: ' + r.status);
+    loadProfitCheckerTab();
+  } catch (ex) { showErr(ex.message); }
+}
+
+async function pcAddGroup() {
+  var name = prompt('Enter new group name:');
+  if (!name || !name.trim()) return;
+  try {
+    var r = await fetch('/api/profit-checker/groups', {
+      method: 'POST', headers: getH(),
+      body: JSON.stringify({ name: name.trim(), group_type: 'custom' })
+    });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Create group failed: ' + r.status);
+    loadProfitCheckerTab();
+  } catch (ex) { showErr(ex.message); }
+}
+
+
+// ── CUSTOMERS TAB ──────────────────────────────────────────────────────────────
+async function loadCustomersTab() {
+  document.getElementById('customersTable').innerHTML = '<div class="loading-state">Loading&hellip;</div>';
+  var limit = document.getElementById('customersLimit').value;
+  try {
+    var custQs = 'limit=' + limit;
+    if (filters.fromDate) custQs += '&from=' + filters.fromDate;
+    if (filters.toDate)   custQs += '&to='   + filters.toDate;
+    var r = await fetch('/api/reports/customers/profit-ltv?' + custQs, { headers: getH() });
+    if (r.status === 401) { handleAuthError(401); return; }
+    if (!r.ok) throw new Error('Customer LTV API returned ' + r.status);
+    var data = await r.json();
+    renderCustomersTable(data.results || []);
+  } catch (ex) {
+    document.getElementById('customersTable').innerHTML = '<div class="empty-state">\u26a0\ufe0f ' + esc(ex.message) + '</div>';
+    showErr(ex.message);
+  }
+}
+
+function renderCustomersTable(customers) {
+  if (!customers.length) {
+    document.getElementById('customersTable').innerHTML = '<div class="empty-state">No customer data yet.</div>';
+    return;
+  }
+  var maxLtv = Math.max.apply(null, customers.map(function(c){ return Math.abs(parseFloat(c.ltv) || 0); }));
+  if (maxLtv <= 0) maxLtv = 1;
+
+  var rows = customers.map(function(c, i) {
+    var revenue = parseFloat(c.total_revenue) || 0;
+    var cost = parseFloat(c.total_cost) || 0;
+    var profit = parseFloat(c.total_profit) || 0;
+    var avg   = parseFloat(c.avg_order_value) || 0;
+    var barW  = (Math.abs(profit) / maxLtv * 100).toFixed(1);
+    var seg = String(c.segment || 'BREAKEVEN');
+    var segColor = seg === 'VIP' ? 'var(--g-green)' : (seg === 'LOSS' ? 'var(--g-red)' : 'var(--g-amber)');
+    return '<tr>'
+      + '<td style="font-weight:600;color:var(--g-600);font-size:12px">#' + (i+1) + '</td>'
+      + '<td><strong>' + esc(c.name) + '</strong></td>'
+      + '<td style="font-size:12px">' + esc(c.city || '\u2014') + '</td>'
+      + '<td style="font-size:12px">' + esc(c.phone || '\u2014') + '</td>'
+      + '<td class="num">' + (c.total_orders || 0) + '</td>'
+      + '<td class="num">' + fmtINR(revenue) + '</td>'
+      + '<td class="num">' + fmtINR(cost) + '</td>'
+      + '<td class="num ' + (profit >= 0 ? 'pos' : 'neg') + '" style="font-weight:700">' + fmtINR(profit) + '</td>'
+      + '<td style="min-width:120px">'
+        + '<div class="margin-bar" style="height:8px">'
+        + '<div class="margin-fill" style="width:' + barW + '%;background:' + (profit >= 0 ? 'var(--g-green)' : 'var(--g-red)') + '"></div>'
+        + '</div></td>'
+      + '<td class="num" style="font-weight:700;color:' + segColor + '">' + esc(seg) + '</td>'
+      + '<td class="num">' + (avg > 0 ? fmtINR(avg) : '\u2014') + '</td>'
+      + '</tr>';
+  }).join('');
+
+  document.getElementById('customersTable').innerHTML =
+    '<table><thead><tr>'
+    + '<th>#</th><th>Customer</th><th>City</th><th>Phone</th>'
+    + '<th class="num">Orders</th><th class="num">Revenue</th><th class="num">Cost</th>'
+    + '<th class="num">LTV Profit</th><th>LTV Trend</th><th class="num">Segment</th><th class="num">Avg/Order</th>'
+    + '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+// ── BOOT ───────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  // Initialize default filter to "This Month"
+  document.getElementById('filterPeriod').value = 'thismonth';
+  var today = new Date();
+  var pad = function(n) { return String(n).padStart(2,'0'); };
+  var fmt = function(d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); };
+  var monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  document.getElementById('filterFromDate').value = fmt(monthStart);
+  document.getElementById('filterToDate').value = fmt(today);
+  
+  // Load products for filter dropdown
+  loadProductsForFilter();
+  setProfitConfigEditableState();
+
+  var monthInput = document.getElementById('cfgOverheadMonth');
+  if (monthInput && !monthInput.value) monthInput.value = currentYm();
+
+  var ovMonthInput = document.getElementById('ovOverheadMonth');
+  if (ovMonthInput && !ovMonthInput.value) ovMonthInput.value = currentYm();
+
+  // Load initial overview with default "This Month" filter
+  applyFilters();
+});
+</script>
+<!-- PROFIT CHECKER MODALS (position:fixed — must be at body level) -->
+<div id="pcEntryModal" class="modal-backdrop">
+  <div style="background:#fff;border-radius:var(--r-md);width:100%;max-width:480px;margin:16px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--bdr);position:sticky;top:0;background:#fff;z-index:1">
+      <strong id="pcEntryModalTitle">Add Expense</strong>
+      <button onclick="document.getElementById('pcEntryModal').classList.remove('open')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--g-600);line-height:1">&times;</button>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+      <input type="hidden" id="pcEntryId">
+      <input type="hidden" id="pcEntryGroupId">
+      <input type="hidden" id="pcEntryGroupType">
+      <input type="hidden" id="pcEntrySubType">
+      <input type="hidden" id="pcModalProductType" value="generic">
+
+      <!-- ── Product type toggle (product_purchase only) ───── -->
+      <div id="pcModalSecProductType">
+        <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:6px">Purchase Type</label>
+        <div style="display:flex;gap:0;border:1px solid var(--bdr);border-radius:var(--r-xs);overflow:hidden">
+          <button type="button" id="pcPTypeSpecific" onclick="pcSetPurchaseType('specific')"
+            style="flex:1;padding:7px 10px;font-size:12px;border:0;cursor:pointer;background:var(--g-blue);color:#fff;font-weight:600">
+            Specific Product
+          </button>
+          <button type="button" id="pcPTypeBulk" onclick="pcSetPurchaseType('bulk')"
+            style="flex:1;padding:7px 10px;font-size:12px;border:0;border-left:1px solid var(--bdr);cursor:pointer;background:#fff;color:var(--g-800)">
+            Bulk / Raw Material
+          </button>
+          <button type="button" id="pcPTypeGeneric" onclick="pcSetPurchaseType('generic')"
+            style="flex:1;padding:7px 10px;font-size:12px;border:0;border-left:1px solid var(--bdr);cursor:pointer;background:#fff;color:var(--g-800)">
+            Generic (no product)
+          </button>
+        </div>
+        <div style="font-size:11px;color:var(--g-600);margin-top:4px">
+          <strong>Specific</strong> = e.g. Cardamom 100g pack &nbsp;|&nbsp;
+          <strong>Bulk/Raw</strong> = e.g. Cardamom 1kg (you pack later) &nbsp;|&nbsp;
+          <strong>Generic</strong> = free entry
+        </div>
+      </div>
+
+      <!-- ── Product selector (purchase + packing) ─────────── -->
+      <div id="pcModalSecProductAll" style="display:none">
+        <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Category</label>
+        <select id="pcModalPurchaseCategory" onchange="pcPurchaseCategoryChanged()"
+          style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box;font-size:13px;margin-bottom:6px">
+          <option value="">&#8212; all categories &#8212;</option>
+        </select>
+        <div style="font-size:11px;color:var(--g-600);margin-bottom:6px">Directory view: choose a category first, then choose the product.</div>
+        <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Product</label>
+        <select id="pcModalProductId" onchange="pcProductSelected()"
+          style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box;font-size:13px">
+          <option value="">&#8212; select product (optional) &#8212;</option>
+        </select>
+      </div>
+
+      <!-- ── Category applicability (packing only) ─────────── -->
+      <div id="pcModalSecCategories" style="display:none">
+        <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Applicable Product Categories *</label>
+        <div id="pcModalCategoryOptions" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        <div id="pcModalCategoryEmpty" style="font-size:11px;color:var(--g-600);margin-top:4px;display:none">No product categories found yet. Add categories on products first.</div>
+        <div style="font-size:11px;color:var(--g-600);margin-top:4px">Packing material cost will be consumed only by sold products in these categories.</div>
+      </div>
+
+      <!-- ── Description ─────────────────────────────────────── -->
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Description *</label>
+        <input id="pcEntryDesc" type="text" placeholder="e.g. Cardamom purchase, Salary June" style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box;font-size:13px">
+      </div>
+
+      <!-- ── Qty + Unit Cost (product/packing/courier) ──────── -->
+      <div id="pcModalSecQty" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Quantity</label>
+            <input id="pcModalQty" type="number" step="0.001" min="0" placeholder="e.g. 50" oninput="pcAutoCalcAmount()"
+              style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box;font-size:13px">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Unit Cost (&#8377;)</label>
+            <input id="pcModalUnitCost" type="number" step="0.01" min="0" placeholder="e.g. 1200" oninput="pcAutoCalcAmount()"
+              style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box;font-size:13px">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Total Amount ─────────────────────────────────────── -->
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Total Amount (&#8377;) *</label>
+        <input id="pcEntryAmount" type="number" step="0.01" min="0" value=""
+          style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box;font-size:13px;font-weight:600">
+        <div style="font-size:11px;color:var(--g-600);margin-top:2px">Auto-calculated from Qty × Unit Cost when both are set.</div>
+      </div>
+
+      <!-- ── Consumption Rate (packing / courier only) ─────── -->
+      <div id="pcModalSecRate" style="display:none">
+        <label id="pcModalRateLabel" style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Usage rate per Order dispatched</label>
+        <input id="pcModalRate" type="number" step="0.0001" min="0" placeholder="e.g. 1 or 0.5"
+          style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box;font-size:13px">
+        <div style="font-size:11px;color:var(--g-600);margin-top:2px">Used to estimate stock consumption and remaining balance from sales data.</div>
+      </div>
+
+      <!-- ── Notes ─────────────────────────────────────────────── -->
+      <div>
+        <label style="font-size:12px;font-weight:600;color:var(--g-700);display:block;margin-bottom:4px">Notes (optional)</label>
+        <input id="pcEntryNotes" type="text" placeholder="Reference, PO#, invoice, etc."
+          style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box;font-size:13px">
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--bdr);position:sticky;bottom:0;background:#fff">
+      <button class="btn btn-outlined btn-sm" onclick="document.getElementById('pcEntryModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-filled btn-sm" onclick="pcSaveEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="pcMapModal" class="modal-backdrop">
+  <div style="background:#fff;border-radius:var(--r-md);width:100%;max-width:440px;margin:16px;box-shadow:var(--shadow-lg)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--bdr)">
+      <strong id="pcMapModalTitle">Map to Sellable Variants</strong>
+      <button onclick="document.getElementById('pcMapModal').classList.remove('open')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--g-600);line-height:1">&times;</button>
+    </div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+      <input type="hidden" id="pcMapSourceId">
+      <p style="font-size:13px;color:var(--g-600);margin:0">Link this raw/bulk product to a sellable variant for carry-forward tracking.</p>
+      <label style="font-size:13px;font-weight:600;display:block">Target Variant Product</label>
+      <select id="pcMapTargetId" style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box">
+        <option value="">&#8212; select &#8212;</option>
+      </select>
+      <label style="font-size:13px;font-weight:600;display:block">Conversion Ratio (1 source unit = X target units)</label>
+      <input id="pcMapRatio" type="number" step="0.001" min="0.001" value="1" style="height:36px;padding:4px 10px;border:1px solid var(--bdr);border-radius:var(--r-xs);width:100%;box-sizing:border-box">
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--bdr)">
+      <button class="btn btn-outlined btn-sm" onclick="document.getElementById('pcMapModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-filled btn-sm" onclick="pcSaveProductMap()">Save Map</button>
+    </div>
+  </div>
+</div>
+
+<script src="/modules/mobile-nav.v4.js?v=20260728c"></script>
+</body>
+</html>

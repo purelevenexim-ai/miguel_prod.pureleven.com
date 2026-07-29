@@ -1,0 +1,71 @@
+# ── UAT docker-compose ────────────────────────────────────────────────────────
+# Used on the UAT server at /opt/miguel
+# ALWAYS run with:  docker compose -p miguel -f config/docker-compose.yml <cmd>
+# This ensures all containers and the network are prefixed with "miguel_"
+# so they always land on the same network: miguel_miguel_network
+#
+# Domain: uat.pureleven.com
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  db:
+    image: postgres:15
+    container_name: miguel_db
+    restart: always
+    volumes:
+      - config_postgres_data:/var/lib/postgresql/data
+    networks:
+      - miguel_network
+    environment:
+      POSTGRES_USER: miguel_user
+      POSTGRES_PASSWORD: miguel_password
+      POSTGRES_DB: miguel_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U miguel_user -d miguel_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ../backend
+    image: miguel_backend
+    container_name: miguel_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend:/app
+    networks:
+      - miguel_network
+    env_file:
+      - ../backend/.env
+    environment:
+      DATABASE_URL: "postgresql+psycopg2://miguel_user:miguel_password@db:5432/miguel_db"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: nginx:alpine
+    container_name: miguel_frontend
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../frontend:/usr/share/nginx/html:ro
+      - ../infra/nginx-uat.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    networks:
+      - miguel_network
+    depends_on:
+      - backend
+
+networks:
+  miguel_network:
+    driver: bridge
+
+volumes:
+  config_postgres_data:
+    external: true

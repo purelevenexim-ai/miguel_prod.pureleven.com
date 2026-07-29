@@ -1,0 +1,562 @@
+order_id,source_product_name,customer_name,phone,items_raw,best_suggestions,reason
+IN_25092115,Clove 100gm,Kunjumoney C,8075901750,"Cardamom 100gm — 1 x Rs 400
+Clove 100gm — 1 x Rs 180",Kerala Cardamom 8mm - 100gm (0.5); Clove 500 gram (0.5); Clove 50 gram (0.5),unmatched_product_name
+IN_25092252,Delivery Charge,Hitha Subhash,9447291473,"Ceylon Cinnamon 100gm — 1 x Rs 320
+Delivery Charge — 1 x Rs 40",,unmatched_product_name
+IN_25091995,Clove 100gm,Jessy,9495438355,"Ceylon Cinnamon C5 — 1 x Rs 320
+Cardamom 100gm — 1 x Rs 400
+Clove 100gm — 1 x Rs 180",Kerala Cardamom 8mm - 100gm (0.5); Clove 500 gram (0.5); Clove 50 gram (0.5),unmatched_product_name
+IN_25091994,Clove 100gm,Devassy. V. K,9388489524,"Clove 100gm — 1 x Rs 200
+Cardamom 100gm — 1 x Rs 400",Kerala Cardamom 8mm - 100gm (0.5); Clove 500 gram (0.5); Clove 50 gram (0.5),unmatched_product_name
+IN_25091910,Cardamom 500gms,Johnkutty,9915195332,"Cardamom 500gms — 1 x Rs 1750
+Delivery Charge — 1 x Rs 40",Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5),unmatched_product_name
+IN_25091910,Delivery Charge,Johnkutty,9915195332,"Cardamom 500gms — 1 x Rs 1750
+Delivery Charge — 1 x Rs 40",,unmatched_product_name
+IN_25092024,Cardamom 500gms,O R Rajan,9427187975,"Black Pepper 500gms — 2 x Rs 475
+Clove 250gm — 2 x Rs 230
+Cardamom 500gms — 2 x Rs 1750
+Nutmeg Mace — 1 x Rs 350
+Kerala Nutmug — 1 x Rs 180",Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5),unmatched_product_name
+IN_25092024,Nutmeg Mace,O R Rajan,9427187975,"Black Pepper 500gms — 2 x Rs 475
+Clove 250gm — 2 x Rs 230
+Cardamom 500gms — 2 x Rs 1750
+Nutmeg Mace — 1 x Rs 350
+Kerala Nutmug — 1 x Rs 180",,unmatched_product_name
+IN_25092024,Kerala Nutmug,O R Rajan,9427187975,"Black Pepper 500gms — 2 x Rs 475
+Clove 250gm — 2 x Rs 230
+Cardamom 500gms — 2 x Rs 1750
+Nutmeg Mace — 1 x Rs 350
+Kerala Nutmug — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Black Pepper Kerala - 500 (0.5); Black Pepper Kerala - 250 (0.5),unmatched_product_name
+IN_25092020,Cardamom 500gms,AS GARIJA,8015901543,"Cardamom 500gms — 1 x Rs 1750
+Black Pepper 500gms — 1 x Rs 540
+Delivery Charge — 1 x Rs 40",Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5),unmatched_product_name
+IN_25092020,Delivery Charge,AS GARIJA,8015901543,"Cardamom 500gms — 1 x Rs 1750
+Black Pepper 500gms — 1 x Rs 540
+Delivery Charge — 1 x Rs 40",,unmatched_product_name
+IN_25092630,Black Pepper (Bulk) 1kg,Muhammed rafi,9747511353,"Black Pepper (Bulk) 1kg — 1 x Rs 950
+Ceylon Cinnamon C5 — 2 x Rs 320
+Cardamom 200 — 2 x Rs 799",Black Pepper Kerala - 100 (0.5); Black Pepper Kerala - 500 (0.5); Black Pepper Kerala - 250 (0.5),unmatched_product_name
+IN_25092989,Spices,Organic Paradise,9497248494,Spices — 1 x Rs 5000,,unmatched_product_name
+IN_25100396,Clove 100,Jayarajan,8547219129,Clove 100 — 1 x Rs 220,Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25100365,Clove 100,Dineshan K,9037518338,Clove 100 — 1 x Rs 220,Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25100628,Clove 100,Neethu Somarajan,9811778330,"black pepper 250 — 1 x Rs 300
+Clove 100 — 1 x Rs 200
+Cardamom 100gm — 1 x Rs 400
+Ceylon Cinnamon — 1 x Rs 320",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25100662,Turmeric 100gm,SANTHOSH K V,9447026057,"black pepper 500 — 2 x Rs 540
+Turmeric 100gm — 1 x Rs 165",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_25100765,Clove 100,Geetha Unni,9910896334,"Cardamom 200 — 2 x Rs 400
+Clove 100 — 2 x Rs 220
+black pepper 500 — 1 x Rs 540",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25100890,Clove 100,Vindhya preman,7012807334,"Ceylon Cinnamon — 1 x Rs 320
+Cardamom 50gms — 1 x Rs 200
+Clove 100 — 1 x Rs 220
+black pepper 500 — 1 x Rs 489",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101344,Clove 100,Susan varghese,8848131560,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101330,Turmeric 100gm,Thomas Mathew,9841055620,"Cardamom 100gm — 4 x Rs 400
+Cardamom 200 — 1 x Rs 799
+Black Pepper 100 — 1 x Rs 170
+Ceylon Cinnamon — 5 x Rs 300
+Turmeric 100gm — 5 x Rs 165
+Clove 100 — 5 x Rs 180
+black pepper 200 — 4 x Rs 250
+White Pepper 100 — 1 x Rs 150",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_25101330,Clove 100,Thomas Mathew,9841055620,"Cardamom 100gm — 4 x Rs 400
+Cardamom 200 — 1 x Rs 799
+Black Pepper 100 — 1 x Rs 170
+Ceylon Cinnamon — 5 x Rs 300
+Turmeric 100gm — 5 x Rs 165
+Clove 100 — 5 x Rs 180
+black pepper 200 — 4 x Rs 250
+White Pepper 100 — 1 x Rs 150",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101489,Cardamom 150,K K Manikandan,9961556486,"Cardamom 150 — 1 x Rs 500
+clove 150 — 1 x Rs 260
+Ceylon Cinnamon 150 — 1 x Rs 450",Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5),unmatched_product_name
+IN_25101489,clove 150,K K Manikandan,9961556486,"Cardamom 150 — 1 x Rs 500
+clove 150 — 1 x Rs 260
+Ceylon Cinnamon 150 — 1 x Rs 450",Clove 500 gram (0.5); Clove 50 gram (0.5); Clove 200 gram (0.5),unmatched_product_name
+IN_25101442,Clove 100,Abdul rehiman,9276100100,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 180
+Black Pepper 800 — 1 x Rs 760",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101490,Clove 100,Sabu,9048557547,"Cardamom 100gm — 1 x Rs 250
+Clove 100 — 1 x Rs 150
+Ceylon Cinnamon — 1 x Rs 299
+Black Pepper 100 — 2 x Rs 150",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101496,Idukki Tamarind 500 gm,Suja Anilkumar.,9399126212,"black pepper 500 — 1 x Rs 540
+Idukki Tamarind 500 gm — 2 x Rs 200
+Cardamom 100gm — 1 x Rs 410
+Ceylon Cinnamon — 1 x Rs 340
+Clove 100 — 1 x Rs 190",Clove 500 gram (0.3333); Black Pepper Kerala - 500 (0.25); Kerala Cardamom 8mm - 500 (0.25),unmatched_product_name
+IN_25101496,Clove 100,Suja Anilkumar.,9399126212,"black pepper 500 — 1 x Rs 540
+Idukki Tamarind 500 gm — 2 x Rs 200
+Cardamom 100gm — 1 x Rs 410
+Ceylon Cinnamon — 1 x Rs 340
+Clove 100 — 1 x Rs 190",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101455,Clove 100,M.K.K.Nair,9961508125,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 160",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101465,Clove 100,SURENDRAN NAIR.C,9497269672,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101597,Clove 100,Abdulkhader. N. U,9961705587,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 220",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101614,Clove 100,Lalitha Kurup(kumari),9526338110,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101782,Clove 100,Sabeed CTK,9207575374,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 200
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 250",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25101842,Clove 100,Shibu kv,9643867613,"Cardamom 100gm — 1 x Rs 359
+Clove 100 — 1 x Rs 200
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 280",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102110,Clove 100,Sophia shaji,9446450321,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102244,Clove 100,Fasalurehman,9895434436,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 150
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 249",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102231,Clove 100,Nisha.Rajesh,9544095658,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102311,Turmeric 100gm,K V CHERIYAN,9869344445,"Cardamom 100gm — 2 x Rs 420
+black pepper 200 — 2 x Rs 240
+Turmeric 100gm — 1 x Rs 165",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_25102378,Clove 100,Hamsakoya,8848817628,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 200
+Ceylon Cinnamon 200 — 1 x Rs 500",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102430,Turmeric 100gm,JosephThomas,9946538580,"Turmeric 100gm — 2 x Rs 200
+Cardamom 100gm — 1 x Rs 350
+Clove 100 — 1 x Rs 190
+black pepper 200 — 1 x Rs 200",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_25102430,Clove 100,JosephThomas,9946538580,"Turmeric 100gm — 2 x Rs 200
+Cardamom 100gm — 1 x Rs 350
+Clove 100 — 1 x Rs 190
+black pepper 200 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102421,Clove 100,Muhammed Sherief,9349144461,"Cardamom 100gm — 1 x Rs 399
+Clove 100 — 1 x Rs 240
+black pepper 200 — 1 x Rs 210",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102429,Clove 100,Sailaja Raju,7994936509,"Cardamom 100gm — 1 x Rs 350
+Clove 100 — 1 x Rs 200
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102585,Clove 100,Amrutha.,9645012527,"Cardamom 100gm — 1 x Rs 340
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 279",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102597,Clove 100,Abdul Fathah,8075066949,"black pepper 500 — 1 x Rs 540
+Ceylon Cinnamon — 1 x Rs 320
+Clove 100 — 1 x Rs 180
+Cardamom 200 — 1 x Rs 780",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102566,Clove 100,Suresh.,9497131521,"Cardamom 100gm — 1 x Rs 350
+Clove 100 — 1 x Rs 210",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102825,Clove 100,Zeetha Chandran,9902021750,"Cardamom 50gms — 1 x Rs 200
+Clove 100 — 1 x Rs 200
+black pepper 250 — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102891,Clove 100,Narayana kaimal,9288900744,"Cardamom 100gm — 1 x Rs 379
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102864,Clove 100,Muhammad Rafeeq,7736417908,"black pepper 200 — 1 x Rs 240
+Clove 100 — 2 x Rs 160
+Ceylon Cinnamon 200 — 1 x Rs 500
+Cardamom 300 — 1 x Rs 1100",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25102864,Cardamom 300,Muhammad Rafeeq,7736417908,"black pepper 200 — 1 x Rs 240
+Clove 100 — 2 x Rs 160
+Ceylon Cinnamon 200 — 1 x Rs 500
+Cardamom 300 — 1 x Rs 1100",Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5),unmatched_product_name
+IN_25102853,Clove 100,Hamza P,8921429869,"Clove 100 — 1 x Rs 200
+Ceylon Cinnamon 200 — 1 x Rs 540",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25103045,Clove 100,Sherly Ashok,9745962253,"Cardamom 100gm — 1 x Rs 320
+Clove 100 — 1 x Rs 199
+black pepper 200 — 1 x Rs 220
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110361,Clove 100,Abdussamad T,9995161936,"Cardamom 100gm — 1 x Rs 370
+Clove 100 — 1 x Rs 190",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110384,Clove 100,Jossy Lukose,9495236175,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 260
+Black Pepper 1kg — 1 x Rs 950",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110323,Cardamom 300,Ani Ittoop.p,9448040465,Cardamom 300 — 1 x Rs 1100,Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5),unmatched_product_name
+IN_25110494,Clove 100,Nandanan K G,9400316454,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 200
+black pepper 500 — 1 x Rs 500",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110481,Clove 1 kg,Shakir Husain,9460385441,"Black Pepper 1kg — 1 x Rs 950
+Clove 1 kg — 1 x Rs 1700",Clove 500 gram (0.5); Clove 50 gram (0.5); Clove 200 gram (0.5),unmatched_product_name
+IN_25110419,Clove 100,Omana Rajan,9495165264,"Cardamom 200 — 1 x Rs 799
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 320",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110684,Clove 100,Rasheedabeevi.H,8921626538,"Cardamom 100gm — 1 x Rs 369
+Clove 100 — 1 x Rs 190
+black pepper 200 — 1 x Rs 190
+Ceylon Cinnamon — 1 x Rs 250
+Black Pepper 300 — 1 x Rs 340",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110673,Clove 100,Manju R Nair,9847561147,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 270",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110687,Clove 100,Manoj. V,9847711579,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 270",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110792,Clove 100,Sandeep A,8848760232,"Cardamom 100gm — 1 x Rs 330
+Clove 100 — 1 x Rs 170",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110768,Clove 100,Sumesh,7666277692,"Cardamom 100gm — 1 x Rs 370
+Clove 100 — 1 x Rs 190",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25110896,White Pepper 500 gm,O R Rajan,8281436335,"black pepper 500 — 1 x Rs 510
+White Pepper 500 gm — 1 x Rs 875",Black Pepper Kerala - 500 (0.5); Clove 500 gram (0.3333); Black Pepper Kerala - 100 (0.25),unmatched_product_name
+IN_25110843,Idukki Tamarind 500 gm,V V Pradeep Kumar,9447576235,"Cardamom 100gm — 1 x Rs 300
+Idukki Tamarind 500 gm — 2 x Rs 200
+Black Pepper 1kg — 1 x Rs 950",Clove 500 gram (0.3333); Black Pepper Kerala - 500 (0.25); Kerala Cardamom 8mm - 500 (0.25),unmatched_product_name
+IN_25111069,Clove 100,Shizin Haseeb,9496929353,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 190
+black pepper 200 — 1 x Rs 220
+Ceylon Cinnamon — 1 x Rs 240",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25111041,Clove 100,Daisy Aniyan,9495292091,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 190
+black pepper 200 — 1 x Rs 190
+Ceylon Cinnamon — 1 x Rs 270",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25111269,Clove 100,Vimala babu,9495840557,"Clove 100 — 2 x Rs 170
+Ceylon Cinnamon 200 — 1 x Rs 560",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25111250,Clove 100,Treasa Bastin,9633757676,"Cardamom 100gm — 1 x Rs 339
+Clove 100 — 1 x Rs 190
+black pepper 200 — 1 x Rs 220
+Ceylon Cinnamon — 1 x Rs 250",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25111294,Turmeric 100gm,Sreedevi,7994011401,"Black Pepper 1kg — 1 x Rs 950
+Turmeric 100gm — 1 x Rs 160",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_25111420,Clove 100,M. S. Basheer,9447394414,"Cardamom 100gm — 1 x Rs 359
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 260
+black pepper 200 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25111711,Clove 100,Chandran ambady,7558803118,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 270
+black pepper 200 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25111715,Clove 100,Ceita jose,9645082254,"black pepper 500 — 1 x Rs 540
+Ceylon Cinnamon — 2 x Rs 340
+Clove 100 — 1 x Rs 220",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25111857,Javithri 50 gm,PRIYA K,8860821165,"Black Pepper 1kg — 1 x Rs 900
+Cardamom 500 — 1 x Rs 1700
+Clove 250gm — 1 x Rs 350
+Javithri 50 gm — 1 x Rs 150",Cinnamon 50 gram (0.3333); Cardamom 50 gram (0.3333); Clove 50 gram (0.3333),unmatched_product_name
+IN_25112084,Clove 100,M P. M NAIR,8976837194,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 190
+black pepper 250 — 1 x Rs 300",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25112494,Clove 100,"VM Joy,",9895982616,"Cardamom 100gm — 1 x Rs 399
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25112420,Clove 100,Oomman M Kurian,9947575016,"Cardamom 100gm — 1 x Rs 380
+Clove 100 — 1 x Rs 200
+black pepper 500 — 1 x Rs 520",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25112882,Clove 100,Mini nizam,9846062463,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 220
+black pepper 500 — 2 x Rs 540",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120319,Clove 100,"Antony John,",9947172953,"Cardamom 100gm — 1 x Rs 359
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 260
+black pepper 200 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120352,Clove 100,Prabha S,9526811014,"Cardamom 100gm — 1 x Rs 340
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120349,Clove 100,Varghese K V,8111807325,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 280",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120481,Clove 100,"Lysamma Oommen,",9793740201,"Cardamom 100gm — 1 x Rs 339
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 220
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120442,Clove 100,MoncyGeorge P,9447230816,"Ceylon Cinnamon 200 — 1 x Rs 520
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120424,Clove 100,Alex,7560927423,"Ceylon Cinnamon — 1 x Rs 320
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120441,Clove 100,"T. A. MOHAMED BASHEER,",9496347834,"Cardamom 100gm — 1 x Rs 340
+Clove 100 — 1 x Rs 160",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120411,Clove 100,"Baby Ranjith,",9447095597,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 260
+black pepper 200 — 1 x Rs 210",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120872,Turmeric 100gm,Abdul Akbar.,9446633245,"Cardamom 100gm — 1 x Rs 349
+black pepper 200 — 1 x Rs 190
+Ceylon Cinnamon — 1 x Rs 300
+Turmeric 100gm — 1 x Rs 160",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_25120894,Clove 100,Shiny Andrews,9633070648,"Cardamom 100gm — 1 x Rs 339
+Clove 100 — 1 x Rs 190
+black pepper 200 — 1 x Rs 190
+Ceylon Cinnamon — 1 x Rs 280",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120836,Clove 100,Babu MJ,9847507482,"Cardamom 200 — 1 x Rs 709
+Clove 100 — 2 x Rs 220
+black pepper 500 — 1 x Rs 540",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120826,Clove 100,"Mrs . Girija nair ,",8111973033,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 270",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120993,Clove 100,"Jessy assis,",8921080453,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 210
+Ceylon Cinnamon — 1 x Rs 260
+Black Pepper 1kg — 1 x Rs 940",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25120980,Clove 100,Muhammad Nazar KP.,9656633206,"Cardamom 200 — 1 x Rs 769
+Clove 100 — 2 x Rs 190
+black pepper 500 — 1 x Rs 500",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121172,Clove 100,Moidheen PP,9567474917,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 210
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121146,Clove 100,Ramla C,9061083890,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 199",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121321,Clove 100,Jessy Jose,9717566486,"Cardamom 100gm — 2 x Rs 420
+Clove 100 — 2 x Rs 199",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121481,Idukki Tamarind 500 gm,"Chandrika.R,",9847769602,"Idukki Tamarind 500 gm — 1 x Rs 200
+Turmeric 100gm — 1 x Rs 150
+black pepper 250 — 1 x Rs 250",Clove 500 gram (0.3333); Black Pepper Kerala - 500 (0.25); Kerala Cardamom 8mm - 500 (0.25),unmatched_product_name
+IN_25121481,Turmeric 100gm,"Chandrika.R,",9847769602,"Idukki Tamarind 500 gm — 1 x Rs 200
+Turmeric 100gm — 1 x Rs 150
+black pepper 250 — 1 x Rs 250",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_25121475,Clove 100,Sathya bhama K.G.,8301823188,"Ceylon Cinnamon 50 — 1 x Rs 140
+black pepper 250 — 1 x Rs 260
+Clove 100 — 1 x Rs 150
+Cardamom 50gms — 1 x Rs 150",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121547,Clove 100,Rajan C.K.,9496214838,"Cardamom 200 — 1 x Rs 690
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121577,Idukki Tamarind 500 gm,Divya Mohan,9633014688,"Idukki Tamarind 500 gm — 1 x Rs 180
+Turmeric 100gm — 1 x Rs 160
+Cardamom 50gms — 1 x Rs 180
+clove 50 — 1 x Rs 90
+Ceylon Cinnamon 50 — 1 x Rs 160
+black pepper 200 — 1 x Rs 230",Clove 500 gram (0.3333); Black Pepper Kerala - 500 (0.25); Kerala Cardamom 8mm - 500 (0.25),unmatched_product_name
+IN_25121577,Turmeric 100gm,Divya Mohan,9633014688,"Idukki Tamarind 500 gm — 1 x Rs 180
+Turmeric 100gm — 1 x Rs 160
+Cardamom 50gms — 1 x Rs 180
+clove 50 — 1 x Rs 90
+Ceylon Cinnamon 50 — 1 x Rs 160
+black pepper 200 — 1 x Rs 230",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_25121519,Clove 100,"V S Pillai,",9496206746,"Cardamom 200 — 1 x Rs 740
+Clove 100 — 2 x Rs 180
+black pepper 500 — 1 x Rs 500",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121637,Clove 100,"Smitha biju,",9560130946,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 280
+black pepper 200 — 1 x Rs 230",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121642,Clove 100,Betcy Eldhose,8802524196,"Cardamom 100gm — 1 x Rs 340
+Clove 100 — 2 x Rs 180
+Ceylon Cinnamon 200 — 1 x Rs 500
+black pepper 200 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121746,Idukki Tamarind 500 gm,Dr Alphin Philip,7907837061,Idukki Tamarind 500 gm — 2 x Rs 180,Clove 500 gram (0.3333); Black Pepper Kerala - 500 (0.25); Kerala Cardamom 8mm - 500 (0.25),unmatched_product_name
+IN_25121790,Clove 100,"Jaya Nair,",7678117758,"Cardamom 200 — 1 x Rs 780
+Clove 100 — 1 x Rs 220",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121866,Clove 100,Elizabeth Chacko,9446156155,"Cardamom 200 — 1 x Rs 789
+Clove 100 — 2 x Rs 180
+black pepper 500 — 1 x Rs 500",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25121823,Clove 100,"Mini Shaibi,",8589088181,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 200
+black pepper 250 — 1 x Rs 300",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25122294,Clove 100,"Raji Venu,",9895232214,"Cardamom 50gms — 1 x Rs 200
+Black Pepper 100 — 1 x Rs 180
+Clove 100 — 1 x Rs 220",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25122312,Spices,Gypsy house,9816379797,Spices — 1 x Rs 700,,unmatched_product_name
+IN_25123069,Clove 100,Annamma Teacher,6238764388,"Cardamom 100gm — 1 x Rs 370
+Clove 100 — 1 x Rs 190",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25123157,Clove 100,Mohana krishnan N,9744721942,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 160
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 290",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_25123129,Clove 100,Lt Col Meby Joseph,7702515900,"Ceylon Cinnamon — 1 x Rs 320
+Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 180
+black pepper 500 — 1 x Rs 540",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010237,Clove 100,Suresh PT,9810312003,"Cardamom 100gm — 1 x Rs 430
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010245,Clove 100,Sudjih P R,9895343720,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 170
+black pepper 500 — 1 x Rs 470",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010360,Clove 100,"Mrs . Girija nair ,",8111973033,"Cardamom 100gm — 1 x Rs 380
+Clove 100 — 1 x Rs 160
+black pepper 200 — 1 x Rs 190
+Ceylon Cinnamon — 1 x Rs 269",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010349,Clove 100,Jaffer Ali K P,9946198227,"Cardamom 100gm — 1 x Rs 359
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010337,Clove 100,Khader mk,7012131302,"black pepper 500 — 1 x Rs 460
+Cardamom 100gm — 1 x Rs 370
+Clove 100 — 1 x Rs 170",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010640,Clove 100,Sudhanshu .,9996177999,"Cardamom 200 — 1 x Rs 849
+Black Pepper 300 — 1 x Rs 449
+Clove 100 — 2 x Rs 180
+Ceylon Cinnamon — 1 x Rs 320
+White Pepper 100 — 1 x Rs 215",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010897,Clove 100,Amrutha Ajayan,8113981254,"Cardamom 100gm — 1 x Rs 380
+Clove 100 — 1 x Rs 160
+black pepper 200 — 1 x Rs 190
+Ceylon Cinnamon — 1 x Rs 269",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010960,Clove 100,Sasikumar k,9446749930,"Cardamom 100gm — 1 x Rs 339
+Clove 100 — 1 x Rs 150
+black pepper 200 — 1 x Rs 230
+Ceylon Cinnamon — 1 x Rs 280",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010965,Clove 100,Jincy Sanjay,9990150942,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 240
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010920,Clove 100,Pradeeh M,9645609820,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 320",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26010929,Clove 100,Sunil N C,9895015092,"Cardamom 100gm — 1 x Rs 359
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011028,Clove 100,"Rincy jose,,",9562855096,"Cardamom 200 — 1 x Rs 719
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011036,Clove 100,Anu Rajan,9946614327,"Cardamom 100gm — 1 x Rs 380
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011083,Clove 100,Balakrishnan OK,9495060544,"Cardamom 200 — 1 x Rs 789
+Clove 100 — 2 x Rs 180
+black pepper 500 — 1 x Rs 500",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011325,Clove 100,"Saifudheen,",9539181867,"Cardamom 100gm — 1 x Rs 370
+Clove 100 — 1 x Rs 190",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011330,Clove 100,"PARVATHI K,",9746785791,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 259",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011595,Clove 100,Thasni C K,9633904062,"Cardamom 100gm — 1 x Rs 359
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011517,Clove 100,Suma Philip,9742261700,"Cardamom 100gm — 1 x Rs 340
+Ceylon Cinnamon — 1 x Rs 260
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011950,Clove 100,Beena Sisupalan,8304023590,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 270",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26011978,Clove 100,Ibrahim K,8111916407,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 270",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012180,Clove 100,"Siddique,",9746421937,"black pepper 500 — 1 x Rs 540
+Cardamom 100gm — 1 x Rs 370
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012111,Clove 100,Jees,9447622120,"Cardamom 100gm — 1 x Rs 360
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012127,Clove 100,"Venugopal,",9605787000,"Cardamom 100gm — 1 x Rs 359
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 200
+Ceylon Cinnamon — 1 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012242,Clove 100,"Raju Thomas,",9495063069,"Clove 100 — 1 x Rs 180
+Ceylon Cinnamon 200 — 1 x Rs 560",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012319,Clove 1 kg,Saidu Muhammad,9867457955,"Cardamom 1 kg — 1 x Rs 3200
+Black Pepper 1kg — 1 x Rs 900
+Clove 1 kg — 1 x Rs 1600",Clove 500 gram (0.5); Clove 50 gram (0.5); Clove 200 gram (0.5),unmatched_product_name
+IN_26012394,Clove 100,Pradeep,9930202252,"black pepper 500 — 1 x Rs 540
+Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012364,Clove 100,"DR SANKAR KRISHNAMOORTHY,",9447280704,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 300",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012488,Cardamom 120,"Maya. R. V,",9746129060,Cardamom 120 — 1 x Rs 500,Kerala Cardamom 8mm - 100gm (0.5); Kerala Cardamom 8mm - 500 (0.5); Kerala Cardamom 8mm - 200 (0.5),unmatched_product_name
+IN_26012465,Clove 100,BINU B,9495888018,"black pepper 500 — 1 x Rs 540
+Cardamom 200 — 1 x Rs 709
+Clove 100 — 2 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012418,Clove 100,"Prema Mohan,",8825834065,"Ceylon Cinnamon 200 — 1 x Rs 540
+black pepper 250 — 1 x Rs 300
+Cardamom 100gm — 1 x Rs 380
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012415,Clove 100,Dr PP Chandrachoodan,9833050336,"Ceylon Cinnamon 200 — 1 x Rs 560
+black pepper 500 — 1 x Rs 540
+Cardamom 200 — 1 x Rs 770
+Clove 100 — 2 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012763,Clove 100,S S Sreekumar,9447719069,"Cardamom 100gm — 2 x Rs 359
+Clove 100 — 2 x Rs 180
+black pepper 200 — 2 x Rs 200
+Ceylon Cinnamon — 2 x Rs 260",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012787,Clove 100,Vasantha kumari,8076034505,"Ceylon Cinnamon — 1 x Rs 249
+Cardamom 100gm — 1 x Rs 350
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 220",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012879,Clove 100,Simon K.P,8086379004,"Ceylon Cinnamon 200 — 1 x Rs 560
+Clove 100 — 2 x Rs 200
+Cardamom 200 — 1 x Rs 700",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012823,Clove 100,Sabeena Riyas PV,9895661407,"Cardamom 200 — 1 x Rs 740
+Clove 100 — 2 x Rs 180
+Ceylon Cinnamon — 1 x Rs 300",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012859,Clove 100,Issudheen,9562520914,"Cardamom 100gm — 1 x Rs 280
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 300
+black pepper 200 — 1 x Rs 239",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012850,Clove 100,"Usha Radhakrishnan,",9847399530,"Ceylon Cinnamon 200 — 1 x Rs 540
+Clove 100 — 2 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012947,Clove 100,"Sulekha Ravi,",9495547916,"Cardamom 100gm — 1 x Rs 380
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012986,Clove 100,Anu mahesh,9940122919,"Cardamom 100gm — 1 x Rs 400
+Clove 100 — 1 x Rs 200",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26012913,Clove 100,"NK Sunny,",9605390420,"Ceylon Cinnamon 200 — 1 x Rs 540
+Clove 100 — 2 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26013116,Clove 100,Dhanya Lal,9947522831,"Cardamom 100gm — 1 x Rs 350
+Ceylon Cinnamon — 1 x Rs 249
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26020162,Clove 100,ARUN KUMAR K R,9496366064,"Cardamom 100gm — 2 x Rs 355
+Clove 100 — 2 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26020238,Clove 100,"K.Beena,",9100514047,"black pepper 250 — 1 x Rs 300
+Cardamom 100gm — 1 x Rs 399
+Clove 100 — 1 x Rs 190",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26020250,Turmeric 100gm,ISHAK. K,9567029338,Turmeric 100gm — 1 x Rs 200,Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_26020692,Clove 1 kg,K.S Srujan,7702147358,"Cardamom 1 kg — 4 x Rs 3450
+Clove 1 kg — 1 x Rs 1800
+Malabar Nutmeg Mace — 2 x Rs 2400",Clove 500 gram (0.5); Clove 50 gram (0.5); Clove 200 gram (0.5),unmatched_product_name
+IN_26020692,Malabar Nutmeg Mace,K.S Srujan,7702147358,"Cardamom 1 kg — 4 x Rs 3450
+Clove 1 kg — 1 x Rs 1800
+Malabar Nutmeg Mace — 2 x Rs 2400",,unmatched_product_name
+IN_26020941,Clove 100,Iqbal Ibrahim,9544144063,"Cardamom 100gm — 1 x Rs 340
+Clove 100 — 1 x Rs 160
+black pepper 200 — 1 x Rs 240
+Ceylon Cinnamon — 1 x Rs 259",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26020985,Clove 100,Sajeev kb,9388634719,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 160
+Ceylon Cinnamon — 1 x Rs 260
+black pepper 200 — 1 x Rs 230",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26020914,Clove 100,"Darshana,",9137335117,"Clove 100 — 1 x Rs 150
+Cardamom 200 — 1 x Rs 250
+Cardamom 100gm — 1 x Rs 100
+Turmeric 100gm — 1 x Rs 165
+coffe powder 200 — 1 x Rs 310",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26020914,Turmeric 100gm,"Darshana,",9137335117,"Clove 100 — 1 x Rs 150
+Cardamom 200 — 1 x Rs 250
+Cardamom 100gm — 1 x Rs 100
+Turmeric 100gm — 1 x Rs 165
+coffe powder 200 — 1 x Rs 310",Kerala Cardamom 8mm - 100gm (0.5),unmatched_product_name
+IN_26020914,coffe powder 200,"Darshana,",9137335117,"Clove 100 — 1 x Rs 150
+Cardamom 200 — 1 x Rs 250
+Cardamom 100gm — 1 x Rs 100
+Turmeric 100gm — 1 x Rs 165
+coffe powder 200 — 1 x Rs 310",Kerala Cardamom 8mm - 200 (0.3333); Ceylon True Cinnamon 200 (0.3333); Black pepper 200 gram (0.3333),unmatched_product_name
+IN_26020910,Clove 100,"N Sandhya Kanth,",9652501562,"Cardamom 100gm — 1 x Rs 349
+Clove 100 — 1 x Rs 180
+black pepper 200 — 1 x Rs 220
+Ceylon Cinnamon — 1 x Rs 250",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021046,Clove 100,Niyas. C,8289872298,"Cardamom 500 — 1 x Rs 1700
+Ceylon Cinnamon 200 — 1 x Rs 500
+Clove 100 — 2 x Rs 160",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021146,Clove 100,"Parivallal Karuppannan,",9442231696,"Cardamom 200 — 1 x Rs 780
+Ceylon Cinnamon — 1 x Rs 320
+black pepper 200 — 1 x Rs 220
+Clove 100 — 1 x Rs 210",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021294,Clove 100,P F Joseph,8943587149,"Cardamom 200 — 1 x Rs 750
+Clove 100 — 2 x Rs 170
+black pepper 500 — 1 x Rs 540
+Ceylon Cinnamon 200 — 1 x Rs 550",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021261,Clove 100,"Thajudeen.A,",8848564558,"Cardamom 200 — 1 x Rs 749
+Clove 100 — 2 x Rs 180
+black pepper 500 — 1 x Rs 540",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021247,Clove 100,Reeja,9497415991,"Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 320",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021279,Clove 100,"Fathima Priyadarsini K H,",9745585523,"Cardamom 100gm — 1 x Rs 350
+Clove 100 — 1 x Rs 180
+Ceylon Cinnamon — 1 x Rs 300
+Ceylon Cinnamon 200 — 1 x Rs 520",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021380,Clove 100,Moideenkutty. P,9447979296,"Cardamom 200 — 1 x Rs 770
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021498,Clove 100,"Mathews Abraham,",9845186594,"Cardamom 100gm — 1 x Rs 369
+Clove 100 — 1 x Rs 180
+black pepper 250 — 1 x Rs 300",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name
+IN_26021448,Idukki Tamarind 500 gm,Bindhu thahir,9895807839,"black pepper 500 — 1 x Rs 540
+Idukki Tamarind 500 gm — 2 x Rs 180",Clove 500 gram (0.3333); Black Pepper Kerala - 500 (0.25); Kerala Cardamom 8mm - 500 (0.25),unmatched_product_name
+IN_26021471,Clove 100,Subaida B A,9446044610,"Cardamom 100gm — 1 x Rs 380
+Clove 100 — 1 x Rs 180",Black Pepper Kerala - 100 (0.5); Ceylon True Cinnamon - 100 (0.5); Cylon Cinnamon 100 gram (0.5),unmatched_product_name

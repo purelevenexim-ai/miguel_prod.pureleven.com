@@ -1,0 +1,3544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2">
+<title>Customers — Miguel CRM</title>
+<link rel="stylesheet" href="/ds.css?v=20260228">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<link rel="stylesheet" href="/styles/mobile.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<style>
+/* ══════════════════════════════════════════════════════════
+   CUSTOMERS PAGE — REDESIGN 2026
+   Cleaner, more visual, faster to scan
+══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
+body { background: var(--bg-page); font-size: 14px; margin: 0; }
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--surf); border-bottom: 1px solid var(--bdr);
+  padding: 0 20px; height: 56px;
+  display: flex; align-items: center; gap: 14px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.topbar-brand { display: flex; align-items: center; gap: 10px; }
+.topbar-icon  { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg,#1a73e8,#4285f4); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; flex-shrink: 0; }
+.topbar-title { font-size: 16px; font-weight: 700; color: var(--g-900); font-family: var(--font); line-height: 1.2; }
+.topbar-sub   { font-size: 12px; color: var(--g-600); font-family: var(--font); }
+.tenant-pill  { background: linear-gradient(135deg,#1a73e8,#4285f4); color: #fff; border-radius: var(--r-pill); padding: 3px 12px; font-size: 11px; font-weight: 700; letter-spacing: .06em; font-family: var(--font); }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  padding: 10px 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--surf); border-bottom: 1px solid var(--bdr);
+}
+.filter-sep { width: 1px; height: 24px; background: var(--bdr); margin: 0 2px; }
+
+/* ── BULK BAR ── */
+.bulk-bar {
+  display:none; padding: 0 20px; height: 48px;
+  background: linear-gradient(90deg,#e8f0fe,#f0f4ff);
+  border-bottom: 1px solid #c5d8fd;
+  align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.bulk-bar.visible { display: flex; }
+.bulk-count { font-size: 13px; font-weight: 700; color: var(--g-blue); font-family: var(--font); margin-right: 4px; }
+.btn-bulk-green  { padding: 5px 14px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; cursor: pointer; background: var(--g-green-lt); color: var(--g-green); border: 1px solid #86efac; font-family: var(--font); transition: background .12s; }
+.btn-bulk-green:hover { background: #bbf7d0; }
+.btn-bulk-cancel { padding: 5px 14px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; cursor: pointer; background: transparent; color: var(--g-600); border: 1px solid var(--bdr); font-family: var(--font); }
+.bulk-bar button { font-family: var(--font); transition: all .12s; }
+.bulk-bar button:hover { filter: brightness(0.95); }
+
+/* ── CONTENT ── */
+.content { padding: 16px 20px; }
+
+/* ── STAT CARDS ── */
+.stat-strip { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-card {
+  background: var(--surf); border-radius: var(--r-md); padding: 16px 18px;
+  display: flex; align-items: flex-start; gap: 14px;
+  border: 1px solid var(--bdr); position: relative; overflow: hidden;
+  transition: box-shadow .15s, transform .15s;
+}
+.stat-card:hover { box-shadow: var(--md-sys-elevation-2); transform: translateY(-1px); }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.stat-card.blue::before   { background: linear-gradient(90deg,#1a73e8,#4285f4); }
+.stat-card.green::before  { background: linear-gradient(90deg,#188038,#34a853); }
+.stat-card.purple::before { background: linear-gradient(90deg,#7627bb,#9c27b0); }
+.stat-card.amber::before  { background: linear-gradient(90deg,#b06000,#f9ab00); }
+.stat-icon {
+  width: 40px; height: 40px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.stat-card.blue   .stat-icon { background: #e8f0fe; }
+.stat-card.green  .stat-icon { background: #e6f4ea; }
+.stat-card.purple .stat-icon { background: #f3e8fd; }
+.stat-card.amber  .stat-icon { background: #fef3e2; }
+.stat-vals { flex: 1; min-width: 0; }
+.stat-val { font-size: 26px; font-weight: 800; color: var(--g-900); line-height: 1; font-family: var(--font); }
+.stat-lbl { font-size: 11px; color: var(--g-600); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-top: 4px; font-family: var(--font); }
+
+/* ── PANEL ── */
+.panel { background: var(--surf); border: 1px solid var(--bdr); border-radius: var(--r-md); overflow: hidden; }
+.panel-header { padding: 14px 18px; border-bottom: 1px solid var(--bdr); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.panel-header h3 { font-size: 14px; font-weight: 700; color: var(--g-900); font-family: var(--font); margin: 0; }
+.panel-meta { font-size: 12px; color: var(--g-600); font-family: var(--font); }
+
+/* ── TABLE ── */
+.tbl-wrap { overflow-x: auto; }
+th.chk { width: 36px; text-align: center; }
+/* Highlight selected row */
+tr.selected td { background: #eef3fd !important; }
+/* Row hover */
+.gs-table tbody tr:hover td { background: var(--g-50); cursor: pointer; }
+/* Customer name cell avatar */
+.cust-cell { display: flex; align-items: center; gap: 10px; }
+.cust-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0; color: #fff;
+}
+.cust-name  { font-size: 13px; font-weight: 600; color: var(--g-900); font-family: var(--font); line-height: 1.2; }
+.cust-code  { font-size: 10px; color: var(--g-500); font-family: var(--font-mono); letter-spacing: .02em; }
+/* Contact cell */
+.contact-primary   { font-size: 13px; font-weight: 500; color: var(--g-900); font-family: var(--font); }
+.contact-secondary { font-size: 11px; color: var(--g-500); font-family: var(--font); margin-top: 1px; }
+/* Address cell */
+.addr-line  { font-size: 12px; color: var(--g-700); max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.addr-state { font-size: 11px; color: var(--g-500); margin-top: 1px; }
+/* Amount cell */
+.amt-primary   { font-size: 13px; font-weight: 700; color: var(--g-900); font-family: var(--font); }
+.amt-secondary { font-size: 10px; color: var(--g-500); font-family: var(--font); margin-top: 1px; }
+/* Engagement mini */
+.eng-mini { font-size: 11px; line-height: 1.9; color: var(--g-600); font-family: var(--font); white-space: nowrap; }
+
+/* ── TIER / SOURCE BADGES ── */
+.tier { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700; border: 1px solid transparent; font-family: var(--font); white-space: nowrap; letter-spacing: .02em; }
+.tier-gold    { background: #fef3c7; color: #92400e; border-color: #fbbf24; }
+.tier-diamond { background: #ede9fe; color: #5b21b6; border-color: #c4b5fd; }
+.tier-brown   { background: #fff7ed; color: #7c2d12; border-color: #fdba74; }
+.tier-green2  { background: #dcfce7; color: #15803d; border-color: #86efac; }
+.tier-blue2   { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+
+.src-manual   { background: var(--g-100);   color: var(--g-700); }
+.src-whatsapp { background: #dcfce7;        color: #15803d; }
+.src-website  { background: #dbeafe;        color: #1d4ed8; }
+.src-meta     { background: #f3e8fd;        color: #7627bb; }
+
+/* ── ROW ACTIONS ── */
+.actions-cell { display: flex; gap: 5px; flex-wrap: nowrap; }
+.btn-xs { padding: 4px 9px; border-radius: var(--r-sm); font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid transparent; white-space: nowrap; font-family: var(--font); transition: all .12s; }
+.bx-edit    { background: #e8f0fe; color: #1a73e8; border-color: #c5d8fd; }
+.bx-edit:hover { background: #c5d8fd; }
+.bx-label   { background: #dcfce7; color: #15803d; border-color: #86efac; }
+.bx-label:hover { background: #bbf7d0; }
+.bx-invoice { background: #f3e8fd; color: #7627bb; border-color: #d8b4fe; }
+.bx-invoice:hover { background: #e9d5ff; }
+.bx-toggle  { background: #fef3e2; color: #b06000; border-color: #fde68a; }
+.bx-toggle:hover { background: #fde68a; }
+.bx-delete  { background: #fee2e2; color: #c5221f; border-color: #fca5a5; }
+.bx-delete:hover { background: #fca5a5; }
+
+.empty   { padding: 56px 24px; text-align: center; color: var(--g-600); font-size: 14px; font-family: var(--font); }
+.empty-icon { font-size: 40px; margin-bottom: 12px; }
+.loading { padding: 40px; text-align: center; color: var(--g-600); font-size: 13px; font-family: var(--font); }
+
+/* ─────────────────────────────────────────────────────────
+   DETAIL VIEW (full-screen overlay)
+───────────────────────────────────────────────────────── */
+#detailView {
+  position: fixed; inset: 0; background: var(--bg-page);
+  overflow-y: auto; z-index: 150; display: none;
+}
+#detailView[style*="display: block"],
+#detailView[style*="display:block"] { display: block !important; }
+
+/* Sticky detail topbar */
+.detail-topbar {
+  background: var(--surf); border-bottom: 1px solid var(--bdr);
+  padding: 0 20px; height: 56px;
+  display: flex; align-items: center; gap: 12px;
+  position: sticky; top: 0; z-index: 160;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07);
+}
+.detail-topbar h2 { font-size: 17px; font-weight: 700; color: var(--g-900); font-family: var(--font); }
+.detail-topbar-actions { display: flex; gap: 8px; align-items: center; }
+.detail-action-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--r-sm); font-size: 13px; font-weight: 600;
+  cursor: pointer; border: 1px solid transparent; font-family: var(--font); white-space: nowrap;
+  transition: all .12s;
+}
+.detail-action-btn.order   { background: #e8f0fe; color: #1a73e8; border-color: #c5d8fd; }
+.detail-action-btn.order:hover   { background: #c5d8fd; }
+.detail-action-btn.note    { background: #fffde7; color: #7c5f00; border-color: #fde68a; }
+.detail-action-btn.note:hover    { background: #fde68a; }
+.detail-action-btn.wa      { background: #dcf8c6; color: #166534; border-color: #86efac; }
+.detail-action-btn.wa:hover      { background: #bbf7d0; }
+.detail-action-btn.edit    { background: var(--g-100); color: var(--g-800); border-color: var(--bdr); }
+.detail-action-btn.edit:hover    { background: var(--bdr); }
+
+/* Hero banner inside detail */
+.detail-hero {
+  background: linear-gradient(135deg, #1a73e8 0%, #4285f4 60%, #174ea6 100%);
+  padding: 28px 32px 24px;
+  display: flex; align-items: flex-start; gap: 20px;
+  flex-wrap: wrap;
+}
+.hero-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(255,255,255,.25); border: 3px solid rgba(255,255,255,.6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 800; color: #fff; flex-shrink: 0;
+  text-transform: uppercase;
+}
+.hero-info { flex: 1; min-width: 0; }
+.hero-name  { font-size: 24px; font-weight: 800; color: #fff; font-family: var(--font); line-height: 1.2; }
+.hero-code  { font-size: 12px; color: rgba(255,255,255,.75); font-family: var(--font-mono); margin-top: 3px; }
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.hero-badge {
+  background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.35);
+  border-radius: var(--r-pill); padding: 4px 12px; font-size: 12px; font-weight: 600;
+  font-family: var(--font); backdrop-filter: blur(4px);
+}
+.hero-metrics { display: flex; gap: 0; margin-left: auto; flex-shrink: 0; align-self: flex-end; }
+.hero-metric {
+  text-align: center; padding: 0 20px; border-right: 1px solid rgba(255,255,255,.2);
+}
+.hero-metric:last-child { border-right: none; padding-right: 0; }
+.hm-val { font-size: 22px; font-weight: 800; color: #fff; font-family: var(--font); }
+.hm-lbl { font-size: 11px; color: rgba(255,255,255,.75); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; font-family: var(--font); }
+
+/* Engagement cards row */
+.eng-strip { display: grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr)); gap: 10px; padding: 16px 24px; border-bottom: 1px solid var(--bdr); background: var(--surf); }
+.eng-card  {
+  background: var(--g-50); border: 1px solid var(--bdr); border-radius: var(--r-sm);
+  padding: 12px 14px; text-align: center;
+  transition: box-shadow .12s;
+}
+.eng-card:hover { box-shadow: var(--md-sys-elevation-1); }
+.eng-card .ev { font-size: 18px; font-weight: 800; color: var(--g-900); font-family: var(--font); line-height: 1; }
+.eng-card .el { font-size: 10px; font-weight: 600; color: var(--g-500); text-transform: uppercase; letter-spacing: .05em; font-family: var(--font); margin-top: 5px; }
+
+/* Detail body */
+.detail-body { max-width: 1100px; margin: 0 auto; padding: 0 0 40px; }
+
+/* Info grid */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 12px; padding: 20px 24px; }
+.info-card {
+  background: var(--surf); border: 1px solid var(--bdr); border-radius: var(--r-md); padding: 14px 16px;
+  transition: box-shadow .12s;
+}
+.info-card:hover { box-shadow: var(--md-sys-elevation-1); }
+.info-card .lbl {
+  font-size: 10px; font-weight: 700; color: var(--g-500); text-transform: uppercase;
+  letter-spacing: .07em; margin-bottom: 6px; font-family: var(--font);
+  display: flex; align-items: center; gap: 4px;
+}
+.info-card .val { font-size: 14px; font-weight: 600; color: var(--g-900); word-break: break-word; font-family: var(--font); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(32,33,36,.45);
+  display:none; align-items: flex-start; justify-content: center;
+  z-index: 200; padding: 40px 16px; overflow-y: auto;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surf); border-radius: var(--r-lg); padding: 28px;
+  width: 100%; max-width: 560px; align-self: flex-start;
+  box-shadow: var(--md-sys-elevation-4);
+}
+.modal h3 { font-size: 17px; font-weight: 700; margin-bottom: 20px; color: var(--g-900); font-family: var(--font); }
+.form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.section-lbl {
+  font-size: 11px; font-weight: 700; color: var(--g-600); text-transform: uppercase;
+  letter-spacing: .06em; padding: 10px 0 8px; border-bottom: 1px solid var(--bdr); margin-bottom: 14px; font-family: var(--font);
+}
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--bdr); }
+
+/* ── WHATSAPP PANEL ── */
+#waPanel {
+  position: fixed; inset: 0 0 0 auto;
+  width: 420px; max-width: 100vw;
+  background: #fff; border-left: 1px solid var(--bdr);
+  display:none; flex-direction: column;
+  z-index: 170; box-shadow: -4px 0 20px rgba(0,0,0,.1);
+}
+#waPanel.open { display: flex; }
+.wa-header {
+  background: linear-gradient(135deg,#075e54,#128c7e); color: #fff;
+  padding: 14px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.wa-avatar { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; border: 2px solid rgba(255,255,255,.4); }
+.wa-name   { font-weight: 700; font-size: 15px; font-family: var(--font); }
+.wa-phone  { font-size: 12px; opacity: .85; font-family: var(--font); }
+.wa-header-actions { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.wa-close-btn { background: rgba(255,255,255,.15); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: background .12s; }
+.wa-close-btn:hover { background: rgba(255,255,255,.3); }
+.wa-open-btn { background: #25d366; border: none; color: #fff; padding: 6px 14px; border-radius: var(--r-pill); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; text-decoration: none; display: flex; align-items: center; gap: 5px; font-family: var(--font); }
+.wa-open-btn:hover { background: #20b958; }
+.wa-messages {
+  flex: 1; overflow-y: auto; padding: 12px 14px;
+  background: #ece5dd url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23b2c9be' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  display: flex; flex-direction: column; gap: 8px;
+}
+.wa-bubble { max-width: 85%; padding: 8px 12px 6px; border-radius: 10px; position: relative; word-break: break-word; box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+.wa-bubble.out { background: #dcf8c6; align-self: flex-end; border-bottom-right-radius: 2px; }
+.wb-text { font-size: 13px; line-height: 1.5; white-space: pre-wrap; color: #111; font-family: var(--font); }
+.wb-meta { font-size: 10px; color: #999; text-align: right; margin-top: 3px; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.wa-empty { text-align: center; color: #888; font-size: 13px; padding: 40px 0; font-family: var(--font); }
+.wa-compose { border-top: 1px solid #ddd; padding: 12px; background: #f0f0f0; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+.wa-compose select, .wa-compose textarea {
+  width: 100%; padding: 8px 12px; border: 1.5px solid #ddd;
+  border-radius: var(--r-sm); font-size: 13px; font-family: var(--font); background: #fff;
+}
+.wa-compose select:focus, .wa-compose textarea:focus { outline: none; border-color: #075e54; }
+.wa-compose textarea { resize: none; min-height: 90px; }
+.wa-compose-row { display: flex; gap: 8px; align-items: center; }
+.wa-compose-row select { flex: 1; }
+.wa-send-btn { background: #075e54; color: #fff; border: none; padding: 10px 18px; border-radius: var(--r-sm); font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px; font-family: var(--font); }
+.wa-send-btn:hover { background: #054c44; }
+.wa-send-btn:disabled { background: #aaa; cursor: not-allowed; }
+.wa-preview-bar { background: #e7fbd4; border: 1px solid #b5edaa; border-radius: var(--r-xs); padding: 7px 12px; font-size: 12px; color: #1a5c0f; display:none; font-family: var(--font); }
+.wa-preview-bar.show { display: block; }
+
+/* ── NEW ORDER MODAL ── */
+.modal-wide { max-width: 860px !important; padding: 0 !important; }
+.no-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--bdr); flex-shrink:0; }
+.no-header h3 { font-size:16px; font-weight:700; color:var(--g-900); margin:0; font-family:var(--font); }
+.no-body   { display:flex; gap:0; max-height:calc(100vh - 160px); overflow:hidden; }
+.no-left   { flex:1; overflow-y:auto; padding:14px 16px; border-right:1px solid var(--bdr); min-width:0; }
+.no-right  { width:260px; flex-shrink:0; overflow-y:auto; padding:14px 16px; }
+.no-footer { padding:12px 20px; border-top:1px solid var(--bdr); display:flex; justify-content:flex-end; gap:8px; background:var(--surf); border-radius:0 0 var(--r-lg) var(--r-lg); }
+.no-section { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--g-600); margin:16px 0 8px; padding-top:16px; border-top:1px solid var(--bdr); }
+.no-section:first-child { margin-top:0; padding-top:0; border-top:none; }
+.no-parse-box { background:var(--g-50); border:1px solid var(--bdr); border-radius:var(--r-sm); padding:12px 14px; margin-bottom:10px; }
+.no-parse-confidence { display:inline-block; padding:3px 9px; border-radius:var(--r-xs); font-size:11px; font-weight:600; margin-bottom:5px; }
+.no-conf-high   { background:var(--g-green-lt); color:var(--g-green); }
+.no-conf-medium { background:var(--g-amber-lt); color:var(--g-amber); }
+.no-conf-low    { background:var(--g-red-lt);   color:var(--g-red); }
+.no-phone-match { padding:9px 12px; border-radius:var(--r-xs); margin-top:5px; font-size:13px; display:none; }
+.no-phone-match.customer { background:var(--g-blue-lt); border:1px solid #93c5fd; color:var(--g-blue-txt); }
+.no-phone-match.lead     { background:var(--g-amber-lt); border:1px solid #fcd34d; color:var(--g-amber); }
+.no-phone-match.new-cust { background:var(--g-green-lt); border:1px solid #86efac; color:var(--g-green); }
+.no-items-area { background:var(--g-50); border-radius:var(--r-sm); padding:10px; margin-bottom:8px; border:1px solid var(--bdr); }
+.no-item-row { background:var(--surf); border:1px solid var(--bdr); border-radius:var(--r-sm); margin-bottom:10px; overflow:visible; }
+.no-item-row:last-child { margin-bottom:0; }
+.no-item-search { position:relative; border-bottom:1px solid var(--bdr); display:flex; align-items:center; }
+.no-item-search input[type="text"] { flex:1; height:38px; padding:0 12px; font-size:13px; border:none; outline:none; font-family:var(--font); background:transparent; color:var(--g-900); min-width:0; }
+.no-item-search input[type="text"]:focus { background:var(--g-blue-lt); }
+.no-unit-badge { font-size:11px; font-weight:600; color:var(--g-600); background:var(--g-100); border-radius:4px; padding:3px 8px; margin-right:10px; white-space:nowrap; display:none; }
+.no-item-controls { display:flex; align-items:stretch; background:var(--g-50); border-radius:0 0 var(--r-sm) var(--r-sm); }
+.no-ctrl-cell { display:flex; flex-direction:column; border-right:1px solid var(--bdr); flex:1; }
+.no-ctrl-cell:last-child { border-right:none; }
+.no-ctrl-label { font-size:10px; color:var(--g-500); padding:4px 10px 0; text-transform:uppercase; letter-spacing:.04em; line-height:1; font-weight:600; }
+.no-ctrl-input { border:none; background:transparent; height:32px; padding:0 10px; font-size:13px; font-family:var(--font); color:var(--g-900); text-align:center; outline:none; display:block; }
+.no-ctrl-input:focus { background:var(--g-blue-lt); }
+.no-item-total { flex:1; display:flex; align-items:center; justify-content:flex-end; padding:0 12px; font-size:13px; font-weight:700; color:var(--g-900); }
+.no-rm-item { border:none; border-left:1px solid var(--bdr); background:none; color:var(--g-500); font-size:18px; cursor:pointer; padding:0 10px; display:flex; align-items:center; justify-content:center; transition:all var(--t); border-radius:0 0 var(--r-sm) 0; }
+.no-rm-item:hover { background:#fff0f0; color:var(--g-red); }
+.no-add-item-btn { width:100%; padding:8px; border:1.5px dashed var(--bdr); border-radius:var(--r-xs); background:none; font-size:12px; font-family:var(--font); color:var(--g-700); cursor:pointer; transition:all var(--t); }
+.no-add-item-btn:hover { border-color:var(--g-blue); color:var(--g-blue); }
+.no-sugg-dropdown { position:absolute; top:calc(100% + 2px); left:0; right:0; z-index:600; background:var(--surf); border:1px solid var(--bdr); border-radius:var(--r-sm); box-shadow:var(--md-sys-elevation-2); max-height:200px; overflow-y:auto; display:none; }
+.no-sugg-item { padding:8px 10px; cursor:pointer; border-bottom:1px solid var(--g-100); font-size:12px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.no-sugg-item:last-child { border-bottom:none; }
+.no-sugg-item:hover { background:var(--g-blue-lt); border-left:3px solid var(--g-blue); padding-left:7px; }
+.no-sugg-price { font-weight:700; color:var(--g-900); white-space:nowrap; background:var(--g-100); padding:2px 6px; border-radius:4px; }
+.no-totals-box { background:var(--g-50); border:1px solid var(--bdr); border-radius:var(--r-sm); padding:14px 16px; font-size:13px; margin-bottom:10px; }
+.no-total-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:8px; }
+.no-total-row.grand { font-size:16px; font-weight:700; margin-top:10px; padding-top:10px; border-top:1px solid var(--bdr); margin-bottom:0; }
+.no-totals-box input[type="number"] { width:68px; padding:4px 8px; border-radius:var(--r-xs); border:1px solid var(--bdr); background:var(--surf); font-size:13px; text-align:right; font-family:var(--font); }
+.no-totals-box input[type="number"]:focus { outline:none; border-color:var(--md-sys-color-primary); }
+.no-pay-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:10px; }
+.no-pay-btn { padding:8px 6px; text-align:center; border:1.5px solid var(--bdr); border-radius:var(--r-sm); font-size:12px; font-weight:500; font-family:var(--font); cursor:pointer; background:var(--surf); color:var(--g-700); transition:all .12s; }
+.no-pay-btn.active { border-color:var(--g-blue); background:var(--g-blue-lt); color:var(--g-blue-txt); font-weight:600; }
+/* Partial COD advance panel */
+.no-advance-panel { background:#fff8e1; border:1.5px solid #f59f00; border-radius:var(--r-xs); padding:9px 12px; margin-bottom:8px; }
+.no-advance-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:12px; color:var(--g-700); font-family:var(--font); }
+.no-advance-row label { font-weight:600; white-space:nowrap; }
+.no-adv-wrap { display:flex; align-items:center; gap:2px; }
+.no-adv-wrap span { font-size:13px; font-weight:600; color:var(--g-900); }
+.no-adv-wrap input[type=number] { width:88px; padding:4px 6px; border:1.5px solid var(--bdr); border-radius:var(--r-xs); font-size:13px; font-weight:600; font-family:var(--font); background:var(--surf); color:var(--g-900); text-align:right; }
+.no-adv-wrap input[type=number]:focus { outline:none; border-color:var(--g-blue); }
+.no-cod-badge { margin-left:auto; font-size:11.5px; color:var(--g-600); white-space:nowrap; }
+.no-cod-badge strong { color:var(--g-900); font-weight:700; }
+
+/* ── INLINE EDIT FIELD ── */
+.inf { display: flex; align-items: center; gap: 8px; }
+.inf .val { flex: 1; }
+.inf-inp { flex: 1; padding: 5px 8px; border: 1.5px solid var(--md-sys-color-primary); border-radius: var(--r-xs); font-size: 13px; font-family: var(--font); background: var(--surf); }
+.inf-inp:focus { outline: none; }
+.inf-btn { padding: 4px 10px; border-radius: var(--r-xs); font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid transparent; white-space: nowrap; font-family: var(--font); }
+.inf-save { background: var(--g-green-lt); color: var(--g-green); border-color: #86efac; }
+.inf-cancel { background: var(--g-100); color: var(--g-600); border-color: var(--bdr); }
+.inf-edit { background: none; border: none; color: var(--md-sys-color-primary); font-size: 11px; cursor: pointer; padding: 3px 6px; opacity: 0; transition: opacity .15s; font-family: var(--font); }
+.info-card:hover .inf-edit { opacity: 1; }
+
+/* ── NOTES ── */
+.note-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.note-item {
+  background: #fffde7; border: 1px solid #fde68a; border-radius: var(--r-md); padding: 14px 16px;
+  position: relative;
+}
+.note-item .nb { font-size: 13px; color: var(--g-900); white-space: pre-wrap; font-family: var(--font); line-height: 1.6; }
+.note-item .nm { font-size: 11px; color: var(--g-600); margin-top: 7px; font-family: var(--font); display: flex; align-items: center; gap: 4px; }
+.note-add-row { display: flex; gap: 8px; align-items: flex-end; }
+.note-add-row textarea { flex: 1; padding: 10px 12px; border: 1.5px solid var(--bdr); border-radius: var(--r-md); font-size: 13px; font-family: var(--font); resize: none; min-height: 70px; }
+.note-add-row textarea:focus { outline: none; border-color: var(--md-sys-color-primary); box-shadow: 0 0 0 3px #e8f0fe; }
+
+/* ── DETAIL TABS ── */
+.dtab-bar { display: flex; gap: 2px; border-bottom: 2px solid var(--bdr); padding: 0 24px; background: var(--surf); }
+.dtab { padding: 12px 18px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: none; color: var(--g-600); border-bottom: 2px solid transparent; margin-bottom: -2px; font-family: var(--font); transition: color .15s; }
+.dtab:hover { color: var(--g-900); }
+.dtab.active { color: var(--md-sys-color-primary); border-bottom-color: var(--md-sys-color-primary); }
+.dtab-panel { display:none; }
+.dtab-panel.active { display: block !important; }
+#dtab-info   { padding: 0; }
+#dtab-orders { padding: 16px 24px; }
+#dtab-notes  { padding: 20px 24px; }
+
+/* ── WA SHARE QUICK BUTTONS ── */
+.wa-share-bar { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 12px; background: #f0fff4; border-bottom: 1px solid #d4edda; }
+.wa-share-btn { background: #dcfce7; color: #15803d; border: 1px solid #86efac; border-radius: var(--r-pill); padding: 5px 12px; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: var(--font); transition: background .12s; }
+.wa-share-btn:hover { background: #bbf7d0; }
+
+/* ── PAGINATION ── */
+.pager { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 16px 0; }
+.pager-info { padding: 7px 14px; font-size: 13px; color: var(--g-600); font-family: var(--font); }
+
+/* ── MOBILE OPTIMIZATIONS ── */
+/* ── Mobile compact ≤599px ── */
+@media (max-width: 599px) {
+
+  /* ── Mobile Redesign Injections ── */
+
+  .page-content {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .toolbar {
+    display: flex !important;
+    gap: 8px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .toolbar > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+  .toolbar .search-input {
+    width: 100% !important;
+  }
+  
+      /* Tables to Cards */
+  .table-wrap .data-table, .table-wrap .data-table tbody, .table-wrap .data-table tr, .table-wrap .data-table td {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: min-content !important;
+    box-sizing: border-box !important;
+  }
+  .table-wrap {
+    overflow-x: hidden !important;
+    padding: 4px 8px !important;
+  }
+  .data-table {
+    min-width: 0 !important;
+    background: transparent !important;
+  }
+  .table-wrap .data-table thead {
+    display:none;
+  }
+  .table-wrap .data-table tr {
+    margin-bottom: 16px !important;
+    border: 1px solid var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    border-radius: var(--r-xl, 16px) !important;
+    background: var(--md-sys-color-surface, #ffffff) !important;
+    padding: 16px 18px !important;
+    position: relative !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04) !important;
+    height: auto !important;
+  }
+  .table-wrap .data-table tr.row-active, .table-wrap .data-table tr.selected {
+    box-shadow: 0 0 0 2px var(--md-sys-color-primary, #1a73e8), 0 4px 12px rgba(0,0,0,0.06) !important;
+  }
+  .table-wrap .data-table td {
+    border: none !important;
+    padding: 10px 0 !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    border-bottom: 1px dashed var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    height: auto !important;
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+  .table-wrap .data-table td::before {
+    content: attr(data-label);
+    font-weight: 700 !important;
+    font-size: 10px !important;
+    letter-spacing: 0.6px !important;
+    color: var(--md-sys-color-outline, #5f6368) !important;
+    text-transform: uppercase !important;
+    display: block !important;
+    margin-bottom: 4px !important;
+    line-height: 1.2 !important;
+  }
+  .table-wrap .data-table td:empty {
+    display:none;
+  }
+  .table-wrap .data-table td:first-child {
+    font-size: 14px !important;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 14px !important;
+    padding-top: 0 !important;
+    display: flex !important;
+  }
+  .table-wrap .data-table td:first-child::before { display:none; }
+  .table-wrap .data-table td:last-child {
+    border-bottom: none !important;
+    margin-top: 8px !important;
+    padding-top: 14px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+  .table-wrap .data-table td:last-child::before { display:none; }
+  
+  /* Detail panel bottom sheet behavior - only active via JS so override display inline */
+  .lp.open-bottom {
+    transform: translateY(0) !important;
+  }
+  
+
+  /* Modals overall should not get blocked by mobile keyboard */
+  .mbk .mbox {
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+    margin: 10px !important;
+    padding-bottom: 24px !important;
+  }
+  
+  /* Hide FAB when modals or bottom sheets are open */
+  body:has(.mbk.open) .btn-fab-mobile,
+  body:has(.lp.open-bottom) .btn-fab-mobile,
+  body:has(.mbk[style*="display: block"]) .btn-fab-mobile,
+  body:has(.mbk.open) .fab,
+  body:has(.lp.open-bottom) .fab {
+    display:none;
+  }
+
+  /* FAB floating fix */
+  .fab {
+    bottom: calc(64px + 16px) !important;
+    z-index: 400 !important;
+  }
+  
+  /* Stat strip exact layout */
+  .stat-strip {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px !important;
+    overflow: visible !important;
+    flex-wrap: unset !important;
+    padding-bottom: 0 !important;
+  }
+  .stat-card {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+
+  /* ── Mobile Redesign Injections ── */
+
+  .page-content {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .toolbar {
+    display: flex !important;
+    gap: 8px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .toolbar > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+  .toolbar .search-input {
+    width: 100% !important;
+  }
+  
+      /* Tables to Cards */
+  .table-wrap .data-table, .table-wrap .data-table tbody, .table-wrap .data-table tr, .table-wrap .data-table td {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: min-content !important;
+    box-sizing: border-box !important;
+  }
+  .table-wrap {
+    overflow-x: hidden !important;
+    padding: 4px 8px !important;
+  }
+  .data-table {
+    min-width: 0 !important;
+    background: transparent !important;
+  }
+  .table-wrap .data-table thead {
+    display:none;
+  }
+  .table-wrap .data-table tr {
+    margin-bottom: 16px !important;
+    border: 1px solid var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    border-radius: var(--r-xl, 16px) !important;
+    background: var(--md-sys-color-surface, #ffffff) !important;
+    padding: 16px 18px !important;
+    position: relative !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04) !important;
+    height: auto !important;
+  }
+  .table-wrap .data-table tr.row-active, .table-wrap .data-table tr.selected {
+    box-shadow: 0 0 0 2px var(--md-sys-color-primary, #1a73e8), 0 4px 12px rgba(0,0,0,0.06) !important;
+  }
+  .table-wrap .data-table td {
+    border: none !important;
+    padding: 10px 0 !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    border-bottom: 1px dashed var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    height: auto !important;
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+  .table-wrap .data-table td::before {
+    content: attr(data-label);
+    font-weight: 700 !important;
+    font-size: 10px !important;
+    letter-spacing: 0.6px !important;
+    color: var(--md-sys-color-outline, #5f6368) !important;
+    text-transform: uppercase !important;
+    display: block !important;
+    margin-bottom: 4px !important;
+    line-height: 1.2 !important;
+  }
+  .table-wrap .data-table td:empty {
+    display:none;
+  }
+  .table-wrap .data-table td:first-child {
+    font-size: 14px !important;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 14px !important;
+    padding-top: 0 !important;
+    display: flex !important;
+  }
+  .table-wrap .data-table td:first-child::before { display:none; }
+  .table-wrap .data-table td:last-child {
+    border-bottom: none !important;
+    margin-top: 8px !important;
+    padding-top: 14px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+  .table-wrap .data-table td:last-child::before { display:none; }
+  
+  /* Detail panel bottom sheet behavior - only active via JS so override display inline */
+  .lp.open-bottom {
+    transform: translateY(0) !important;
+  }
+  
+
+  /* Modals overall should not get blocked by mobile keyboard */
+  .mbk .mbox {
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+    margin: 10px !important;
+    padding-bottom: 24px !important;
+  }
+  
+  /* Hide FAB when modals or bottom sheets are open */
+  body:has(.mbk.open) .btn-fab-mobile,
+  body:has(.lp.open-bottom) .btn-fab-mobile,
+  body:has(.mbk[style*="display: block"]) .btn-fab-mobile,
+  body:has(.mbk.open) .fab,
+  body:has(.lp.open-bottom) .fab {
+    display:none;
+  }
+
+  /* FAB floating fix */
+  .fab {
+    bottom: calc(64px + 16px) !important;
+    z-index: 400 !important;
+  }
+  
+  /* Stat strip exact layout */
+  .stat-strip {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px !important;
+    overflow: visible !important;
+    flex-wrap: unset !important;
+    padding-bottom: 0 !important;
+  }
+  .stat-card {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+  .topbar {
+    flex-wrap: nowrap !important;
+    padding: 0 12px !important;
+    gap: 8px !important;
+    height: 48px !important;
+  }
+  .topbar-brand { flex:1 !important; min-width:0 !important; }
+  .topbar-title { font-size:14px; }
+  .topbar-sub { font-size:11px; }
+
+  .toolbar {
+    padding: 8px 12px;
+    gap: 6px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .toolbar .gs-search { display:none; }
+  .filter-sep { display:none; }
+  .mobile-search-wrap {
+    display:flex !important;
+    padding:10px 12px 4px;
+  }
+  .mobile-search-wrap .gs-search { flex:1; width:100% !important; }
+
+  .content { padding: 10px 12px; }
+
+  /* Stats: 2-col */
+  .stat-strip { grid-template-columns:1fr 1fr; gap:8px; }
+  .stat-card { padding:10px 12px; }
+  .stat-val { font-size:18px; }
+  .stat-icon { width:34px; height:34px; font-size:15px; }
+
+  /* Table rows */
+  .cust-avatar { width:32px; height:32px; font-size:12px; }
+  .cust-name { font-size:12px; }
+  .cust-code { font-size:9px; }
+  .btn-xs { padding:3px 7px; font-size:10px; }
+
+  /* Pager */
+  .pager { gap:6px; }
+  .pager-info { padding:5px 10px; font-size:11px; }
+
+  /* ── Detail view: fullscreen overlay ── */
+  #detailView { position:fixed; inset:0; overflow-y:auto; z-index:150; }
+  .detail-topbar {
+    padding:8px 12px; height:48px; gap:8px;
+    flex-wrap:wrap; position:sticky; top:0; z-index:160;
+  }
+  .detail-topbar h2 { font-size:15px; width:100%; order:1; }
+  .detail-topbar-actions { width:100%; order:2; justify-content:space-between; gap:4px; }
+  .detail-action-btn { padding:6px 10px; font-size:11px; border-radius:8px; flex:1; text-align:center; }
+
+  .detail-hero {
+    padding:16px; gap:12px; flex-direction:column;
+    align-items:center; text-align:center;
+  }
+  .hero-avatar { width:56px; height:56px; font-size:22px; margin:0 auto; }
+  .hero-info { width:100%; }
+  .hero-name { font-size:18px; }
+  .hero-badges { justify-content:center; gap:6px; }
+  .hero-metrics {
+    width:100%; margin-left:0; margin-top:12px;
+    flex-wrap:wrap; justify-content:space-around; gap:8px; align-self:auto;
+  }
+  .hero-metric { flex:1; padding:0 8px; border-right:none !important; }
+  .hm-val { font-size:18px; }
+  .hm-lbl { font-size:10px; }
+  .eng-strip { grid-template-columns:1fr 1fr; gap:8px; padding:12px; }
+
+  /* Notes / order-history body */
+  .no-body { flex-direction:column; max-height:none; overflow:visible; }
+
+  /* Modal: bottom-sheet */
+  .modal-overlay { align-items:flex-end; padding:0; }
+  .modal {
+    border-radius:16px 16px 0 0; max-height:90vh;
+    width:100%; max-width:100vw;
+  }
+  .modal-header { padding:12px 16px; font-size:14px; }
+  .modal-body { padding:12px 16px; }
+  .modal-footer { padding:10px 16px; gap:6px; }
+}
+
+/* ── Mobile medium 600-839px ── */
+@media (min-width:600px) and (max-width:839px) {
+  .content { padding:14px 16px; }
+  .stat-strip { grid-template-columns:repeat(3,1fr); }
+  .eng-strip { grid-template-columns:repeat(3,1fr); }
+}
+</style>
+  <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728b">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="/tenant-admin.html" class="gs-back-btn">← Dashboard</a>
+  <div class="topbar-brand">
+    <div class="topbar-icon">👥</div>
+    <div>
+      <div class="topbar-title">Customers</div>
+      <div class="topbar-sub" id="pageSubtitle">Loading…</div>
+    </div>
+  </div>
+  <div style="flex:1"></div>
+  <span class="tenant-pill" id="tenantBadge"></span>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="gs-search" >
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="searchInput" placeholder="Search name, phone, code…" oninput="debounceSearch()">
+  </div>
+  <select class="form-select" style="width:auto;height:36px;padding:0 10px;font-size:13px;" id="stateFilter" onchange="loadCustomers()">
+    <option value="">All States</option>
+    <option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option>
+    <option>Chhattisgarh</option><option>Delhi</option><option>Gujarat</option>
+    <option>Haryana</option><option>Jharkhand</option><option>Karnataka</option>
+    <option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option>
+    <option>Odisha</option><option>Punjab</option><option>Rajasthan</option>
+    <option>Tamil Nadu</option><option>Telangana</option><option>Uttar Pradesh</option>
+    <option>Uttarakhand</option><option>West Bengal</option><option>Other</option>
+  </select>
+  <select class="form-select" style="width:auto;height:36px;padding:0 10px;font-size:13px;" id="statusFilter" onchange="loadCustomers()">
+    <option value="all">All Customers</option>
+    <option value="">Active only</option>
+    <option value="inactive">Inactive</option>
+  </select>
+  <select class="form-select" style="width:auto;height:36px;padding:0 10px;font-size:13px;" id="typeFilter" onchange="loadCustomers()">
+    <option value="">All Types</option>
+    <option value="retail">Retail</option>
+    <option value="wholesale">Wholesale</option>
+    <option value="distributor">Distributor</option>
+  </select>
+  <div style="flex:1"></div>
+  <button class="btn btn-outlined btn-sm" onclick="loadCustomers()">⟳ Refresh</button>
+  <button class="btn btn-filled btn-sm" onclick="openCreateModal()">+ New Customer</button>
+</div>
+
+<!-- BULK BAR -->
+<div class="bulk-bar" id="bulkBar">
+  <span class="bulk-count" id="bulkCount">0 selected</span>
+  <!-- Single-select actions (hidden when multiple selected) -->
+  <button class="btn-bulk-wa" id="bulkWaBtn" onclick="bulkWhatsApp()" style="background:#25d366;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">💬 WhatsApp</button>
+  <button class="btn-bulk-call" id="bulkCallBtn" onclick="bulkVoiceCall()" style="background:#1a73e8;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">📞 Call</button>
+  <button class="btn-bulk-edit" id="bulkEditBtn" onclick="bulkEdit()" style="background:#e8f0fe;color:#1a73e8;border:1px solid #c5d8fd;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">✏ Edit</button>
+  <!-- Always visible actions -->
+  <button class="btn-bulk-label" id="bulkLabelBtn" onclick="bulkPrintLabels()" style="background:#dcfce7;color:#15803d;border:1px solid #86efac;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">🏷 Print Labels</button>
+  <button class="btn-bulk-invoice" id="bulkInvoiceBtn" onclick="bulkPrintInvoices()" style="background:#f3e8fd;color:#7627bb;border:1px solid #d8b4fe;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">🧾 Print Invoices</button>
+  <button class="btn-bulk-toggle" id="bulkActivateBtn" onclick="confirmBulkToggleStatus()" style="background:#fef3e2;color:#b06000;border:1px solid #fde68a;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">⏸ Activate/Deactivate</button>
+  <button class="btn-bulk-delete" id="bulkDeleteBtn" onclick="confirmBulkDelete()" style="background:#fee2e2;color:#c5221f;border:1px solid #fca5a5;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">🗑 Delete</button>
+  <button class="btn-bulk-cancel" onclick="clearSelection()">✕ Clear</button>
+</div>
+
+<!-- Bulk Delete Confirmation Modal -->
+<div id="custBulkDeleteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px 32px;max-width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+    <div style="font-size:18px;font-weight:700;color:#111;margin-bottom:8px;">🗑 Delete Customers</div>
+    <div id="custBulkDeleteMsg" style="font-size:14px;color:#555;margin-bottom:24px;">Are you sure?</div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="document.getElementById('custBulkDeleteModal').style.display='none'" style="padding:8px 18px;border-radius:8px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-size:14px;">Cancel</button>
+      <button onclick="bulkDelete()" style="padding:8px 18px;border-radius:8px;border:none;background:#dc2626;color:#fff;cursor:pointer;font-size:14px;font-weight:600;">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="custToggleStatusModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;padding:28px 32px;max-width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+    <div style="font-size:18px;font-weight:700;color:#111;margin-bottom:8px;">⏸ Activate / Deactivate</div>
+    <div id="custToggleStatusMsg" style="font-size:14px;color:#555;margin-bottom:24px;">Toggle status for selected customers?</div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="document.getElementById('custToggleStatusModal').style.display='none'" style="padding:8px 18px;border-radius:8px;border:1px solid #ddd;background:#f5f5f5;cursor:pointer;font-size:14px;">Cancel</button>
+      <button onclick="bulkToggleStatus()" style="padding:8px 18px;border-radius:8px;border:none;background:#b06000;color:#fff;cursor:pointer;font-size:14px;font-weight:600;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="gs-banner gs-banner-error"   id="errBanner" style="display:none;margin-bottom:12px;"></div>
+  <div class="gs-banner gs-banner-success" id="okBanner"  style="display:none;margin-bottom:12px;"></div>
+
+  <div class="stat-strip">
+    <div class="stat-card blue">
+      <div class="stat-icon">👥</div>
+      <div class="stat-vals"><div class="stat-val" id="sTotal">—</div><div class="stat-lbl">Total Customers</div></div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">✅</div>
+      <div class="stat-vals"><div class="stat-val" id="sActive">—</div><div class="stat-lbl">Active</div></div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-icon">☑️</div>
+      <div class="stat-vals"><div class="stat-val" id="sSelected">0</div><div class="stat-lbl">Selected</div></div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-icon">📋</div>
+      <div class="stat-vals"><div class="stat-val" id="sShown">—</div><div class="stat-lbl">Shown</div></div>
+    </div>
+  </div>
+
+  <!-- MOBILE SEARCH BAR — shown only on mobile, just above the customer list -->
+  <div class="mobile-search-wrap" style="display:none;">
+    <div class="gs-search" style="width:100%">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="mobileSearchInput" placeholder="Search name, phone, code…" oninput="document.getElementById('searchInput').value=this.value;debounceSearch()">
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <h3>Customer List</h3>
+        <span class="panel-meta" id="tableMeta"></span>
+      </div>
+      <button class="btn btn-filled btn-sm" onclick="openCreateModal()" style="background:var(--g-blue);border-color:var(--g-blue);">+ New Customer</button>
+    </div>
+    <div class="tbl-wrap" id="tblWrap"><div class="loading">Loading customers…</div></div>
+  </div>
+  <div id="pagination" style="display:flex;justify-content:center;gap:8px;padding:16px 0"></div>
+</div>
+
+<!-- CUSTOMER DETAIL OVERLAY -->
+<div id="detailView">
+  <div class="detail-topbar">
+    <button class="gs-back-btn" onclick="closeDetail()">← Back</button>
+    <div style="flex:1;min-width:0;">
+      <h2 id="detailName" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Customer</h2>
+      <div id="detailMeta" style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--g-600);flex-wrap:wrap;margin-top:1px;"></div>
+    </div>
+    <div class="detail-topbar-actions">
+      <button class="detail-action-btn order" onclick="openNewOrderModal()">📦 New Order</button>
+      <button class="detail-action-btn note"  onclick="openNoteModal()">📝 Note</button>
+      <button class="detail-action-btn wa"    onclick="openWaPanel()">💬 WhatsApp</button>
+      <button class="detail-action-btn edit"  onclick="editDetailCustomer()">✏ Edit</button>
+    </div>
+  </div>
+
+  <!-- Hero banner -->
+  <div class="detail-hero" id="detailHero">
+    <div class="hero-avatar" id="heroAvatar">?</div>
+    <div class="hero-info">
+      <div class="hero-name" id="heroName">—</div>
+      <div class="hero-code" id="heroCode">—</div>
+      <div class="hero-badges" id="heroBadges"></div>
+    </div>
+    <div class="hero-metrics" id="heroMetrics"></div>
+  </div>
+
+  <div class="detail-body">
+    <div class="gs-banner gs-banner-error" id="detailErr" style="display:none;margin:12px 24px 0;"></div>
+
+    <!-- Engagement strip -->
+    <div class="eng-strip" id="detailEngStrip"></div>
+
+    <!-- Tab bar -->
+    <div class="dtab-bar">
+      <button class="dtab active" onclick="switchDTab('info',this)">📋 Info</button>
+      <button class="dtab" onclick="switchDTab('orders',this)">📦 Orders <span id="detailOrderCount" style="font-size:11px;opacity:.7;margin-left:2px;"></span></button>
+      <button class="dtab" onclick="switchDTab('notes',this)">📝 Notes</button>
+    </div>
+
+    <!-- Info tab -->
+    <div class="dtab-panel active" id="dtab-info">
+      <div class="info-grid" id="detailInfoGrid"></div>
+    </div>
+
+    <!-- Orders tab -->
+    <div class="dtab-panel" id="dtab-orders">
+      <div class="panel">
+        <div class="panel-header">
+          <h3>📦 Order History</h3>
+          <button class="detail-action-btn order" onclick="openNewOrderModal()" style="padding:5px 12px;font-size:12px;">+ New Order</button>
+        </div>
+        <div class="tbl-wrap" id="detailOrdersTbl"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- Notes tab -->
+    <div class="dtab-panel" id="dtab-notes">
+      <div class="note-add-row" style="margin-bottom:16px;">
+        <textarea id="noteInput" placeholder="Add a note about this customer…" rows="3"></textarea>
+        <button class="btn btn-filled btn-sm" onclick="submitNote()" id="noteSaveBtn" style="align-self:flex-end;background:var(--g-amber);border-color:var(--g-amber);">💾 Save</button>
+      </div>
+      <div class="note-list" id="noteList"><div class="loading">Loading notes…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP PANEL -->
+<div id="waPanel">
+  <div class="wa-header">
+    <div class="wa-avatar">👤</div>
+    <div>
+      <div class="wa-name" id="waCustomerName">Customer</div>
+      <div class="wa-phone" id="waCustomerPhone">—</div>
+    </div>
+    <div class="wa-header-actions">
+      <a id="waDirectLink" href="#" target="_blank" class="wa-open-btn" title="Open WhatsApp directly">↗ Chat</a>
+      <button class="wa-close-btn" onclick="closeWaPanel()" title="Close">✕</button>
+    </div>
+  </div>
+  <!-- Quick share shortcuts -->
+  <div class="wa-share-bar" id="waShareBar">
+    <span style="font-size:10px;font-weight:700;color:var(--g-600);align-self:center;font-family:var(--font);">QUICK SHARE:</span>
+    <button class="wa-share-btn" onclick="waShareLatestLabel()">🏷 Latest Label</button>
+    <button class="wa-share-btn" onclick="waShareLatestInvoice()">🧾 Latest Invoice</button>
+    <button class="wa-share-btn" onclick="waShareOrderStatus()">📦 Order Status</button>
+    <button class="wa-share-btn" onclick="waShareCustomerLabels()">🔖 Labels</button>
+  </div>
+  <div class="wa-messages" id="waMessages">
+    <div class="wa-empty">Loading messages…</div>
+  </div>
+  <div class="wa-compose">
+    <div class="wa-compose-row">
+      <select id="waTplSelect" onchange="updateWaPreview()">
+        <option value="custom">✏ Custom message</option>
+        <option value="pre_dispatch">📦 Pre-Dispatch template</option>
+        <option value="shipped">🚚 Shipped template</option>
+      </select>
+      <select id="waOrderSelect" onchange="updateWaPreview()" style="display:none;">
+        <option value="">— pick order —</option>
+      </select>
+    </div>
+    <div class="wa-preview-bar" id="waPreviewBar">
+      ✅ Message auto-composed from order. Edit below if needed.
+    </div>
+    <textarea id="waTextarea" rows="4" placeholder="Type a message…"></textarea>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="wa-send-btn" id="waSendBtn" onclick="sendWaMessage()">↗ Open WhatsApp &amp; Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW ORDER MODAL (orders-page replica) -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal modal-wide">
+
+    <!-- Header -->
+    <div class="no-header">
+      <h3>📦 New Order — <span id="orderModalCustName" style="color:var(--md-sys-color-primary)"></span></h3>
+      <button onclick="closeOrderModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--g-600);line-height:1;">✕</button>
+    </div>
+
+    <!-- Body -->
+    <div class="no-body">
+
+      <!-- LEFT: address + customer + items -->
+      <div class="no-left">
+
+        <div class="gs-banner gs-banner-error" id="orderErr" style="display:none;margin-bottom:10px;"></div>
+
+        <!-- Address parser -->
+        <div class="no-section">📍 Delivery Address</div>
+        <div class="no-parse-box">
+          <label class="form-label">Paste WhatsApp Address</label>
+          <textarea class="form-textarea" id="no_addrPaste" style="margin-top:4px;min-height:60px;"
+            placeholder="Paste full address — name, phone, area, pincode, state…"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();noParseAddress();}"></textarea>
+          <button class="btn btn-outlined" id="no_parseBtn" onclick="noParseAddress()"
+            style="width:100%;margin-top:6px;">🔍 Parse Address</button>
+        </div>
+        <div id="no_manualFlag" style="display:none;background:var(--g-red-lt);border:1px solid #fca5a5;color:var(--g-red);padding:7px 10px;border-radius:var(--r-xs);font-size:12px;margin-bottom:6px;">
+          ⚠️ Auto-parse unclear — please fill fields manually
+        </div>
+        <div id="no_parsedTag" style="margin-bottom:6px;"></div>
+
+        <div class="form-row" style="margin-bottom:8px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Name on Label</label>
+            <input type="text" class="form-input" id="no_deliveryName" placeholder="Recipient">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Name 2</label>
+            <input type="text" class="form-input" id="no_deliveryName2" placeholder="Optional">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:8px;">
+          <label class="form-label">Address Line</label>
+          <textarea class="form-textarea" id="no_deliveryAddr" placeholder="House no, street, area…" ></textarea>
+        </div>
+        <div class="form-row" style="margin-bottom:8px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">City</label>
+            <input type="text" class="form-input" id="no_deliveryCity" placeholder="City">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">District</label>
+            <input type="text" class="form-input" id="no_deliveryDistrict" placeholder="District">
+          </div>
+        </div>
+        <div class="form-row" style="margin-bottom:8px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">State</label>
+            <input type="text" class="form-input" id="no_deliveryState" placeholder="State">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Pincode</label>
+            <input type="text" class="form-input" id="no_deliveryPin" placeholder="6-digit" maxlength="6">
+          </div>
+        </div>
+
+        <!-- Customer phone lookup -->
+        <div class="no-section">👤 Customer</div>
+        <div class="form-group" style="margin-bottom:8px;">
+          <label class="form-label">Phone *</label>
+          <input type="tel" class="form-input" id="no_custPhone" placeholder="10-digit mobile"
+            maxlength="15" oninput="noOnPhoneInput()" autocomplete="off">
+          <div class="no-phone-match" id="no_phoneMatch"></div>
+        </div>
+        <div class="form-row" style="margin-bottom:8px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Name *</label>
+            <input type="text" class="form-input" id="no_custName" placeholder="Customer name">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Alt. Phone</label>
+            <input type="tel" class="form-input" id="no_custPhone2" placeholder="Alternate">
+          </div>
+        </div>
+
+        <!-- Items -->
+        <div class="no-section">🛒 Items</div>
+        <div class="no-items-area" id="no_itemsArea"></div>
+        <button class="no-add-item-btn" onclick="noAddItemRow()">＋ Add Product</button>
+
+        <!-- Notes -->
+        <div class="no-section">📝 Notes</div>
+        <textarea class="form-textarea" id="no_orderNotes" placeholder="Any special instructions…" style="margin-bottom:8px;min-height:44px;"></textarea>
+
+      </div><!-- /no-left -->
+
+      <!-- RIGHT: totals + payment -->
+      <div class="no-right">
+
+        <div class="no-section">💰 Summary</div>
+        <div class="no-totals-box">
+          <div class="no-total-row"><span>Subtotal</span><span id="no_tSubtotal">₹0.00</span></div>
+          <div class="no-total-row">
+            <span>Discount</span>
+            <span style="display:flex;align-items:center;gap:4px;">
+              —&nbsp;<input type="number" id="no_orderDisc" value="0" min="0" oninput="noRecalcTotals()">
+            </span>
+          </div>
+          <div class="no-total-row">
+            <span>Shipping</span>
+            <span style="display:flex;align-items:center;gap:4px;">
+              +&nbsp;<input type="number" id="no_orderShip" value="0" min="0" oninput="noRecalcTotals()">
+            </span>
+          </div>
+          <div class="no-total-row grand"><span>Total</span><span id="no_tTotal">₹0.00</span></div>
+        </div>
+
+        <div class="no-section">💳 Payment</div>
+        <div class="no-pay-grid" style="grid-template-columns:repeat(2,1fr);">
+          <div class="no-pay-btn active" id="no_pay_cod"           onclick="noSetPayment('cod')">💵 COD</div>
+          <div class="no-pay-btn"        id="no_pay_partial_cod"   onclick="noSetPayment('partial_cod')">📦 Partial COD</div>
+          <div class="no-pay-btn"        id="no_pay_upi"           onclick="noSetPayment('upi')">📲 UPI</div>
+          <div class="no-pay-btn"        id="no_pay_bank_transfer" onclick="noSetPayment('bank_transfer')">🏦 Bank Transfer</div>
+          <div class="no-pay-btn"        id="no_pay_prepaid"       onclick="noSetPayment('prepaid')">✅ Prepaid</div>
+          <div class="no-pay-btn"        id="no_pay_pay_after_delivery" onclick="noSetPayment('pay_after_delivery')">📬 PAD</div>
+        </div>
+        <div id="no_partialCodPanel" class="no-advance-panel" style="display:none;">
+          <div class="no-advance-row">
+            <label>💰 Advance paid:</label>
+            <div class="no-adv-wrap"><span>₹</span><input type="number" id="no_advanceAmountInput" min="0" step="1" value="0" oninput="noOnAdvanceInput()"></div>
+            <span class="no-cod-badge">COD on delivery: <strong id="no_codOnDelivery">₹0.00</strong></span>
+          </div>
+        </div>
+
+        <div class="no-section">📅 Delivery</div>
+        <div class="form-group" style="margin-bottom:8px;">
+          <label class="form-label">Expected Date</label>
+          <input type="date" class="form-input" id="no_oExpected" style="margin-top:3px;">
+        </div>
+
+        <div class="no-section">🚚 Delivery Partner &amp; Service</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Delivery Partner *</label>
+            <select class="form-select" id="no_courierSel" onchange="noOnCourierChange()" style="margin-top:3px;">
+              <option value="">Loading…</option>
+            </select>
+          </div>
+          <div class="form-group" id="no_ipIdBox" style="margin-bottom:0;display:none;">
+            <label class="form-label">India Post Service *</label>
+            <select class="form-select" id="no_ipCustomerIdSel" style="margin-top:3px;">
+              <option value="">— Select Service Type —</option>
+            </select>
+          </div>
+        </div>
+
+      </div><!-- /no-right -->
+    </div><!-- /no-body -->
+
+    <!-- Footer -->
+    <div class="no-footer">
+      <button class="btn btn-outlined" onclick="closeOrderModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="noSubmitOrder()" id="orderSaveBtn"
+        style="background:var(--g-green);border-color:var(--g-green);min-">
+        ✅ Create Order
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD NOTE MODAL -->
+<div class="modal-overlay" id="noteModal">
+  <div class="modal" >
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h3 style="margin:0;">📝 Add Note</h3>
+      <button onclick="closeNoteModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--g-600);">✕</button>
+    </div>
+    <div class="gs-banner gs-banner-error" id="noteErr" style="display:none;margin-bottom:12px;"></div>
+    <div class="form-group">
+      <label class="form-label">Customer: <strong id="noteModalCustName"></strong></label>
+      <textarea class="form-textarea" id="noteModalInput" rows="4" placeholder="Type your note…" style="margin-top:6px;"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeNoteModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="submitNoteModal()" id="noteModalSaveBtn">💾 Save Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE / EDIT MODAL -->
+<div class="modal-overlay" id="trackingModal" style="display:none;z-index:1001;">
+  <div class="modal" >
+    <h3>Update Tracking</h3>
+    <div style="margin-bottom:12px;font-size:13px;color:var(--g-600);">
+      Order: <strong id="trackingOrderNum">—</strong>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Courier Partner</label>
+        <select class="form-select" id="trackingCourierSel" onchange="onTrackingCourierChange()" style="margin-top:3px;">
+          <option value="">— Manual Entry —</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row" id="trackingCourierNameBox" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Courier Name</label>
+        <input class="form-input" id="trackingCourierNameInput" placeholder="e.g., DHL, FedEx" style="margin-top:3px;">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Tracking Number *</label>
+        <input class="form-input" id="trackingNumberInput" placeholder="e.g., 1234567890" style="margin-top:3px;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeTrackingModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="submitTrackingUpdate()">Update</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="custModal">
+  <div class="modal">
+    <h3 id="modalTitle">New Customer</h3>
+    <div class="gs-banner gs-banner-error" id="modalErr" style="display:none;margin-bottom:12px;"></div>
+    <input type="hidden" id="m_id">
+
+    <div class="section-lbl">Basic Info</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input class="form-input" id="m_name" placeholder="Sunita Devi" style="margin-top:3px;">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone *</label>
+        <input class="form-input" id="m_phone" placeholder="9876543210" style="margin-top:3px;">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Alternate Phone</label>
+        <input class="form-input" id="m_alt_phone" style="margin-top:3px;">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="m_email" type="email" style="margin-top:3px;">
+      </div>
+    </div>
+
+    <div class="section-lbl">Address</div>
+    <div class="form-group">
+      <label class="form-label">Address</label>
+      <textarea class="form-textarea" id="m_address" rows="2" placeholder="House No, Street, Area" style="margin-top:3px;"></textarea>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group">
+        <label class="form-label">Pincode</label>
+        <input class="form-input" id="m_pin" placeholder="500001" style="margin-top:3px;">
+      </div>
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <input class="form-input" id="m_city" placeholder="Hyderabad" style="margin-top:3px;">
+      </div>
+      <div class="form-group">
+        <label class="form-label">State</label>
+        <input class="form-input" id="m_state" placeholder="Telangana" style="margin-top:3px;">
+      </div>
+    </div>
+
+    <div class="section-lbl">Segmentation</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Customer Type</label>
+        <select class="form-select" id="m_ctype" style="margin-top:3px;">
+          <option value="">— Select —</option>
+          <option value="retail">Retail</option>
+          <option value="wholesale">Wholesale</option>
+          <option value="distributor">Distributor</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Source</label>
+        <select class="form-select" id="m_source" style="margin-top:3px;">
+          <option value="manual">Manual</option>
+          <option value="website">Website</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="meta_ads">Meta Ads</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Payment Preference</label>
+        <select class="form-select" id="m_payment" style="margin-top:3px;">
+          <option value="cod">COD</option>
+          <option value="prepaid">Prepaid</option>
+          <option value="pay_after_delivery">Pay After Delivery</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-lbl">Notes</div>
+    <div class="form-group">
+      <textarea class="form-textarea" id="m_notes" rows="2" placeholder="Any notes about this customer…" style="margin-top:3px;"></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outlined" onclick="closeCustModal()">Cancel</button>
+      <button class="btn btn-filled" onclick="submitCustomer()" id="saveBtn">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<script src="/modules/auth.js"></script>
+<script>
+const TOKEN = localStorage.getItem('token');
+const TYPE  = localStorage.getItem('type');
+const ROLE  = localStorage.getItem('role') || 'admin';
+const SLUG  = localStorage.getItem('slug') || '';
+if (!TOKEN || TYPE !== 'tenant') window.location.replace('/tenant-login.html');
+
+function logout() {
+  ['token','type','role','slug','user_id','email','tenant_token'].forEach(k => {
+    localStorage.removeItem(k); sessionStorage.removeItem(k);
+  });
+  window.location.replace('/tenant-login.html');
+}
+const H = { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' };
+
+let allData       = [];
+let selectedIds   = new Set();
+let selectedItems = new Map();
+let currentPage   = 1;
+let totalRecords  = 0;
+const PAGE_SIZE   = 50;
+let searchTimer   = null;
+let editingCustId = null;
+let detailCustId  = null;
+
+document.getElementById('tenantBadge').textContent = SLUG.toUpperCase();
+
+/* ── Cross-tab broadcast helper ─────────────────────────── */
+function crmBroadcast(msg) {
+  try {
+    const bc = new BroadcastChannel('miguel_crm');
+    bc.postMessage(msg);
+    bc.close();
+  } catch(_) {
+    try { localStorage.setItem('crm_order_created', JSON.stringify({t: Date.now(), ...msg})); } catch(__) {}
+  }
+}
+
+// ── Cross-tab sync: listen for orders created in other tabs ──
+try {
+  const bc = new BroadcastChannel('miguel_crm');
+  bc.onmessage = (e) => {
+    if(e.data && (e.data.type === 'order_created' || e.data.type === 'customer_created' || e.data.type === 'order_updated' || e.data.type === 'customer_updated')) {
+      loadCustomers();
+    }
+  };
+} catch(_) {
+  window.addEventListener('storage', (e) => {
+    if(e.key === 'crm_order_created' || e.key === 'crm_data_updated') { loadCustomers(); }
+  });
+}
+
+initializeCustomerPage();
+
+async function initializeCustomerPage() {
+  await loadCustomers();
+  const customerId = new URLSearchParams(window.location.search).get('customer_id');
+  if (!customerId) return;
+  try {
+    let customer = allData.find(c => c.id === customerId);
+    if (!customer) {
+      const response = await fetch(`/api/customers/${encodeURIComponent(customerId)}`, { headers:H });
+      if (!response.ok) throw new Error('Customer not found');
+      customer = await response.json();
+      allData.unshift(customer);
+    }
+    await openDetail(customerId);
+  } catch (error) {
+    showErr(error.message || 'Could not open customer');
+  }
+}
+
+async function loadCustomers() {
+  const search    = document.getElementById('searchInput').value.trim();
+  const state     = document.getElementById('stateFilter').value;
+  const statusVal = document.getElementById('statusFilter').value;
+  const typeVal   = document.getElementById('typeFilter').value;
+
+  let url = `/api/customers/with-orders?page=${currentPage}&limit=${PAGE_SIZE}`;
+  if (search)  url += `&search=${encodeURIComponent(search)}`;
+  if (state)   url += `&state=${encodeURIComponent(state)}`;
+  if (statusVal === 'inactive') url += `&is_active=false`;
+  else if (statusVal === '') url += `&is_active=true`;
+  // statusVal === 'all' → no filter sent → API returns everything
+
+  document.getElementById('tblWrap').innerHTML = '<div class="loading">Loading…</div>';
+  try {
+    const r = await fetch(url, { headers: H });
+    if (!r.ok) throw new Error(await r.text());
+    const d = await r.json();
+    allData = typeVal ? (d.data||[]).filter(x => x.customer_type === typeVal) : (d.data||[]);
+    totalRecords = d.total || 0;
+    document.getElementById('sTotal').textContent  = totalRecords;
+    document.getElementById('sActive').textContent = (d.data||[]).filter(x=>x.is_active).length;
+    document.getElementById('sShown').textContent  = allData.length;
+    document.getElementById('tableMeta').textContent = `${totalRecords} customer${totalRecords!==1?'s':''}`;
+    document.getElementById('pageSubtitle').textContent = `${totalRecords} customers · newest first`;
+    renderTable();
+    renderPagination(d.total, d.page, d.limit);
+  } catch(ex) { showErr('Load error: ' + ex.message); }
+}
+
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { currentPage = 1; loadCustomers(); }, 350);
+}
+
+function tierInfo(amount) {
+  const a = parseFloat(amount) || 0;
+  if (a > 2000) return { cls: 'tier-gold',    label: '🥇 Gold' };
+  if (a > 1500) return { cls: 'tier-diamond', label: '💎 Diamond' };
+  if (a > 1000) return { cls: 'tier-brown',   label: '🟫 Bronze' };
+  if (a > 500)  return { cls: 'tier-green2',  label: '🟢 Green' };
+  return            { cls: 'tier-blue2',   label: '🔵 Blue' };
+}
+function sourceInfo(s) {
+  const map = {
+    manual:      { cls:'src-manual',   label:'Manual' },
+    website:     { cls:'src-website',  label:'Website' },
+    whatsapp:    { cls:'src-whatsapp', label:'WhatsApp' },
+    meta_ads:    { cls:'src-meta',     label:'Meta Ads' },
+    meta:        { cls:'src-meta',     label:'Meta' },
+    google_form: { cls:'src-manual',   label:'Google Form' },
+  };
+  return map[s] || { cls:'src-manual', label: s||'Manual' };
+}
+function ctypeLabel(v) { return v ? v.charAt(0).toUpperCase() + v.slice(1) : '—'; }
+
+function renderTable() {
+  const wrap = document.getElementById('tblWrap');
+  if (!allData.length) {
+    wrap.innerHTML = '<div class="empty"><div class="empty-icon">👥</div>No customers found.<br><small style="color:var(--g-500);margin-top:4px;display:block;">Try adjusting your search or filters.</small></div>';
+    return;
+  }
+  const canPrint = ['admin','operations','sales'].includes(ROLE);
+  wrap.innerHTML = `
+  <table class="gs-table">
+    <thead><tr>
+      <th class="chk"><input type="checkbox" id="chkAll" onchange="toggleAll(this)"></th>
+      <th>Customer</th><th>Contact</th><th>Address</th>
+      <th>Type / Source</th><th>Payment &amp; Value</th>
+      <th>Tracking &amp; Status</th><th>Engagement</th>
+    </tr></thead>
+    <tbody>${allData.map((c,i)=>rowHtml(c,i,canPrint)).join('')}</tbody>
+  </table>`;
+  selectedIds.forEach(id => {
+    const cb = document.getElementById(`chk_${id}`);
+    if (cb) { cb.checked = true; cb.closest('tr').classList.add('selected'); }
+  });
+  updateBulkBar();
+}
+
+function rowHtml(c, i, canPrint) {
+  const amt  = parseFloat(c.total_amount || 0);
+  const src  = sourceInfo(c.source);
+  const hasOrder = c.order_uuid && c.order_uuid !== '';
+
+  // Avatar — initials with consistent blue
+  const initials = (c.name||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
+  const avatarBg = '#1a73e8';
+
+  // ── Payment & Value combined column ──
+  const advAmount = parseFloat(c.advance_amount || 0);
+  const codAmount = parseFloat(c.cod_amount || 0);
+  let payChip;
+  
+  if (c.payment_method === 'partial_cod' && advAmount > 0) {
+    // Partial COD: show advance amount with balance
+    payChip = `<span class="chip" style="font-size:11px;background:#fed7aa;color:#92400e;border:1px solid #fdba74;">⚡ Part COD</span>
+               <div style="font-size:10px;color:var(--g-600);margin-top:2px;">Adv: ₹${advAmount.toFixed(0)} | Balance: ₹${codAmount.toFixed(0)}</div>`;
+  } else if (c.payment_method === 'cod') {
+    payChip = '<span class="chip chip-amber" style="font-size:11px;">💵 COD</span>';
+  } else {
+    payChip = '<span class="chip chip-blue" style="font-size:11px;">✓ Paid</span>';
+  }
+
+  // ── Tracking & Status combined column ──
+  const orderStatus = c.order_status || '';
+  const statusMap = {
+    draft: { cls: 'chip-gray', label: 'Draft' },
+    confirmed: { cls: 'chip-blue', label: 'Confirmed' },
+    processing: { cls: 'chip-blue', label: 'Processing' },
+    packed: { cls: 'chip-purple', label: 'Packed' },
+    shipped: { cls: 'chip-amber', label: 'Shipped' },
+    out_for_delivery: { cls: 'chip-amber', label: 'Out for Delivery' },
+    delivered: { cls: 'chip-green', label: 'Delivered' },
+    cancelled: { cls: 'chip-red', label: 'Cancelled' },
+    returned: { cls: 'chip-red', label: 'Returned' },
+  };
+  const sInfo = statusMap[orderStatus] || { cls: 'chip-gray', label: orderStatus ? orderStatus.replace(/_/g, ' ') : '—' };
+  const trackingHtml = c.tracking_number
+    ? `<code style="background:var(--g-100);padding:2px 6px;border-radius:4px;font-size:10px;font-family:var(--font-mono);color:var(--g-800);">${esc(c.tracking_number)}</code>`
+    : '<span style="color:var(--g-400);font-size:11px;">No tracking</span>';
+  const orderStatusChip = orderStatus
+    ? `<span class="chip ${sInfo.cls}" style="font-size:10px;margin-top:3px;">${sInfo.label}</span>`
+    : '';
+
+  const totalOrders = c.total_orders_count || c.order_count || 0;
+  const avgVal      = parseFloat(c.average_order_value || 0);
+  const engHtml = `<div class="eng-mini">
+    <div>📦 <strong>${totalOrders}</strong> order${totalOrders!==1?'s':''}</div>
+    ${avgVal ? `<div>Avg ₹${avgVal.toLocaleString('en-IN',{maximumFractionDigits:0})}</div>` : ''}
+    ${c.last_order_date ? `<div style="color:var(--g-500)">↩ ${fmtDate(c.last_order_date)}</div>` : ''}
+  </div>`;
+
+  // ── Fade inactive customers ──
+  const rowOpacity = c.is_active ? '' : 'opacity:0.45;';
+
+  // ── Row background color based on order status (matching orders page) ──
+  let rowBg = '';
+  if (orderStatus === 'shipped' || orderStatus === 'out_for_delivery') {
+    rowBg = 'background:#fffde7;'; // pastel yellow for shipped
+  } else if (orderStatus === 'delivered') {
+    rowBg = 'background:#f0fdf4;'; // pastel green for delivered
+  } else if (orderStatus === 'cancelled' || orderStatus === 'returned') {
+    rowBg = 'background:#fef2f2;opacity:0.7;'; // pastel red, faded
+  }
+
+  return `<tr class="data-row" id="row_${c.id}" style="cursor:pointer;${rowOpacity}${rowBg}" onclick="openDetail('${c.id}')">
+    <td class="chk col-chk" onclick="event.stopPropagation()">
+      <input type="checkbox" id="chk_${c.id}" onchange="toggleRow('${c.id}','${c.order_uuid||''}',this)">
+    </td>
+    <td class="col-cx">
+      <div class="cust-cell">
+        <div class="cust-avatar" style="background:${avatarBg}">${initials}</div>
+        <div>
+          <div class="cust-name">${esc(c.name)}</div>
+          <div class="cust-code">${esc(c.unique_customer_code||'')}</div>
+          ${!c.is_active ? '<span class="chip chip-red" style="font-size:9px;margin-top:2px;">Inactive</span>' : ''}
+          ${!c.is_active ? `<button onclick="event.stopPropagation();reactivateCustomer('${c.id}')" style="margin-top:4px;display:block;font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid #16a34a;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:600;">↩ Reactivate</button>` : ''}
+        </div>
+      </div>
+    </td>
+    <td class="col-contact">
+      <div class="contact-primary">${esc(formatPhoneForDisplay(c.phone))}</div>
+      ${c.alternate_phone ? `<div class="contact-secondary">${esc(formatPhoneForDisplay(c.alternate_phone))}</div>` : ''}
+    </td>
+    <td class="col-addr">
+      <div class="addr-line" title="${esc(c.address||'')}">${esc(c.address||'—')}</div>
+      <div class="addr-state">${[c.city,c.state].filter(Boolean).join(', ')||''} ${c.pincode?`· ${c.pincode}`:''}</div>
+    </td>
+    <td class="col-type">
+      <div style="font-size:12px;font-weight:600;color:var(--g-800);margin-bottom:4px">${ctypeLabel(c.customer_type)}</div>
+      <span class="chip ${src.cls}" style="font-size:10px;">${esc(src.label)}</span>
+    </td>
+    <td class="col-pay">
+      ${payChip}
+      <div class="amt-primary" style="margin-top:4px;">₹${amt.toLocaleString('en-IN')}</div>
+    </td>
+    <td class="col-track">
+      ${trackingHtml}
+      <div style="margin-top:3px;">${orderStatusChip}</div>
+    </td>
+    <td class="col-eng">${engHtml}</td>
+  </tr>`;
+}
+
+function renderPagination(total, page, limit) {
+  const tp = Math.ceil(total / limit);
+  const el = document.getElementById('pagination');
+  if (tp <= 1) { el.innerHTML = ''; return; }
+  el.innerHTML =
+    (page > 1 ? `<button class="btn btn-outlined btn-sm" onclick="goPage(${page-1})">← Prev</button>` : '') +
+    `<span style="padding:7px 12px;font-size:13px;color:var(--g-600);font-family:var(--font)">Page ${page} / ${tp}</span>` +
+    (page < tp ? `<button class="btn btn-outlined btn-sm" onclick="goPage(${page+1})">Next →</button>` : '');
+}
+function goPage(p) {
+  const tp = Math.ceil((totalRecords || 0) / PAGE_SIZE);
+  if (p < 1 || (tp && p > tp)) return;
+  currentPage = p;
+  loadCustomers();
+}
+
+function toggleRow(custId, orderUuid, cb) {
+  const tr = document.getElementById(`row_${custId}`);
+  if (cb.checked) {
+    selectedIds.add(custId);
+    selectedItems.set(custId, { customer_id: custId, order_id: orderUuid });
+    tr && tr.classList.add('selected');
+  } else {
+    selectedIds.delete(custId);
+    selectedItems.delete(custId);
+    tr && tr.classList.remove('selected');
+  }
+  updateBulkBar();
+}
+
+async function reactivateCustomer(customerId) {
+  try {
+    const r = await fetch(`/api/customers/${customerId}/toggle-status`, { method: 'PATCH', headers: H });
+    if (!r.ok) throw new Error(await r.text());
+    const d = await r.json();
+    if (d.is_active) {
+      showOk('✅ Customer reactivated');
+    } else {
+      showOk('Customer deactivated');
+    }
+    loadCustomers();
+  } catch(e) {
+    alert('Failed to reactivate customer: ' + e.message);
+  }
+}
+function toggleAll(masterCb) {
+  allData.forEach(c => {
+    const cb = document.getElementById(`chk_${c.id}`);
+    if (!cb) return;
+    cb.checked = masterCb.checked;
+    toggleRow(c.id, c.order_uuid||'', cb);
+  });
+}
+function clearSelection() {
+  selectedIds.clear(); selectedItems.clear();
+  document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false);
+  document.querySelectorAll('tr.selected').forEach(tr => tr.classList.remove('selected'));
+  updateBulkBar();
+}
+function updateBulkBar() {
+  const n = selectedIds.size;
+  document.getElementById('sSelected').textContent = n;
+  document.getElementById('bulkCount').textContent = `${n} selected`;
+  document.getElementById('bulkBar').classList.toggle('visible', n > 0);
+  // Single-select actions: only show when exactly 1 customer selected
+  const isSingle = n === 1;
+  document.getElementById('bulkWaBtn').style.display = isSingle ? '' : 'none';
+  document.getElementById('bulkCallBtn').style.display = isSingle ? '' : 'none';
+  document.getElementById('bulkEditBtn').style.display = isSingle ? '' : 'none';
+}
+function validBulkItems() {
+  return [...selectedItems.values()].filter(x => x.order_id && x.order_id !== '' && x.order_id !== 'undefined');
+}
+
+async function bulkPrintLabels() {
+  const items = validBulkItems();
+  if (!items.length) { showErr('Select customers with orders first.'); return; }
+  showOk(`Generating ${items.length} label(s)…`);
+  try {
+    const r = await fetch('/api/customers/bulk-labels', { method:'POST', headers:H, body:JSON.stringify({items}) });
+    if (!r.ok) { const e=await r.json().catch(()=>({})); showErr(e.detail||'Error.'); return; }
+    const blob = await r.blob();
+    const url  = URL.createObjectURL(blob);
+    const w    = window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    if (!w) showErr('Pop-up blocked — please allow pop-ups for this site.');
+  } catch(ex) { showErr('Error: '+ex.message); }
+}
+async function bulkPrintInvoices() {
+  const items = validBulkItems();
+  if (!items.length) { showErr('Select customers with orders first.'); return; }
+  showOk(`Generating ${items.length} invoice(s)…`);
+  try {
+    const r = await fetch('/api/customers/bulk-invoices', { method:'POST', headers:H, body:JSON.stringify({items}) });
+    if (!r.ok) { const e=await r.json().catch(()=>({})); showErr(e.detail||'Error.'); return; }
+    const html = await r.text();
+    const w = window.open('', '_blank');
+    if (!w) { showErr('Pop-up blocked.'); return; }
+    w.document.open(); w.document.write(html); w.document.close();
+  } catch(ex) { showErr('Error: '+ex.message); }
+}
+
+// ── New bulk bar actions ─────────────────────────────────────────────────────
+function bulkWhatsApp() {
+  if (selectedIds.size !== 1) return;
+  const custId = [...selectedIds][0];
+  const c = allData.find(x => x.id === custId);
+  if (!c || !c.phone) { showErr('No phone number for this customer.'); return; }
+  if (typeof WaChatbox !== 'undefined' && WaChatbox.open) {
+    WaChatbox.open({phone: c.phone, name: c.name, contextType: 'customer', contextId: c.id});
+  } else {
+    const waPhone = normalizePhoneForWhatsApp(c.phone);
+    if (!waPhone) { showErr('Invalid phone number format for WhatsApp.'); return; }
+    window.open(`https://wa.me/${waPhone}`, '_blank');
+  }
+}
+
+function bulkVoiceCall() {
+  if (selectedIds.size !== 1) return;
+  const custId = [...selectedIds][0];
+  const c = allData.find(x => x.id === custId);
+  if (!c || !c.phone) { showErr('No phone number for this customer.'); return; }
+  window.open(`tel:${c.phone}`, '_self');
+}
+
+function bulkEdit() {
+  if (selectedIds.size !== 1) return;
+  const custId = [...selectedIds][0];
+  openEditModal(custId);
+}
+
+function confirmBulkToggleStatus() {
+  const ids = [...selectedIds];
+  if (!ids.length) return;
+  const msg = document.getElementById('custToggleStatusMsg');
+  if (msg) msg.textContent = `Toggle active/inactive for ${ids.length} customer${ids.length > 1 ? 's' : ''}?`;
+  const modal = document.getElementById('custToggleStatusModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+async function bulkToggleStatus() {
+  const modal = document.getElementById('custToggleStatusModal');
+  if (modal) modal.style.display = 'none';
+
+  const ids = [...selectedIds];
+  if (!ids.length) return;
+  let ok = 0, fail = 0;
+  for (const id of ids) {
+    try {
+      const r = await fetch(`/api/customers/${id}/toggle-status`, { method:'PATCH', headers:H });
+      if (r.ok) ok++; else fail++;
+    } catch(e) { fail++; }
+  }
+  showOk(`${ok} toggled${fail ? `, ${fail} failed` : ''}`);
+  clearSelection();
+  await loadCustomers();
+}
+
+function confirmBulkDelete() {
+  const ids = [...selectedIds];
+  if (!ids.length) return;
+  const names = ids.map(id => { const c = allData.find(x => x.id === id); return c ? c.name : id; });
+  const msg = document.getElementById('custBulkDeleteMsg');
+  if (msg) msg.textContent = `Delete ${ids.length} customer${ids.length > 1 ? 's' : ''}? ${names.join(', ')}. This cannot be undone.`;
+  const modal = document.getElementById('custBulkDeleteModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+async function bulkDelete() {
+  // Close modal
+  const modal = document.getElementById('custBulkDeleteModal');
+  if (modal) modal.style.display = 'none';
+
+  const ids = [...selectedIds];
+  if (!ids.length) return;
+  let ok = 0, fail = 0, errors = [];
+  for (const id of ids) {
+    try {
+      const r = await fetch(`/api/customers/${id}`, { method:'DELETE', headers:H });
+      if (r.ok) {
+        ok++;
+      } else {
+        fail++;
+        try { const e = await r.json(); errors.push(e.detail || `Customer ${id}: HTTP ${r.status}`); }
+        catch { errors.push(`Customer ${id}: HTTP ${r.status}`); }
+      }
+    } catch(e) { fail++; errors.push(`Network error`); }
+  }
+  if (ok > 0) showOk(`${ok} deleted${fail ? `, ${fail} failed` : ''}`);
+  if (fail > 0) showErr(`${fail} could not be deleted: ${errors.join('; ')}`);
+  clearSelection();
+  await loadCustomers();
+}
+
+async function printLabel(customerId, orderId) {
+  if (!orderId || orderId === 'undefined') { showErr('No order for this customer.'); return; }
+  const r = await fetch(`/api/customers/${customerId}/orders/${orderId}/label`, { headers:H });
+  if (!r.ok) { const e=await r.json().catch(()=>({})); showErr(e.detail||'Error.'); return; }
+  const blob = await r.blob();
+  const url  = URL.createObjectURL(blob);
+  const w    = window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+  if (!w) showErr('Pop-up blocked.');
+}
+async function printInvoice(customerId, orderId) {
+  if (!orderId || orderId === 'undefined') { showErr('No order for this customer.'); return; }
+  const r = await fetch(`/api/customers/${customerId}/orders/${orderId}/invoice`, { headers:H });
+  if (!r.ok) { const e=await r.json().catch(()=>({})); showErr(e.detail||'Error.'); return; }
+  const html = await r.text();
+  const w = window.open('', '_blank');
+  if (!w) { showErr('Pop-up blocked.'); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+}
+
+function openCreateModal() {
+  editingCustId = null;
+  document.getElementById('modalTitle').textContent = 'New Customer';
+  ['m_name','m_phone','m_alt_phone','m_email','m_address','m_pin','m_city','m_state','m_notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m_ctype').value   = '';
+  document.getElementById('m_source').value  = 'manual';
+  document.getElementById('m_payment').value = 'cod';
+  document.getElementById('modalErr').style.display = 'none';
+  document.getElementById('custModal').classList.add('open');
+  document.getElementById('m_name').focus();
+}
+function openEditModal(id) {
+  const c = allData.find(x => x.id === id);
+  if (!c) return;
+  editingCustId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Customer';
+  document.getElementById('m_name').value      = c.name || '';
+  document.getElementById('m_phone').value     = c.phone || '';
+  document.getElementById('m_alt_phone').value = c.alternate_phone || '';
+  document.getElementById('m_email').value     = c.email || '';
+  document.getElementById('m_address').value   = c.address || '';
+  document.getElementById('m_pin').value       = c.pincode || '';
+  document.getElementById('m_city').value      = c.city || '';
+  document.getElementById('m_state').value     = c.state || '';
+  document.getElementById('m_ctype').value     = c.customer_type || '';
+  document.getElementById('m_source').value    = c.source || 'manual';
+  document.getElementById('m_payment').value   = c.payment_method || 'cod';
+  document.getElementById('m_notes').value     = c.notes || '';
+  document.getElementById('modalErr').style.display = 'none';
+  document.getElementById('custModal').classList.add('open');
+}
+function closeCustModal() { document.getElementById('custModal').classList.remove('open'); editingCustId = null; }
+async function submitCustomer() {
+  const name  = document.getElementById('m_name').value.trim();
+  const phone = document.getElementById('m_phone').value.trim();
+  const errEl = document.getElementById('modalErr');
+  errEl.style.display = 'none';
+  if (!name || !phone) { errEl.textContent='Name and phone are required.'; errEl.style.display=''; return; }
+  const payload = {
+    name, phone,
+    alternate_phone:         document.getElementById('m_alt_phone').value.trim()||null,
+    email:                   document.getElementById('m_email').value.trim()||null,
+    address:                 document.getElementById('m_address').value.trim()||null,
+    pincode:                 document.getElementById('m_pin').value.trim()||null,
+    city:                    document.getElementById('m_city').value.trim()||null,
+    state:                   document.getElementById('m_state').value.trim()||null,
+    customer_type:           document.getElementById('m_ctype').value||null,
+    source:                  document.getElementById('m_source').value||'manual',
+    payment_mode_preference: document.getElementById('m_payment').value||'cod',
+    notes:                   document.getElementById('m_notes').value.trim()||null,
+  };
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+  try {
+    const url    = editingCustId ? `/api/customers/${editingCustId}` : '/api/customers/';
+    const method = editingCustId ? 'PATCH' : 'POST';
+    const r = await fetch(url, { method, headers:H, body:JSON.stringify(payload) });
+    if (!r.ok) { const e=await r.json().catch(()=>({})); errEl.textContent=e.detail||'Failed.'; errEl.style.display=''; return; }
+    closeCustModal();
+    showOk(editingCustId ? 'Customer updated.' : 'Customer created.');
+    crmBroadcast({type: editingCustId ? 'customer_updated' : 'customer_created'});
+    currentPage = 1; await loadCustomers();
+  } catch(ex) { errEl.textContent='Server error: '+ex.message; errEl.style.display=''; }
+  finally { saveBtn.disabled=false; saveBtn.textContent='Save Customer'; }
+}
+
+async function toggleStatus(id) {
+  const r = await fetch(`/api/customers/${id}/toggle-status`, { method:'PATCH', headers:H });
+  if (r.ok) { showOk('Status updated.'); await loadCustomers(); }
+  else { const e=await r.json().catch(()=>({})); showErr(e.detail||'Failed.'); }
+}
+async function deleteCustomer(id, name) {
+  if (!confirm(`Permanently delete "${name}"? This cannot be undone.`)) return;
+  const r = await fetch(`/api/customers/${id}`, { method:'DELETE', headers:H });
+  if (r.ok) { showOk('Customer permanently deleted.'); await loadCustomers(); }
+  else { const e=await r.json().catch(()=>({})); showErr(e.detail||'Failed.'); }
+}
+
+async function openDetail(id) {
+  detailCustId = id;
+  document.getElementById('detailView').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  // Reset tabs to Info
+  switchDTab('info', document.querySelector('.dtab'));
+  const c = allData.find(x => x.id === id);
+  if (c) {
+    document.getElementById('detailName').textContent = c.name;
+    const src  = sourceInfo(c.source);
+    document.getElementById('detailMeta').innerHTML =
+      `<span style="font-family:var(--font-mono);font-size:11px;">${esc(c.unique_customer_code)}</span>` +
+      `<span class="chip ${src.cls}" style="font-size:10px;">${src.label}</span>` +
+      (c.customer_type ? `<span class="chip chip-gray" style="font-size:10px;">${ctypeLabel(c.customer_type)}</span>` : '');
+
+    // Hero banner
+    const initials = (c.name||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
+    document.getElementById('heroAvatar').textContent = initials;
+    document.getElementById('heroName').textContent   = c.name;
+    document.getElementById('heroCode').textContent   = c.unique_customer_code || '';
+    const badges = [src.label];
+    if (c.customer_type) badges.push(ctypeLabel(c.customer_type));
+    if (c.city) badges.push(c.city);
+    document.getElementById('heroBadges').innerHTML   = badges.map(b=>`<span class="hero-badge">${esc(b)}</span>`).join('');
+    const amt = parseFloat(c.total_amount||0);
+    const totalOrders = c.total_orders_count || c.order_count || 0;
+    const avgVal = parseFloat(c.average_order_value||0);
+    document.getElementById('heroMetrics').innerHTML = `
+      <div class="hero-metric"><div class="hm-val">₹${amt.toLocaleString('en-IN')}</div><div class="hm-lbl">Total Spent</div></div>
+      <div class="hero-metric"><div class="hm-val">${totalOrders}</div><div class="hm-lbl">Orders</div></div>
+      ${avgVal?`<div class="hero-metric"><div class="hm-val">₹${avgVal.toLocaleString('en-IN',{maximumFractionDigits:0})}</div><div class="hm-lbl">Avg Order</div></div>`:''}
+    `;
+    renderDetailEngagement(c);
+    renderDetailInfo(c);
+  }
+  document.getElementById('detailErr').style.display = 'none';
+  document.getElementById('detailOrdersTbl').innerHTML = '<div class="loading">Loading orders…</div>';
+  loadDetailNotes(id);
+  try {
+    const r = await fetch(`/api/customers/${id}/orders`, { headers:H });
+    if (!r.ok) throw new Error(await r.text());
+    const orders = await r.json();
+    document.getElementById('detailOrderCount').textContent = `${orders.length}`;
+    renderDetailOrders(orders, id);
+  } catch(ex) {
+    document.getElementById('detailErr').textContent = 'Orders load error: '+ex.message;
+    document.getElementById('detailErr').style.display = '';
+  }
+}
+function renderDetailEngagement(c) {
+  const totalOrders = c.total_orders_count || c.order_count || 0;
+  const avgVal      = parseFloat(c.average_order_value || 0);
+  const cards = [
+    ['📦 Orders',     totalOrders],
+    ['💰 Latest',     '₹' + parseFloat(c.total_amount||0).toLocaleString('en-IN')],
+    ['📊 Avg Value',  avgVal ? '₹'+avgVal.toLocaleString('en-IN',{maximumFractionDigits:0}) : '—'],
+    ['🛒 Abandoned',  c.abandoned_carts || 0],
+    ['🗓 First Order', c.first_order_date ? fmtDate(c.first_order_date) : '—'],
+    ['🗓 Last Order',  c.last_order_date  ? fmtDate(c.last_order_date)  : '—'],
+    ['👁 Last Seen',   c.last_seen_at     ? fmtDate(c.last_seen_at)     : '—'],
+  ];
+  document.getElementById('detailEngStrip').innerHTML = cards.map(([l,v]) =>
+    `<div class="eng-card"><div class="ev">${v}</div><div class="el">${l}</div></div>`
+  ).join('');
+}
+function renderDetailInfo(c) {
+  const src  = sourceInfo(c.source);
+  const fieldIcons = {
+    'Phone': '📱', 'Alt Phone': '📞', 'Address': '🏠', 'City': '🏙',
+    'State': '📍', 'Pincode': '🔢', 'Payment Pref': '💳', 'Customer Type': '🏷', 'Notes': '📝',
+    'Source': '🌐', 'Status': '✅', 'Created': '🗓'
+  };
+  // Editable fields: [label, field_key, current_val, input_type]
+  const editableFields = [
+    ['Phone',        'phone',        c.phone||'',            'text'],
+    ['Alt Phone',    'alternate_phone', c.alternate_phone||'','text'],
+    ['Address',      'address',      c.address||'',          'text'],
+    ['City',         'city',         c.city||'',             'text'],
+    ['State',        'state',        c.state||'',            'text'],
+    ['Pincode',      'pincode',      c.pincode||'',          'text'],
+    ['Payment Pref', 'payment_mode_preference', c.payment_method||'cod', 'select:cod,prepaid,pay_after_delivery'],
+    ['Customer Type','customer_type',c.customer_type||'',    'select:retail,wholesale,distributor'],
+    ['Notes',        'notes',        c.notes||'',            'text'],
+  ];
+  const readOnlyFields = [
+    ['Source',  src.label],
+    ['Status',  c.is_active ? '✅ Active' : '❌ Inactive'],
+    ['Created', c.created_at ? fmtDate(c.created_at) : '—'],
+  ];
+  const editHtml = editableFields.map(([lbl, key, val, inputType]) => {
+    const safeId = `inf_${key}`;
+    const dispVal = (key === 'phone' || key === 'alternate_phone') ? formatPhoneForDisplay(val) : (val || '—');
+    let inputEl;
+    if (inputType.startsWith('select:')) {
+      const opts = inputType.replace('select:','').split(',');
+      inputEl = `<select class="inf-inp" id="${safeId}_inp" style="display:none;">
+        ${opts.map(o=>`<option value="${o}" ${o===val?'selected':''}>${o.charAt(0).toUpperCase()+o.slice(1).replace(/_/g,' ')}</option>`).join('')}
+      </select>`;
+    } else {
+      inputEl = `<input class="inf-inp" id="${safeId}_inp" value="${esc(val)}" style="display:none;">`;
+    }
+    return `<div class="info-card">
+      <div class="lbl">${fieldIcons[lbl]||''} ${lbl}</div>
+      <div class="inf">
+        <div class="val" id="${safeId}_val">${esc(dispVal)}</div>
+        ${inputEl}
+        <button class="inf-edit" id="${safeId}_editbtn" onclick="startInlineEdit('${key}','${safeId}')">✏</button>
+        <button class="inf-btn inf-save" id="${safeId}_savebtn" style="display:none;" onclick="saveInlineEdit('${key}','${safeId}')">✓</button>
+        <button class="inf-btn inf-cancel" id="${safeId}_cancelbtn" style="display:none;" onclick="cancelInlineEdit('${safeId}')">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+  const roHtml = readOnlyFields.map(([l,v]) =>
+    `<div class="info-card"><div class="lbl">${fieldIcons[l]||''} ${l}</div><div class="val">${esc(String(v))}</div></div>`
+  ).join('');
+  document.getElementById('detailInfoGrid').innerHTML = editHtml + roHtml;
+}
+function renderDetailOrders(orders, customerId) {
+  const el = document.getElementById('detailOrdersTbl');
+  if (!orders.length) { el.innerHTML = '<div class="empty">No orders yet.</div>'; return; }
+  el.innerHTML = `<table class="gs-table">
+    <thead><tr>
+      <th>Order ID</th><th>Items</th><th>Amount</th><th>Payment</th>
+      <th>Status</th><th>Tracking</th><th>Printed</th><th>Date</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${orders.map(o => {
+      const items = o.items.map(i=>`${i.product_name} ×${i.quantity} ${i.unit}`).join(', ');
+      let pp;
+      if (o.payment_method === 'cod') {
+        pp = '<span class="chip chip-amber">💵 COD</span>';
+      } else if (o.payment_method === 'partial_cod') {
+        pp = '<span class="chip chip-amber">📦 Partial COD</span>';
+      } else {
+        pp = '<span class="chip chip-blue">✅ Paid</span>';
+      }
+      const sc    = {delivered:'chip-green',cancelled:'chip-red',shipped:'chip-blue'}[o.status]||'chip-gray';
+      const amt   = parseFloat(o.total_amount||0);
+      return `<tr>
+        <td>
+          <code style="font-family:var(--font-mono);font-size:11px">${esc(o.order_number)}</code>
+        </td>
+        <td style="font-size:11px;max-overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(items)}">${esc(items)||'—'}</td>
+        <td>
+          <strong>₹${amt.toLocaleString('en-IN')}</strong>
+          ${Number(o.amount_due)>0?`<div style="font-size:10px;color:var(--g-red)">Due ₹${o.amount_due}</div>`:''}
+        </td>
+        <td>${pp}</td>
+        <td><span class="chip ${sc}">${o.status}</span></td>
+        <td style="font-size:11px">
+          ${o.tracking_number ? `<span>${esc(o.tracking_number)}</span>` : '—'}
+          <button class="btn-xs" onclick="openTrackingUpdateModal('${o.id}','${esc(o.order_number)}','${esc(o.tracking_number||'')}','${esc(o.courier_name||'')}','${esc(o.shipping_partner||'')}')" style="margin-left:4px;font-size:10px;padding:2px 6px;border:1px solid var(--g-400);border-radius:3px;background:none;cursor:pointer;">✎</button>
+        </td>
+        <td><span class="chip chip-purple">${o.printed_count}×</span></td>
+        <td style="font-size:11px;color:var(--g-600)">${o.created_at?fmtDate(o.created_at):'—'}</td>
+        <td>
+          <div class="actions-cell">
+            <button class="btn-xs bx-label"   onclick="printLabel('${customerId}','${o.id}')">🏷 Label</button>
+            <button class="btn-xs bx-invoice" onclick="printInvoice('${customerId}','${o.id}')">🧾 Invoice</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+function closeDetail() {
+  document.getElementById('detailView').style.display = 'none';
+  const errEl = document.getElementById('detailErr');
+  if (errEl) errEl.style.display = 'none';
+  document.body.style.overflow = '';
+  detailCustId = null;
+}
+function editDetailCustomer() {
+  const c = allData.find(x => x.id === detailCustId);
+  if (!c) return; closeDetail(); openEditModal(c.id);
+}
+
+function showErr(msg) {
+  const b = document.getElementById('errBanner');
+  b.textContent = msg; b.style.display = '';
+  setTimeout(() => b.style.display = 'none', 5000);
+}
+function showOk(msg) {
+  const b = document.getElementById('okBanner');
+  b.textContent = msg; b.style.display = '';
+  setTimeout(() => b.style.display = 'none', 3000);
+}
+const COUNTRY_DIAL_CODES = [
+  '998','994','993','992','977','976','975','974','973','972','971','970','968','967','966','965','964','963','962','961','960',
+  '886','880','856','855','853','852','850','689','687','685','682','680','679','677','675','673','672','670','692','691','690',
+  '599','598','597','596','595','594','593','592','591','590','509','508','507','506','505','504','503','502','501','500',
+  '420','423','421','389','387','386','385','383','382','381','380','378','377','376','375','374','373','372','371','370',
+  '299','298','297','291','290','269','268','267','266','265','264','263','262','261','260','258','257','256','255','254','253','252','251','250',
+  '249','248','246','245','244','243','242','241','240','239','238','237','236','235','234','233','232','231','230','229','228','227','226','225','224','223','222','221','220','218','216','213','212','211','20',
+  '995','996','997','98','95','94','93','92','91','90',
+  '86','84','82','81','66','65','64','63','62','61','60','58','57','56','55','54','53','52','51','49','48','47','46','45','44','43','41','40','39','36','34','33','32','31','30','27','7','1'
+].sort((a,b)=>b.length-a.length);
+
+function phoneDigits(v) { return String(v || '').replace(/\D/g, ''); }
+
+function formatPhoneForDisplay(rawPhone) {
+  if (!rawPhone) return '—';
+  const raw = String(rawPhone).trim();
+  const digits = phoneDigits(raw);
+  if (!digits) return raw;
+
+  if (digits.length === 12 && digits.startsWith('91')) return digits.slice(2);
+  if (digits.length === 10) return digits;
+
+  const cc = COUNTRY_DIAL_CODES.find(code => digits.startsWith(code) && digits.length > code.length + 4);
+  if (cc) return `+${cc} ${digits.slice(cc.length)}`;
+
+  return raw.startsWith('+') ? raw : digits;
+}
+
+function normalizePhoneForWhatsApp(rawPhone) {
+  if (!rawPhone) return '';
+  const raw = String(rawPhone).trim();
+  let digits = phoneDigits(raw);
+  if (!digits) return '';
+
+  if (digits.startsWith('00')) digits = digits.slice(2);
+  if (digits.length === 10) return `91${digits}`;
+  if (digits.length === 12 && digits.startsWith('91')) return digits;
+  if (raw.startsWith('+') && digits.length >= 8 && digits.length <= 15) return digits;
+  if (digits.length >= 11 && digits.length <= 15) return digits;
+  return '';
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); }
+  catch { return iso; }
+}
+
+document.getElementById('custModal').addEventListener('click', function(e) { if (e.target===this) closeCustModal(); });
+document.getElementById('orderModal').addEventListener('click', function(e) { if (e.target===this) closeOrderModal(); });
+document.getElementById('noteModal').addEventListener('click',  function(e) { if (e.target===this) closeNoteModal(); });
+
+/* ══════════════════════════════════════════════
+   DETAIL TABS
+══════════════════════════════════════════════ */
+function switchDTab(name, btn) {
+  document.querySelectorAll('.dtab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.dtab-panel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else {
+    const allBtns = document.querySelectorAll('.dtab');
+    if (name === 'info')   allBtns[0].classList.add('active');
+    if (name === 'orders') allBtns[1].classList.add('active');
+    if (name === 'notes')  allBtns[2].classList.add('active');
+  }
+  document.getElementById('dtab-' + name).classList.add('active');
+}
+
+/* ══════════════════════════════════════════════
+   INLINE FIELD EDITING
+══════════════════════════════════════════════ */
+function startInlineEdit(key, safeId) {
+  document.getElementById(safeId+'_val').style.display = 'none';
+  document.getElementById(safeId+'_editbtn').style.display = 'none';
+  document.getElementById(safeId+'_inp').style.display = '';
+  document.getElementById(safeId+'_savebtn').style.display = '';
+  document.getElementById(safeId+'_cancelbtn').style.display = '';
+  document.getElementById(safeId+'_inp').focus();
+}
+function cancelInlineEdit(safeId) {
+  document.getElementById(safeId+'_val').style.display = '';
+  document.getElementById(safeId+'_editbtn').style.display = '';
+  document.getElementById(safeId+'_inp').style.display = 'none';
+  document.getElementById(safeId+'_savebtn').style.display = 'none';
+  document.getElementById(safeId+'_cancelbtn').style.display = 'none';
+}
+async function saveInlineEdit(key, safeId) {
+  const inpEl = document.getElementById(safeId+'_inp');
+  const newVal = inpEl.value.trim();
+  const saveBtn = document.getElementById(safeId+'_savebtn');
+  saveBtn.disabled = true; saveBtn.textContent = '…';
+  try {
+    const payload = { [key]: newVal || null };
+    const r = await fetch(`/api/customers/${detailCustId}`, { method:'PATCH', headers:H, body:JSON.stringify(payload) });
+    if (!r.ok) { const e=await r.json().catch(()=>({})); showDetailErr(e.detail||'Save failed'); return; }
+    // Patch local allData
+    const c = allData.find(x => x.id === detailCustId);
+    if (c) {
+      c[key] = newVal || null;
+      if (key === 'payment_mode_preference') c.payment_method = newVal;
+    }
+    // Update display
+    document.getElementById(safeId+'_val').textContent = newVal || '—';
+    cancelInlineEdit(safeId);
+    showOk('✓ Saved');
+  } catch(ex) { showDetailErr('Error: '+ex.message); }
+  finally { saveBtn.disabled=false; saveBtn.textContent='✓'; }
+}
+function showDetailErr(msg) {
+  const el = document.getElementById('detailErr');
+  el.textContent = msg; el.style.display = '';
+  setTimeout(()=>el.style.display='none', 4000);
+}
+
+/* ══════════════════════════════════════════════
+   NOTES (inline tab + modal)
+══════════════════════════════════════════════ */
+let _notesCache = [];
+async function loadDetailNotes(id) {
+  const el = document.getElementById('noteList');
+  el.innerHTML = '<div class="loading">Loading…</div>';
+  try {
+    // Customer detail includes interactions[]
+    const r = await fetch(`/api/customers/${id}`, { headers:H });
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    _notesCache = (d.interactions || []).filter(x => x.interaction_type === 'note');
+    renderNoteList();
+  } catch { el.innerHTML = '<div style="color:var(--g-600);font-size:13px;padding:16px;">Could not load notes.</div>'; }
+}
+function renderNoteList() {
+  const el = document.getElementById('noteList');
+  if (!_notesCache.length) {
+    el.innerHTML = '<div style="color:var(--g-600);font-size:13px;padding:16px;">No notes yet. Add one above.</div>'; return;
+  }
+  el.innerHTML = [..._notesCache].reverse().map(n => `
+    <div class="note-item">
+      <div class="nb">${esc(n.message_content || '')}</div>
+      <div class="nm">🗓 ${fmtDate(n.created_at)}</div>
+    </div>
+  `).join('');
+}
+async function submitNote() {
+  const txt = document.getElementById('noteInput').value.trim();
+  if (!txt || !detailCustId) return;
+  const btn = document.getElementById('noteSaveBtn');
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await fetch(`/api/customers/${detailCustId}/interactions`, {
+      method:'POST', headers:H, body:JSON.stringify({ message_content: txt, interaction_type:'note' })
+    });
+    if (!r.ok) throw new Error((await r.json().catch(()=>({}))).detail || 'Failed');
+    document.getElementById('noteInput').value = '';
+    await loadDetailNotes(detailCustId);
+    showOk('📝 Note saved.');
+  } catch(ex) { showDetailErr(ex.message); }
+  finally { btn.disabled=false; btn.textContent='💾 Save'; }
+}
+
+// Note modal (opened from topbar button)
+function openNoteModal() {
+  const c = allData.find(x=>x.id===detailCustId);
+  document.getElementById('noteModalCustName').textContent = c ? c.name : '';
+  document.getElementById('noteModalInput').value = '';
+  document.getElementById('noteErr').style.display = 'none';
+  document.getElementById('noteModal').classList.add('open');
+  setTimeout(()=>document.getElementById('noteModalInput').focus(), 100);
+}
+function closeNoteModal() { document.getElementById('noteModal').classList.remove('open'); }
+async function submitNoteModal() {
+  const txt = document.getElementById('noteModalInput').value.trim();
+  const errEl = document.getElementById('noteErr');
+  errEl.style.display = 'none';
+  if (!txt) { errEl.textContent='Please enter a note.'; errEl.style.display=''; return; }
+  const btn = document.getElementById('noteModalSaveBtn');
+  btn.disabled=true; btn.textContent='Saving…';
+  try {
+    const r = await fetch(`/api/customers/${detailCustId}/interactions`, {
+      method:'POST', headers:H, body:JSON.stringify({ message_content: txt, interaction_type:'note' })
+    });
+    if (!r.ok) throw new Error((await r.json().catch(()=>({}))).detail||'Failed');
+    closeNoteModal();
+    showOk('📝 Note saved.');
+    loadDetailNotes(detailCustId);
+    // Auto-switch to notes tab
+    switchDTab('notes', document.querySelectorAll('.dtab')[2]);
+  } catch(ex) { errEl.textContent=ex.message; errEl.style.display=''; }
+  finally { btn.disabled=false; btn.textContent='💾 Save Note'; }
+}
+
+/* ══════════════════════════════════════════════
+   NEW ORDER MODAL — orders-page replica
+══════════════════════════════════════════════ */
+let _noItemId    = 0;
+let _noPayMethod = 'cod';
+let _noAdvanceAmount = 0;
+let _noMatchedCustId   = null;
+let _noPhoneTimer      = null;
+let _noSuggTimers      = {};
+let _noProducts        = [];
+let _noCouriers        = [];
+let _noSelectedCourier = null;
+
+async function openNewOrderModal() {
+  if (!detailCustId) return;
+  const c = allData.find(x=>x.id===detailCustId);
+  document.getElementById('orderModalCustName').textContent = c ? c.name : '';
+  document.getElementById('orderErr').style.display = 'none';
+  // Reset all fields
+  ['no_addrPaste','no_deliveryAddr','no_deliveryCity','no_deliveryDistrict',
+   'no_deliveryState','no_deliveryPin','no_deliveryName','no_deliveryName2',
+   'no_custPhone2','no_orderNotes','no_oExpected'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('no_orderDisc').value = '0';
+  document.getElementById('no_orderShip').value = '0';
+  document.getElementById('no_parsedTag').innerHTML = '';
+  document.getElementById('no_manualFlag').style.display = 'none';
+  document.getElementById('no_phoneMatch').style.display = 'none';
+  document.getElementById('no_itemsArea').innerHTML = '';
+  _noItemId = 0; _noMatchedCustId = detailCustId;
+  // Reset partial COD advance panel
+  _noAdvanceAmount = 0;
+  const advInp = document.getElementById('no_advanceAmountInput');
+  if (advInp) advInp.value = 0;
+  const panel = document.getElementById('no_partialCodPanel');
+  if (panel) panel.style.display = 'none';
+  noUpdateCodBreakdown();
+
+  // Pre-fill from customer
+  if (c) {
+    document.getElementById('no_custPhone').value    = c.phone || '';
+    document.getElementById('no_custName').value     = c.name  || '';
+    document.getElementById('no_deliveryName').value = c.name  || '';
+    document.getElementById('no_deliveryAddr').value  = c.address  || '';
+    document.getElementById('no_deliveryCity').value  = c.city     || '';
+    document.getElementById('no_deliveryState').value = c.state    || '';
+    document.getElementById('no_deliveryPin').value   = c.pincode  || '';
+    noSetPayment(c.payment_method || 'cod');
+  } else {
+    noSetPayment('cod');
+  }
+  noAddItemRow();
+  noRecalcTotals();
+  document.getElementById('orderModal').classList.add('open');
+  // Load products in background
+  if (!_noProducts.length) {
+    try {
+      const r = await fetch('/api/products/?page_size=1000', { headers:H });
+      if (r.ok) { const d = await r.json(); _noProducts = d.results || d.data || d || []; }
+    } catch {}
+  }
+  // Load delivery partners
+  noLoadCouriers();
+  setTimeout(()=>document.getElementById('no_addrPaste').focus(), 100);
+}
+
+function closeOrderModal() {
+  document.getElementById('orderModal').classList.remove('open');
+  document.getElementById('no_itemsArea').innerHTML = '';
+  _noItemId = 0; _noMatchedCustId = null;
+}
+
+/* ── Address Parser ── */
+async function noParseAddress() {
+  const raw = document.getElementById('no_addrPaste').value.trim();
+  if (!raw) return;
+  const btn = document.getElementById('no_parseBtn');
+  btn.textContent = '⏳ Parsing…'; btn.disabled = true;
+  try {
+    const r = await fetch('/api/orders/parse-address', {
+      method:'POST', headers:H, body:JSON.stringify({ raw_text: raw })
+    });
+    const d = await r.json();
+    const cc = d.confidence==='high'?'no-conf-high':d.confidence==='medium'?'no-conf-medium':'no-conf-low';
+    document.getElementById('no_parsedTag').innerHTML =
+      `<span class="no-parse-confidence ${cc}">Confidence: ${(d.confidence||'').toUpperCase()}</span>
+       ${d.warnings?.length?`<span style="font-size:11px;color:var(--g-amber);margin-left:8px;">${d.warnings.join(', ')}</span>`:''}`;
+    document.getElementById('no_manualFlag').style.display = d.needs_manual ? '' : 'none';
+    if (d.confidence !== 'low') {
+      if (d.name) { document.getElementById('no_custName').value = d.name; document.getElementById('no_deliveryName').value = d.name; }
+      if (d.name2)  document.getElementById('no_deliveryName2').value = d.name2;
+      if (d.phone && !document.getElementById('no_custPhone').value) {
+        document.getElementById('no_custPhone').value = d.phone;
+        if ((d.phone.replace(/\D/g,'')).length >= 10) noLookupPhone(d.phone.replace(/\D/g,''));
+      }
+      if (d.phone2)       document.getElementById('no_custPhone2').value = d.phone2;
+      if (d.address_line) document.getElementById('no_deliveryAddr').value = d.address_line;
+      if (d.city)         document.getElementById('no_deliveryCity').value = d.city;
+      if (d.district)     document.getElementById('no_deliveryDistrict').value = d.district;
+      if (d.state)        document.getElementById('no_deliveryState').value = d.state;
+      if (d.pincode)      document.getElementById('no_deliveryPin').value = d.pincode;
+    }
+  } catch { document.getElementById('no_manualFlag').style.display = ''; }
+  finally { btn.textContent='🔍 Parse Address'; btn.disabled=false; }
+}
+
+/* ── Phone lookup ── */
+let _noPhoneDebounce = null;
+function noOnPhoneInput() {
+  clearTimeout(_noPhoneDebounce);
+  const val = document.getElementById('no_custPhone').value.replace(/\D/g,'');
+  if (val.length >= 10) {
+    _noPhoneDebounce = setTimeout(() => noLookupPhone(val), 600);
+  } else {
+    document.getElementById('no_phoneMatch').style.display = 'none';
+  }
+}
+async function noLookupPhone(phone) {
+  const el = document.getElementById('no_phoneMatch');
+  try {
+    const r = await fetch('/api/orders/phone-lookup', {
+      method:'POST', headers:H, body:JSON.stringify({ phone })
+    });
+    if (!r.ok) { el.style.display='none'; return; }
+    const d = await r.json();
+    if (!d || d.type === 'new') {
+      el.className='no-phone-match new-cust'; el.style.display='';
+      el.innerHTML = `🆕 New customer — will be created on order save`;
+      _noMatchedCustId = detailCustId; return;
+    }
+    if (d.type === 'customer') {
+      el.className='no-phone-match customer'; el.style.display='';
+      el.innerHTML = `✅ <strong>${d.name}</strong> (${d.unique_customer_code||'existing'})<br>
+        <button onclick="noUseMatchedCustomer()" style="margin-top:4px;padding:3px 10px;border:1px solid var(--g-blue);border-radius:var(--r-xs);background:var(--g-blue-lt);color:var(--g-blue-txt);font-size:11px;cursor:pointer;font-weight:600;font-family:var(--font);">✓ Use This Customer</button>`;
+      window._noPhoneMatchData = d; _noMatchedCustId = d.id;
+      if (!document.getElementById('no_custName').value) document.getElementById('no_custName').value = d.name;
+      if (d.address && !document.getElementById('no_deliveryAddr').value) {
+        document.getElementById('no_deliveryAddr').value  = d.address  || '';
+        document.getElementById('no_deliveryCity').value  = d.city     || '';
+        document.getElementById('no_deliveryState').value = d.state    || '';
+        document.getElementById('no_deliveryPin').value   = d.pincode  || '';
+      }
+    } else {
+      el.className='no-phone-match lead'; el.style.display='';
+      el.innerHTML = `🎯 <strong>Lead</strong>: ${d.name}<br>
+        <button onclick="noUseMatchedCustomer()" style="margin-top:4px;padding:3px 10px;border:1px solid var(--g-amber);border-radius:var(--r-xs);background:var(--g-amber-lt);color:var(--g-amber);font-size:11px;cursor:pointer;font-weight:600;font-family:var(--font);">✓ Use This Lead</button>`;
+      window._noPhoneMatchData = d; _noMatchedCustId = null;
+      if (!document.getElementById('no_custName').value) document.getElementById('no_custName').value = d.name;
+    }
+  } catch { el.style.display='none'; }
+}
+function noUseMatchedCustomer() {
+  const d = window._noPhoneMatchData;
+  if (!d) return;
+  _noMatchedCustId = d.id || detailCustId;
+  document.getElementById('no_custName').value = d.name || '';
+  if (d.address)  document.getElementById('no_deliveryAddr').value  = d.address;
+  if (d.city)     document.getElementById('no_deliveryCity').value  = d.city;
+  if (d.state)    document.getElementById('no_deliveryState').value = d.state;
+  if (d.pincode)  document.getElementById('no_deliveryPin').value   = d.pincode;
+  showOk('Customer info loaded ✓');
+}
+
+/* ── Item rows ── */
+function noAddItemRow(prefill={}) {
+  _noItemId++;
+  const id = _noItemId;
+  const row = document.createElement('div');
+  row.className = 'no-item-row';
+  row.id = 'no-item-' + id;
+  row.innerHTML = `
+    <div class="no-item-search">
+      <input type="text" placeholder="🔍 Type product name or SKU…" id="no_iname_${id}"
+        oninput="noShowSuggestions(${id})" autocomplete="off"
+        onblur="setTimeout(()=>{const s=document.getElementById('no_sugg_${id}');if(s)s.style.display='none'},200)"
+        value="${esc(prefill.product_name||'')}"
+        onfocus="if(this.value.trim())noShowSuggestions(${id})">
+      <span class="no-unit-badge" id="no_iunit_badge_${id}">${prefill.unit||''}</span>
+      <input type="hidden" id="no_iunit_${id}" value="${prefill.unit||'piece'}">
+      <div class="no-sugg-dropdown" id="no_sugg_${id}"></div>
+    </div>
+    <div class="no-item-controls">
+      <div class="no-ctrl-cell">
+        <span class="no-ctrl-label">Qty</span>
+        <input type="number" class="no-ctrl-input" id="no_iqty_${id}" 
+          min="0.001" step="0.001" oninput="noRecalcRow(${id})" value="${prefill.quantity||'1'}">
+      </div>
+      <div class="no-ctrl-cell">
+        <span class="no-ctrl-label">Price ₹</span>
+        <input type="number" class="no-ctrl-input" id="no_iprice_${id}" 
+          min="0" step="0.01" oninput="noRecalcRow(${id})" value="${prefill.unit_price||''}">
+      </div>
+      <div class="no-ctrl-cell">
+        <span class="no-ctrl-label">Disc %</span>
+        <input type="number" class="no-ctrl-input" id="no_idisc_${id}" 
+          min="0" max="100" oninput="noRecalcRow(${id})" value="${prefill.discount_pct||'0'}">
+      </div>
+      <div class="no-item-total" id="no_itotal_${id}">₹0.00</div>
+      <button class="no-rm-item" onclick="noRemoveItemRow(${id})" type="button" title="Remove">×</button>
+    </div>`;
+  document.getElementById('no_itemsArea').appendChild(row);
+  noRecalcRow(id);
+  // Focus name field
+  setTimeout(()=>document.getElementById(`no_iname_${id}`)?.focus(), 60);
+}
+
+function noRemoveItemRow(id) {
+  const el = document.getElementById('no-item-' + id);
+  if (el) el.remove();
+  noRecalcTotals();
+}
+
+function noRecalcRow(id) {
+  const qty   = parseFloat(document.getElementById(`no_iqty_${id}`)?.value)   || 0;
+  const price = parseFloat(document.getElementById(`no_iprice_${id}`)?.value) || 0;
+  const disc  = parseFloat(document.getElementById(`no_idisc_${id}`)?.value)  || 0;
+  const total = qty * price * (1 - disc / 100);
+  const el = document.getElementById(`no_itotal_${id}`);
+  if (el) el.textContent = '₹' + total.toFixed(2);
+  noRecalcTotals();
+}
+
+function noRecalcTotals() {
+  let sub = 0;
+  document.querySelectorAll('.no-item-row').forEach(row => {
+    const id = row.id.replace('no-item-', '');
+    const t = parseFloat(document.getElementById(`no_itotal_${id}`)?.textContent?.replace('₹','')) || 0;
+    sub += t;
+  });
+  const disc = parseFloat(document.getElementById('no_orderDisc')?.value) || 0;
+  const ship = parseFloat(document.getElementById('no_orderShip')?.value) || 0;
+  const subEl = document.getElementById('no_tSubtotal');
+  const totEl = document.getElementById('no_tTotal');
+  if (subEl) subEl.textContent = '₹' + sub.toFixed(2);
+  if (totEl) totEl.textContent = '₹' + (sub - disc + ship).toFixed(2);
+}
+
+/* ── Product suggestions ── */
+function noShowSuggestions(id) {
+  const input = document.getElementById(`no_iname_${id}`);
+  const sugg  = document.getElementById(`no_sugg_${id}`);
+  if (!sugg || !input) return;
+  const val = input.value.trim();
+  if (!val) { sugg.style.display='none'; return; }
+  clearTimeout(_noSuggTimers[id]);
+  _noSuggTimers[id] = setTimeout(async () => {
+    sugg.style.display = 'block';
+    sugg.innerHTML = `<div style="padding:10px;color:var(--g-600);font-size:12px;text-align:center;">Searching…</div>`;
+    try {
+      const r = await fetch(`/api/products/?search=${encodeURIComponent(val)}&page_size=20`, { headers:H });
+      if (!r.ok) throw new Error();
+      const d = await r.json();
+      const matches = d.results || d.data || d || [];
+      if (!matches.length) {
+        sugg.innerHTML = `<div style="padding:10px;color:var(--g-600);font-size:12px;text-align:center;">No products found for "<b>${esc(val)}</b>"</div>`;
+        return;
+      }
+      sugg.innerHTML = matches.map(p => {
+        const dispName = p.name + (p.variation_name?` — ${p.variation_name}`:'');
+        const safeName = dispName.replace(/'/g,"\\'");
+        const safeUnit = (p.unit||'piece').replace(/'/g,"\\'");
+        const safeUnitLabel = (p.unit_label||p.unit||'piece').replace(/'/g,"\\'");
+        return `<div class="no-sugg-item"
+          onmousedown="noSelectProduct(${id},'${safeName}','${(p.sku||'').replace(/'/g,"\\'")}',${p.unit_price||0},'${safeUnit}','${safeUnitLabel}')">
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:600;color:var(--g-900);">${esc(p.name)}${p.variation_name?`<span style="font-weight:400;color:var(--g-600);"> — ${esc(p.variation_name)}</span>`:''}
+            </div>
+            <div style="font-size:11px;color:var(--g-600);margin-top:2px;">
+              ${p.unit_label?`<span style="background:var(--g-100);padding:2px 6px;border-radius:3px;margin-right:4px;">${esc(p.unit_label)}</span>`:''}
+              ${p.sku?`<span>SKU: ${esc(p.sku)}</span>`:''}
+            </div>
+          </div>
+          <span class="no-sugg-price">₹${p.unit_price||0}</span>
+        </div>`;
+      }).join('');
+    } catch {
+      // Local fallback
+      const words = val.toLowerCase().split(/\s+/).filter(Boolean);
+      const local = _noProducts.filter(p=>{
+        const hay = [p.name||'',p.sku||'',p.variation_name||'',p.unit_label||''].join(' ').toLowerCase();
+        return words.every(w=>hay.includes(w));
+      }).slice(0,15);
+      if (!local.length) {
+        sugg.innerHTML=`<div style="padding:10px;color:var(--g-600);font-size:12px;text-align:center;">No products found</div>`;
+        return;
+      }
+      sugg.innerHTML = local.map(p=>{
+        const dispName = p.name+(p.variation_name?` — ${p.variation_name}`:'');
+        const safeName = dispName.replace(/'/g,"\\'");
+        const safeUnit = (p.unit||'piece').replace(/'/g,"\\'");
+        const safeUnitLabel = (p.unit_label||p.unit||'piece').replace(/'/g,"\\'");
+        return `<div class="no-sugg-item"
+          onmousedown="noSelectProduct(${id},'${safeName}','${(p.sku||'').replace(/'/g,"\\'")}',${p.unit_price||0},'${safeUnit}','${safeUnitLabel}')">
+          <div style="flex:1;min-width:0;"><div style="font-weight:600;">${esc(p.name)}${p.variation_name?` <span style="color:var(--g-600);">— ${esc(p.variation_name)}</span>`:''}</div></div>
+          <span class="no-sugg-price">₹${p.unit_price||0}</span>
+        </div>`;
+      }).join('');
+    }
+  }, 200);
+}
+
+function noSelectProduct(id, name, sku, price, unit, unitLabel) {
+  document.getElementById(`no_iname_${id}`).value   = name;
+  document.getElementById(`no_iprice_${id}`).value  = price || 0;
+  document.getElementById(`no_iunit_${id}`).value   = unit  || 'piece';
+  const badge = document.getElementById(`no_iunit_badge_${id}`);
+  if (badge) { badge.textContent = unitLabel||unit||'piece'; badge.style.display='inline-block'; }
+  document.getElementById(`no_sugg_${id}`).style.display = 'none';
+  noRecalcRow(id);
+  setTimeout(()=>document.getElementById(`no_iqty_${id}`)?.focus(), 80);
+}
+
+/* ── Payment ── */
+function noSetPayment(method) {
+  _noPayMethod = method;
+  document.querySelectorAll('.no-pay-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('no_pay_' + method);
+  if (el) el.classList.add('active');
+  const panel = document.getElementById('no_partialCodPanel');
+  if (panel) panel.style.display = method === 'partial_cod' ? '' : 'none';
+  if (method !== 'partial_cod') {
+    _noAdvanceAmount = 0;
+    const inp = document.getElementById('no_advanceAmountInput');
+    if (inp) inp.value = 0;
+    noUpdateCodBreakdown();
+  }
+}
+function noOnAdvanceInput() {
+  const total = parseFloat((document.getElementById('no_tTotal')?.textContent || '0').replace(/[₹,]/g,'')) || 0;
+  const raw = parseFloat(document.getElementById('no_advanceAmountInput').value) || 0;
+  _noAdvanceAmount = Math.min(Math.max(0, raw), total);
+  if (raw > total) document.getElementById('no_advanceAmountInput').value = _noAdvanceAmount;
+  noUpdateCodBreakdown();
+}
+function noUpdateCodBreakdown() {
+  const el = document.getElementById('no_codOnDelivery');
+  if (!el) return;
+  const total = parseFloat((document.getElementById('no_tTotal')?.textContent || '0').replace(/[₹,]/g,'')) || 0;
+  const cod = Math.max(0, total - _noAdvanceAmount);
+  el.textContent = '₹' + cod.toFixed(2);
+}
+
+/* ── Delivery Partner & Service ── */
+async function noLoadCouriers() {
+  try {
+    const r = await fetch('/api/orders/couriers', { headers: H });
+    if (!r.ok) {
+      const sel = document.getElementById('no_courierSel');
+      sel.innerHTML = '<option value="">⚠️ Error loading couriers (' + r.status + ')</option>';
+      return;
+    }
+    _noCouriers = await r.json();
+    const sel = document.getElementById('no_courierSel');
+    if (!_noCouriers || _noCouriers.length === 0) {
+      sel.innerHTML = '<option value="">No delivery partners configured — add in Tenant Admin → Shipping Config</option>';
+    } else {
+      const defaultPartner = _noCouriers.find(c => c.is_default);
+      sel.innerHTML = '<option value="">— Select Delivery Partner —</option>' +
+        _noCouriers.map(c =>
+          `<option value="${c.id}" ${(defaultPartner && c.is_default) ? 'selected' : ''}>${c.name}</option>`
+        ).join('');
+    }
+    noOnCourierChange();
+  } catch(e) {
+    const sel = document.getElementById('no_courierSel');
+    sel.innerHTML = '<option value="">⚠️ Network error loading couriers</option>';
+  }
+}
+
+function noOnCourierChange() {
+  const val = document.getElementById('no_courierSel').value;
+  _noSelectedCourier = _noCouriers.find(c => c.id === val) || null;
+
+  const ipIdBox = document.getElementById('no_ipIdBox');
+  const sel     = document.getElementById('no_ipCustomerIdSel');
+
+  if (_noSelectedCourier && _noSelectedCourier.customer_ids && _noSelectedCourier.customer_ids.length > 0) {
+    ipIdBox.style.display = '';
+    sel.innerHTML = '<option value="">— Select Service Type —</option>' +
+      _noSelectedCourier.customer_ids.map(cid =>
+        `<option value="${cid.id}">${cid.name || cid.id}</option>`
+      ).join('');
+  } else {
+    ipIdBox.style.display = 'none';
+    sel.innerHTML = '<option value="">—</option>';
+  }
+}
+
+/* ── Submit ── */
+async function noSubmitOrder() {
+  const errEl = document.getElementById('orderErr');
+  errEl.style.display = 'none';
+  const custName  = document.getElementById('no_custName').value.trim();
+  const custPhone = document.getElementById('no_custPhone').value.replace(/\D/g,'');
+  if (!custName && !_noMatchedCustId) {
+    errEl.textContent='Enter customer name.'; errEl.style.display=''; return;
+  }
+  // Collect items
+  const items = [];
+  document.querySelectorAll('.no-item-row').forEach(row => {
+    const id = row.id.replace('no-item-', '');
+    const name  = document.getElementById(`no_iname_${id}`)?.value.trim() || '';
+    const price = parseFloat(document.getElementById(`no_iprice_${id}`)?.value) || 0;
+    const qty   = parseFloat(document.getElementById(`no_iqty_${id}`)?.value)   || 1;
+    const disc  = parseFloat(document.getElementById(`no_idisc_${id}`)?.value)  || 0;
+    const unit  = document.getElementById(`no_iunit_${id}`)?.value || 'piece';
+    if (name && price > 0) items.push({ product_name:name, quantity:qty, unit, unit_price:price, discount_pct:disc });
+  });
+  if (!items.length) {
+    errEl.textContent='Add at least one item with a product name and price.'; errEl.style.display=''; return;
+  }
+  const courierCode = document.getElementById('no_courierSel').value;
+  const ipId = document.getElementById('no_ipCustomerIdSel').value;
+  const payload = {
+    customer_id:      _noMatchedCustId || detailCustId || null,
+    customer_name:    custName || null,
+    customer_phone:   custPhone || null,
+    customer_phone2:  document.getElementById('no_custPhone2').value.replace(/\D/g,'') || null,
+    items,
+    payment_method:   _noPayMethod,
+    advance_amount:   _noPayMethod === 'partial_cod' ? _noAdvanceAmount : 0,
+    delivery_name:    document.getElementById('no_deliveryName').value.trim()    || null,
+    address_name2:    document.getElementById('no_deliveryName2').value.trim()   || null,
+    delivery_address: document.getElementById('no_deliveryAddr').value.trim()    || null,
+    delivery_city:    document.getElementById('no_deliveryCity').value.trim()    || null,
+    delivery_district:document.getElementById('no_deliveryDistrict').value.trim()|| null,
+    delivery_state:   document.getElementById('no_deliveryState').value.trim()   || null,
+    delivery_pincode: document.getElementById('no_deliveryPin').value.trim()     || null,
+    expected_delivery:document.getElementById('no_oExpected').value              || null,
+    discount_amount:  parseFloat(document.getElementById('no_orderDisc').value)  || 0,
+    shipping_charge:  parseFloat(document.getElementById('no_orderShip').value)  || 0,
+    shipping_partner_id: courierCode || null,
+    courier_name: _noSelectedCourier ? _noSelectedCourier.name : null,
+    courier_code: _noSelectedCourier ? _noSelectedCourier.partner_type : null,
+    india_post_customer_id: ipId || null,
+    notes:            document.getElementById('no_orderNotes').value.trim()      || null,
+    order_source:     'manual',
+    order_intent:     'confirmed',
+  };
+  const btn = document.getElementById('orderSaveBtn');
+  btn.disabled=true; btn.textContent='Creating…';
+  try {
+    const r = await fetch('/api/orders/', { method:'POST', headers:H, body:JSON.stringify(payload) });
+    
+    // Try to parse response
+    let order = {};
+    try {
+      order = await r.json();
+    } catch(parseErr) {
+      // If response body is empty or not JSON, that's ok for successful requests
+      if(!r.ok) throw parseErr;
+    }
+    
+    if (!r.ok) { 
+      errEl.textContent=order.detail||'Failed to create order.'; 
+      errEl.style.display=''; 
+      return; 
+    }
+    closeOrderModal();
+    showOk(`✅ Order ${order.order_number||''} created!`);
+    // Reload orders in detail view
+    const ro = await fetch(`/api/customers/${detailCustId}/orders`, { headers:H });
+    if (ro.ok) {
+      const orders = await ro.json();
+      document.getElementById('detailOrderCount').textContent = `${orders.length} order${orders.length!==1?'s':''}`;
+      renderDetailOrders(orders, detailCustId);
+    }
+    switchDTab('orders', document.querySelectorAll('.dtab')[1]);
+    await loadCustomers();
+    // Notify other open tabs (leads, orders) to refresh
+    crmBroadcast({ type: 'order_created', order_number: order.order_number, customer_id: order.customer_id });
+  } catch(ex) { 
+    errEl.textContent='Error: '+ex.message; 
+    errEl.style.display=''; 
+  }
+  finally { 
+    btn.disabled=false; 
+    btn.innerHTML='✅ Create Order'; 
+  }
+}
+
+/* ══════════════════════════════════════════════
+   WHATSAPP QUICK SHARE BUTTONS
+══════════════════════════════════════════════ */
+async function waShareLatestLabel() {
+  if (!waCustomerData?.orders?.length) { alert('No orders found for this customer.'); return; }
+  const latest = waCustomerData.orders[0];
+  const cid = waCustomerData.id;
+  try {
+    const r = await fetch(`/api/customers/${cid}/orders/${latest.id}/label`, { headers:H });
+    if (!r.ok) throw new Error('Label generation failed');
+    const blob = await r.blob();
+    const url  = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    // Auto-compose WA message
+    const rawPhone = (waCustomerData.phone||'').replace(/\D/g,'').slice(-10);
+    const msg = `Hi ${waCustomerData.name}, your shipping label for order ${latest.order_number} is ready. Please find it attached. 📦`;
+    document.getElementById('waTextarea').value = msg;
+    showOk('🏷 Label opened. Message pre-filled — press Send to log.');
+  } catch(ex) { alert('Error: '+ex.message); }
+}
+async function waShareLatestInvoice() {
+  if (!waCustomerData?.orders?.length) { alert('No orders found for this customer.'); return; }
+  const latest = waCustomerData.orders[0];
+  const cid = waCustomerData.id;
+  try {
+    const r = await fetch(`/api/customers/${cid}/orders/${latest.id}/invoice`, { headers:H });
+    if (!r.ok) throw new Error('Invoice generation failed');
+    const html = await r.text();
+    const w = window.open('', '_blank');
+    if (!w) { alert('Pop-up blocked.'); return; }
+    w.document.open(); w.document.write(html); w.document.close();
+    const amt = parseFloat(latest.total_amount||0).toLocaleString('en-IN');
+    const msg = `Hi ${waCustomerData.name}, please find your invoice for order ${latest.order_number} — ₹${amt}. 🧾`;
+    document.getElementById('waTextarea').value = msg;
+    showOk('🧾 Invoice opened. Message pre-filled — press Send to log.');
+  } catch(ex) { alert('Error: '+ex.message); }
+}
+function waShareOrderStatus() {
+  if (!waCustomerData?.orders?.length) { alert('No orders found.'); return; }
+  const latest = waCustomerData.orders[0];
+  const tracking = latest.tracking_number ? `\nTracking: ${latest.tracking_number}` : '';
+  const amt = parseFloat(latest.total_amount||0).toLocaleString('en-IN');
+  const msg = `Hi ${waCustomerData.name}, your order ${latest.order_number} (₹${amt}) status: *${latest.status?.toUpperCase()}*.${tracking}\nThank you! 🙏`;
+  document.getElementById('waTextarea').value = msg;
+  document.getElementById('waTextarea').focus();
+  showOk('📦 Status message ready — press Send to log.');
+}
+function waShareCustomerLabels() {
+  const c = allData.find(x=>x.id===detailCustId);
+  const src  = c ? sourceInfo(c.source).label : '—';
+  const msg = `Hi ${waCustomerData?.name||'Customer'}, here is a summary of your account:\n• Type: ${ctypeLabel(c?.customer_type)}\n• Source: ${src}\n• Payment: ${(c?.payment_method||'cod').toUpperCase()}\n\nThank you for being our valued customer! 🌟`;
+  document.getElementById('waTextarea').value = msg;
+  document.getElementById('waTextarea').focus();
+  showOk('🔖 Label summary ready — press Send to log.');
+}
+
+// WHATSAPP
+let waCustomerData = null;
+let waPreviewUrl   = '';
+
+async function openWaPanel() {
+  const id = detailCustId;
+  if (!id) return;
+  const c = allData.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('waCustomerName').textContent = c.name;
+  document.getElementById('waCustomerPhone').textContent = formatPhoneForDisplay(c.phone);
+  const normalizedPhone = normalizePhoneForWhatsApp(c.phone);
+  const directHref = normalizedPhone ? `https://wa.me/${normalizedPhone}` : 'https://wa.me/';
+  document.getElementById('waDirectLink').href = directHref;
+  document.getElementById('waTplSelect').value   = 'custom';
+  document.getElementById('waTextarea').value    = '';
+  document.getElementById('waPreviewBar').classList.remove('show');
+  document.getElementById('waOrderSelect').style.display = 'none';
+  document.getElementById('waPanel').classList.add('open');
+  try {
+    const r = await fetch(`/api/customers/${id}/orders`, { headers:H });
+    const orders = r.ok ? await r.json() : [];
+    waCustomerData = { id, name: c.name, phone: c.phone, orders };
+    const sel = document.getElementById('waOrderSelect');
+    sel.innerHTML = '<option value="">— pick order —</option>' +
+      orders.map(o => `<option value="${o.id}">${esc(o.order_number)} — ₹${parseFloat(o.total_amount||0).toLocaleString('en-IN')}</option>`).join('');
+  } catch { waCustomerData = { id, name: c.name, phone: c.phone, orders: [] }; }
+  await loadWaHistory(id);
+}
+function closeWaPanel() {
+  document.getElementById('waPanel').classList.remove('open');
+  waCustomerData = null; waPreviewUrl = '';
+}
+async function loadWaHistory(customerId) {
+  const el = document.getElementById('waMessages');
+  el.innerHTML = '<div class="wa-empty">Loading…</div>';
+  try {
+    const r = await fetch(`/api/customers/${customerId}/whatsapp`, { headers:H });
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    renderWaHistory(d.messages || []);
+  } catch {
+    el.innerHTML = '<div class="wa-empty">Could not load message history.</div>';
+  }
+}
+function renderWaHistory(messages) {
+  const el = document.getElementById('waMessages');
+  if (!messages.length) {
+    el.innerHTML = '<div class="wa-empty">No messages yet.<br><small style="color:#aaa">Send the first message below.</small></div>'; return;
+  }
+  const sorted = [...messages].reverse();
+  el.innerHTML = sorted.map(m => {
+    const time = m.sent_at ? new Date(m.sent_at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    return `<div class="wa-bubble out">
+      <div class="wb-text">${esc(m.message)}</div>
+      <div class="wb-meta"><span>${esc(m.sent_by)}</span><span>${time}</span><span>✓✓</span></div>
+    </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+async function updateWaPreview() {
+  const tpl = document.getElementById('waTplSelect').value;
+  const orderSel = document.getElementById('waOrderSelect');
+  const previewBar = document.getElementById('waPreviewBar');
+  if (tpl === 'custom') {
+    orderSel.style.display = 'none'; previewBar.classList.remove('show'); waPreviewUrl = ''; return;
+  }
+  orderSel.style.display = '';
+  const orderId = orderSel.value;
+  if (!orderId) { previewBar.classList.remove('show'); document.getElementById('waTextarea').value = ''; waPreviewUrl = ''; return; }
+  if (!detailCustId) return;
+  try {
+    const r = await fetch(`/api/customers/${detailCustId}/whatsapp/compose?order_id=${orderId}`, { headers:H });
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    document.getElementById('waTextarea').value = d.message || '';
+    waPreviewUrl = d.wa_url || '';
+    previewBar.classList.add('show');
+  } catch { previewBar.classList.remove('show'); waPreviewUrl = ''; }
+}
+async function sendWaMessage() {
+  const message = document.getElementById('waTextarea').value.trim();
+  if (!message) { alert('Please enter a message.'); return; }
+  if (!detailCustId) return;
+  const orderId = document.getElementById('waOrderSelect').value || null;
+  const btn = document.getElementById('waSendBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const payload = { message };
+    if (orderId) payload.order_id = orderId;
+    const r = await fetch(`/api/customers/${detailCustId}/whatsapp`, { method:'POST', headers:H, body:JSON.stringify(payload) });
+    if (!r.ok) { const e=await r.json().catch(()=>({})); alert(e.detail||'Failed to log.'); return; }
+    const d = await r.json();
+    const waUrl = waPreviewUrl || d.wa_url;
+    if (waUrl) {
+      window.open(waUrl, '_blank');
+    } else {
+      const phone = normalizePhoneForWhatsApp(waCustomerData?.phone || '');
+      if (phone) window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+    document.getElementById('waTextarea').value = '';
+    document.getElementById('waTplSelect').value = 'custom';
+    document.getElementById('waOrderSelect').style.display = 'none';
+    document.getElementById('waPreviewBar').classList.remove('show');
+    waPreviewUrl = '';
+    await loadWaHistory(detailCustId);
+  } catch(ex) { alert('Error: ' + ex.message); }
+  finally { btn.disabled=false; btn.innerHTML='↗ Open WhatsApp &amp; Log'; }
+}
+
+// ── Tracking Update Modal ────────────────────────────────────
+let _currentTrackingOrderId = null;
+let _courierListCustomers = [];
+
+async function openTrackingUpdateModal(orderId, orderNum, trackingNum, courierName, shippingPartner) {
+  _currentTrackingOrderId = orderId;
+  document.getElementById('trackingModal').style.display = 'flex';
+  document.getElementById('trackingOrderNum').textContent = orderNum;
+  document.getElementById('trackingNumberInput').value = trackingNum;
+  document.getElementById('trackingCourierNameInput').value = courierName;
+  
+  // Load couriers
+  try {
+    const r = await fetch('/api/orders/couriers', { headers: H });
+    _courierListCustomers = await r.json();
+    
+    const sel = document.getElementById('trackingCourierSel');
+    sel.innerHTML = '<option value="">— Manual Entry —</option>' +
+      _courierListCustomers.map(c => 
+        `<option value="${c.id}">${c.name} (${c.partner_type.toUpperCase()})</option>`
+      ).join('');
+  } catch(e) {
+    console.error('Failed to load couriers:', e);
+  }
+}
+
+function closeTrackingModal() {
+  document.getElementById('trackingModal').style.display = 'none';
+  _currentTrackingOrderId = null;
+}
+
+function onTrackingCourierChange() {
+  const sel = document.getElementById('trackingCourierSel');
+  const nameBox = document.getElementById('trackingCourierNameBox');
+  nameBox.style.display = sel.value === '' ? 'block' : 'none';
+}
+
+async function submitTrackingUpdate() {
+  try {
+    const sel = document.getElementById('trackingCourierSel');
+    const courierNameInput = document.getElementById('trackingCourierNameInput');
+    const trackingInput = document.getElementById('trackingNumberInput');
+    
+    const selectedPartner = sel.value 
+      ? _courierListCustomers.find(c => c.id === sel.value) 
+      : null;
+    
+    const trackingNum = (trackingInput.value || '').trim();
+    
+    if (!trackingNum) {
+      alert('Please enter a tracking number');
+      return;
+    }
+    
+    const payload = {
+      tracking_number: trackingNum,
+      shipping_partner_id: selectedPartner ? selectedPartner.id : null,
+      courier_name: selectedPartner ? selectedPartner.name : (courierNameInput.value?.trim() || null),
+      courier_code: selectedPartner ? selectedPartner.partner_type : null,
+    };
+    
+    const r = await fetch(`/api/orders/${_currentTrackingOrderId}/tracking`, {
+      method: 'PATCH',
+      headers: H,
+      body: JSON.stringify(payload),
+    });
+    
+    if (r.ok) {
+      showOk('✅ Tracking updated successfully');
+      closeTrackingModal();
+      // Reload customer detail to show updated tracking
+      if (detailCustId) {
+        openDetail(detailCustId);
+      } else {
+        await loadCustomers();
+      }
+    } else {
+      const e = await r.json();
+      showErr(e.detail || 'Update failed');
+    }
+  } catch(e) {
+    console.error('Error updating tracking:', e);
+    showErr('Network error: ' + e.message);
+  }
+}
+</script>
+<script src="/modules/wa-chatbox.js"></script>
+<script>
+  (function initWaChatbox() {
+    const t = localStorage.getItem('token');
+    if (t && window.WaChatbox) WaChatbox.init(t);
+    else window.addEventListener('load', () => {
+      const t2 = localStorage.getItem('token');
+      if (t2 && window.WaChatbox) WaChatbox.init(t2);
+    });
+  })();
+</script>
+<script src="/modules/mobile-nav.v4.js?v=20260728c"></script>
+
+<script>
+// Auto-apply data-labels for mobile table rendering
+document.addEventListener("DOMContentLoaded", () => {
+    setInterval(() => {
+        document.querySelectorAll(".data-table").forEach(table => {
+            const headers = Array.from(table.querySelectorAll("th")).map(th => th.innerText.trim());
+            table.querySelectorAll("tbody tr").forEach(row => {
+                Array.from(row.children).forEach((td, i) => {
+                    if(headers[i] && !td.getAttribute("data-label")) {
+                        td.setAttribute("data-label", headers[i]);
+                    }
+                });
+            });
+        });
+    }, 1000); // Polling for dynamically loaded rows
+});
+</script>
+
+<script>
+// Mobile Bottom Sheet UX Integration
+document.addEventListener("DOMContentLoaded", () => {
+    const lp = document.querySelector(".lp");
+    const drawer = document.querySelector(".drawer");
+    
+    // Add close button to LP for mobile
+    if (lp) {
+        const closeBtn = document.createElement("button");
+        closeBtn.innerHTML = "▼ Close";
+        closeBtn.className = "btn btn-ghost btn-sm mobile-close-btn";
+        closeBtn.style.cssText = "display:none; position: absolute; right: 10px; top: 10px; z-index: 501; color: var(--md-sys-color-on-surface-variant); background: var(--md-sys-color-surface); box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-weight: bold;";
+        lp.appendChild(closeBtn);
+        
+        closeBtn.onclick = () => {
+            lp.classList.remove("open-bottom");
+        };
+        
+        // Show close btn only on mobile when opened
+        const observer = new MutationObserver(() => {
+            if (lp.classList.contains("open-bottom")) {
+                closeBtn.style.display = "block";
+            } else {
+                closeBtn.style.display = "none";
+            }
+        });
+        observer.observe(lp, {attributes: true, attributeFilter: ['class']});
+    }
+
+    // Intercept row clicks and 'New' buttons to trigger slide up on mobile
+    document.addEventListener("click", e => {
+        // Table row clicks for Details
+        const tr = e.target.closest("tr");
+        if (tr && tr.closest(".data-table") && (lp || drawer)) {
+            if (lp) lp.classList.add("open-bottom");
+            if (drawer) drawer.classList.add("open");
+        }
+        
+        // New Lead / New Order action buttons (any button with 'New' or + icon roughly)
+        const btn = e.target.closest("button");
+        if (btn && (btn.innerText.includes("New") || btn.innerText.includes("＋"))) {
+            if (lp) lp.classList.add("open-bottom");
+        }
+    });
+});
+</script>
+<style>
+@media (max-width: 599px) {
+
+  /* ── Mobile Redesign Injections ── */
+
+  .page-content {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .toolbar {
+    display: flex !important;
+    gap: 8px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .toolbar > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+  .toolbar .search-input {
+    width: 100% !important;
+  }
+  
+      /* Tables to Cards */
+  .table-wrap .data-table, .table-wrap .data-table tbody, .table-wrap .data-table tr, .table-wrap .data-table td {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: min-content !important;
+    box-sizing: border-box !important;
+  }
+  .table-wrap {
+    overflow-x: hidden !important;
+    padding: 4px 8px !important;
+  }
+  .data-table {
+    min-width: 0 !important;
+    background: transparent !important;
+  }
+  .table-wrap .data-table thead {
+    display:none;
+  }
+  .table-wrap .data-table tr {
+    margin-bottom: 16px !important;
+    border: 1px solid var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    border-radius: var(--r-xl, 16px) !important;
+    background: var(--md-sys-color-surface, #ffffff) !important;
+    padding: 16px 18px !important;
+    position: relative !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04) !important;
+    height: auto !important;
+  }
+  .table-wrap .data-table tr.row-active, .table-wrap .data-table tr.selected {
+    box-shadow: 0 0 0 2px var(--md-sys-color-primary, #1a73e8), 0 4px 12px rgba(0,0,0,0.06) !important;
+  }
+  .table-wrap .data-table td {
+    border: none !important;
+    padding: 10px 0 !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    border-bottom: 1px dashed var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    height: auto !important;
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+  .table-wrap .data-table td::before {
+    content: attr(data-label);
+    font-weight: 700 !important;
+    font-size: 10px !important;
+    letter-spacing: 0.6px !important;
+    color: var(--md-sys-color-outline, #5f6368) !important;
+    text-transform: uppercase !important;
+    display: block !important;
+    margin-bottom: 4px !important;
+    line-height: 1.2 !important;
+  }
+  .table-wrap .data-table td:empty {
+    display:none;
+  }
+  .table-wrap .data-table td:first-child {
+    font-size: 14px !important;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant, #e0e0e0) !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 14px !important;
+    padding-top: 0 !important;
+    display: flex !important;
+  }
+  .table-wrap .data-table td:first-child::before { display:none; }
+  .table-wrap .data-table td:last-child {
+    border-bottom: none !important;
+    margin-top: 8px !important;
+    padding-top: 14px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+  }
+  .table-wrap .data-table td:last-child::before { display:none; }
+  
+  /* Detail panel bottom sheet behavior - only active via JS so override display inline */
+  .lp.open-bottom {
+    transform: translateY(0) !important;
+  }
+  
+
+  /* Modals overall should not get blocked by mobile keyboard */
+  .mbk .mbox {
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+    margin: 10px !important;
+    padding-bottom: 24px !important;
+  }
+  
+  /* Hide FAB when modals or bottom sheets are open */
+  body:has(.mbk.open) .btn-fab-mobile,
+  body:has(.lp.open-bottom) .btn-fab-mobile,
+  body:has(.mbk[style*="display: block"]) .btn-fab-mobile,
+  body:has(.mbk.open) .fab,
+  body:has(.lp.open-bottom) .fab {
+    display:none;
+  }
+
+  /* FAB floating fix */
+  .fab {
+    bottom: calc(64px + 16px) !important;
+    z-index: 400 !important;
+  }
+  
+  /* Stat strip exact layout */
+  .stat-strip {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px !important;
+    overflow: visible !important;
+    flex-wrap: unset !important;
+    padding-bottom: 0 !important;
+  }
+  .stat-card {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+  .mobile-close-btn { display: block !important; }
+}
+</style>
+</body>
+
+
+</html>
+
+
+<style>
+@media (max-width: 599px) {
+  .stat-strip {
+    display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; padding-bottom: 12px !important; overflow: visible !important; flex-wrap: unset !important;
+  }
+  .stat-card {
+    min-width: 0 !important; width: 100% !important; box-sizing: border-box !important; margin: 0 !important; border-radius: 10px !important; padding: 12px 8px !important; border: none !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.4) !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%) !important;
+    display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important;
+  }
+  .stat-card-val { font-size: 20px !important; font-weight: 800 !important; color: var(--md-sys-color-primary, #1d4ed8) !important; margin-bottom: 2px; }
+  .stat-card-label { font-size: 9px !important; font-weight: 700 !important; letter-spacing: 0.5px !important; color: var(--md-sys-color-outline, #4b5563) !important; text-transform: uppercase; }
+
+  .toolbar {
+    display: flex !important; gap: 8px !important; flex-direction: column !important; align-items: stretch !important; margin-bottom: 16px !important;
+    background: #ffffff !important; padding: 12px !important; border-radius: 12px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important; border: 1px solid #f3f4f6 !important;
+  }
+  .toolbar > * { width: 100% !important; max-width: 100% !important; min-height: 40px !important; margin: 0 !important; box-sizing: border-box !important; border-radius: 8px; }
+  .toolbar select, .toolbar input { border: 1px solid #e5e7eb !important; background: #f9fafb; }
+
+  .gs-table { display: block !important; width: 100% !important; background: transparent !important; border: none; }
+  .gs-table thead { display:none; }
+  .gs-table tbody { display: block !important; width: 100%; }
+  
+  .gs-table tr {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas: 'cx cx' 'contact addr' 'pay eng' 'type type' !important;
+    margin-bottom: 12px !important; border-radius: 12px !important; background: #ffffff !important;
+    padding: 12px !important; gap: 8px !important; box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important; border: 1px solid #e2e8f0 !important; height: auto !important;
+  }
+
+  .gs-table td { border: none !important; padding: 0 !important; margin: 0 !important; display: flex !important; flex-direction: column !important; align-items: flex-start; }
+  .gs-table td::before { display:none; }
+
+  .chk, .col-chk { display:none; } /* hide checkbox */
+  .col-cx { grid-area: cx !important; border-bottom: 1px dashed #e2e8f0 !important; padding-bottom: 6px; margin-bottom: 2px; }
+  .col-contact { grid-area: contact !important; justify-content: center; }
+  .col-addr { grid-area: addr !important; font-size: 11px !important; color: #4b5563; }
+  .col-type { grid-area: type !important; align-items: flex-end !important; justify-content: center; }
+  .col-pay { grid-area: pay !important; font-size: 12px !important; background: #f9fafb !important; padding: 6px !important; border-radius: 8px; }
+  .col-track { display:none; }
+  .col-eng { display: flex !important; grid-area: eng !important; align-items: flex-end; justify-content: flex-end; }
+}
+</style>
+
+
+
+
+
+
+<style>
+/* ============================================================
+   CUSTOMERS PAGE — CLEAN RESPONSIVE LAYOUT v3 (compact mobile)
+   ============================================================ */
+
+/* ── DESKTOP (≥1024px): polished table ── */
+@media (min-width:1024px) {
+  #tblWrap {
+    background:#fff !important;
+    border:1px solid #e2e8f0 !important;
+    border-radius:12px !important;
+    box-shadow:0 1px 3px rgba(15,23,42,.04) !important;
+    overflow:hidden !important;
+  }
+  #tblWrap .gs-table { width:100% !important; border-collapse:separate !important; border-spacing:0 !important; }
+  #tblWrap .gs-table thead th {
+    background:#f8fafc !important; color:#475569 !important;
+    font-size:11px !important; font-weight:700 !important;
+    text-transform:uppercase !important; letter-spacing:.05em !important;
+    padding:12px 10px !important; border-bottom:1px solid #e2e8f0 !important;
+    text-align:left !important;
+  }
+  #tblWrap .gs-table tbody tr { transition:background .12s; cursor:pointer; }
+  #tblWrap .gs-table tbody tr:hover { background:#f8fafc !important; }
+  #tblWrap .gs-table tbody td {
+    padding:12px 10px !important; border-bottom:1px solid #f1f5f9 !important;
+    vertical-align:top !important; font-size:13px !important; color:#1e293b !important;
+  }
+  #tblWrap .gs-table tbody tr:last-child td { border-bottom:none !important; }
+}
+
+/* ── TABLET + MOBILE shared resets ── */
+@media (max-width:1023px) {
+  #tblWrap {
+    background:#f1f5f9 !important;
+    padding:10px !important;
+    border:none !important; box-shadow:none !important;
+    overflow:visible !important;
+  }
+  #tblWrap .gs-table,
+  #tblWrap .gs-table tbody {
+    display:block !important; width:100% !important;
+    background:transparent !important; border:none !important; min-width:0 !important;
+  }
+  #tblWrap .gs-table thead { display:none !important; }
+  #tblWrap .gs-table td {
+    padding:0 !important; margin:0 !important; border:none !important;
+    min-width:0 !important; height:auto !important; min-height:0 !important;
+    background:transparent !important; text-align:left !important;
+    white-space:normal !important; overflow:visible !important;
+    word-break:normal !important; word-wrap:break-word !important;
+  }
+  #tblWrap .gs-table td::before { display:none !important; content:none !important; }
+  #tblWrap .gs-table td:empty { display:none !important; }
+}
+
+/* ── TABLET (600-1023px): 2-up grid card ── */
+@media (min-width:600px) and (max-width:1023px) {
+  #tblWrap .gs-table tr {
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    grid-template-areas:
+      "cx       cx"
+      "contact  contact"
+      "addr     addr"
+      "type     pay"
+      "track    eng" !important;
+    column-gap:14px !important; row-gap:8px !important;
+    background:#fff !important;
+    border:1px solid #e2e8f0 !important;
+    border-radius:14px !important;
+    padding:14px !important; margin-bottom:12px !important;
+    box-shadow:0 1px 3px rgba(15,23,42,.04) !important;
+    cursor:pointer !important;
+  }
+  #tblWrap .col-chk     { display:none !important; }
+  #tblWrap .col-cx      { grid-area:cx !important; padding-bottom:8px !important; border-bottom:1px dashed #e2e8f0 !important; }
+  #tblWrap .col-contact { grid-area:contact !important; font-size:12px !important; color:#475569 !important; }
+  #tblWrap .col-addr    { grid-area:addr !important; font-size:12px !important; color:#475569 !important; padding:6px 8px !important; background:#f8fafc !important; border-radius:6px !important; }
+  #tblWrap .col-type    { grid-area:type !important; }
+  #tblWrap .col-pay     { grid-area:pay !important; text-align:right !important; }
+  #tblWrap .col-track   { grid-area:track !important; }
+  #tblWrap .col-eng     { grid-area:eng !important; text-align:right !important; }
+}
+
+/* ── MOBILE (<600px): COMPACT card ── */
+@media (max-width:599px) {
+  #tblWrap { padding:8px !important; background:#f1f5f9 !important; overflow-x:hidden !important; }
+
+  #tblWrap .gs-table tr {
+    display:block !important;
+    background:#fff !important;
+    border:1px solid #e2e8f0 !important;
+    border-radius:12px !important;
+    padding:12px 14px !important;
+    margin-bottom:10px !important;
+    box-shadow:0 1px 3px rgba(15,23,42,.05) !important;
+    cursor:pointer !important;
+    overflow:hidden !important;
+  }
+
+  /* Hide checkbox on mobile */
+  #tblWrap .col-chk { display:none !important; }
+
+  /* CUSTOMER block: name + code on one line, avatar smaller */
+  #tblWrap .col-cx {
+    padding:0 0 8px 0 !important;
+    border-bottom:1px solid #f1f5f9 !important;
+    margin-bottom:8px !important;
+    display:flex !important;
+    align-items:center !important;
+    gap:10px !important;
+  }
+  #tblWrap .col-cx .avatar,
+  #tblWrap .col-cx [class*="avatar"] {
+    width:36px !important; height:36px !important;
+    flex:0 0 36px !important;
+    font-size:13px !important;
+  }
+  #tblWrap .col-cx > div,
+  #tblWrap .col-cx .name-block {
+    flex:1 !important; min-width:0 !important;
+    font-size:14px !important; font-weight:700 !important; color:#0f172a !important;
+    line-height:1.3 !important;
+  }
+  #tblWrap .col-cx .cust-code,
+  #tblWrap .col-cx small { font-size:11px !important; color:#94a3b8 !important; font-weight:500 !important; }
+
+  /* CONTACT: phone + email tightly */
+  #tblWrap .col-contact {
+    font-size:12px !important; color:#475569 !important;
+    line-height:1.5 !important;
+    margin-bottom:8px !important;
+  }
+  #tblWrap .col-contact > div { font-size:12px !important; }
+
+  /* ADDRESS: clamped to 2 lines, no per-word break */
+  #tblWrap .col-addr {
+    padding:6px 10px !important;
+    background:#f8fafc !important;
+    border-radius:6px !important;
+    font-size:11px !important;
+    color:#475569 !important;
+    line-height:1.45 !important;
+    margin-bottom:8px !important;
+    display:-webkit-box !important;
+    -webkit-line-clamp:2 !important;
+    -webkit-box-orient:vertical !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+    word-break:normal !important;
+    overflow-wrap:break-word !important;
+    white-space:normal !important;
+  }
+  #tblWrap .col-addr > * { display:inline !important; }
+
+  /* TYPE + PAY + TRACK: inline chips on one row */
+  #tblWrap .col-type, #tblWrap .col-pay, #tblWrap .col-track {
+    display:inline-block !important;
+    vertical-align:middle !important;
+    font-size:11px !important;
+    margin:0 6px 8px 0 !important;
+    padding:0 !important;
+    background:transparent !important;
+    text-align:left !important;
+    width:auto !important;
+    border-radius:0 !important;
+  }
+  #tblWrap .col-type > *, #tblWrap .col-pay > *, #tblWrap .col-track > * {
+    display:inline-block !important;
+    vertical-align:middle !important;
+    margin-right:4px !important;
+  }
+
+  /* ENGAGEMENT: inline horizontal mini-stats */
+  #tblWrap .col-eng {
+    display:block !important;
+    text-align:left !important;
+    margin-top:6px !important;
+    padding-top:8px !important;
+    border-top:1px solid #f1f5f9 !important;
+    font-size:11px !important;
+    color:#64748b !important;
+  }
+  #tblWrap .col-eng .eng-mini,
+  #tblWrap .col-eng > div {
+    display:flex !important;
+    flex-wrap:wrap !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:10px !important;
+    font-size:11px !important;
+    color:#64748b !important;
+  }
+  #tblWrap .col-eng .eng-mini > div,
+  #tblWrap .col-eng > div > div {
+    display:inline-flex !important;
+    align-items:center !important;
+    gap:3px !important;
+    margin:0 !important;
+    font-size:11px !important;
+    white-space:nowrap !important;
+  }
+}
+</style>

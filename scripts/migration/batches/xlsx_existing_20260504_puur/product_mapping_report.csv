@@ -1,0 +1,1167 @@
+order_id,source_product_name,matched_product_id,matched_product_name,match_method,score
+IN_25092140,Cardamom 50gms,,,unmatched,0.5
+IN_25092140,Ceylon Cinnamon 100gm,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092115,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092115,Clove 100gm,,,unmatched,0.5
+IN_25092142,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092142,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092162,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092162,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092186,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092136,Ceylon Cinnamon 100gm,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092119,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092119,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092160,Cardamom 250g,,,unmatched,0.5
+IN_25092160,250gm Black Pepper,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092245,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092245,200 gm Black pepper,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,0.75
+IN_25092253,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092252,Ceylon Cinnamon 100gm,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092252,Delivery Charge,,,unmatched,0.0
+IN_25092247,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092247,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092223,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092223,250gm Black Pepper,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25091995,Ceylon Cinnamon C5,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25091995,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25091995,Clove 100gm,,,unmatched,0.5
+IN_25091994,Clove 100gm,,,unmatched,0.5
+IN_25091994,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25091910,Cardamom 500gms,,,unmatched,0.5
+IN_25091910,Delivery Charge,,,unmatched,0.0
+IN_25091965,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25091965,Ceylon Cinnamon 100gm,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092024,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092024,Clove 250gm,,,unmatched,0.5
+IN_25092024,Cardamom 500gms,,,unmatched,0.5
+IN_25092024,Nutmeg Mace,,,unmatched,0.0
+IN_25092024,Kerala Nutmug,,,unmatched,0.5
+IN_25092020,Cardamom 500gms,,,unmatched,0.5
+IN_25092020,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092020,Delivery Charge,,,unmatched,0.0
+IN_25092022,Cardamom 250g,,,unmatched,0.5
+IN_25092093,Black Pepper 500gms,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25092680,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092680,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25092659,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25092667,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25092667,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25092697,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25092670,Black Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,1.0
+IN_25092698,Ceylon Cinnamon C5,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092656,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25092656,Ceylon Cinnamon C5,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092644,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092664,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092633,Ceylon Cinnamon C5,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092630,Black Pepper (Bulk) 1kg,,,unmatched,0.5
+IN_25092630,Ceylon Cinnamon C5,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092630,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25092678,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25092678,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092693,Ceylon Cinnamon C5,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092693,Cardamom 50gms,,,unmatched,0.5
+IN_25092676,Ceylon Cinnamon C5,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092710,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25092765,Ceylon Cinnamon 150,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25092752,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25092975,Cinnamon 100gm,,,unmatched,0.5
+IN_25092975,Cardamom 100gms,,,unmatched,0.5
+IN_25092917,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25092983,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25092998,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25092998,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25092969,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25092969,Cardamom 50gms,,,unmatched,0.5
+IN_25092979,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25092989,Spices,,,unmatched,0.0
+IN_25100116,Cardamom 50gms,,,unmatched,0.5
+IN_25100116,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25100116,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100198,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100160,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100132,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25100132,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100127,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25100127,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100173,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25100173,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100279,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100287,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100287,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100261,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25100278,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100288,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100249,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25100315,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25100315,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100342,Cardamom 50gms,,,unmatched,0.5
+IN_25100342,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100328,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100328,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100396,Clove 100,,,unmatched,0.5
+IN_25100310,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25100365,Clove 100,,,unmatched,0.5
+IN_25100314,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100614,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100614,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25100614,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100631,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100683,Cardamom 50gms,,,unmatched,0.5
+IN_25100683,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25100683,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25100633,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100633,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25100633,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100640,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100679,Cardamom 50gms,,,unmatched,0.5
+IN_25100679,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100628,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25100628,Clove 100,,,unmatched,0.5
+IN_25100628,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25100628,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100689,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100685,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25100662,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100662,Turmeric 100gm,,,unmatched,0.5
+IN_25100682,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25100682,Cardamom 50gms,,,unmatched,0.5
+IN_25100765,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25100765,Clove 100,,,unmatched,0.5
+IN_25100765,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100825,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100874,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100819,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100894,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25100890,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100890,Cardamom 50gms,,,unmatched,0.5
+IN_25100890,Clove 100,,,unmatched,0.5
+IN_25100890,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100892,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100892,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25100892,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25100942,Cardamom 50gms,,,unmatched,0.5
+IN_25100942,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25100942,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25100933,Cardamom 50gms,,,unmatched,0.5
+IN_25100933,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100953,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25100953,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100970,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100913,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25100940,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25100957,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25100930,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25100930,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101344,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101344,Clove 100,,,unmatched,0.5
+IN_25101329,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25101330,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101330,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25101330,Black Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,1.0
+IN_25101330,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25101330,Turmeric 100gm,,,unmatched,0.5
+IN_25101330,Clove 100,,,unmatched,0.5
+IN_25101330,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25101330,White Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25101489,Cardamom 150,,,unmatched,0.5
+IN_25101489,clove 150,,,unmatched,0.5
+IN_25101489,Ceylon Cinnamon 150,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25101442,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101442,Clove 100,,,unmatched,0.5
+IN_25101442,Black Pepper 800,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25101490,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101490,Clove 100,,,unmatched,0.5
+IN_25101490,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25101490,Black Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,1.0
+IN_25101496,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25101496,Idukki Tamarind 500 gm,,,unmatched,0.3333
+IN_25101496,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101496,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25101496,Clove 100,,,unmatched,0.5
+IN_25101455,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101455,Clove 100,,,unmatched,0.5
+IN_25101465,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101465,Clove 100,,,unmatched,0.5
+IN_25101422,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101422,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25101597,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101597,Clove 100,,,unmatched,0.5
+IN_25101675,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25101614,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101614,Clove 100,,,unmatched,0.5
+IN_25101748,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101748,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25101782,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101782,Clove 100,,,unmatched,0.5
+IN_25101782,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25101782,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25101752,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25101752,Cardamom 50gms,,,unmatched,0.5
+IN_25101713,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101713,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25101866,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25101866,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101821,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25101842,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101842,Clove 100,,,unmatched,0.5
+IN_25101842,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25101842,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25101858,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25101858,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25101882,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25101882,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102116,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102189,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102142,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25102149,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25102146,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102146,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102173,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25102153,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102110,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102110,Clove 100,,,unmatched,0.5
+IN_25102124,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25102114,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102147,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102147,Cardamom 50gms,,,unmatched,0.5
+IN_25102244,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102244,Clove 100,,,unmatched,0.5
+IN_25102244,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102244,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102231,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102231,Clove 100,,,unmatched,0.5
+IN_25102253,Black Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,1.0
+IN_25102249,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25102344,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102377,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25102377,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25102377,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102377,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102397,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102397,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102317,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25102381,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102311,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102311,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102311,Turmeric 100gm,,,unmatched,0.5
+IN_25102326,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102378,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102378,Clove 100,,,unmatched,0.5
+IN_25102378,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25102370,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25102430,Turmeric 100gm,,,unmatched,0.5
+IN_25102430,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102430,Clove 100,,,unmatched,0.5
+IN_25102430,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102421,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102421,Clove 100,,,unmatched,0.5
+IN_25102421,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102429,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102429,Clove 100,,,unmatched,0.5
+IN_25102429,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102429,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102451,Cardamom 250g,,,unmatched,0.5
+IN_25102427,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25102458,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102422,Cardamom 50gms,,,unmatched,0.5
+IN_25102422,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25102422,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102422,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25102510,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102554,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102554,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102585,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102585,Clove 100,,,unmatched,0.5
+IN_25102585,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102585,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102568,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102551,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102597,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102597,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102597,Clove 100,,,unmatched,0.5
+IN_25102597,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25102566,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102566,Clove 100,,,unmatched,0.5
+IN_25102592,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102560,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102513,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25102793,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25102790,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25102825,Cardamom 50gms,,,unmatched,0.5
+IN_25102825,Clove 100,,,unmatched,0.5
+IN_25102825,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25102891,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25102891,Clove 100,,,unmatched,0.5
+IN_25102891,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102891,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102823,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102843,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102843,Cardamom 50gms,,,unmatched,0.5
+IN_25102844,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102844,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25102864,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25102864,Clove 100,,,unmatched,0.5
+IN_25102864,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25102864,Cardamom 300,,,unmatched,0.5
+IN_25102853,Clove 100,,,unmatched,0.5
+IN_25102853,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25102813,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25102913,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25102936,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25103076,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25103076,Cardamom 50gms,,,unmatched,0.5
+IN_25103076,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25103098,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103045,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25103045,Clove 100,,,unmatched,0.5
+IN_25103045,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25103045,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25103040,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25103040,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103081,Cardamom 50gms,,,unmatched,0.5
+IN_25103081,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103025,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25103068,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25103068,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25103020,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25103020,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25103116,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25103116,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25103110,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103177,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103176,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25103176,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103159,Cardamom 50gms,,,unmatched,0.5
+IN_25103159,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25103166,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103134,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25103134,Ceylon Cinnamon 500,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25103123,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25103195,Cardamom 250g,,,unmatched,0.5
+IN_25103183,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103140,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25103140,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25103140,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25103137,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25110337,Clove 250gm,,,unmatched,0.5
+IN_25110361,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110361,Clove 100,,,unmatched,0.5
+IN_25110374,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110374,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25110384,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110384,Clove 100,,,unmatched,0.5
+IN_25110384,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25110384,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110384,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25110323,Cardamom 300,,,unmatched,0.5
+IN_25110391,Cardamom 50gms,,,unmatched,0.5
+IN_25110391,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25110383,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25110311,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110311,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25110379,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110418,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25110466,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110411,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110436,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25110494,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110494,Clove 100,,,unmatched,0.5
+IN_25110494,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25110481,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25110481,Clove 1 kg,,,unmatched,0.5
+IN_25110458,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25110458,Cylon Cinnamon 300gm,2d328f36-619b-44b0-835b-c8570e9b7c1e,Cylon Cinnamon 100 gram,token_similarity,0.6667
+IN_25110415,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25110441,Cardamom 250g,,,unmatched,0.5
+IN_25110413,Cardamom 50gms,,,unmatched,0.5
+IN_25110413,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110419,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25110419,Clove 100,,,unmatched,0.5
+IN_25110419,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110684,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110684,Clove 100,,,unmatched,0.5
+IN_25110684,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25110684,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110684,Black Pepper 300,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25110651,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25110673,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110673,Clove 100,,,unmatched,0.5
+IN_25110673,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25110673,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110669,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25110687,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110687,Clove 100,,,unmatched,0.5
+IN_25110687,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25110687,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110748,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110748,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110746,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110729,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110729,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25110734,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25110792,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110792,Clove 100,,,unmatched,0.5
+IN_25110750,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110750,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110768,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110768,Clove 100,,,unmatched,0.5
+IN_25110791,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25110867,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25110896,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25110896,White Pepper 500 gm,,,unmatched,0.5
+IN_25110873,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25110873,Clove 250gm,,,unmatched,0.5
+IN_25110873,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25110823,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25110843,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25110843,Idukki Tamarind 500 gm,,,unmatched,0.3333
+IN_25110843,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25110875,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25110875,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25110813,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111071,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25111069,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111069,Clove 100,,,unmatched,0.5
+IN_25111069,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25111069,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25111018,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25111041,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111041,Clove 100,,,unmatched,0.5
+IN_25111041,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25111041,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25111269,Clove 100,,,unmatched,0.5
+IN_25111269,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25111250,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111250,Clove 100,,,unmatched,0.5
+IN_25111250,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25111250,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25111277,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111277,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25111218,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25111294,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25111294,Turmeric 100gm,,,unmatched,0.5
+IN_25111363,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25111427,Black Pepper 300,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25111427,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111420,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111420,Clove 100,,,unmatched,0.5
+IN_25111420,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25111420,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25111445,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25111786,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25111761,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25111783,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25111724,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25111776,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25111711,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111711,Clove 100,,,unmatched,0.5
+IN_25111711,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25111711,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25111715,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25111715,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25111715,Clove 100,,,unmatched,0.5
+IN_25111857,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25111857,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25111857,Clove 250gm,,,unmatched,0.5
+IN_25111857,Javithri 50 gm,,,unmatched,0.3333
+IN_25111854,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111854,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25111860,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25111860,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25111920,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25111961,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25111961,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25112022,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25112021,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25112051,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25112062,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25112084,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25112084,Clove 100,,,unmatched,0.5
+IN_25112084,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25112174,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25112174,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25112198,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25112160,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25112148,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25112130,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25112494,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25112494,Clove 100,,,unmatched,0.5
+IN_25112420,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25112420,Clove 100,,,unmatched,0.5
+IN_25112420,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25112418,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25112575,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25112575,Ceylon cinnamon 250 gram,a96bea5d-615e-4ffc-b93a-0c9359a49c44,Ceylon True Cinnamon - 250,token_similarity,0.75
+IN_25112570,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25112546,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25112672,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25112672,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25112613,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25112882,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25112882,Clove 100,,,unmatched,0.5
+IN_25112882,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120167,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25120112,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120298,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120234,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120265,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120228,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120292,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120292,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120319,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120319,Clove 100,,,unmatched,0.5
+IN_25120319,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120319,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25120380,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25120352,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120352,Clove 100,,,unmatched,0.5
+IN_25120352,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120349,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120349,Clove 100,,,unmatched,0.5
+IN_25120349,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120323,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25120322,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120322,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120396,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25120392,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120446,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25120446,Clove 250gm,,,unmatched,0.5
+IN_25120446,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25120481,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120481,Clove 100,,,unmatched,0.5
+IN_25120481,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25120481,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120485,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25120485,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120491,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120442,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25120442,Clove 100,,,unmatched,0.5
+IN_25120429,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120429,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120431,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120431,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120431,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25120480,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120424,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120424,Clove 100,,,unmatched,0.5
+IN_25120441,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120441,Clove 100,,,unmatched,0.5
+IN_25120463,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120463,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120470,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120411,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120411,Clove 100,,,unmatched,0.5
+IN_25120411,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120411,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25120449,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120456,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120483,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120483,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120486,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120486,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25120523,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25120887,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25120872,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120872,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25120872,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120872,Turmeric 100gm,,,unmatched,0.5
+IN_25120894,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120894,Clove 100,,,unmatched,0.5
+IN_25120894,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25120894,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120821,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120836,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25120836,Clove 100,,,unmatched,0.5
+IN_25120836,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120826,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120826,Clove 100,,,unmatched,0.5
+IN_25120826,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25120826,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120858,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25120840,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120840,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120886,Cardamom 50gms,,,unmatched,0.5
+IN_25120886,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25120874,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120874,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120820,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120820,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25120993,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120993,Clove 100,,,unmatched,0.5
+IN_25120993,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25120993,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120993,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25120980,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25120980,Clove 100,,,unmatched,0.5
+IN_25120980,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25120945,Cardamom 250g,,,unmatched,0.5
+IN_25120953,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120953,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120915,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25120929,Cardamom 1 kg,,,unmatched,0.5
+IN_25120929,Clove 250gm,,,unmatched,0.5
+IN_25120910,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120910,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120934,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25120934,Clove 250gm,,,unmatched,0.5
+IN_25120984,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25120984,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25120937,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25120937,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121026,Malabar nutmeg 500 gram,40b9ffef-56d8-4439-9a48-488f838c47fe,Clove 500 gram,token_similarity,0.6667
+IN_25121026,Cardamom 250g,,,unmatched,0.5
+IN_25121026,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25121026,Clove 250gm,,,unmatched,0.5
+IN_25121026,Ceylon Cinnamon 500,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25121055,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25121059,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25121158,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25121116,Cardamom 50gms,,,unmatched,0.5
+IN_25121116,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25121116,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121116,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25121118,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121172,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121172,Clove 100,,,unmatched,0.5
+IN_25121172,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121172,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121111,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25121111,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121146,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121146,Clove 100,,,unmatched,0.5
+IN_25121121,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121121,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25121197,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121197,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121285,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25121285,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121234,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25121241,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121210,Cardamom 50gms,,,unmatched,0.5
+IN_25121210,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25121210,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25121210,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121370,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25121312,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25121312,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121321,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121321,Clove 100,,,unmatched,0.5
+IN_25121381,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25121481,Idukki Tamarind 500 gm,,,unmatched,0.3333
+IN_25121481,Turmeric 100gm,,,unmatched,0.5
+IN_25121481,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25121475,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25121475,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25121475,Clove 100,,,unmatched,0.5
+IN_25121475,Cardamom 50gms,,,unmatched,0.5
+IN_25121443,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25121547,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25121547,Clove 100,,,unmatched,0.5
+IN_25121530,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121530,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121534,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25121577,Idukki Tamarind 500 gm,,,unmatched,0.3333
+IN_25121577,Turmeric 100gm,,,unmatched,0.5
+IN_25121577,Cardamom 50gms,,,unmatched,0.5
+IN_25121577,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25121577,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25121577,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121573,Cardamom 50gms,,,unmatched,0.5
+IN_25121573,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25121573,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121573,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25121519,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25121519,Clove 100,,,unmatched,0.5
+IN_25121519,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25121513,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25121513,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121648,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25121659,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121676,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121676,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121637,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121637,Clove 100,,,unmatched,0.5
+IN_25121637,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121637,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121646,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25121618,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25121642,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121642,Clove 100,,,unmatched,0.5
+IN_25121642,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25121642,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121626,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25121625,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25121783,Cardamom 50gms,,,unmatched,0.5
+IN_25121783,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_25121783,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25121783,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_25121746,Idukki Tamarind 500 gm,,,unmatched,0.3333
+IN_25121790,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25121790,Clove 100,,,unmatched,0.5
+IN_25121866,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_25121866,Clove 100,,,unmatched,0.5
+IN_25121866,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25121823,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25121823,Clove 100,,,unmatched,0.5
+IN_25121823,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25122045,Cardamom 250g,,,unmatched,0.5
+IN_25122045,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25122072,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25122246,Malabar nutmeg 500 gram,40b9ffef-56d8-4439-9a48-488f838c47fe,Clove 500 gram,token_similarity,0.6667
+IN_25122279,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25122279,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25122228,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25122294,Cardamom 50gms,,,unmatched,0.5
+IN_25122294,Black Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,1.0
+IN_25122294,Clove 100,,,unmatched,0.5
+IN_25122312,Spices,,,unmatched,0.0
+IN_25122355,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25122355,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25122931,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25122931,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_25122997,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123091,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123091,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_25123058,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123066,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123082,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25123035,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123069,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25123069,Clove 100,,,unmatched,0.5
+IN_25123087,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123050,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25123050,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123052,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123143,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25123157,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25123157,Clove 100,,,unmatched,0.5
+IN_25123157,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_25123157,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25123149,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25123150,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25123150,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123172,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_25123137,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_25123137,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25123114,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_25123129,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_25123129,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_25123129,Clove 100,,,unmatched,0.5
+IN_25123129,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010119,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26010199,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010114,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010114,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26010114,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010196,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26010155,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010187,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010124,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010274,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010220,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26010239,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26010237,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010237,Clove 100,,,unmatched,0.5
+IN_26010257,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010257,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010263,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26010285,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010285,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010252,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26010252,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010245,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010245,Clove 100,,,unmatched,0.5
+IN_26010245,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010272,Cardamom 50gms,,,unmatched,0.5
+IN_26010272,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26010272,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010360,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010360,Clove 100,,,unmatched,0.5
+IN_26010360,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26010360,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010349,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010349,Clove 100,,,unmatched,0.5
+IN_26010349,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26010349,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010337,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010337,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010337,Clove 100,,,unmatched,0.5
+IN_26010530,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010557,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010597,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010576,Cardamom 250g,,,unmatched,0.5
+IN_26010576,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26010570,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010570,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26010584,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26010657,Cardamom 1 kg,,,unmatched,0.5
+IN_26010657,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26010631,Cardamom 1 kg,,,unmatched,0.5
+IN_26010640,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26010640,Black Pepper 300,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26010640,Clove 100,,,unmatched,0.5
+IN_26010640,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010640,White Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26010769,Black Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,1.0
+IN_26010769,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010766,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010814,Cardamom 250g,,,unmatched,0.5
+IN_26010828,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010862,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26010897,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010897,Clove 100,,,unmatched,0.5
+IN_26010897,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26010897,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010813,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010813,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010896,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26010960,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010960,Clove 100,,,unmatched,0.5
+IN_26010960,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26010960,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010965,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010965,Clove 100,,,unmatched,0.5
+IN_26010965,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26010965,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010920,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010920,Clove 100,,,unmatched,0.5
+IN_26010920,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010910,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010910,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26010910,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26010929,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26010929,Clove 100,,,unmatched,0.5
+IN_26010929,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26010929,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011035,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26011026,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011026,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011077,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011028,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26011028,Clove 100,,,unmatched,0.5
+IN_26011028,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011081,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26011081,Cardamom 250g,,,unmatched,0.5
+IN_26011036,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011036,Clove 100,,,unmatched,0.5
+IN_26011083,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26011083,Clove 100,,,unmatched,0.5
+IN_26011083,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26011212,Cardamom 50gms,,,unmatched,0.5
+IN_26011212,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26011212,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_26011312,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011312,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26011312,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26011325,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011325,Clove 100,,,unmatched,0.5
+IN_26011330,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011330,Clove 100,,,unmatched,0.5
+IN_26011330,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26011330,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011514,Cardamom 250g,,,unmatched,0.5
+IN_26011577,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26011595,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011595,Clove 100,,,unmatched,0.5
+IN_26011595,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26011595,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011517,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011517,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011517,Clove 100,,,unmatched,0.5
+IN_26011950,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011950,Clove 100,,,unmatched,0.5
+IN_26011950,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26011950,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011978,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26011978,Clove 100,,,unmatched,0.5
+IN_26011978,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26011978,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26011917,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012180,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012180,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012180,Clove 100,,,unmatched,0.5
+IN_26012187,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012114,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26012114,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012111,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012111,Clove 100,,,unmatched,0.5
+IN_26012127,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012127,Clove 100,,,unmatched,0.5
+IN_26012127,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26012127,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012124,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_26012124,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26012124,Cardamom 50gms,,,unmatched,0.5
+IN_26012124,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26012138,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012292,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26012273,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_26012273,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26012273,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26012273,Cardamom 50gms,,,unmatched,0.5
+IN_26012262,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012242,Clove 100,,,unmatched,0.5
+IN_26012242,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012274,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012274,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012225,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26012225,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26012291,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012291,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012211,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012319,Cardamom 1 kg,,,unmatched,0.5
+IN_26012319,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26012319,Clove 1 kg,,,unmatched,0.5
+IN_26012399,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012394,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012394,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012394,Clove 100,,,unmatched,0.5
+IN_26012329,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012329,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012393,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012345,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26012310,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012351,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26012344,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26012344,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012364,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012364,Clove 100,,,unmatched,0.5
+IN_26012364,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012459,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012432,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26012488,Cardamom 120,,,unmatched,0.5
+IN_26012482,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012437,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26012465,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012465,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26012465,Clove 100,,,unmatched,0.5
+IN_26012484,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012477,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012477,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26012418,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012418,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26012418,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012418,Clove 100,,,unmatched,0.5
+IN_26012415,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012415,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012415,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26012415,Clove 100,,,unmatched,0.5
+IN_26012734,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26012734,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012734,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012728,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26012763,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012763,Clove 100,,,unmatched,0.5
+IN_26012763,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26012763,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012727,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012748,Cardamom 50gms,,,unmatched,0.5
+IN_26012748,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26012748,black pepper 240,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26012748,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_26012781,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26012770,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012770,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012710,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012710,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012752,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012785,Cardamom 50gms,,,unmatched,0.5
+IN_26012785,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_26012785,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26012785,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26012787,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012787,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012787,Clove 100,,,unmatched,0.5
+IN_26012787,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26012879,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012879,Clove 100,,,unmatched,0.5
+IN_26012879,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26012823,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26012823,Clove 100,,,unmatched,0.5
+IN_26012823,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012859,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012859,Clove 100,,,unmatched,0.5
+IN_26012859,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012859,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26012865,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012865,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26012839,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26012844,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012850,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012850,Clove 100,,,unmatched,0.5
+IN_26012947,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012947,Clove 100,,,unmatched,0.5
+IN_26012965,Clove 250gm,,,unmatched,0.5
+IN_26012965,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012986,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012986,Clove 100,,,unmatched,0.5
+IN_26012911,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012911,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012960,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012913,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26012913,Clove 100,,,unmatched,0.5
+IN_26012930,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26012930,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012969,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26012969,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26012916,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26013080,Cardamom 1 kg,,,unmatched,0.5
+IN_26013052,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26013052,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26013030,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26013064,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26013064,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26013037,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26013091,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26013091,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26013011,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26013097,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26013087,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26013087,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26013049,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26013018,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26013176,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26013134,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26013134,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26013178,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26013116,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26013116,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26013116,Clove 100,,,unmatched,0.5
+IN_26013125,Cardamom 1 kg,,,unmatched,0.5
+IN_26020162,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020162,Clove 100,,,unmatched,0.5
+IN_26020119,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26020154,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26020173,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26020269,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26020291,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26020291,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26020262,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020220,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020220,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26020238,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26020238,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020238,Clove 100,,,unmatched,0.5
+IN_26020250,Turmeric 100gm,,,unmatched,0.5
+IN_26020212,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020223,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020299,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26020281,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26020345,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26020345,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26020333,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26020692,Cardamom 1 kg,,,unmatched,0.5
+IN_26020692,Clove 1 kg,,,unmatched,0.5
+IN_26020692,Malabar Nutmeg Mace,,,unmatched,0.0
+IN_26020941,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020941,Clove 100,,,unmatched,0.5
+IN_26020941,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26020941,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26020985,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020985,Clove 100,,,unmatched,0.5
+IN_26020985,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26020985,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26020950,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26020914,Clove 100,,,unmatched,0.5
+IN_26020914,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26020914,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020914,Turmeric 100gm,,,unmatched,0.5
+IN_26020914,coffe powder 200,,,unmatched,0.3333
+IN_26020910,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020910,Clove 100,,,unmatched,0.5
+IN_26020910,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26020910,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26020935,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26020973,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020973,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26020986,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020922,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26020990,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26020990,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26020990,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26021014,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021014,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021014,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021052,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021052,Cardamom 250g,,,unmatched,0.5
+IN_26021077,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021077,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021016,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021081,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021058,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26021046,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26021046,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021046,Clove 100,,,unmatched,0.5
+IN_26021096,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021096,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021135,Cardamom 500,594e93da-e4cf-4df1-96cd-4e14986afb4a,Kerala Cardamom 8mm - 500,token_similarity,1.0
+IN_26021192,Cardamom 250g,,,unmatched,0.5
+IN_26021113,White Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26021181,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021181,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26021181,White Pepper 100,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26021146,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26021146,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021146,black pepper 200,919629bf-499c-49e7-a3c6-46a210f3d061,Black pepper 200 gram,token_similarity,1.0
+IN_26021146,Clove 100,,,unmatched,0.5
+IN_26021116,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021116,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021149,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26021242,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021243,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021243,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26021213,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021286,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021286,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26021294,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26021294,Clove 100,,,unmatched,0.5
+IN_26021294,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021294,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021283,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26021227,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021227,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021261,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26021261,Clove 100,,,unmatched,0.5
+IN_26021261,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021247,Clove 100,,,unmatched,0.5
+IN_26021247,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021211,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021279,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021279,Clove 100,,,unmatched,0.5
+IN_26021279,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021279,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021291,Cardamom 250g,,,unmatched,0.5
+IN_26021291,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26021291,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_26021276,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021276,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021329,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021329,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021320,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021320,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021321,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021337,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021337,Ceylon Cinnamon,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,1.0
+IN_26021389,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021380,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26021380,Clove 100,,,unmatched,0.5
+IN_26021481,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021481,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021475,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021475,Cardamom 50gms,,,unmatched,0.5
+IN_26021475,clove 50,864b63c6-ea70-4608-92a9-d9aa47bada5c,Clove 50 gram,token_similarity,1.0
+IN_26021475,Ceylon Cinnamon 50,24451b73-f350-44c7-9cde-d66010eeb55b,Ceylon True Cinnamon - 100,token_similarity,0.6667
+IN_26021498,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021498,Clove 100,,,unmatched,0.5
+IN_26021498,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26021448,black pepper 500,5e30d442-f7d6-4724-b880-bddc1cec2e94,Black Pepper Kerala - 500,token_similarity,1.0
+IN_26021448,Idukki Tamarind 500 gm,,,unmatched,0.3333
+IN_26021494,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021453,Black Pepper 1kg,60d07f58-bc0b-4573-8e8d-ffab0a5aef89,Black Pepper Kerala - 100,token_similarity,0.6667
+IN_26021451,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0
+IN_26021471,Cardamom 100gm,3947dbab-476a-4493-8a90-fe7155eddfde,Kerala Cardamom 8mm - 100gm,token_similarity,1.0
+IN_26021471,Clove 100,,,unmatched,0.5
+IN_26021418,Cardamom 200,2ec719f5-cdd5-4246-8208-829d66596e34,Kerala Cardamom 8mm - 200,token_similarity,1.0
+IN_26021418,black pepper 250,0086756c-42f9-4410-9315-0451ba552e21,Black Pepper Kerala - 250,token_similarity,1.0
+IN_26021418,Ceylon Cinnamon 200,0d60d913-c612-41ab-82ee-8cb98d65d660,Ceylon True Cinnamon 200,token_similarity,1.0

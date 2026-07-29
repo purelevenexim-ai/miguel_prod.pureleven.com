@@ -1,0 +1,9 @@
+DRY RUN SUMMARY:
+{
+  "rows_total": 604,
+  "rows_imported": 0,
+  "rows_skipped_existing": 0,
+  "rows_skipped_unresolved": 0,
+  "customers_created": 0,
+  "customers_updated": 0
+}

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2">  <title>WhatsApp Setup Guide — Miguel CRM</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f7fa;
+      color: #2d3748;
+      line-height: 1.6;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    .guide-header {
+      background: linear-gradient(135deg, #1a237e 0%, #1565c0 100%);
+      color: #fff;
+      padding: 36px 0 28px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,.25);
+    }
+    .guide-header h1 { font-size: 22px; font-weight: 800; letter-spacing: -.3px; }
+    .guide-header p  { font-size: 13px; opacity: .85; margin-top: 4px; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.18); color: #fff;
+      border: 1px solid rgba(255,255,255,.35); border-radius: 20px;
+      padding: 5px 14px; font-size: 12px; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      position: absolute; left: 24px; top: 50%; transform: translateY(-50%);
+      transition: background .15s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,.28); }
+
+    /* ── Progress bar ────────────────────────────────── */
+    .progress-bar {
+      background: #e2e8f0;
+      height: 4px;
+      position: sticky;
+      top: 84px;
+      z-index: 99;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #25d366, #1565c0);
+      width: 0%;
+      transition: width .3s ease;
+    }
+
+    /* ── Layout ──────────────────────────────────────── */
+    .guide-body {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ── Sidebar TOC ──────────────────────────────────── */
+    .toc {
+      position: sticky;
+      top: 106px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      padding: 16px 14px;
+      font-size: 12px;
+    }
+    .toc-title { font-weight: 700; color: #1a237e; margin-bottom: 10px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+    .toc a {
+      display: flex; align-items: center; gap: 8px;
+      color: #4a5568; text-decoration: none;
+      padding: 5px 8px; border-radius: 6px;
+      margin-bottom: 2px; transition: background .12s;
+    }
+    .toc a:hover, .toc a.active { background: #ebf4ff; color: #1565c0; font-weight: 600; }
+    .toc-num {
+      min-width: 20px; height: 20px; border-radius: 50%;
+      background: #e2e8f0; color: #4a5568;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .toc a.active .toc-num { background: #1565c0; color: #fff; }
+
+    /* ── Content area ────────────────────────────────── */
+    .guide-content { display: flex; flex-direction: column; gap: 28px; }
+
+    /* ── Section card ────────────────────────────────── */
+    .section-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      scroll-margin-top: 120px;
+    }
+    .section-card-head {
+      padding: 16px 20px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid #f0f4f8;
+    }
+    .section-num {
+      min-width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg,#1565c0,#1a237e);
+      color: #fff; font-size: 14px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-card-head h2 { font-size: 15px; font-weight: 700; color: #1a237e; }
+    .section-card-head .badge {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      padding: 2px 10px; border-radius: 20px;
+    }
+    .badge-required { background: #fce4ec; color: #c62828; }
+    .badge-optional { background: #e3f2fd; color: #1565c0; }
+    .badge-auto     { background: #e8f5e9; color: #2e7d32; }
+    .section-card-body { padding: 20px 20px 24px; }
+
+    /* ── Steps ───────────────────────────────────────── */
+    .steps { display: flex; flex-direction: column; gap: 14px; }
+    .step {
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .step-num {
+      min-width: 28px; height: 28px; border-radius: 50%;
+      background: #1565c0; color: #fff;
+      font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-body { font-size: 13px; color: #4a5568; }
+    .step-body strong { color: #2d3748; }
+    .step-body code {
+      background: #f7fafc; border: 1px solid #e2e8f0;
+      padding: 1px 6px; border-radius: 4px; font-size: 11px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ── Info / tip boxes ────────────────────────────── */
+    .info-box {
+      border-radius: 8px; padding: 11px 14px;
+      font-size: 12px; margin: 14px 0 4px;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .info-box.tip    { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+    .info-box.warn   { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+    .info-box.info   { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; }
+    .info-box .icon  { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Key/value display ───────────────────────────── */
+    .kv { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 12px; }
+    .kv-row { display: flex; align-items: center; gap: 10px; padding: 4px 0; border-bottom: 1px solid #edf2f7; }
+    .kv-row:last-child { border-bottom: none; }
+    .kv-key { min-width: 160px; font-weight: 600; color: #4a5568; }
+    .kv-val { color: #2d3748; font-family: 'Courier New', monospace; font-size: 11px; word-break: break-all; }
+    .kv-val.secret { color: #e53e3e; }
+
+    /* ── Action button ───────────────────────────────── */
+    .action-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 18px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; text-decoration: none; cursor: pointer;
+      border: none; transition: opacity .15s;
+    }
+    .action-btn:hover { opacity: .88; }
+    .btn-blue   { background: #1565c0; color: #fff; }
+    .btn-green  { background: #25d366; color: #fff; }
+    .btn-orange { background: #e65100; color: #fff; }
+    .btn-outline { background: #fff; color: #1565c0; border: 1.5px solid #1565c0; }
+
+    /* ── Screenshot placeholder ──────────────────────── */
+    .screenshot-note {
+      background: #f7fafc; border: 2px dashed #cbd5e0;
+      border-radius: 10px; padding: 18px;
+      text-align: center; font-size: 12px; color: #718096;
+      margin: 12px 0;
+    }
+
+    /* ── Divider ─────────────────────────────────────── */
+    hr { border: none; border-top: 1px solid #f0f4f8; margin: 6px 0 10px; }
+
+    /* ── Done banner ─────────────────────────────────── */
+    .done-banner {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border: 2px solid #86efac; border-radius: 14px;
+      padding: 28px 24px; text-align: center;
+    }
+    .done-banner h3 { font-size: 18px; color: #166534; margin-bottom: 8px; }
+    .done-banner p  { font-size: 13px; color: #4a5568; margin-bottom: 18px; }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 680px) {
+      .guide-body { grid-template-columns: 1fr; }
+      .toc { position: static; }
+      .back-btn { position: static; transform: none; display: block; margin: 0 auto 10px; text-align: center; }
+    }
+  </style>
+  <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728b">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ HEADER -->
+<div class="guide-header" style="position:relative;">
+  <a class="back-btn" href="/marketing.html#settings" onclick="history.back();return false;">← Back to Settings</a>
+  <h1>📱 WhatsApp Setup Guide</h1>
+  <p>Complete step-by-step guide to connect WABIS with Miguel CRM</p>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="guide-body">
+
+  <!-- ══════════════════════════════ SIDEBAR TOC -->
+  <aside class="toc">
+    <div class="toc-title">Contents</div>
+    <a href="#step1" class="toc-link"><span class="toc-num">1</span> Get API Token</a>
+    <a href="#step2" class="toc-link"><span class="toc-num">2</span> Get Phone Number ID</a>
+    <a href="#step3" class="toc-link"><span class="toc-num">3</span> Save in Miguel</a>
+    <a href="#step4" class="toc-link"><span class="toc-num">4</span> Configure Webhook</a>
+    <a href="#step5" class="toc-link"><span class="toc-num">5</span> Test Connection</a>
+    <a href="#step6" class="toc-link"><span class="toc-num">6</span> Order Notifications</a>
+    <a href="#step7" class="toc-link"><span class="toc-num">7</span> Postback Rules</a>
+    <a href="#done"  class="toc-link"><span class="toc-num">✓</span> You're Done!</a>
+  </aside>
+
+  <!-- ══════════════════════════════ MAIN CONTENT -->
+  <div class="guide-content">
+
+    <!-- ─── SECTION 1: API Token ───────────────────── -->
+    <div class="section-card" id="step1">
+      <div class="section-card-head">
+        <div class="section-num">1</div>
+        <h2>Get your WABIS API Token</h2>
+        <span class="badge badge-required">REQUIRED</span>
+      </div>
+      <div class="section-card-body">
+        <p style="font-size:13px;color:#4a5568;margin-bottom:16px;">
+          The API Token lets Miguel send WhatsApp messages directly from the chat inbox and audience section.
+          It authenticates every request to <code>bot.wabis.in/api/v1/</code>.
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              Open <a href="https://bot.wabis.in" target="_blank" style="color:#1565c0;font-weight:600;">bot.wabis.in</a>
+              and log in to your WABIS account.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              In the top navigation bar click <strong>Developer</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              You will see a section called <strong>Your API Tokens</strong>. Click
+              <strong>Create New Token</strong> or copy an existing one.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              Copy the full token string — it looks like:
+              <div class="kv" style="margin-top:8px;">
+                <div class="kv-row">
+                  <span class="kv-key">API Token format</span>
+                  <span class="kv-val">18280|Ws5wnHgkReob1OKVhDHWH3kzEIIRjItGN9wPcQFz23380f95</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              Keep this token safe — treat it like a password.
+              You'll paste it in <a href="#step3" style="color:#1565c0;">Step 3</a>.
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box tip">
+          <span class="icon">💡</span>
+          <div>Your token is: <code>18280|Ws5wnHgkReob1OKVhDHWH3kzEIIRjItGN9wPcQFz23380f95</code> — this is already filled in for you in the Settings page tip.</div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <a href="https://bot.wabis.in" target="_blank" class="action-btn btn-blue">🌐 Open bot.wabis.in →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 2: Phone Number ID ────────────── -->
+    <div class="section-card" id="step2">
+      <div class="section-card-head">
+        <div class="section-num">2</div>
+        <h2>Get your WhatsApp Phone Number ID</h2>
+        <span class="badge badge-required">REQUIRED</span>
+      </div>
+      <div class="section-card-body">
+        <p style="font-size:13px;color:#4a5568;margin-bottom:16px;">
+          The <strong>Phone Number ID</strong> identifies which WhatsApp number should send messages.
+          Every WABIS API call requires this alongside the API token.
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              In <a href="https://bot.wabis.in" target="_blank" style="color:#1565c0;font-weight:600;">bot.wabis.in</a>,
+              go to <strong>WhatsApp Accounts</strong> (or <strong>My Numbers</strong>) in the sidebar.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              Click on your WhatsApp number / account.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              Look for the field labelled <strong>Phone Number ID</strong> or <strong>phone_number_id</strong>.
+              It is a numeric ID (e.g. <code>521234567890123</code>).
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              Copy this number. You'll paste it in <a href="#step3" style="color:#1565c0;">Step 3</a>.
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box warn">
+          <span class="icon">⚠️</span>
+          <div>
+            <strong>Phone Number ID ≠ Phone Number.</strong> The phone_number_id is a long numeric identifier
+            assigned by Meta/WhatsApp. Your actual phone number (e.g. +91 94477 44583) is different from this ID.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 3: Save in Miguel ─────────────── -->
+    <div class="section-card" id="step3">
+      <div class="section-card-head">
+        <div class="section-num">3</div>
+        <h2>Paste credentials into Miguel Settings</h2>
+        <span class="badge badge-required">REQUIRED</span>
+      </div>
+      <div class="section-card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              In Miguel, open <strong>Marketing → ⚙️ Settings</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              Find the <strong>WhatsApp — WABIS Setup</strong> section.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              In the <strong>API Token</strong> field — paste the token from Step 1.
+              The field is masked (password type) — that is normal.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              In the <strong>Phone Number ID</strong> field — paste the ID from Step 2.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              Click <strong>💾 Save Settings</strong>. You should see a green ✅ success banner.
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box info">
+          <span class="icon">ℹ️</span>
+          <div>
+            The <strong>Bot ID</strong> and <strong>Access Token</strong> under "Legacy / Workflow URL settings"
+            are only needed if you use WABIS Workflow URLs for order notifications. They are not required for
+            direct messaging from the chat inbox.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 4: Webhook ─────────────────────── -->
+    <div class="section-card" id="step4">
+      <div class="section-card-head">
+        <div class="section-num">4</div>
+        <h2>Configure Inbound Webhook in WABIS</h2>
+        <span class="badge badge-auto">AUTO-GENERATED</span>
+      </div>
+      <div class="section-card-body">
+        <p style="font-size:13px;color:#4a5568;margin-bottom:16px;">
+          The inbound webhook lets WABIS notify Miguel when a customer sends you a WhatsApp message.
+          Without this, you will not receive incoming messages in the inbox.
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              In Miguel → Settings → find the <strong>Inbound Webhook</strong> section.
+              Your unique webhook URL is shown there — it looks like:
+              <div class="kv" style="margin-top:8px;">
+                <div class="kv-row">
+                  <span class="kv-key">Webhook URL</span>
+                  <span class="kv-val">https://yourdomain.com/api/wa/inbound/{your-tenant-id}</span>
+                </div>
+                <div class="kv-row">
+                  <span class="kv-key">Webhook Secret</span>
+                  <span class="kv-val secret">Click 👁 to reveal in Settings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              Copy the Webhook URL (click the 📋 copy button next to it).
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              Go to <a href="https://bot.wabis.in" target="_blank" style="color:#1565c0;font-weight:600;">bot.wabis.in</a>
+              → your WhatsApp Account → <strong>Webhook Settings</strong> (or Outbound Webhook).
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              Paste Miguel's webhook URL as the <strong>Webhook URL</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              Add a custom header:<br>
+              <strong>Header name:</strong> <code>X-Webhook-Secret</code><br>
+              <strong>Header value:</strong> copy the secret from Miguel (click 👁 to reveal it).
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              Enable the events: <strong>Message Received</strong> and <strong>Button/Postback</strong>.
+              Save in WABIS.
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box tip">
+          <span class="icon">💡</span>
+          <div>
+            Once the webhook is configured, every message your customers send on WhatsApp will appear
+            in Miguel's <strong>💬 Inbox</strong> tab in real time.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 5: Test Connection ────────────── -->
+    <div class="section-card" id="step5">
+      <div class="section-card-head">
+        <div class="section-num">5</div>
+        <h2>Test the Connection</h2>
+        <span class="badge badge-auto">VERIFY</span>
+      </div>
+      <div class="section-card-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              After saving your API Token + Phone Number ID, scroll to the top of the
+              <strong>WhatsApp — WABIS Setup</strong> section.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              Click the <strong>🔌 Test Connection</strong> button.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              You should see: <code style="color:#2e7d32;background:#e8f5e9;border-color:#a5d6a7;">✅ Connection successful</code><br>
+              The status badge at the top will show <strong>✅ Ready — Direct Messaging Enabled</strong>.
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <p style="font-size:13px;font-weight:600;color:#2d3748;margin-bottom:10px;">What to do if it fails:</p>
+        <div class="kv">
+          <div class="kv-row">
+            <span class="kv-key">401 Unauthorized</span>
+            <span class="kv-val">API Token is wrong or expired — re-copy from WABIS Developer page</span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">404 Not Found</span>
+            <span class="kv-val">Phone Number ID is incorrect — re-copy from WABIS WhatsApp Accounts</span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Cannot reach server</span>
+            <span class="kv-val">Check internet connection or WABIS service status</span>
+          </div>
+          <div class="kv-row">
+            <span class="kv-key">Not Configured badge</span>
+            <span class="kv-val">API Token or Phone Number ID is empty — make sure you saved</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 6: Order Notifications ────────── -->
+    <div class="section-card" id="step6">
+      <div class="section-card-head">
+        <div class="section-num">6</div>
+        <h2>Set Up Order Notification Messages</h2>
+        <span class="badge badge-optional">OPTIONAL</span>
+      </div>
+      <div class="section-card-body">
+        <p style="font-size:13px;color:#4a5568;margin-bottom:16px;">
+          Miguel can automatically send a WhatsApp message when an order status changes
+          (e.g. confirmed, packed, shipped, delivered). Each trigger uses a
+          <strong>WABIS Workflow URL</strong>.
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              In <a href="https://bot.wabis.in" target="_blank" style="color:#1565c0;font-weight:600;">bot.wabis.in</a>
+              → go to <strong>Automations</strong> or <strong>Flows / Workflows</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              Create or open a workflow (e.g. "Order Confirmed Message"). Design the WhatsApp
+              template message with your variables. In WABIS, at the top of the workflow you
+              will see a <strong>Webhook URL</strong> — copy it.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              In Miguel → Settings → scroll to <strong>Campaign Types / Message Templates</strong>.
+              Click <strong>+ Add Template</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              Fill in:
+              <div class="kv" style="margin-top:8px;">
+                <div class="kv-row"><span class="kv-key">Name</span><span class="kv-val">e.g. "Order Confirmed WA"</span></div>
+                <div class="kv-row"><span class="kv-key">Trigger Event</span><span class="kv-val">Order → Confirmed</span></div>
+                <div class="kv-row"><span class="kv-key">Workflow URL</span><span class="kv-val">Paste the WABIS webhook URL from step 2</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              In the <strong>Payload Template</strong> JSON, use these available variables:
+              <div class="kv" style="margin-top:8px;">
+                <div class="kv-row"><span class="kv-key"><code>{{customer_name}}</code></span><span class="kv-val">Customer's full name</span></div>
+                <div class="kv-row"><span class="kv-key"><code>{{order_number}}</code></span><span class="kv-val">Order reference number</span></div>
+                <div class="kv-row"><span class="kv-key"><code>{{tracking_number}}</code></span><span class="kv-val">Courier tracking number</span></div>
+                <div class="kv-row"><span class="kv-key"><code>{{courier_name}}</code></span><span class="kv-val">Courier company name</span></div>
+                <div class="kv-row"><span class="kv-key"><code>{{total_amount}}</code></span><span class="kv-val">Order total amount</span></div>
+                <div class="kv-row"><span class="kv-key"><code>{{phone}}</code></span><span class="kv-val">Customer phone (auto-set)</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-body">
+              Save the template. Now whenever an order is moved to <em>Confirmed</em> status,
+              Miguel automatically sends the WhatsApp message to that customer.
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box warn">
+          <span class="icon">⚠️</span>
+          <div>
+            <strong>24-hour window:</strong> WhatsApp only allows free messages within 24 hours of
+            a customer's last message. For order notifications initiated by you (outside the 24h window),
+            Miguel uses approved <strong>Utility templates</strong> automatically.
+            Set up a Utility template workflow URL in the Campaign Type for <em>Order Created</em>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SECTION 7: Postback Rules ─────────────── -->
+    <div class="section-card" id="step7">
+      <div class="section-card-head">
+        <div class="section-num">7</div>
+        <h2>Set Up Postback / Button Rules</h2>
+        <span class="badge badge-optional">OPTIONAL</span>
+      </div>
+      <div class="section-card-body">
+        <p style="font-size:13px;color:#4a5568;margin-bottom:16px;">
+          When a customer taps a quick-reply button in WhatsApp, WABIS sends a <em>postback</em> event
+          to your webhook. Postback Rules tell Miguel what to do automatically when that happens.
+        </p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              In Miguel → Settings → <strong>Postback Rules</strong> section → click <strong>+ Add Rule</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>Keyword</strong>: The exact postback value WABIS sends (from your WABIS button config,
+              e.g. <code>BTN_CONFIRM_ORDER</code> or <code>INTERESTED</code>).
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Action</strong>: What Miguel should do:
+              <div class="kv" style="margin-top:8px;">
+                <div class="kv-row"><span class="kv-key">Tag subscriber</span><span class="kv-val">Add a label to this subscriber in the inbox</span></div>
+                <div class="kv-row"><span class="kv-key">Change WA status</span><span class="kv-val">Update their conversation status (e.g. Contacted, Won)</span></div>
+                <div class="kv-row"><span class="kv-key">Trigger campaign</span><span class="kv-val">Start a blast / workflow for this subscriber</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              Save the rule. It becomes active immediately — the next time a customer taps
+              that button, Miguel executes the action automatically.
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box tip">
+          <span class="icon">💡</span>
+          <div>
+            Use postback rules to auto-qualify leads. For example: when a customer taps
+            <em>"I want to buy"</em>, automatically change their status to <em>Interested</em>
+            and add a <em>Hot Lead</em> tag.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── DONE BANNER ────────────────────────────── -->
+    <div class="done-banner" id="done">
+      <div style="font-size:40px;margin-bottom:10px;">🎉</div>
+      <h3>You're all set!</h3>
+      <p>
+        Once you've completed Steps 1–5, your WhatsApp inbox is live and direct messaging works.<br>
+        Steps 6–7 are optional enhancements for automation.
+      </p>
+      <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+        <a href="/marketing.html" class="action-btn btn-green">💬 Open WhatsApp Inbox →</a>
+        <a href="/marketing.html#settings" onclick="history.back();return false;" class="action-btn btn-outline">← Back to Settings</a>
+      </div>
+    </div>
+
+  </div><!-- /guide-content -->
+</div><!-- /guide-body -->
+
+<script>
+  // ── Scroll progress bar ──────────────────────────────────────
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total    = document.body.scrollHeight - window.innerHeight;
+    const pct      = total > 0 ? (scrolled / total) * 100 : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+  });
+
+  // ── Active TOC link highlight ────────────────────────────────
+  const sections = document.querySelectorAll('.section-card, .done-banner');
+  const tocLinks  = document.querySelectorAll('.toc-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const id = entry.target.id;
+        tocLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+          const num = a.querySelector('.toc-num');
+          if(num) num.style.background = a.classList.contains('active') ? '#1565c0' : '';
+          if(num) num.style.color      = a.classList.contains('active') ? '#fff'    : '';
+        });
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

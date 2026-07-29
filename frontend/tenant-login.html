@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="apple-touch-icon" href="/miguel_favicon.png?v=2">
+<title>Sign in — Miguel CRM</title>
+<link rel="stylesheet" href="/ds.css">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<link rel="stylesheet" href="/styles/mobile.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<style>
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-page);
+}
+.login-card {
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  border-radius: var(--r-md);
+  padding: 40px 40px 36px;
+  width: 100%;
+  max-width: 420px;
+  
+}
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.login-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--g-blue);
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--font);
+  flex-shrink: 0;
+}
+.login-logo-name { font-size: 18px; font-weight: 600; color: var(--g-900); font-family: var(--font); }
+.login-logo-sub  { font-size: 11px; color: var(--g-600); letter-spacing: .04em; font-family: var(--font); }
+h1 { font-size: 20px; font-weight: 600; color: var(--g-900); margin-bottom: 6px; font-family: var(--font); }
+.login-subtitle { font-size: 13px; color: var(--g-700); margin-bottom: 28px; font-family: var(--font); }
+.divider { display: flex; align-items: center; gap: 10px; color: var(--g-400); font-size: 12px; margin: 20px 0 16px; font-family: var(--font); }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--bdr); }
+.platform-link { display: block; text-align: center; font-size: 13px; color: var(--g-700); text-decoration: none; font-family: var(--font); }
+.platform-link span { color: var(--g-blue-txt); font-weight: 500; }
+.platform-link:hover span { text-decoration: underline; }
+</style>
+  <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728b">
+</head>
+<body>
+<div class="login-card">
+  <div class="login-logo">
+    <div class="login-logo-icon" style="background:none;padding:0;overflow:hidden;"><img src="/miguel_favicon.png" alt="Miguel" style="width:40px;height:40px;display:block;"></div>
+    <div>
+      <div class="login-logo-name">Miguel CRM</div>
+      <div class="login-logo-sub">Employee Portal</div>
+    </div>
+  </div>
+
+  <h1>Sign in to your workspace</h1>
+  <p class="login-subtitle">Enter your company slug, email, and password.</p>
+
+  <div class="gs-banner gs-banner-error" id="err" style="display:none;margin-bottom:16px;"></div>
+
+  <form id="loginForm">
+    <div class="form-group">
+      <label class="form-label" for="slug">Company Slug</label>
+      <input type="text" class="form-input" id="slug" placeholder="e.g. purelevenexim"
+        required autocomplete="off">
+      <span class="form-hint">Your company's unique identifier</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="email">Email address</label>
+      <input type="email" class="form-input" id="email" placeholder="you@company.com" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="password">Password</label>
+      <input type="password" class="form-input" id="password" placeholder="••••••••" required>
+    </div>
+    <button type="submit" class="btn btn-filled" id="btn"
+      style="width:100%;height:40px;font-size:14px;margin-top:4px;">
+      Sign in
+    </button>
+  </form>
+
+  <div class="divider">or</div>
+  <a class="platform-link" href="/platform-login.html">
+    Platform admin? <span>Sign in here →</span>
+  </a>
+</div>
+
+<script>
+const urlSlug = new URLSearchParams(window.location.search).get('slug');
+if (urlSlug) document.getElementById('slug').value = urlSlug;
+
+if (localStorage.getItem('type') === 'tenant' && localStorage.getItem('token')) {
+  window.location.replace('/tenant-admin.html');
+}
+
+const form   = document.getElementById('loginForm');
+const errBox = document.getElementById('err');
+const btn    = document.getElementById('btn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  errBox.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  const slug     = document.getElementById('slug').value.trim().toLowerCase();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  try {
+    const res = await fetch('/tenant/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug, email, password }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      localStorage.setItem('token',       data.access_token);
+      localStorage.setItem('type',        'tenant');
+      localStorage.setItem('role',        data.role);
+      localStorage.setItem('employee_id', data.employee_id);
+      localStorage.setItem('tenant_id',   data.tenant_id);
+      localStorage.setItem('slug',        slug);
+      window.location.replace('/tenant-admin.html');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showErr(err.detail || 'Login failed — check your slug, email or password.');
+    }
+  } catch (ex) {
+    showErr('Cannot reach server. Please try again.');
+  }
+});
+
+function showErr(msg) {
+  errBox.textContent   = msg;
+  errBox.style.display = '';
+  btn.disabled         = false;
+  btn.textContent      = 'Sign in';
+}
+</script>
+</body>
+</html>

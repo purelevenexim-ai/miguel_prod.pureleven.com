@@ -1,0 +1,8 @@
+name,address,pincode,phone,phone_display,payment_type,amount,order_id,tracking_id,items,notes,_id,created_ts,printed_count
+Vijay,"Lonika Ventures  No 7/1 Murphy Road  Ulsoor, Bangalore",560008,9999901642,+91 9999901642,Prepaid,4500,IN_25101642,,Ceylon Cinnamon 150 — 20 x Rs 480,MIGRATION_PLACEHOLDER_PHONE=YES,c148626270,2025-10-16T07:29:57.931074,2
+Reena Manuel,"Ponnassery House Chembumukku Thrikkakara po Kk Road, KKRRA-49B",682021,9999920553,+91 9999920553,Prepaid,280,IN_25120553,CL346334431IN,Turmeric 100gm — 2 x Rs 140,MIGRATION_PLACEHOLDER_PHONE=YES,c313706938,2025-12-05T09:23:57.151897,3
+Seena Antony V,New UP School Eswaramangalam Eswaramangalam PO Malappuram,679573,9999921273,+91 9999921273,Prepaid,1330,IN_25121273,CL346339867IN,"Cardamom 100gm — 1 x Rs 360
+black pepper 500 — 1 x Rs 490
+Ceylon Cinnamon 200 — 1 x Rs 480",MIGRATION_PLACEHOLDER_PHONE=YES,c641990569,2025-12-12T07:40:46.619584,2
+Sidhick,"Palavilayil Near TB Adoor po ,Pathanamthitta.",691523,9999921516,+91 9999921516,COD,600,IN_25121516,EL570351055IN,"Ceylon Cinnamon — 1 x Rs 300
+Javithri 50 gm — 2 x Rs 150",MIGRATION_PLACEHOLDER_PHONE=YES,c602587553,2025-12-15T06:41:19.020543,2

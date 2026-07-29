@@ -1,0 +1,178 @@
+{
+  "total_endpoints": 150,
+  "base_url": "http://localhost:8000 (dev) | prod.pureleven.com (prod)",
+  "authentication": "JWT Bearer token (via /api/auth/login)",
+  "endpoints": {
+    "auth": [
+      {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "auth": false,
+        "purpose": "Login user, get JWT token"
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/logout",
+        "auth": true,
+        "purpose": "Logout user"
+      },
+      {
+        "method": "GET",
+        "path": "/api/auth/me",
+        "auth": true,
+        "purpose": "Get current user profile"
+      }
+    ],
+    "orders": [
+      {
+        "method": "GET",
+        "path": "/api/orders",
+        "auth": true,
+        "params": [
+          "status",
+          "limit",
+          "offset"
+        ],
+        "purpose": "List all orders with optional filtering"
+      },
+      {
+        "method": "POST",
+        "path": "/api/orders",
+        "auth": true,
+        "purpose": "Create new order"
+      },
+      {
+        "method": "GET",
+        "path": "/api/orders/{id}",
+        "auth": true,
+        "purpose": "Get single order"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/orders/{id}",
+        "auth": true,
+        "purpose": "Update order details"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/orders/{id}/status",
+        "auth": true,
+        "purpose": "Change order status"
+      },
+      {
+        "method": "POST",
+        "path": "/api/orders/{id}/tracking",
+        "auth": true,
+        "purpose": "Add tracking number"
+      }
+    ],
+    "customers": [
+      {
+        "method": "GET",
+        "path": "/api/customers",
+        "auth": true,
+        "params": [
+          "limit",
+          "offset"
+        ],
+        "purpose": "List all customers"
+      },
+      {
+        "method": "POST",
+        "path": "/api/customers",
+        "auth": true,
+        "purpose": "Create customer"
+      },
+      {
+        "method": "GET",
+        "path": "/api/customers/{id}",
+        "auth": true,
+        "purpose": "Get customer + orders + activity"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/customers/{id}",
+        "auth": true,
+        "purpose": "Update customer profile"
+      }
+    ],
+    "message_automation": [
+      {
+        "method": "GET",
+        "path": "/api/message-automation/tasks",
+        "auth": true,
+        "purpose": "Get customer message journey"
+      },
+      {
+        "method": "POST",
+        "path": "/api/message-automation/schedule",
+        "auth": true,
+        "purpose": "Manually schedule message"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/message-automation/tasks/{id}/cancel",
+        "auth": true,
+        "purpose": "Cancel pending message"
+      }
+    ],
+    "whatsapp": [
+      {
+        "method": "POST",
+        "path": "/api/wa/send",
+        "auth": true,
+        "purpose": "Send WhatsApp message (WABIS)"
+      },
+      {
+        "method": "GET",
+        "path": "/api/wa/conversation-by-phone/{phone}",
+        "auth": true,
+        "purpose": "Get conversation + 24h window status"
+      },
+      {
+        "method": "POST",
+        "path": "/api/wa/webhook",
+        "auth": false,
+        "purpose": "Receive inbound WhatsApp messages"
+      }
+    ],
+    "reporting": [
+      {
+        "method": "GET",
+        "path": "/api/reports/dashboard",
+        "auth": true,
+        "purpose": "KPI dashboard"
+      },
+      {
+        "method": "GET",
+        "path": "/api/reports/profit-loss",
+        "auth": true,
+        "params": [
+          "date_from",
+          "date_to"
+        ],
+        "purpose": "P&L statement"
+      }
+    ],
+    "shipments": [
+      {
+        "method": "POST",
+        "path": "/api/shipments",
+        "auth": true,
+        "purpose": "Create shipment"
+      },
+      {
+        "method": "GET",
+        "path": "/api/shipments/{id}/tracking",
+        "auth": true,
+        "purpose": "Get real-time tracking"
+      },
+      {
+        "method": "GET",
+        "path": "/api/shipments/{id}/label-pdf",
+        "auth": true,
+        "purpose": "Download label PDF"
+      }
+    ]
+  }
+}

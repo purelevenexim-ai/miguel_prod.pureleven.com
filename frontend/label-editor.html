@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script defer src="/modules/page-loader.js?v=20260307"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<link rel="icon" type="image/png" href="/miguel_favicon.png?v=2">
+<link rel="shortcut icon" type="image/png" href="/miguel_favicon.png?v=2">
+<title>Label & Invoice Editor — Miguel CRM</title>
+<link rel="stylesheet" href="/ds.css?v=20260301">
+<link rel="stylesheet" href="/styles/adaptive.css?v=20260307">
+<link rel="stylesheet" href="/styles/mobile.css?v=20260307">
+<script defer src="/modules/adaptive-layout.js?v=20260307"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;700&family=Open+Sans:wght@400;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ed-bg:#f4f5f7;--ed-surf:#fff;--ed-bdr:#e1e4e8;--ed-primary:#1a73e8;
+  --ed-primary-lt:#e8f0fe;--ed-text:#1f2937;--ed-muted:#6b7280;
+  --ed-canvas-bg:#e9ecef;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;font-family:Inter,sans-serif;background:var(--ed-bg);}
+.ed-topbar{height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--ed-bdr);background:var(--ed-surf);flex-shrink:0;position:sticky;top:0;z-index:200;}
+.ed-topbar-back{font-size:13px;color:var(--ed-muted);text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:4px;}
+.ed-topbar-back:hover{color:var(--ed-primary);}
+.ed-topbar-title{font-size:15px;font-weight:700;color:var(--ed-text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ed-topbar-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.ed-btn{padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;outline:none;display:inline-flex;align-items:center;gap:5px;}
+.ed-btn-primary{background:var(--ed-primary);color:#fff;}.ed-btn-primary:hover{opacity:.9;}
+.ed-btn-ghost{background:transparent;color:var(--ed-muted);padding:6px 10px;}.ed-btn-ghost:hover{color:var(--ed-primary);background:var(--ed-primary-lt);}
+.ed-btn-outlined{background:transparent;border:1px solid var(--ed-bdr);color:var(--ed-text);}.ed-btn-outlined:hover{border-color:var(--ed-primary);color:var(--ed-primary);}
+.ed-btn-danger{background:#ef4444;color:#fff;}.ed-btn-sm{padding:5px 10px;font-size:11px;}
+.ed-mode-tabs{display:flex;gap:0;background:var(--ed-surf);border-bottom:1px solid var(--ed-bdr);padding:0 16px;flex-shrink:0;}
+.ed-mode-tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--ed-muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+.ed-mode-tab:hover{color:var(--ed-primary);}.ed-mode-tab.active{color:var(--ed-primary);border-bottom-color:var(--ed-primary);font-weight:600;}
+.ed-app{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;}
+.ed-body{display:flex;flex:1;overflow:hidden;min-height:0;}
+.ed-sidebar{width:300px;min-width:240px;display:flex;flex-direction:column;border-right:1px solid var(--ed-bdr);background:var(--ed-surf);overflow:hidden;flex-shrink:0;}
+.ed-sidebar-header{padding:12px 14px;border-bottom:1px solid var(--ed-bdr);font-size:12px;font-weight:700;color:var(--ed-text);text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;justify-content:space-between;}
+.ed-sidebar-body{flex:1;overflow-y:auto;padding:0;}
+.ed-section{border-bottom:1px solid var(--ed-bdr);}
+.ed-section-head{padding:10px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;font-size:12px;font-weight:600;color:var(--ed-text);}
+.ed-section-head:hover{background:var(--ed-primary-lt);}
+.ed-section-head .ed-chevron{transition:transform .2s;font-size:10px;margin-left:auto;color:var(--ed-muted);}
+.ed-section-head.collapsed .ed-chevron{transform:rotate(-90deg);}
+.ed-section-body{padding:8px 14px 12px;display:block;}
+.ed-section-head.collapsed + .ed-section-body{display:none;}
+.ed-field{margin-bottom:10px;}
+.ed-label{display:block;font-size:11px;font-weight:600;color:var(--ed-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em;}
+.ed-input{width:100%;padding:7px 10px;border:1px solid var(--ed-bdr);border-radius:6px;font-size:13px;outline:none;background:#fff;transition:border-color .12s;font-family:inherit;}
+.ed-input:focus{border-color:var(--ed-primary);}
+.ed-select{width:100%;padding:7px 10px;border:1px solid var(--ed-bdr);border-radius:6px;font-size:13px;outline:none;background:#fff;cursor:pointer;font-family:inherit;}
+.ed-textarea{width:100%;padding:7px 10px;border:1px solid var(--ed-bdr);border-radius:6px;font-size:12px;outline:none;resize:vertical;font-family:inherit;min-height:60px;}
+.ed-row{display:flex;gap:8px;}.ed-row > *{flex:1;min-width:0;}
+.ed-color-wrap{display:flex;align-items:center;gap:6px;}
+.ed-color-swatch{width:30px;height:30px;border-radius:6px;border:1px solid var(--ed-bdr);cursor:pointer;padding:0;overflow:hidden;}
+.ed-color-swatch input[type=color]{width:40px;height:40px;border:none;padding:0;cursor:pointer;margin:-5px;}
+.ed-check-row{display:flex;align-items:center;gap:8px;padding:4px 0;}
+.ed-check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--ed-primary);}
+.ed-check-row label{font-size:12px;color:var(--ed-text);cursor:pointer;}
+.ed-elem-list{list-style:none;margin:0;padding:0;}
+.ed-elem-item{padding:7px 10px;font-size:12px;cursor:pointer;border-radius:6px;display:flex;align-items:center;gap:8px;transition:all .12s;user-select:none;margin-bottom:2px;}
+.ed-elem-item:hover{background:var(--ed-primary-lt);}
+.ed-elem-item.active{background:var(--ed-primary);color:#fff;}
+.ed-elem-item .ed-elem-icon{font-size:14px;flex-shrink:0;}
+.ed-elem-item .ed-elem-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ed-elem-item .ed-elem-vis{cursor:pointer;font-size:11px;opacity:.5;}.ed-elem-item .ed-elem-vis:hover{opacity:1;}
+.ed-add-btn{width:100%;padding:8px;border:1.5px dashed var(--ed-bdr);border-radius:8px;background:transparent;font-size:12px;font-weight:600;color:var(--ed-muted);cursor:pointer;transition:all .15s;margin-top:6px;}
+.ed-add-btn:hover{border-color:var(--ed-primary);color:var(--ed-primary);background:var(--ed-primary-lt);}
+.ed-canvas-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--ed-canvas-bg);overflow:auto;padding:24px;min-width:0;}
+.ed-canvas-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-shrink:0;}
+.ed-zoom-btn{background:var(--ed-surf);border:1px solid var(--ed-bdr);border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;font-weight:600;color:var(--ed-text);}
+.ed-zoom-btn:hover{border-color:var(--ed-primary);color:var(--ed-primary);}
+.ed-canvas{position:relative;background:#fff;border:1px solid var(--ed-bdr);box-shadow:0 4px 24px rgba(0,0,0,.08);border-radius:4px;overflow:hidden;transition:width .2s,height .2s;}
+.ed-el{position:absolute;cursor:move;user-select:none;outline:2px solid transparent;outline-offset:2px;transition:outline-color .1s;min-width:20px;min-height:14px;}
+.ed-el:hover{outline-color:rgba(26,115,232,.3);}
+.ed-el.selected{outline-color:var(--ed-primary);outline-style:solid;z-index:10;}
+.ed-el.selected::after{content:'';position:absolute;inset:-4px;border:1.5px dashed var(--ed-primary);border-radius:2px;pointer-events:none;}
+.ed-resize{position:absolute;bottom:-4px;right:-4px;width:10px;height:10px;background:var(--ed-primary);border-radius:2px;cursor:se-resize;display:none;}
+.ed-el.selected .ed-resize{display:block;}
+.ed-props{width:260px;min-width:220px;display:flex;flex-direction:column;border-left:1px solid var(--ed-bdr);background:var(--ed-surf);overflow:hidden;flex-shrink:0;}
+.ed-props-header{padding:12px 14px;border-bottom:1px solid var(--ed-bdr);font-size:12px;font-weight:700;color:var(--ed-text);text-transform:uppercase;letter-spacing:.05em;}
+.ed-props-body{flex:1;overflow-y:auto;padding:12px 14px;}
+.ed-props-empty{padding:40px 14px;text-align:center;color:var(--ed-muted);font-size:12px;}
+.ed-settings-wrap{flex:1;overflow-y:auto;padding:24px 16px;}
+.ed-settings-card{background:var(--ed-surf);border:1px solid var(--ed-bdr);border-radius:12px;padding:20px;margin-bottom:16px;}
+.ed-settings-card h3{font-size:14px;font-weight:700;color:var(--ed-text);margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+.ed-settings-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.ed-settings-row.col1{grid-template-columns:1fr;}.ed-settings-row.col3{grid-template-columns:1fr 1fr 1fr;}
+.ed-notif{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:10000;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.ed-notif.ok{background:#1b5e20;color:#fff;}.ed-notif.err{background:#b71c1c;color:#fff;}.ed-notif.show{opacity:1;transform:translateY(0);}
+.ed-mobile-panel-btn{display:none;position:fixed;bottom:70px;z-index:150;width:44px;height:44px;border-radius:50%;border:none;font-size:18px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.ed-mobile-panel-btn.left-btn{left:12px;background:var(--ed-primary);color:#fff;}
+.ed-mobile-panel-btn.right-btn{right:12px;background:var(--ed-surf);color:var(--ed-primary);border:1px solid var(--ed-bdr);}
+/* Upload zone */
+.ed-upload-zone{border:2px dashed var(--ed-bdr);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:10px;background:#fafbfc;}
+.ed-upload-zone:hover,.ed-upload-zone.drag-over{border-color:var(--ed-primary);background:var(--ed-primary-lt);}
+.ed-upload-zone .uz-icon{font-size:28px;margin-bottom:4px;}
+.ed-upload-zone .uz-text{font-size:11px;color:var(--ed-muted);}
+.ed-upload-zone .uz-hint{font-size:10px;color:#aaa;margin-top:2px;}
+.ed-upload-preview{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid var(--ed-bdr);border-radius:6px;margin-bottom:8px;background:#fafbfc;}
+.ed-upload-preview img{width:48px;height:48px;object-fit:contain;border-radius:4px;background:#fff;border:1px solid var(--ed-bdr);}
+.ed-upload-preview .up-info{flex:1;min-width:0;font-size:11px;color:var(--ed-muted);}
+.ed-upload-preview .up-remove{cursor:pointer;font-size:16px;color:#ef4444;padding:4px;}
+/* Preset grid */
+.ed-preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.ed-preset-btn{padding:8px 6px;border:1px solid var(--ed-bdr);border-radius:6px;background:#fff;font-size:11px;font-weight:500;cursor:pointer;text-align:center;transition:all .12s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.ed-preset-btn:hover{border-color:var(--ed-primary);color:var(--ed-primary);background:var(--ed-primary-lt);}
+.ed-preset-btn .pb-icon{font-size:16px;}
+@media(max-width:899px){
+  .ed-sidebar,.ed-props{position:fixed;top:0;bottom:0;width:85vw;max-width:320px;z-index:300;transform:translateX(-110%);transition:transform .22s ease;box-shadow:4px 0 20px rgba(0,0,0,.15);}
+  .ed-props{right:0;left:auto;transform:translateX(110%);}
+  .ed-sidebar.mobile-show{transform:translateX(0);}.ed-props.mobile-show{transform:translateX(0);}
+  .ed-mobile-panel-btn{display:flex;align-items:center;justify-content:center;}
+  .ed-canvas-wrap{padding:12px;}.ed-topbar-back span{display:none;}
+  .ed-mode-tabs{padding:0 8px;overflow-x:auto;}.ed-mode-tab{padding:9px 12px;font-size:12px;white-space:nowrap;}
+}
+@media(max-width:599px){.ed-settings-row{grid-template-columns:1fr !important;}.ed-settings-wrap{padding:12px;}.ed-settings-card{padding:14px;}}
+</style>
+  <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728b">
+</head>
+<body>
+<div class="ed-app">
+  <div class="ed-topbar gs-topbar">
+    <a href="tenant-admin.html" class="ed-topbar-back">← <span>Dashboard</span></a>
+    <div class="ed-topbar-title">🎨 Company Settings & Label Editor</div>
+    <div class="ed-topbar-actions">
+      <button class="ed-btn ed-btn-ghost ed-btn-sm" onclick="undo()" title="Undo (Ctrl+Z)">↩</button>
+      <button class="ed-btn ed-btn-ghost ed-btn-sm" onclick="redo()" title="Redo (Ctrl+Y)">↪</button>
+      <button class="ed-btn ed-btn-ghost ed-btn-sm" onclick="duplicateSelected()" title="Duplicate (Ctrl+D)">📋</button>
+      <button class="ed-btn ed-btn-outlined ed-btn-sm" onclick="resetTemplate()" title="Reset to default">🔄 Reset</button>
+      <button class="ed-btn ed-btn-primary" onclick="saveAll()">💾 Save All</button>
+    </div>
+  </div>
+  <div class="ed-mode-tabs">
+    <button class="ed-mode-tab active" onclick="switchMode('settings')" id="mode-settings">⚙️ Company Settings</button>
+    <button class="ed-mode-tab" onclick="switchMode('label')" id="mode-label">🏷 Label Editor</button>
+    <button class="ed-mode-tab" onclick="switchMode('invoice')" id="mode-invoice">🧾 Invoice Editor</button>
+  </div>
+  <div class="ed-settings-wrap" id="view-settings" style="flex:1;overflow-y:auto;"></div>
+  <div class="ed-body" id="view-editor" style="display:none;">
+    <div class="ed-sidebar" id="edSidebar">
+      <div class="ed-sidebar-header"><span id="sidebarTitle">Elements</span><button class="ed-btn ed-btn-ghost ed-btn-sm" onclick="closeMobileSidebar()" style="display:none;" id="closeSidebarBtn">✕</button></div>
+      <div class="ed-sidebar-body" id="sidebarBody"></div>
+    </div>
+    <div class="ed-canvas-wrap" onclick="if(event.target===this)deselectAll()">
+      <div class="ed-canvas-toolbar">
+        <button class="ed-zoom-btn" onclick="doZoom(-10)">−</button>
+        <span id="zoomLevel" style="font-size:12px;font-weight:600;min-width:40px;text-align:center;">100%</span>
+        <button class="ed-zoom-btn" onclick="doZoom(10)">+</button>
+        <button class="ed-zoom-btn" onclick="doZoom(0)">Fit</button>
+        <span style="width:1px;height:20px;background:var(--ed-bdr);margin:0 4px;"></span>
+        <span style="font-size:11px;color:var(--ed-muted);" id="canvasSizeLabel">4″ × 6″</span>
+      </div>
+      <div class="ed-canvas" id="edCanvas"></div>
+    </div>
+    <div class="ed-props" id="edProps">
+      <div class="ed-props-header">Properties</div>
+      <div class="ed-props-body" id="propsBody"><div class="ed-props-empty">Click an element on the canvas to edit its properties</div></div>
+    </div>
+  </div>
+</div>
+<button class="ed-mobile-panel-btn left-btn" id="mobileSidebarBtn" onclick="toggleMobileSidebar()" style="display:none;">☰</button>
+<button class="ed-mobile-panel-btn right-btn" id="mobilePropsBtn" onclick="toggleMobileProps()" style="display:none;">⚙</button>
+<div class="ed-notif" id="edNotif"></div>
+<script src="/modules/auth.js"></script>
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════
+   LABEL & INVOICE EDITOR — Complete JavaScript
+   ═══════════════════════════════════════════════════════════════ */
+
+// ── Auth ─────────────────────────────────────────────────
+function logout(){['token','type','role','slug','user_id','email','tenant_token'].forEach(k=>{localStorage.removeItem(k);sessionStorage.removeItem(k);});window.location.replace('/tenant-login.html');}
+const HOST='';
+function getH(){const t=localStorage.getItem('token')||'';return{'Content-Type':'application/json','Authorization':'Bearer '+t};}
+function getHMultipart(){const t=localStorage.getItem('token')||'';return{'Authorization':'Bearer '+t};}
+function handleAuthErr(s){if(s===401)logout();}
+function notif(msg,type='ok'){const el=document.getElementById('edNotif');el.textContent=msg;el.className='ed-notif '+type+' show';setTimeout(()=>el.classList.remove('show'),3000);}
+
+// ═══ STATE ═══
+let tenantSettings = {};
+let currentMode = 'settings';
+let zoomPct = 100;
+let selectedElId = null;
+let isDragging = false;
+let isResizing = false;
+let dragOffset = {x:0,y:0};
+let _animFrame = null;
+
+// Undo/Redo stacks
+let undoStack = [];
+let redoStack = [];
+const MAX_UNDO = 40;
+
+const FONTS = [
+  {name:'Inter', family:'Inter, sans-serif'},
+  {name:'Poppins', family:'Poppins, sans-serif'},
+  {name:'Roboto', family:'Roboto, sans-serif'},
+  {name:'Montserrat', family:'Montserrat, sans-serif'},
+  {name:'Playfair Display', family:'"Playfair Display", serif'},
+  {name:'Lato', family:'Lato, sans-serif'},
+  {name:'Open Sans', family:'"Open Sans", sans-serif'},
+  {name:'Courier Prime', family:'"Courier Prime", monospace'},
+  {name:'System Default', family:'system-ui, sans-serif'},
+];
+
+// ── Image upload constraints ─────────────────────────────
+const MAX_IMG_KB = 512;
+const ALLOWED_IMG_TYPES = ['image/jpeg','image/png'];
+const ALLOWED_IMG_EXT = ['.jpg','.jpeg','.png'];
+
+// ═══ DEFAULT LABEL TEMPLATE — matches actual label_pdf.py layout ═══
+const DEFAULT_LABEL_TEMPLATE = {
+  canvas: { width: 384, height: 576, bgColor: '#ffffff', padding: 14 },
+  elements: [
+    { id:'logo', type:'image', label:'Logo', x:14, y:10, w:50, h:30, src:'', visible:true },
+    { id:'brand', type:'text', label:'Company Name', x:14, y:10, w:356, h:24, text:'{{company_name}}', fontSize:18, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a1a1a', align:'center', visible:true },
+    { id:'slogan', type:'text', label:'Slogan', x:14, y:36, w:356, h:14, text:'{{slogan}}', fontSize:7, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#666666', align:'center', visible:true },
+    { id:'divider1', type:'line', label:'Header Divider', x:14, y:56, w:356, h:2, color:'#cccccc', lineStyle:'solid', visible:true },
+    { id:'courier_ids', type:'text', label:'Courier IDs', x:14, y:64, w:356, h:12, text:'Cust ID: {{customer_id}} | Contract: {{contract_id}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#555555', align:'right', visible:true },
+    { id:'india_post_id', type:'text', label:'India Post ID', x:14, y:78, w:356, h:14, text:'India Post ID: {{india_post_id}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#333333', align:'left', bgColor:'#f0f7ff', padding:3, visible:true },
+    { id:'payment_type', type:'text', label:'Payment Type (COD/Prepaid)', x:14, y:98, w:220, h:20, text:'{{payment_type}}', fontSize:14, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#b30000', align:'left', visible:true },
+    { id:'amount', type:'text', label:'Collect Amount', x:240, y:100, w:130, h:16, text:'Rs. {{amount}}', fontSize:11, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a1a1a', align:'right', visible:true },
+    { id:'ship_label', type:'text', label:'SHIP TO Label', x:14, y:126, w:80, h:12, text:'SHIP TO:', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#555555', align:'left', visible:true },
+    { id:'to_name', type:'text', label:'Customer Name', x:14, y:140, w:356, h:18, text:'{{customer_name}}', fontSize:11, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a1a1a', align:'left', visible:true },
+    { id:'to_addr', type:'text', label:'Customer Address', x:14, y:160, w:356, h:34, text:'{{customer_address}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#333333', align:'left', visible:true },
+    { id:'to_city_pin', type:'text', label:'City, State, PIN', x:14, y:198, w:356, h:13, text:'{{city}}, {{state}}, PIN: {{pincode}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#333333', align:'left', visible:true },
+    { id:'to_phone', type:'text', label:'Customer Phone', x:14, y:214, w:356, h:13, text:'Ph: {{customer_phone}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#333333', align:'left', visible:true },
+    { id:'divider2', type:'line', label:'Address Divider', x:14, y:234, w:356, h:1, color:'#dddddd', lineStyle:'dashed', visible:true },
+    { id:'from_label', type:'text', label:'FROM Label', x:14, y:242, w:34, h:12, text:'FROM:', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#555555', align:'left', visible:true },
+    { id:'from_info', type:'text', label:'From Details', x:52, y:242, w:318, h:22, text:'{{company_name}}, {{from_address}}\nPIN: {{from_pincode}}  |  Ph: {{from_phone}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#333333', align:'left', visible:true },
+    { id:'divider3', type:'line', label:'Products Divider', x:14, y:270, w:356, h:1, color:'#eeeeee', lineStyle:'dotted', visible:true },
+    { id:'products_label', type:'text', label:'Products Label', x:14, y:278, w:70, h:12, text:'Products:', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#333333', align:'left', visible:true },
+    { id:'products_list', type:'text', label:'Product Items', x:20, y:292, w:350, h:50, text:'{{items_text}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#333333', align:'left', visible:true },
+    { id:'divider4', type:'line', label:'Amounts Divider', x:14, y:348, w:356, h:1, color:'#eeeeee', lineStyle:'dotted', visible:true },
+    { id:'subtotal', type:'text', label:'Subtotal', x:14, y:356, w:356, h:12, text:'Subtotal: Rs. {{subtotal}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#333333', align:'left', visible:true },
+    { id:'discount', type:'text', label:'Discount', x:14, y:370, w:356, h:12, text:'Discount: - Rs. {{discount_amount}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#e53935', align:'left', visible:true },
+    { id:'shipping', type:'text', label:'Shipping Charge', x:14, y:384, w:356, h:12, text:'Shipping: Rs. {{shipping_charge}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#333333', align:'left', visible:true },
+    { id:'final_amount', type:'text', label:'Final Amount', x:14, y:398, w:356, h:14, text:'Total: Rs. {{final_amount}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a1a1a', align:'left', visible:true },
+    { id:'order_num', type:'text', label:'Order Number', x:14, y:540, w:356, h:18, text:'#{{order_number}}', fontSize:11, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#333333', align:'center', visible:true },
+    { id:'tracking', type:'text', label:'Tracking Number', x:14, y:558, w:356, h:12, text:'Tracking: {{tracking_number}}', fontSize:7, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#888888', align:'center', visible:true },
+  ],
+};
+
+// ═══ DEFAULT INVOICE TEMPLATE — RMS Spices style ═══
+const DEFAULT_INVOICE_TEMPLATE = {
+  canvas: { width: 595, height: 842, bgColor: '#ffffff', padding: 20 },
+  elements: [
+    { id:'inv_logo', type:'image', label:'Company Logo', x:20, y:16, w:80, h:50, src:'', visible:true },
+    { id:'inv_brand', type:'text', label:'Company Name', x:110, y:20, w:300, h:26, text:'{{company_name}}', fontSize:20, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a73e8', align:'left', visible:true },
+    { id:'inv_slogan', type:'text', label:'Tagline', x:110, y:46, w:300, h:14, text:'{{slogan}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#888888', align:'left', visible:true },
+    { id:'inv_addr', type:'text', label:'Company Address', x:110, y:60, w:300, h:14, text:'{{from_address}}, {{city}}, {{state}} - {{pincode}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#555555', align:'left', visible:true },
+    { id:'inv_contact', type:'text', label:'Contact / GSTIN', x:110, y:74, w:300, h:14, text:'Ph: {{phone}} | {{email}} | GSTIN: {{gstin}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#888888', align:'left', visible:true },
+    { id:'inv_order_no', type:'text', label:'Order No', x:430, y:20, w:145, h:14, text:'Order #: {{order_number}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#333333', align:'right', visible:true },
+    { id:'inv_date', type:'text', label:'Date', x:430, y:36, w:145, h:14, text:'Date: {{invoice_date}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#555555', align:'right', visible:true },
+    { id:'inv_payment_mode', type:'text', label:'Payment Mode', x:430, y:52, w:145, h:14, text:'Payment: {{payment_type}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#555555', align:'right', visible:true },
+    { id:'inv_divider1', type:'line', label:'Header Divider', x:20, y:96, w:555, h:2, color:'#1a73e8', lineStyle:'solid', visible:true },
+    { id:'inv_title', type:'text', label:'Document Title', x:20, y:104, w:555, h:24, text:'TAX INVOICE', fontSize:14, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a73e8', align:'center', visible:true },
+    { id:'inv_number', type:'text', label:'Invoice Number', x:20, y:128, w:280, h:14, text:'Invoice #: {{invoice_number}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'600', color:'#333333', align:'left', visible:true },
+    { id:'inv_billfrom_label', type:'text', label:'Order From Label', x:20, y:152, w:260, h:14, text:'ORDER FROM / BILL TO', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a73e8', align:'left', visible:true },
+    { id:'inv_shipto_label', type:'text', label:'Ship To Label', x:300, y:152, w:275, h:14, text:'SHIP TO', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a73e8', align:'left', visible:true },
+    { id:'inv_cust_name', type:'text', label:'Customer Name', x:20, y:170, w:260, h:16, text:'{{customer_name}}', fontSize:12, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a1a1a', align:'left', visible:true },
+    { id:'inv_cust_addr', type:'text', label:'Customer Address', x:20, y:188, w:260, h:36, text:'{{customer_address}}\n{{city}}, {{state}} - {{pincode}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#555555', align:'left', visible:true },
+    { id:'inv_cust_phone', type:'text', label:'Customer Phone', x:20, y:228, w:260, h:14, text:'Ph: {{customer_phone}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#555555', align:'left', visible:true },
+    { id:'inv_ship_name', type:'text', label:'Ship To Name', x:300, y:170, w:275, h:16, text:'{{customer_name}}', fontSize:12, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a1a1a', align:'left', visible:true },
+    { id:'inv_ship_addr', type:'text', label:'Ship To Address', x:300, y:188, w:275, h:36, text:'{{customer_address}}\n{{city}}, {{state}} - {{pincode}}', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#555555', align:'left', visible:true },
+    { id:'inv_divider2', type:'line', label:'Section Divider', x:20, y:250, w:555, h:1, color:'#e0e0e0', lineStyle:'solid', visible:true },
+    { id:'inv_items_header', type:'text', label:'Items Table Header', x:20, y:260, w:555, h:22, text:'SL.NO | ITEM | QTY | UNIT | PRICE/UNIT | GST | FINAL AMOUNT', fontSize:9, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#ffffff', align:'left', bgColor:'#1a73e8', padding:6, visible:true },
+    { id:'inv_items', type:'text', label:'Items Table Body', x:20, y:284, w:555, h:160, text:'{{items_table}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#333333', align:'left', visible:true },
+    { id:'inv_subtotal', type:'text', label:'Sub Total', x:380, y:450, w:195, h:16, text:'Sub Total: Rs. {{subtotal}}', fontSize:11, fontFamily:'Inter, sans-serif', fontWeight:'600', color:'#333333', align:'right', visible:true },
+    { id:'inv_discount', type:'text', label:'Discount', x:380, y:468, w:195, h:16, text:'Discount: - Rs. {{discount_amount}}', fontSize:11, fontFamily:'Inter, sans-serif', fontWeight:'600', color:'#e53935', align:'right', visible:true },
+    { id:'inv_total', type:'text', label:'Total Amount', x:380, y:488, w:195, h:20, text:'Total: Rs. {{total_amount}}', fontSize:14, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#1a73e8', align:'right', visible:true },
+    { id:'inv_advance', type:'text', label:'Advance Paid', x:380, y:510, w:195, h:14, text:'Advance: Rs. {{advance_amount}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#2e7d32', align:'right', visible:true },
+    { id:'inv_balance', type:'text', label:'Balance Due', x:380, y:526, w:195, h:16, text:'Balance: Rs. {{balance_due}}', fontSize:12, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#e65100', align:'right', visible:true },
+    { id:'inv_saved', type:'text', label:'You Saved', x:380, y:544, w:195, h:14, text:'You Saved: Rs. {{discount_amount}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'600', color:'#558b2f', align:'right', visible:true },
+    { id:'inv_amount_words', type:'text', label:'Amount in Words', x:20, y:570, w:555, h:16, text:'Amount: {{amount_words}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'600', color:'#333333', align:'left', bgColor:'#f8f9fa', padding:4, visible:true },
+    { id:'inv_divider3', type:'line', label:'Footer Divider', x:20, y:600, w:555, h:1, color:'#e0e0e0', lineStyle:'solid', visible:true },
+    { id:'inv_terms_label', type:'text', label:'Terms Title', x:20, y:612, w:300, h:14, text:'Terms & Conditions', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'700', color:'#333333', align:'left', visible:true },
+    { id:'inv_terms', type:'text', label:'Terms Text', x:20, y:628, w:300, h:48, text:'1. Goods once sold will not be taken back.\n2. Subject to local jurisdiction.\n3. E&OE', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#666666', align:'left', visible:true },
+    { id:'inv_bank', type:'text', label:'Bank Details', x:20, y:682, w:300, h:52, text:'Bank: {{bank_name}} | A/c: {{bank_account}}\nIFSC: {{bank_ifsc}} | Branch: {{bank_branch}}\nUPI: {{upi_id}}', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#888888', align:'left', visible:true },
+    { id:'inv_sign_line', type:'line', label:'Signature Line', x:420, y:720, w:155, h:1, color:'#999999', lineStyle:'solid', visible:true },
+    { id:'inv_sign', type:'text', label:'Authorized Signatory', x:400, y:726, w:175, h:28, text:'Authorized Signatory\nFor {{company_name}}', fontSize:10, fontFamily:'Inter, sans-serif', fontWeight:'600', color:'#333333', align:'center', visible:true },
+    { id:'inv_header_img', type:'image', label:'Header Image', x:20, y:0, w:555, h:0, src:'', visible:false },
+    { id:'inv_footer_img', type:'image', label:'Footer Image', x:20, y:790, w:555, h:0, src:'', visible:false },
+    { id:'inv_footer', type:'text', label:'Footer Text', x:20, y:820, w:555, h:14, text:'Generated by {{company_name}} CRM | Computer-generated document', fontSize:8, fontFamily:'Inter, sans-serif', fontWeight:'400', color:'#bbbbbb', align:'center', visible:true },
+  ],
+};
+
+let labelTemplate = JSON.parse(JSON.stringify(DEFAULT_LABEL_TEMPLATE));
+let invoiceTemplate = JSON.parse(JSON.stringify(DEFAULT_INVOICE_TEMPLATE));
+function getActiveTemplate(){ return currentMode === 'label' ? labelTemplate : invoiceTemplate; }
+function setActiveTemplate(t){ if(currentMode==='label') labelTemplate=t; else invoiceTemplate=t; }
+
+// ═══ INIT ═══
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadTenantSettings();
+  renderSettings();
+  updateMobileButtons();
+  window.addEventListener('resize', updateMobileButtons);
+  document.getElementById('edCanvas').addEventListener('click', onCanvasClick);
+});
+
+async function loadTenantSettings(){
+  try{
+    const r = await fetch(HOST+'/api/tenant/settings',{headers:getH()});
+    if(!r.ok){handleAuthErr(r.status);return;}
+    tenantSettings = await r.json();
+    if(tenantSettings.label_template) labelTemplate = tenantSettings.label_template;
+    if(tenantSettings.invoice_template) invoiceTemplate = tenantSettings.invoice_template;
+  }catch(e){console.error(e);}
+}
+
+// ═══ MODE SWITCHING ═══
+function switchMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.ed-mode-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('mode-'+mode).classList.add('active');
+  document.getElementById('view-settings').style.display = mode==='settings' ? '' : 'none';
+  document.getElementById('view-editor').style.display = mode!=='settings' ? 'flex' : 'none';
+  const mSb=document.getElementById('mobileSidebarBtn'),mPb=document.getElementById('mobilePropsBtn');
+  if(mode==='settings'){if(mSb)mSb.style.display='none';if(mPb)mPb.style.display='none';}
+  if(mode!=='settings'){selectedElId=null;renderEditor();updateMobileButtons();}
+}
+function updateMobileButtons(){
+  const isMobile=window.innerWidth<=899,isEditor=currentMode!=='settings';
+  const mSb=document.getElementById('mobileSidebarBtn'),mPb=document.getElementById('mobilePropsBtn'),cb=document.getElementById('closeSidebarBtn');
+  if(mSb)mSb.style.display=(isMobile&&isEditor)?'flex':'none';
+  if(mPb)mPb.style.display=(isMobile&&isEditor)?'flex':'none';
+  if(cb)cb.style.display=isMobile?'':'none';
+}
+function toggleMobileSidebar(){document.getElementById('edSidebar').classList.toggle('mobile-show');}
+function closeMobileSidebar(){document.getElementById('edSidebar').classList.remove('mobile-show');}
+function toggleMobileProps(){document.getElementById('edProps').classList.toggle('mobile-show');}
+function closeMobileProps(){document.getElementById('edProps').classList.remove('mobile-show');}
+
+
+// ═══ COMPANY SETTINGS (Tab 1) ═══
+function renderSettings(){
+  const ts=tenantSettings;
+  const wrap=document.getElementById('view-settings');
+  wrap.innerHTML = `
+  <div style="max-width:680px;margin:0 auto;padding:24px 0;">
+    <div style="margin-bottom:20px;">
+      <h2 style="font-size:18px;font-weight:700;color:var(--ed-text);margin:0 0 4px;">Company Settings</h2>
+      <p style="font-size:13px;color:var(--ed-muted);margin:0;">Configure your business information used across labels and invoices.</p>
+    </div>
+    <div class="ed-settings-card">
+      <h3>🏢 Company Information</h3>
+      <div class="ed-settings-row col1"><div class="ed-field"><label class="ed-label">Company Name</label><input class="ed-input" id="ts_company_name" value="${esc(ts.company_name||'')}"></div></div>
+      <div class="ed-settings-row">
+        <div class="ed-field"><label class="ed-label">Phone</label><input class="ed-input" id="ts_phone" value="${esc(ts.phone||'')}"></div>
+        <div class="ed-field"><label class="ed-label">Email</label><input class="ed-input" id="ts_email" value="${esc(ts.email||'')}" type="email"></div>
+      </div>
+      <div class="ed-settings-row col1"><div class="ed-field"><label class="ed-label">Slogan / Tagline</label><input class="ed-input" id="ts_slogan" value="${esc(ts.slogan||'')}" placeholder="e.g. Fresh from farm to kitchen"></div></div>
+      <div class="ed-settings-row col1">
+        <div class="ed-field">
+          <label class="ed-label">Company Logo</label>
+          <div id="logoUploadArea"></div>
+        </div>
+      </div>
+    </div>
+    <div class="ed-settings-card">
+      <h3>📍 Address</h3>
+      <div class="ed-settings-row col1"><div class="ed-field"><label class="ed-label">Address Line 1</label><input class="ed-input" id="ts_address_line1" value="${esc(ts.address_line1||'')}"></div></div>
+      <div class="ed-settings-row col1"><div class="ed-field"><label class="ed-label">Address Line 2</label><input class="ed-input" id="ts_address_line2" value="${esc(ts.address_line2||'')}" placeholder="Landmark, building, floor…"></div></div>
+      <div class="ed-settings-row col3">
+        <div class="ed-field"><label class="ed-label">City</label><input class="ed-input" id="ts_gst_city" value="${esc(ts.gst_city||'')}"></div>
+        <div class="ed-field"><label class="ed-label">State</label><input class="ed-input" id="ts_gst_state" value="${esc(ts.gst_state||'')}"></div>
+        <div class="ed-field"><label class="ed-label">Pincode</label><input class="ed-input" id="ts_gst_pincode" value="${esc(ts.gst_pincode||'')}"></div>
+      </div>
+    </div>
+    <div class="ed-settings-card">
+      <h3>🧾 GST Details</h3>
+      <div class="ed-settings-row">
+        <div class="ed-field"><label class="ed-label">GSTIN</label><input class="ed-input" id="ts_gstin" value="${esc(ts.gstin||'')}" placeholder="22AAAAA0000A1Z5"></div>
+        <div class="ed-field"><label class="ed-label">GST Registered Address</label><input class="ed-input" id="ts_gst_address" value="${esc(ts.gst_address||'')}"></div>
+      </div>
+    </div>
+    <div class="ed-settings-card">
+      <h3>🏦 Bank Details</h3>
+      <div class="ed-settings-row">
+        <div class="ed-field"><label class="ed-label">Bank Name</label><input class="ed-input" id="ts_bank_name" value="${esc(ts.bank_name||'')}"></div>
+        <div class="ed-field"><label class="ed-label">Account Number</label><input class="ed-input" id="ts_bank_account" value="${esc(ts.bank_account||'')}"></div>
+      </div>
+      <div class="ed-settings-row">
+        <div class="ed-field"><label class="ed-label">IFSC Code</label><input class="ed-input" id="ts_bank_ifsc" value="${esc(ts.bank_ifsc||'')}"></div>
+        <div class="ed-field"><label class="ed-label">Branch</label><input class="ed-input" id="ts_bank_branch" value="${esc(ts.bank_branch||'')}"></div>
+      </div>
+      <div class="ed-settings-row"><div class="ed-field"><label class="ed-label">UPI ID</label><input class="ed-input" id="ts_upi_id" value="${esc(ts.upi_id||'')}"></div></div>
+    </div>
+    <div class="ed-settings-card">
+      <h3>🔢 Prefixes & Options</h3>
+      <div class="ed-settings-row col3">
+        <div class="ed-field"><label class="ed-label">Invoice Prefix</label><input class="ed-input" id="ts_invoice_prefix" value="${esc(ts.invoice_prefix||'INV')}"></div>
+        <div class="ed-field"><label class="ed-label">Proforma Prefix</label><input class="ed-input" id="ts_proforma_prefix" value="${esc(ts.proforma_prefix||'PRF')}"></div>
+        <div class="ed-field"><label class="ed-label">Bill Prefix</label><input class="ed-input" id="ts_bill_prefix" value="${esc(ts.bill_prefix||'BILL')}"></div>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:6px;">
+        <div class="ed-check-row"><input type="checkbox" id="ts_label_show_logo" ${ts.label_show_logo?'checked':''}><label for="ts_label_show_logo">Show Logo on Label</label></div>
+        <div class="ed-check-row"><input type="checkbox" id="ts_label_show_slogan" ${ts.label_show_slogan?'checked':''}><label for="ts_label_show_slogan">Show Slogan</label></div>
+        <div class="ed-check-row"><input type="checkbox" id="ts_label_show_barcode" ${ts.label_show_barcode?'checked':''}><label for="ts_label_show_barcode">Show Barcode</label></div>
+      </div>
+      <div class="ed-settings-row col1" style="margin-top:10px;"><div class="ed-field"><label class="ed-label">Label Footer Note</label><input class="ed-input" id="ts_label_footer_note" value="${esc(ts.label_footer_note||'')}" placeholder="e.g. Thank you!"></div></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:10px;">
+      <button class="ed-btn ed-btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+    </div>
+  </div>`;
+  // Render logo upload widget
+  renderLogoUpload();
+}
+
+function renderLogoUpload(){
+  const area = document.getElementById('logoUploadArea');
+  if(!area) return;
+  const currentLogo = tenantSettings.logo_url || '';
+  if(currentLogo){
+    area.innerHTML = `
+      <div class="ed-upload-preview">
+        <img src="${esc(currentLogo)}" alt="Logo">
+        <div class="up-info"><div style="font-weight:600;">Current Logo</div><div>Click ✕ to remove</div></div>
+        <span class="up-remove" onclick="removeLogo()" title="Remove logo">✕</span>
+      </div>
+      <button class="ed-add-btn" onclick="document.getElementById('logoFileInput').click()">📷 Change Logo</button>
+      <input type="file" id="logoFileInput" accept=".jpg,.jpeg,.png" style="display:none" onchange="handleLogoUpload(this)">`;
+  } else {
+    area.innerHTML = `
+      <div class="ed-upload-zone" onclick="document.getElementById('logoFileInput').click()" id="logoDropZone">
+        <div class="uz-icon">📷</div>
+        <div class="uz-text">Click to upload logo</div>
+        <div class="uz-hint">JPG or PNG only, max ${MAX_IMG_KB} KB</div>
+      </div>
+      <input type="file" id="logoFileInput" accept=".jpg,.jpeg,.png" style="display:none" onchange="handleLogoUpload(this)">`;
+    // Drag-drop on the zone
+    const zone = document.getElementById('logoDropZone');
+    if(zone){
+      zone.addEventListener('dragover', e=>{e.preventDefault();zone.classList.add('drag-over');});
+      zone.addEventListener('dragleave', ()=>zone.classList.remove('drag-over'));
+      zone.addEventListener('drop', e=>{e.preventDefault();zone.classList.remove('drag-over');if(e.dataTransfer.files.length)uploadImageFile(e.dataTransfer.files[0],'logo');});
+    }
+  }
+}
+
+function removeLogo(){
+  tenantSettings.logo_url = '';
+  renderLogoUpload();
+}
+
+async function handleLogoUpload(input){
+  if(!input.files||!input.files.length) return;
+  await uploadImageFile(input.files[0], 'logo');
+}
+
+async function uploadImageFile(file, imageType){
+  // Client-side validation
+  if(!ALLOWED_IMG_TYPES.includes(file.type)){
+    notif('Only JPG/PNG images are allowed!','err'); return;
+  }
+  const ext = '.'+file.name.split('.').pop().toLowerCase();
+  if(!ALLOWED_IMG_EXT.includes(ext)){
+    notif('Only .jpg / .png files are allowed!','err'); return;
+  }
+  if(file.size > MAX_IMG_KB * 1024){
+    notif(`Image too large (${(file.size/1024).toFixed(0)} KB). Max ${MAX_IMG_KB} KB.`,'err'); return;
+  }
+  // Upload to server
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('image_type', imageType);
+  try{
+    const r = await fetch(HOST+'/api/tenant/upload-image', {method:'POST', headers:getHMultipart(), body:fd});
+    if(!r.ok){const e=await r.json();notif(e.detail||'Upload failed','err');return;}
+    const data = await r.json();
+    notif(`✅ ${imageType} image uploaded (${data.size_kb} KB)`,'ok');
+    if(imageType==='logo'){
+      tenantSettings.logo_url = data.url;
+      renderLogoUpload();
+    }
+    return data.url;
+  }catch(e){notif('Upload failed: '+e.message,'err');}
+  return null;
+}
+
+async function saveSettings(){
+  const payload = {};
+  const fields = ['company_name','phone','email','slogan','address_line1','address_line2','gst_city','gst_state','gst_pincode','gstin','gst_address','bank_name','bank_account','bank_ifsc','bank_branch','upi_id','invoice_prefix','proforma_prefix','bill_prefix','label_footer_note'];
+  fields.forEach(f=>{const el=document.getElementById('ts_'+f);if(el)payload[f]=el.value||null;});
+  ['label_show_logo','label_show_slogan','label_show_barcode'].forEach(f=>{const el=document.getElementById('ts_'+f);if(el)payload[f]=el.checked;});
+  // Include logo_url from state
+  payload.logo_url = tenantSettings.logo_url || null;
+  try{
+    const r=await fetch(HOST+'/api/tenant/settings',{method:'PATCH',headers:getH(),body:JSON.stringify(payload)});
+    if(r.ok){tenantSettings=await r.json();notif('✅ Settings saved','ok');}
+    else{const e=await r.json();notif(e.detail||'Save failed','err');}
+  }catch(e){notif('Network error','err');}
+}
+
+
+// ═══ EDITOR RENDERING ═══
+function renderEditor(){renderSidebar();renderCanvas();renderProps();}
+
+// ── SIDEBAR ──
+function renderSidebar(){
+  const tmpl=getActiveTemplate();
+  const sb=document.getElementById('sidebarBody');
+  document.getElementById('sidebarTitle').textContent = currentMode==='label'?'Label Elements':'Invoice Elements';
+  let html='';
+
+  // Canvas Settings
+  html += `<div class="ed-section">
+    <div class="ed-section-head" onclick="toggleSection(this)">🎨 Canvas Settings <span class="ed-chevron">▼</span></div>
+    <div class="ed-section-body">
+      <div class="ed-row">
+        <div class="ed-field"><label class="ed-label">Width</label><input class="ed-input" type="number" value="${tmpl.canvas.width}" onchange="tmplProp('canvas','width',+this.value)"></div>
+        <div class="ed-field"><label class="ed-label">Height</label><input class="ed-input" type="number" value="${tmpl.canvas.height}" onchange="tmplProp('canvas','height',+this.value)"></div>
+      </div>
+      <div class="ed-field"><label class="ed-label">Background</label>
+        <div class="ed-color-wrap"><div class="ed-color-swatch"><input type="color" value="${tmpl.canvas.bgColor||'#ffffff'}" onchange="tmplProp('canvas','bgColor',this.value)"></div>
+        <input class="ed-input" style="flex:1;" value="${tmpl.canvas.bgColor||'#ffffff'}" onchange="tmplProp('canvas','bgColor',this.value)"></div>
+      </div>
+    </div>
+  </div>`;
+
+  // Elements list
+  html += `<div class="ed-section">
+    <div class="ed-section-head" onclick="toggleSection(this)">📋 Elements (${tmpl.elements.length}) <span class="ed-chevron">▼</span></div>
+    <div class="ed-section-body">
+      <ul class="ed-elem-list" id="elemList">
+        ${tmpl.elements.map(el => `
+          <li class="ed-elem-item ${selectedElId===el.id?'active':''}" onclick="selectElement('${el.id}')" draggable="true" ondragstart="onElListDragStart(event,'${el.id}')" ondragover="onElListDragOver(event)" ondrop="onElListDrop(event,'${el.id}')">
+            <span class="ed-elem-icon">${el.type==='text'?'📝':el.type==='line'?'➖':el.type==='image'?'🖼':el.type==='rect'?'⬜':'📦'}</span>
+            <span class="ed-elem-name">${esc(el.label||el.id)}</span>
+            <span class="ed-elem-vis" onclick="event.stopPropagation();toggleVis('${el.id}')" title="Toggle visibility">${el.visible!==false?'👁':'👁‍🗨'}</span>
+          </li>`).join('')}
+      </ul>
+      <button class="ed-add-btn" onclick="addElement('text')">+ Add Text</button>
+    </div>
+  </div>`;
+
+  // Quick Presets — product elements, dividers, images
+  const labelPresets = [
+    {key:'logo',icon:'🖼',name:'Logo'},
+    {key:'divider',icon:'➖',name:'Divider'},
+    {key:'product_items',icon:'📦',name:'Product Items'},
+    {key:'subtotal',icon:'💰',name:'Subtotal'},
+    {key:'discount',icon:'🏷',name:'Discount'},
+    {key:'shipping',icon:'🚚',name:'Shipping'},
+    {key:'final_amount',icon:'💵',name:'Final Amount'},
+    {key:'tracking',icon:'📍',name:'Tracking #'},
+    {key:'order_num',icon:'🔢',name:'Order Number'},
+    {key:'payment_badge',icon:'💳',name:'Payment Type'},
+    {key:'barcode',icon:'📊',name:'Barcode Area'},
+    {key:'qr',icon:'🔲',name:'QR Code Area'},
+  ];
+  const invoicePresets = [
+    {key:'logo',icon:'🖼',name:'Logo'},
+    {key:'divider',icon:'➖',name:'Divider'},
+    {key:'items_table',icon:'📋',name:'Items Table'},
+    {key:'subtotal',icon:'💰',name:'Sub Total'},
+    {key:'discount',icon:'🏷',name:'Discount'},
+    {key:'shipping',icon:'🚚',name:'Shipping'},
+    {key:'total',icon:'💵',name:'Grand Total'},
+    {key:'advance',icon:'💳',name:'Advance Paid'},
+    {key:'balance',icon:'⚠️',name:'Balance Due'},
+    {key:'bank_details',icon:'🏦',name:'Bank Details'},
+    {key:'terms',icon:'📜',name:'Terms & Conditions'},
+    {key:'signature',icon:'✍️',name:'Auth. Signatory'},
+    {key:'header_img',icon:'🖼',name:'Header Image'},
+    {key:'footer_img',icon:'🖼',name:'Footer Image'},
+  ];
+  const presets = currentMode==='label' ? labelPresets : invoicePresets;
+  html += `<div class="ed-section">
+    <div class="ed-section-head" onclick="toggleSection(this)">✨ Quick Add Elements <span class="ed-chevron">▼</span></div>
+    <div class="ed-section-body">
+      <div class="ed-preset-grid">
+        ${presets.map(p=>`<button class="ed-preset-btn" onclick="addPresetElement('${p.key}')"><span class="pb-icon">${p.icon}</span>${p.name}</button>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  // Image Upload section (for header/footer images in invoice mode)
+  if(currentMode === 'invoice'){
+    html += `<div class="ed-section">
+      <div class="ed-section-head" onclick="toggleSection(this)">📷 Upload Images <span class="ed-chevron">▼</span></div>
+      <div class="ed-section-body">
+        <div class="ed-field"><label class="ed-label">Header Image</label>
+          <div class="ed-upload-zone" onclick="document.getElementById('headerImgInput').click()" id="headerDropZone">
+            <div class="uz-icon">🖼</div><div class="uz-text">Upload header image</div><div class="uz-hint">JPG/PNG, max ${MAX_IMG_KB} KB</div>
+          </div>
+          <input type="file" id="headerImgInput" accept=".jpg,.jpeg,.png" style="display:none" onchange="handleEditorImageUpload(this,'header')">
+        </div>
+        <div class="ed-field"><label class="ed-label">Footer Image</label>
+          <div class="ed-upload-zone" onclick="document.getElementById('footerImgInput').click()" id="footerDropZone">
+            <div class="uz-icon">🖼</div><div class="uz-text">Upload footer image</div><div class="uz-hint">JPG/PNG, max ${MAX_IMG_KB} KB</div>
+          </div>
+          <input type="file" id="footerImgInput" accept=".jpg,.jpeg,.png" style="display:none" onchange="handleEditorImageUpload(this,'footer')">
+        </div>
+      </div>
+    </div>`;
+  }
+
+  sb.innerHTML = html;
+  // Bind drop zones for invoice images
+  if(currentMode==='invoice'){
+    ['header','footer'].forEach(t=>{
+      const zone = document.getElementById(t+'DropZone');
+      if(zone){
+        zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+        zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+        zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');if(e.dataTransfer.files.length)handleEditorImageFile(e.dataTransfer.files[0],t);});
+      }
+    });
+  }
+}
+
+async function handleEditorImageUpload(input, type){
+  if(!input.files||!input.files.length)return;
+  await handleEditorImageFile(input.files[0], type);
+}
+
+async function handleEditorImageFile(file, type){
+  // Client validation
+  if(!ALLOWED_IMG_TYPES.includes(file.type)){notif('Only JPG/PNG allowed!','err');return;}
+  if(file.size > MAX_IMG_KB * 1024){notif(`Image too large (${(file.size/1024).toFixed(0)}KB). Max ${MAX_IMG_KB}KB.`,'err');return;}
+  // Upload
+  const url = await uploadImageFile(file, type);
+  if(!url) return;
+  // Apply to the right element
+  const tmpl = getActiveTemplate();
+  const targetId = type==='header' ? 'inv_header_img' : 'inv_footer_img';
+  let el = tmpl.elements.find(e=>e.id===targetId);
+  if(el){
+    el.src = url;
+    el.visible = true;
+    if(type==='header') el.h = 60;
+    if(type==='footer') el.h = 40;
+  }
+  renderEditor();
+}
+
+function toggleSection(head){
+  head.classList.toggle('collapsed');
+}
+
+// ── CANVAS ──
+function renderCanvas(){
+  const tmpl=getActiveTemplate();
+  const canvas=document.getElementById('edCanvas');
+  const scale=zoomPct/100;
+  canvas.style.width=(tmpl.canvas.width*scale)+'px';
+  canvas.style.height=(tmpl.canvas.height*scale)+'px';
+  canvas.style.background=tmpl.canvas.bgColor||'#fff';
+  document.getElementById('zoomLevel').textContent=zoomPct+'%';
+  const wIn=(tmpl.canvas.width/96).toFixed(1), hIn=(tmpl.canvas.height/96).toFixed(1);
+  document.getElementById('canvasSizeLabel').textContent=`${wIn}″ × ${hIn}″`;
+
+  let html='';
+  tmpl.elements.forEach(el=>{
+    if(el.visible===false) return;
+    const sx=el.x*scale, sy=el.y*scale, sw=el.w*scale, sh=el.h*scale;
+    const sel=selectedElId===el.id;
+
+    if(el.type==='line'){
+      const ls=el.lineStyle==='dashed'?'dashed':el.lineStyle==='dotted'?'dotted':'solid';
+      html+=`<div class="ed-el ${sel?'selected':''}" data-id="${el.id}" style="left:${sx}px;top:${sy}px;width:${sw}px;height:${Math.max(sh,4)}px;display:flex;align-items:center;"
+        onpointerdown="startDrag(event,'${el.id}')">
+        <div style="width:100%;border-top:${Math.max(1,el.h*scale*0.5)}px ${ls} ${el.color||'#ccc'};"></div>
+        <div class="ed-resize" onpointerdown="startResize(event,'${el.id}')"></div></div>`;
+    } else if(el.type==='rect'){
+      html+=`<div class="ed-el ${sel?'selected':''}" data-id="${el.id}" style="left:${sx}px;top:${sy}px;width:${sw}px;height:${sh}px;background:${el.bgColor||'transparent'};border:${el.borderWidth||1}px solid ${el.borderColor||'#ccc'};border-radius:${(el.borderRadius||0)*scale}px;"
+        onpointerdown="startDrag(event,'${el.id}')">
+        <div class="ed-resize" onpointerdown="startResize(event,'${el.id}')"></div></div>`;
+    } else if(el.type==='image'){
+      html+=`<div class="ed-el ${sel?'selected':''}" data-id="${el.id}" style="left:${sx}px;top:${sy}px;width:${sw}px;height:${Math.max(sh,20)}px;display:flex;align-items:center;justify-content:center;background:${el.src?'transparent':'var(--ed-primary-lt)'};border-radius:4px;overflow:hidden;"
+        onpointerdown="startDrag(event,'${el.id}')">
+        ${el.src?`<img src="${esc(el.src)}" style="max-width:100%;max-height:100%;object-fit:contain;">`:`<span style="font-size:${Math.max(10,12*scale)}px;color:var(--ed-muted);">🖼 ${esc(el.label||'Image')}</span>`}
+        <div class="ed-resize" onpointerdown="startResize(event,'${el.id}')"></div></div>`;
+    } else {
+      // text
+      const dt=resolveTemplate(el.text||'');
+      const bgS=el.bgColor?`background:${el.bgColor};`:'';
+      const padS=el.padding?`padding:${el.padding*scale}px;`:'';
+      html+=`<div class="ed-el ${sel?'selected':''}" data-id="${el.id}" style="left:${sx}px;top:${sy}px;width:${sw}px;min-height:${sh}px;font-family:${el.fontFamily||'Inter, sans-serif'};font-size:${(el.fontSize||12)*scale}px;font-weight:${el.fontWeight||'400'};color:${el.color||'#1a1a1a'};text-align:${el.align||'left'};line-height:1.4;overflow:hidden;white-space:pre-wrap;word-break:break-word;${bgS}${padS}border-radius:${(el.borderRadius||0)*scale}px;"
+        onpointerdown="startDrag(event,'${el.id}')">
+        ${esc(dt)}
+        <div class="ed-resize" onpointerdown="startResize(event,'${el.id}')"></div></div>`;
+    }
+  });
+  canvas.innerHTML=html;
+}
+
+function resolveTemplate(text){
+  const ts=tenantSettings;
+  const map={
+    company_name: ts.company_name||'Your Company',
+    slogan: ts.slogan||'Your tagline here',
+    from_address: [ts.address_line1,ts.address_line2].filter(Boolean).join(', ')||'123 Street, Area',
+    phone: ts.phone||'+91 9876543210',
+    email: ts.email||'info@company.com',
+    gstin: ts.gstin||'22AAAAA0000A1Z5',
+    city: ts.gst_city||'City',
+    state: ts.gst_state||'State',
+    pincode: ts.gst_pincode||'600001',
+    from_pincode: ts.gst_pincode||'600001',
+    from_phone: ts.phone||'+91 9876543210',
+    customer_name: 'Haritha',
+    customer_address: '147, Amarar Jeevanandam Road, Rathinapuri',
+    customer_phone: '+91 94877 23072',
+    payment_type: 'Cash on Delivery',
+    amount: '799.00',
+    order_number: 'PRN-260303-013',
+    invoice_number: 'INV-260303-001',
+    invoice_date: '03 Mar 2026',
+    total_amount: '799.00',
+    subtotal: '849.00',
+    discount_amount: '100.00',
+    shipping_charge: '50.00',
+    final_amount: '799.00',
+    advance_amount: '0.00',
+    balance_due: '799.00',
+    items_text: 'Kerala Spice Box x1 - Rs.799\nTurmeric Powder 200g x2 - Rs.50',
+    items_table: '1 | Kerala Spice Box | 1 | pcs | Rs.799 | 5% | Rs.799',
+    footer_note: ts.label_footer_note||'Thank you for your purchase!',
+    bank_name: ts.bank_name||'Bank Name',
+    bank_account: ts.bank_account||'XXXX1234',
+    bank_ifsc: ts.bank_ifsc||'IFSC0001',
+    bank_branch: ts.bank_branch||'Main Branch',
+    upi_id: ts.upi_id||'pay@upi',
+    tracking_number: 'IP12345678',
+    customer_id: 'C-12345',
+    contract_id: 'CT-001',
+    india_post_id: 'IPCID-99887',
+    amount_words: 'Seven Hundred Ninety Nine Rupees Only',
+  };
+  return (text||'').replace(/\{\{(\w+)\}\}/g, (_,key) => map[key]!==undefined ? map[key] : key);
+}
+
+
+// ── PROPERTIES PANEL ──
+function renderProps(){
+  const pb=document.getElementById('propsBody');
+  if(!selectedElId){pb.innerHTML='<div class="ed-props-empty">Click an element on the canvas to edit its properties</div>';return;}
+  const tmpl=getActiveTemplate();
+  const el=tmpl.elements.find(e=>e.id===selectedElId);
+  if(!el){pb.innerHTML='<div class="ed-props-empty">Element not found</div>';return;}
+
+  let html=`
+  <div class="ed-field"><label class="ed-label">Label / Name</label><input class="ed-input" value="${esc(el.label||el.id)}" onchange="elProp('${el.id}','label',this.value)"></div>
+  <div class="ed-row">
+    <div class="ed-field"><label class="ed-label">X</label><input class="ed-input" type="number" value="${el.x}" onchange="elProp('${el.id}','x',+this.value)"></div>
+    <div class="ed-field"><label class="ed-label">Y</label><input class="ed-input" type="number" value="${el.y}" onchange="elProp('${el.id}','y',+this.value)"></div>
+  </div>
+  <div class="ed-row">
+    <div class="ed-field"><label class="ed-label">Width</label><input class="ed-input" type="number" value="${el.w}" onchange="elProp('${el.id}','w',+this.value)"></div>
+    <div class="ed-field"><label class="ed-label">Height</label><input class="ed-input" type="number" value="${el.h}" onchange="elProp('${el.id}','h',+this.value)"></div>
+  </div>`;
+
+  if(el.type==='text'){
+    html+=`
+    <div class="ed-field"><label class="ed-label">Text / Template</label><textarea class="ed-textarea" onchange="elProp('${el.id}','text',this.value)">${esc(el.text||'')}</textarea>
+      <div style="font-size:10px;color:var(--ed-muted);margin-top:2px;">Use {{field}} placeholders</div>
+    </div>
+    <div class="ed-field"><label class="ed-label">Font</label>
+      <select class="ed-select" onchange="elProp('${el.id}','fontFamily',this.value)">
+        ${FONTS.map(f=>`<option value="${f.family}" ${el.fontFamily===f.family?'selected':''}>${f.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="ed-row">
+      <div class="ed-field"><label class="ed-label">Size</label><input class="ed-input" type="number" value="${el.fontSize||12}" min="6" max="72" onchange="elProp('${el.id}','fontSize',+this.value)"></div>
+      <div class="ed-field"><label class="ed-label">Weight</label>
+        <select class="ed-select" onchange="elProp('${el.id}','fontWeight',this.value)">
+          <option value="400" ${el.fontWeight==='400'?'selected':''}>Regular</option>
+          <option value="500" ${el.fontWeight==='500'?'selected':''}>Medium</option>
+          <option value="600" ${el.fontWeight==='600'?'selected':''}>Semi Bold</option>
+          <option value="700" ${el.fontWeight==='700'?'selected':''}>Bold</option>
+        </select>
+      </div>
+    </div>
+    <div class="ed-field"><label class="ed-label">Text Color</label>
+      <div class="ed-color-wrap"><div class="ed-color-swatch"><input type="color" value="${el.color||'#1a1a1a'}" onchange="elProp('${el.id}','color',this.value)"></div>
+      <input class="ed-input" style="flex:1;" value="${el.color||'#1a1a1a'}" onchange="elProp('${el.id}','color',this.value)"></div>
+    </div>
+    <div class="ed-field"><label class="ed-label">Background</label>
+      <div class="ed-color-wrap"><div class="ed-color-swatch"><input type="color" value="${el.bgColor||'#ffffff'}" onchange="elProp('${el.id}','bgColor',this.value==='#ffffff'?'':this.value)"></div>
+      <input class="ed-input" style="flex:1;" value="${el.bgColor||''}" placeholder="transparent" onchange="elProp('${el.id}','bgColor',this.value)"></div>
+    </div>
+    <div class="ed-field"><label class="ed-label">Alignment</label>
+      <div style="display:flex;gap:4px;">
+        <button class="ed-btn ${el.align==='left'?'ed-btn-primary':'ed-btn-outlined'} ed-btn-sm" onclick="elProp('${el.id}','align','left')">◀</button>
+        <button class="ed-btn ${el.align==='center'?'ed-btn-primary':'ed-btn-outlined'} ed-btn-sm" onclick="elProp('${el.id}','align','center')">◆</button>
+        <button class="ed-btn ${el.align==='right'?'ed-btn-primary':'ed-btn-outlined'} ed-btn-sm" onclick="elProp('${el.id}','align','right')">▶</button>
+      </div>
+    </div>
+    <div class="ed-row">
+      <div class="ed-field"><label class="ed-label">Padding</label><input class="ed-input" type="number" value="${el.padding||0}" min="0" onchange="elProp('${el.id}','padding',+this.value)"></div>
+      <div class="ed-field"><label class="ed-label">Radius</label><input class="ed-input" type="number" value="${el.borderRadius||0}" min="0" onchange="elProp('${el.id}','borderRadius',+this.value)"></div>
+    </div>`;
+  } else if(el.type==='line'){
+    html+=`
+    <div class="ed-field"><label class="ed-label">Color</label>
+      <div class="ed-color-wrap"><div class="ed-color-swatch"><input type="color" value="${el.color||'#cccccc'}" onchange="elProp('${el.id}','color',this.value)"></div>
+      <input class="ed-input" style="flex:1;" value="${el.color||'#cccccc'}" onchange="elProp('${el.id}','color',this.value)"></div>
+    </div>
+    <div class="ed-field"><label class="ed-label">Style</label>
+      <select class="ed-select" onchange="elProp('${el.id}','lineStyle',this.value)">
+        <option value="solid" ${el.lineStyle==='solid'?'selected':''}>Solid</option>
+        <option value="dashed" ${el.lineStyle==='dashed'?'selected':''}>Dashed</option>
+        <option value="dotted" ${el.lineStyle==='dotted'?'selected':''}>Dotted</option>
+      </select>
+    </div>`;
+  } else if(el.type==='image'){
+    html+=`
+    <div class="ed-field"><label class="ed-label">Image URL</label><input class="ed-input" value="${esc(el.src||'')}" onchange="elProp('${el.id}','src',this.value)" placeholder="https://…/logo.png or data:…"></div>
+    <div class="ed-field">
+      <button class="ed-add-btn" onclick="document.getElementById('propImgInput').click()">�� Upload Image</button>
+      <input type="file" id="propImgInput" accept=".jpg,.jpeg,.png" style="display:none" onchange="handlePropImageUpload(this,'${el.id}')">
+    </div>
+    ${el.src?`<div class="ed-upload-preview" style="margin-top:4px;"><img src="${esc(el.src)}" alt="preview"><div class="up-info">Preview</div><span class="up-remove" onclick="elProp('${el.id}','src','')" title="Clear">✕</span></div>`:''}`;
+  } else if(el.type==='rect'){
+    html+=`
+    <div class="ed-field"><label class="ed-label">Fill</label>
+      <div class="ed-color-wrap"><div class="ed-color-swatch"><input type="color" value="${el.bgColor||'#ffffff'}" onchange="elProp('${el.id}','bgColor',this.value)"></div>
+      <input class="ed-input" style="flex:1;" value="${el.bgColor||''}" onchange="elProp('${el.id}','bgColor',this.value)"></div>
+    </div>
+    <div class="ed-field"><label class="ed-label">Border Color</label>
+      <div class="ed-color-wrap"><div class="ed-color-swatch"><input type="color" value="${el.borderColor||'#cccccc'}" onchange="elProp('${el.id}','borderColor',this.value)"></div>
+      <input class="ed-input" style="flex:1;" value="${el.borderColor||'#cccccc'}" onchange="elProp('${el.id}','borderColor',this.value)"></div>
+    </div>
+    <div class="ed-row">
+      <div class="ed-field"><label class="ed-label">Border W</label><input class="ed-input" type="number" value="${el.borderWidth||1}" min="0" onchange="elProp('${el.id}','borderWidth',+this.value)"></div>
+      <div class="ed-field"><label class="ed-label">Radius</label><input class="ed-input" type="number" value="${el.borderRadius||0}" min="0" onchange="elProp('${el.id}','borderRadius',+this.value)"></div>
+    </div>`;
+  }
+
+  // Visibility + Delete
+  html+=`<div style="border-top:1px solid var(--ed-bdr);margin-top:12px;padding-top:12px;">
+    <div class="ed-check-row"><input type="checkbox" id="elVisCheck" ${el.visible!==false?'checked':''} onchange="elProp('${el.id}','visible',this.checked)"><label for="elVisCheck">Visible</label></div>
+    <button class="ed-btn ed-btn-danger ed-btn-sm" onclick="deleteElement('${el.id}')" style="margin-top:8px;width:100%;">🗑 Delete Element</button>
+  </div>`;
+  pb.innerHTML=html;
+}
+
+async function handlePropImageUpload(input, elId){
+  if(!input.files||!input.files.length)return;
+  const file=input.files[0];
+  if(!ALLOWED_IMG_TYPES.includes(file.type)){notif('Only JPG/PNG allowed!','err');return;}
+  if(file.size>MAX_IMG_KB*1024){notif(`Too large. Max ${MAX_IMG_KB}KB.`,'err');return;}
+  const url=await uploadImageFile(file,'logo');
+  if(url){elProp(elId,'src',url);}
+}
+
+
+// ── ELEMENT OPERATIONS ──
+
+function selectElement(id){selectedElId=id;renderCanvas();renderProps();renderSidebar();}
+function deselectAll(){selectedElId=null;renderCanvas();renderProps();renderSidebar();}
+
+function tmplProp(section,key,val){
+  const t=getActiveTemplate();
+  if(val!==undefined){if(!t[section])t[section]={};t[section][key]=val;}
+  else{t[section]=key;}
+  setActiveTemplate(t);renderCanvas();
+}
+function elProp(elId,key,val){
+  const t=getActiveTemplate();
+  const el=t.elements.find(e=>e.id===elId);
+  if(el){el[key]=val;setActiveTemplate(t);renderCanvas();renderProps();}
+}
+function toggleVis(elId){
+  const t=getActiveTemplate();
+  const el=t.elements.find(e=>e.id===elId);
+  if(el){el.visible=el.visible===false?true:false;setActiveTemplate(t);renderCanvas();renderSidebar();}
+}
+function deleteElement(elId){
+  pushUndo();
+  const t=getActiveTemplate();
+  t.elements=t.elements.filter(e=>e.id!==elId);
+  if(selectedElId===elId)selectedElId=null;
+  setActiveTemplate(t);renderCanvas();renderSidebar();renderProps();
+}
+function addElement(type){
+  pushUndo();
+  const t=getActiveTemplate();const id='el_'+Date.now();
+  let el={id,type,x:20,y:20,w:120,h:type==='line'?2:30,visible:true,label:type};
+  if(type==='text')Object.assign(el,{text:'New text',fontFamily:'Inter',fontSize:12,fontWeight:'400',color:'#1a1a1a',align:'left',bgColor:'',padding:0,borderRadius:0});
+  else if(type==='line')Object.assign(el,{color:'#cccccc',lineStyle:'solid'});
+  else if(type==='image')Object.assign(el,{w:80,h:80,src:''});
+  else if(type==='rect')Object.assign(el,{w:100,h:60,bgColor:'#f0f4ff',borderColor:'#d0d5dd',borderWidth:1,borderRadius:4});
+  t.elements.push(el);selectedElId=id;setActiveTemplate(t);renderCanvas();renderSidebar();renderProps();
+}
+
+function addPresetElement(presetName){
+  pushUndo();
+  const t=getActiveTemplate();const id='el_'+Date.now();let el;
+  const cw=t.canvas.width||384, ch=t.canvas.height||576;
+  // Smart placement: find the lowest y of existing elements + 10px gap
+  const lowestY = t.elements.reduce((max,e)=>Math.max(max, e.y+(e.h||0)), 0);
+  const smartY = Math.min(lowestY + 6, ch - 30);
+  switch(presetName){
+    case 'logo':
+      el={id,type:'image',label:'Logo',x:10,y:8,w:80,h:40,src:tenantSettings.logo_url||'',visible:true};break;
+    case 'products_list': case 'product_items':
+      el={id,type:'text',label:'Products List',x:10,y:200,w:cw-20,h:80,text:'{{items_text}}',fontFamily:'Inter, sans-serif',fontSize:10,fontWeight:'400',color:'#1a1a1a',align:'left',bgColor:'#f8f9fb',padding:6,borderRadius:4,visible:true};break;
+    case 'subtotal':
+      el={id,type:'text',label:'Subtotal',x:cw-150,y:380,w:130,h:16,text:'Subtotal: ₹{{subtotal}}',fontFamily:'Inter, sans-serif',fontSize:10,fontWeight:'400',color:'#555',align:'right',bgColor:'',padding:0,borderRadius:0,visible:true};break;
+    case 'discount':
+      el={id,type:'text',label:'Discount',x:cw-150,y:398,w:130,h:16,text:'Discount: -₹{{discount_amount}}',fontFamily:'Inter, sans-serif',fontSize:10,fontWeight:'600',color:'#e74c3c',align:'right',bgColor:'',padding:0,borderRadius:0,visible:true};break;
+    case 'shipping_charge': case 'shipping':
+      el={id,type:'text',label:'Shipping Charge',x:cw-150,y:416,w:130,h:16,text:'Shipping: ₹{{shipping_charge}}',fontFamily:'Inter, sans-serif',fontSize:10,fontWeight:'400',color:'#555',align:'right',bgColor:'',padding:0,borderRadius:0,visible:true};break;
+    case 'final_amount': case 'total':
+      el={id,type:'text',label:'Total',x:cw-150,y:436,w:130,h:20,text:'TOTAL: ₹{{final_amount}}',fontFamily:'Inter, sans-serif',fontSize:13,fontWeight:'700',color:'#2563eb',align:'right',bgColor:'#eef2ff',padding:4,borderRadius:4,visible:true};break;
+    case 'divider':
+      el={id,type:'line',label:'Divider',x:10,y:200,w:cw-20,h:2,color:'#e5e7eb',lineStyle:'solid',visible:true};break;
+    case 'barcode':
+      el={id,type:'rect',label:'Barcode Area',x:10,y:ch-120,w:180,h:60,bgColor:'#f9fafb',borderColor:'#d0d5dd',borderWidth:1,borderRadius:4,visible:true};break;
+    case 'qr':
+      el={id,type:'rect',label:'QR Code Area',x:cw-80,y:ch-120,w:70,h:70,bgColor:'#f9fafb',borderColor:'#d0d5dd',borderWidth:1,borderRadius:4,visible:true};break;
+    case 'header_image': case 'header_img':
+      el={id,type:'image',label:'Header Image',x:0,y:0,w:cw,h:60,src:'',visible:true};break;
+    case 'footer_image': case 'footer_img':
+      el={id,type:'image',label:'Footer Image',x:0,y:ch-60,w:cw,h:60,src:'',visible:true};break;
+    case 'tracking':
+      el={id,type:'text',label:'Tracking #',x:14,y:ch-18,w:cw-28,h:12,text:'Tracking: {{tracking_number}}',fontFamily:'Inter, sans-serif',fontSize:7,fontWeight:'400',color:'#888',align:'center',visible:true};break;
+    case 'order_num':
+      el={id,type:'text',label:'Order Number',x:14,y:ch-36,w:cw-28,h:18,text:'#{{order_number}}',fontFamily:'Inter, sans-serif',fontSize:11,fontWeight:'700',color:'#333',align:'center',visible:true};break;
+    case 'payment_badge':
+      el={id,type:'text',label:'Payment Type',x:14,y:98,w:200,h:20,text:'{{payment_type}}',fontFamily:'Inter, sans-serif',fontSize:14,fontWeight:'700',color:'#b30000',align:'left',visible:true};break;
+    case 'items_table':
+      el={id,type:'text',label:'Items Table',x:20,y:260,w:cw-40,h:160,text:'{{items_table}}',fontFamily:'Inter, sans-serif',fontSize:10,fontWeight:'400',color:'#333',align:'left',bgColor:'#f8f9fb',padding:6,borderRadius:4,visible:true};break;
+    case 'advance':
+      el={id,type:'text',label:'Advance Paid',x:cw-210,y:510,w:195,h:14,text:'Advance: Rs. {{advance_amount}}',fontFamily:'Inter, sans-serif',fontSize:10,fontWeight:'400',color:'#2e7d32',align:'right',visible:true};break;
+    case 'balance':
+      el={id,type:'text',label:'Balance Due',x:cw-210,y:526,w:195,h:16,text:'Balance: Rs. {{balance_due}}',fontFamily:'Inter, sans-serif',fontSize:12,fontWeight:'700',color:'#e65100',align:'right',visible:true};break;
+    case 'bank_details':
+      el={id,type:'text',label:'Bank Details',x:20,y:680,w:300,h:52,text:'Bank: {{bank_name}} | A/c: {{bank_account}}\nIFSC: {{bank_ifsc}} | Branch: {{bank_branch}}',fontFamily:'Inter, sans-serif',fontSize:8,fontWeight:'400',color:'#888',align:'left',visible:true};break;
+    case 'terms':
+      el={id,type:'text',label:'Terms & Conditions',x:20,y:620,w:300,h:48,text:'Terms & Conditions:\n1. Goods once sold will not be taken back.\n2. Subject to local jurisdiction.',fontFamily:'Inter, sans-serif',fontSize:8,fontWeight:'400',color:'#666',align:'left',visible:true};break;
+    case 'signature':
+      el={id,type:'text',label:'Auth. Signatory',x:cw-200,y:720,w:175,h:28,text:'Authorized Signatory\nFor {{company_name}}',fontFamily:'Inter, sans-serif',fontSize:10,fontWeight:'600',color:'#333',align:'center',visible:true};break;
+    default: notif('Unknown preset: '+presetName,'err'); return;
+  }
+  t.elements.push(el);selectedElId=id;setActiveTemplate(t);renderCanvas();renderSidebar();renderProps();
+  notif('Added: '+el.label);
+}
+
+// Element list reorder via drag
+let dragListSrcId=null;
+function onElListDragStart(e,elId){dragListSrcId=elId;e.dataTransfer.effectAllowed='move';}
+function onElListDragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move';}
+function onElListDrop(e,targetId){
+  e.preventDefault();if(!dragListSrcId||dragListSrcId===targetId)return;
+  const t=getActiveTemplate();const elems=t.elements;
+  const srcI=elems.findIndex(x=>x.id===dragListSrcId);
+  const tgtI=elems.findIndex(x=>x.id===targetId);
+  if(srcI<0||tgtI<0)return;
+  const [moved]=elems.splice(srcI,1);elems.splice(tgtI,0,moved);
+  setActiveTemplate(t);renderSidebar();renderCanvas();
+  dragListSrcId=null;
+}
+
+
+// ── SMOOTH DRAG & DROP (requestAnimationFrame) — optimized ──
+let dragging=false,dragElId=null,dragStartX=0,dragStartY=0,dragElStartX=0,dragElStartY=0,rafId=null;
+let resizing=false,resElId=null,resStartX=0,resStartY=0,resElStartW=0,resElStartH=0;
+let pendingDragX=0,pendingDragY=0,pendingResW=0,pendingResH=0;
+let _boundMoveH=null,_boundUpH=null; // proper cleanup references
+let _justDragged=false; // prevent deselect on drag end
+
+function getCanvasCoords(e){
+  const cv=document.getElementById('edCanvas');if(!cv)return{cx:0,cy:0};
+  const r=cv.getBoundingClientRect();
+  const scale=zoomPct/100;
+  const touch=e.touches?e.touches[0]:e;
+  return{cx:(touch.clientX-r.left)/scale, cy:(touch.clientY-r.top)/scale};
+}
+
+// Fast DOM update: only move the single dragged element instead of full re-render
+function _fastMoveEl(elId,x,y){
+  const dom=document.querySelector(`.ed-el[data-id="${elId}"]`);
+  if(!dom)return;
+  const scale=zoomPct/100;
+  dom.style.left=(x*scale)+'px';
+  dom.style.top=(y*scale)+'px';
+}
+function _fastResizeEl(elId,w,h){
+  const dom=document.querySelector(`.ed-el[data-id="${elId}"]`);
+  if(!dom)return;
+  const scale=zoomPct/100;
+  dom.style.width=(w*scale)+'px';
+  const el_type=getActiveTemplate().elements.find(x=>x.id===elId);
+  if(el_type && el_type.type==='text') dom.style.minHeight=(h*scale)+'px';
+  else dom.style.height=(h*scale)+'px';
+}
+
+function startDrag(e,elId){
+  e.preventDefault();e.stopPropagation();
+  pushUndo();
+  if(selectedElId!==elId) selectElement(elId);
+  const t=getActiveTemplate();const el=t.elements.find(x=>x.id===elId);if(!el)return;
+  const {cx,cy}=getCanvasCoords(e);
+  dragging=true;dragElId=elId;_justDragged=false;
+  dragStartX=cx;dragStartY=cy;
+  dragElStartX=el.x;dragElStartY=el.y;
+  pendingDragX=el.x;pendingDragY=el.y;
+
+  const isTouch=e.type==='touchstart';
+  _boundMoveH=isTouch?(ev)=>{ev.preventDefault();updateDrag(ev);}:(ev)=>{ev.preventDefault();updateDrag(ev);};
+  _boundUpH=()=>finishDrag();
+  document.addEventListener(isTouch?'touchmove':'mousemove',_boundMoveH,{passive:false});
+  document.addEventListener(isTouch?'touchend':'mouseup',_boundUpH,{once:true});
+}
+
+function updateDrag(e){
+  const {cx,cy}=getCanvasCoords(e);
+  pendingDragX=Math.round(dragElStartX+(cx-dragStartX));
+  pendingDragY=Math.round(dragElStartY+(cy-dragStartY));
+  _justDragged=true;
+  if(!rafId)rafId=requestAnimationFrame(applyDragFrame);
+}
+
+function applyDragFrame(){
+  rafId=null;
+  if(!dragging)return;
+  const t=getActiveTemplate();const el=t.elements.find(x=>x.id===dragElId);
+  if(!el)return;
+  const maxX=(t.canvas.width||384)-el.w; const maxY=(t.canvas.height||576)-el.h;
+  el.x=Math.max(0,Math.min(pendingDragX,maxX));
+  el.y=Math.max(0,Math.min(pendingDragY,maxY));
+  setActiveTemplate(t);
+  // Fast update — avoid full re-render for smooth dragging
+  _fastMoveEl(dragElId, el.x, el.y);
+}
+
+function finishDrag(){
+  dragging=false;
+  document.removeEventListener('mousemove',_boundMoveH);
+  document.removeEventListener('touchmove',_boundMoveH);
+  if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+  _boundMoveH=null;_boundUpH=null;
+  renderCanvas(); // final clean render
+  renderProps();
+  // Prevent click-deselect right after dragging
+  if(_justDragged){setTimeout(()=>{_justDragged=false;},50);}
+}
+
+// ── RESIZE ──
+function startResize(e,elId){
+  e.preventDefault();e.stopPropagation();
+  pushUndo();
+  const t=getActiveTemplate();const el=t.elements.find(x=>x.id===elId);if(!el)return;
+  const {cx,cy}=getCanvasCoords(e);
+  resizing=true;resElId=elId;_justDragged=false;
+  resStartX=cx;resStartY=cy;
+  resElStartW=el.w;resElStartH=el.h;
+  pendingResW=el.w;pendingResH=el.h;
+
+  const isTouch=e.type==='touchstart';
+  _boundMoveH=isTouch?(ev)=>{ev.preventDefault();updateResize(ev);}:(ev)=>{ev.preventDefault();updateResize(ev);};
+  _boundUpH=()=>finishResize();
+  document.addEventListener(isTouch?'touchmove':'mousemove',_boundMoveH,{passive:false});
+  document.addEventListener(isTouch?'touchend':'mouseup',_boundUpH,{once:true});
+}
+function updateResize(e){
+  const {cx,cy}=getCanvasCoords(e);
+  pendingResW=Math.max(10,Math.round(resElStartW+(cx-resStartX)));
+  pendingResH=Math.max(4,Math.round(resElStartH+(cy-resStartY)));
+  _justDragged=true;
+  if(!rafId)rafId=requestAnimationFrame(applyResizeFrame);
+}
+function applyResizeFrame(){
+  rafId=null;if(!resizing)return;
+  const t=getActiveTemplate();const el=t.elements.find(x=>x.id===resElId);if(!el)return;
+  el.w=pendingResW;el.h=pendingResH;
+  setActiveTemplate(t);
+  _fastResizeEl(resElId, el.w, el.h);
+}
+function finishResize(){
+  resizing=false;
+  document.removeEventListener('mousemove',_boundMoveH);
+  document.removeEventListener('touchmove',_boundMoveH);
+  if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+  _boundMoveH=null;_boundUpH=null;
+  renderCanvas();
+  renderProps();
+  if(_justDragged){setTimeout(()=>{_justDragged=false;},50);}
+}
+
+// Canvas click deselect — ignore if we just dragged
+function onCanvasClick(e){
+  if(_justDragged) return;
+  if(e.target.id==='edCanvas'||e.target.classList.contains('ed-canvas')){deselectAll();}
+}
+
+
+// ── ZOOM ──
+function doZoom(delta){
+  if(delta===0){zoomPct=100;}
+  else{zoomPct=Math.max(30,Math.min(300,zoomPct+delta));}
+  renderCanvas();
+}
+
+// ── SAVE / RESET ──
+async function saveAll(){
+  try{
+    const h=getH();
+    // Save label template
+    const r1 = await fetch('/api/tenant/label-template',{method:'PATCH',headers:h,body:JSON.stringify({template: labelTemplate})});
+    if(!r1.ok){const e=await r1.json().catch(()=>({}));notif('Label save failed: '+(e.detail||r1.status),'err');return;}
+    // Save invoice template
+    const r2 = await fetch('/api/tenant/invoice-template',{method:'PATCH',headers:h,body:JSON.stringify({template: invoiceTemplate})});
+    if(!r2.ok){const e=await r2.json().catch(()=>({}));notif('Invoice save failed: '+(e.detail||r2.status),'err');return;}
+    notif('Templates saved!');
+  }catch(err){notif('Save failed: '+err.message,'err');}
+}
+
+function resetTemplate(){
+  if(!confirm('Reset '+currentMode+' template to defaults? This cannot be undone.'))return;
+  if(currentMode==='label'){labelTemplate=JSON.parse(JSON.stringify(DEFAULT_LABEL_TEMPLATE));}
+  else{invoiceTemplate=JSON.parse(JSON.stringify(DEFAULT_INVOICE_TEMPLATE));}
+  selectedElId=null;renderEditor();notif('Template reset to defaults');
+}
+
+// ── UNDO / REDO ──
+function pushUndo(){
+  const t=getActiveTemplate();
+  undoStack.push(JSON.stringify(t));
+  if(undoStack.length>MAX_UNDO) undoStack.shift();
+  redoStack=[];
+}
+function undo(){
+  if(!undoStack.length)return;
+  const t=getActiveTemplate();
+  redoStack.push(JSON.stringify(t));
+  const prev=JSON.parse(undoStack.pop());
+  setActiveTemplate(prev);selectedElId=null;
+  renderEditor();notif('↩ Undo');
+}
+function redo(){
+  if(!redoStack.length)return;
+  const t=getActiveTemplate();
+  undoStack.push(JSON.stringify(t));
+  const next=JSON.parse(redoStack.pop());
+  setActiveTemplate(next);selectedElId=null;
+  renderEditor();notif('↪ Redo');
+}
+// Duplicate selected element
+function duplicateSelected(){
+  if(!selectedElId)return;
+  const t=getActiveTemplate();
+  const el=t.elements.find(e=>e.id===selectedElId);
+  if(!el)return;
+  pushUndo();
+  const clone=JSON.parse(JSON.stringify(el));
+  clone.id='el_'+Date.now();
+  clone.label=(el.label||'Element')+' copy';
+  clone.x=Math.min(el.x+15, (t.canvas.width||384)-clone.w);
+  clone.y=Math.min(el.y+15, (t.canvas.height||576)-clone.h);
+  t.elements.push(clone);
+  selectedElId=clone.id;
+  setActiveTemplate(t);renderEditor();
+  notif('Duplicated: '+clone.label);
+}
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown',function(e){
+  // Global shortcuts: Ctrl+Z (undo), Ctrl+Shift+Z / Ctrl+Y (redo)
+  if((e.ctrlKey||e.metaKey) && e.key==='z' && !e.shiftKey){e.preventDefault();undo();return;}
+  if((e.ctrlKey||e.metaKey) && (e.key==='y' || (e.key==='z'&&e.shiftKey))){e.preventDefault();redo();return;}
+  if((e.ctrlKey||e.metaKey) && e.key==='d' && selectedElId){e.preventDefault();duplicateSelected();return;}
+
+  if(!selectedElId)return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  const step=e.shiftKey?10:1;
+  const t=getActiveTemplate();const el=t.elements.find(x=>x.id===selectedElId);if(!el)return;
+  let handled=false;
+  switch(e.key){
+    case 'ArrowLeft':el.x=Math.max(0,el.x-step);handled=true;break;
+    case 'ArrowRight':el.x=Math.min((t.canvas.width||384)-el.w,el.x+step);handled=true;break;
+    case 'ArrowUp':el.y=Math.max(0,el.y-step);handled=true;break;
+    case 'ArrowDown':el.y=Math.min((t.canvas.height||576)-el.h,el.y+step);handled=true;break;
+    case 'Delete':case 'Backspace':deleteElement(selectedElId);handled=true;break;
+    case 'Escape':deselectAll();handled=true;break;
+  }
+  if(handled){e.preventDefault();setActiveTemplate(t);renderCanvas();renderProps();}
+});
+
+// ── UTILITY ──
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+</script>
+<script src="/modules/mobile-nav.v4.js?v=20260728c"></script>
+
+<!-- Mobile nav (same as other pages) -->
+<script>
+(function(){
+  const nb=document.querySelector('.mobile-nav-bottom');
+  if(!nb)return;
+  const items=[
+    {label:'Dashboard',icon:'📊',href:'/index.html'},
+    {label:'Orders',icon:'📦',href:'/orders.html'},
+    {label:'Leads',icon:'📋',href:'/leads.html'},
+    {label:'Labels',icon:'🏷',href:'/label-editor.html'},
+    {label:'More',icon:'☰',href:'#more'}
+  ];
+  nb.innerHTML=items.map(it=>`<a class="mn-item${location.pathname.endsWith(it.href)?' active':''}" href="${it.href}"><span class="mn-icon">${it.icon}</span><span class="mn-label">${it.label}</span></a>`).join('');
+})();
+</script>
+</body>
+</html>
