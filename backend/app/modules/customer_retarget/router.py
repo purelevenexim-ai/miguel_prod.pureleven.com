@@ -120,6 +120,27 @@ def list_retarget_campaigns(
     )
 
 
+@router.get("/whatsapp/messages")
+def list_retarget_messages(
+    page: int = Query(1, ge=1),
+    limit: int = Query(50, ge=1, le=200),
+    status: str = Query("all", max_length=20),
+    date_from: Optional[date] = Query(None),
+    date_to: Optional[date] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(retarget_roles),
+):
+    return service.list_retarget_messages(
+        db,
+        current_user,
+        page=page,
+        limit=limit,
+        status=status,
+        date_from=date_from,
+        date_to=date_to,
+    )
+
+
 @router.get("/whatsapp/campaigns/{batch_id}")
 def get_retarget_campaign_detail(
     batch_id: str,

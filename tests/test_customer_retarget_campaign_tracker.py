@@ -154,6 +154,40 @@ class CampaignDailyReportingContractTests(unittest.TestCase):
             self.assertIn(marker, source)
 
 
+class CampaignMessageLedgerContractTests(unittest.TestCase):
+    def test_message_ledger_api_is_tenant_and_date_scoped(self):
+        router_source = ROUTER.read_text()
+        service_source = SERVICE.read_text()
+        self.assertIn('@router.get("/whatsapp/messages")', router_source)
+        for marker in [
+            "def list_retarget_messages(",
+            "MessageAutomationTask.tenant_id == current_user.tenant_id",
+            "MessageAutomationTask.created_at >= range_start",
+            "MessageAutomationTask.created_at < range_end",
+            "MessageAutomationTask.status == selected_status",
+            "WaMessage.tenant_id == current_user.tenant_id",
+            '"provider_message_id": task.provider_message_id',
+            '"header_image_url": payload.get(',
+        ]:
+            self.assertIn(marker, service_source)
+
+    def test_frontend_lists_all_messages_with_details_and_status_filters(self):
+        source = (
+            ROOT / "frontend" / "customer-retarget.html"
+        ).read_text()
+        for marker in [
+            "All campaign messages",
+            'id="campaignMessagesBody"',
+            'id="campaignMessageStatus"',
+            "loadCampaignMessages(",
+            "/api/customer-retarget/whatsapp/messages",
+            "Provider message ID",
+            "Header media",
+            "Attempts:",
+        ]:
+            self.assertIn(marker, source)
+
+
 class MetaStatusWebhookSecurityContractTests(unittest.TestCase):
     """
     A message-status callback (delivered/read/failed) must never be applied

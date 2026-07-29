@@ -84,6 +84,14 @@ RETARGET_TEMPLATE_VARIABLES = {
 MAX_RETARGET_BULK_RECIPIENTS = 5000
 CAMPAIGN_REPORT_TIMEZONE = "Asia/Kolkata"
 MAX_CAMPAIGN_REPORT_DAYS = 366
+CAMPAIGN_MESSAGE_STATUSES = {
+    "all",
+    "pending",
+    "sent",
+    "failed",
+    "skipped",
+    "cancelled",
+}
 
 
 def _phone_key(value: Optional[str]) -> str:
@@ -526,25 +534,10 @@ def _retarget_batch_column():
     return MessageAutomationTask.payload["manual_batch_id"].astext
 
 
-def list_retarget_campaigns(
-    db: Session,
-    current_user: Employee,
-    *,
-    page: int = 1,
-    limit: int = 25,
-    date_from: Optional[date] = None,
-    date_to: Optional[date] = None,
-) -> dict:
-    """
-    Discover WhatsApp Customer Retarget bulk-send batches.
-    There is no dedicated campaign table for this feature — each bulk send from
-    the "Send WhatsApp template" modal stamps a batch_id into
-    message_automation_tasks.payload['manual_batch_id']; a "campaign" here is
-    just that batch grouping.
-    """
-    batch_col = _retarget_batch_column()
-    template_col = MessageAutomationTask.payload["manual_template_name"].astext
-    language_col = MessageAutomationTask.payload["manual_language_code"].astext
+def _campaign_report_window(
+    date_from: Optional[date],
+    date_to: Optional[date],
+) -> tuple[date, date, datetime, datetime]:
     report_timezone = ZoneInfo(CAMPAIGN_REPORT_TIMEZONE)
     today = datetime.now(report_timezone).date()
     selected_to = date_to or today
@@ -569,6 +562,31 @@ def list_retarget_campaigns(
         time.min,
         tzinfo=report_timezone,
     ).astimezone(timezone.utc)
+    return selected_from, selected_to, range_start, range_end
+
+
+def list_retarget_campaigns(
+    db: Session,
+    current_user: Employee,
+    *,
+    page: int = 1,
+    limit: int = 25,
+    date_from: Optional[date] = None,
+    date_to: Optional[date] = None,
+) -> dict:
+    """
+    Discover WhatsApp Customer Retarget bulk-send batches.
+    There is no dedicated campaign table for this feature — each bulk send from
+    the "Send WhatsApp template" modal stamps a batch_id into
+    message_automation_tasks.payload['manual_batch_id']; a "campaign" here is
+    just that batch grouping.
+    """
+    batch_col = _retarget_batch_column()
+    template_col = MessageAutomationTask.payload["manual_template_name"].astext
+    language_col = MessageAutomationTask.payload["manual_language_code"].astext
+    selected_from, selected_to, range_start, range_end = (
+        _campaign_report_window(date_from, date_to)
+    )
 
     task_filters = (
         MessageAutomationTask.tenant_id == current_user.tenant_id,
@@ -703,6 +721,123 @@ def list_retarget_campaigns(
             ),
         },
         "daily_results": daily_results,
+    }
+
+
+def list_retarget_messages(
+    db: Session,
+    current_user: Employee,
+    *,
+    page: int = 1,
+    limit: int = 50,
+    status: str = "all",
+    date_from: Optional[date] = None,
+    date_to: Optional[date] = None,
+) -> dict:
+    selected_status = (status or "all").strip().lower()
+    if selected_status not in CAMPAIGN_MESSAGE_STATUSES:
+        raise HTTPException(status_code=422, detail="Unknown message status")
+
+    selected_from, selected_to, range_start, range_end = (
+        _campaign_report_window(date_from, date_to)
+    )
+    batch_col = _retarget_batch_column()
+    filters = [
+        MessageAutomationTask.tenant_id == current_user.tenant_id,
+        MessageAutomationTask.template_key
+        == message_automation_service.RETARGET_MANUAL_TEMPLATE_KEY,
+        batch_col.isnot(None),
+        MessageAutomationTask.created_at >= range_start,
+        MessageAutomationTask.created_at < range_end,
+    ]
+    if selected_status != "all":
+        filters.append(MessageAutomationTask.status == selected_status)
+
+    query = db.query(MessageAutomationTask).filter(*filters)
+    total = query.count()
+    page = max(1, page)
+    limit = max(1, min(limit, 200))
+    tasks = (
+        query.order_by(
+            MessageAutomationTask.created_at.desc(),
+            MessageAutomationTask.id.desc(),
+        )
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
+
+    provider_ids = [
+        task.provider_message_id
+        for task in tasks
+        if task.provider_message_id
+    ]
+    wa_by_provider_id = {}
+    if provider_ids:
+        wa_by_provider_id = {
+            message.provider_message_id: message
+            for message in db.query(WaMessage)
+            .filter(
+                WaMessage.tenant_id == current_user.tenant_id,
+                WaMessage.provider_message_id.in_(provider_ids),
+            )
+            .all()
+        }
+
+    messages = []
+    for task in tasks:
+        payload = dict(task.payload or {})
+        wa_message = wa_by_provider_id.get(task.provider_message_id)
+        messages.append(
+            {
+                "id": str(task.id),
+                "batch_id": str(payload.get("manual_batch_id") or ""),
+                "customer_id": (
+                    str(task.customer_id) if task.customer_id else None
+                ),
+                "customer_name": task.recipient_name or "",
+                "phone": task.recipient_phone_e164 or "",
+                "template_name": str(
+                    payload.get("manual_template_name") or ""
+                ),
+                "language_code": str(
+                    payload.get("manual_language_code") or "en"
+                ),
+                "task_status": task.status,
+                "delivery_status": (
+                    wa_message.status.value if wa_message else None
+                ),
+                "read_at": (
+                    wa_message.read_at if wa_message else None
+                ),
+                "created_at": task.created_at,
+                "scheduled_at": task.scheduled_at,
+                "sent_at": task.sent_at,
+                "attempts": task.attempts,
+                "max_attempts": task.max_attempts,
+                "provider_message_id": task.provider_message_id,
+                "error_reason": task.error_reason,
+                "body": task.body,
+                "header_image_url": payload.get(
+                    "manual_header_image_url"
+                ),
+                "customer_name_variable": payload.get("customer_name"),
+                "website_url": payload.get("website_url"),
+                "whatsapp_link": payload.get("whatsapp_link"),
+            }
+        )
+
+    return {
+        "messages": messages,
+        "page": page,
+        "limit": limit,
+        "total": total,
+        "status": selected_status,
+        "filters": {
+            "date_from": selected_from.isoformat(),
+            "date_to": selected_to.isoformat(),
+            "timezone": CAMPAIGN_REPORT_TIMEZONE,
+        },
     }
 
 
