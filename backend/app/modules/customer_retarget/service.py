@@ -76,6 +76,11 @@ VALID_VIEWS = {
 OLD_CUSTOMERS_TAG = "Old Customers"
 MANUAL_RETARGET_TAG = "Customer Retarget"
 TEST_CUSTOMER_TAG = "Test Customer"
+RETARGET_TEMPLATE_HEADER_MEDIA_URLS = {
+    "customer_retarget_en_v1": (
+        "https://prod.pureleven.com/media/customer-retarget-pureleven-v1.mp4"
+    ),
+}
 RETARGET_TEMPLATE_VARIABLES = {
     "customer_name",
     "name",
@@ -455,8 +460,12 @@ async def queue_retarget_template(
         )
 
     header_format = message_automation_service._template_header_format(template_json)
+    header_media_url = (
+        data.header_image_url
+        or RETARGET_TEMPLATE_HEADER_MEDIA_URLS.get(data.template_name)
+    )
     _validate_custom_header_media_url(
-        data.header_image_url,
+        header_media_url,
         header_format,
     )
 
@@ -579,7 +588,7 @@ async def queue_retarget_template(
             payload={
                 "manual_template_name": data.template_name,
                 "manual_language_code": data.language_code,
-                "manual_header_image_url": data.header_image_url,
+                "manual_header_image_url": header_media_url,
                 "manual_employee_id": str(current_user.id),
                 "manual_batch_id": str(batch_id),
                 "customer_name": customer_name,

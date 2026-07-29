@@ -787,6 +787,9 @@ function selectedTemplateOption(){
 }
 const MEDIA_LABELS={image:'Custom header image URL (optional)',video:'Custom header video URL (optional)',document:'Custom header document URL (optional)'};
 const MEDIA_PLACEHOLDERS={image:'https://…/pureleven-products.jpg',video:'https://…/pureleven-video.mp4',document:'https://…/pureleven-catalog.pdf'};
+const DEFAULT_TEMPLATE_MEDIA_URLS={
+  customer_retarget_en_v1:'https://prod.pureleven.com/media/customer-retarget-pureleven-v1.mp4'
+};
 function handleTemplateChange(){
   const template=selectedTemplateOption();
   const imageField=document.getElementById('templateImageField');
@@ -795,8 +798,11 @@ function handleTemplateChange(){
   imageField.style.display=format?'flex':'none';
   document.getElementById('templateImageLabel').textContent=MEDIA_LABELS[format]||'Custom header media URL (optional)';
   document.getElementById('templateImageUrl').placeholder=MEDIA_PLACEHOLDERS[format]||'https://…';
-  document.getElementById('templateImageUrl').value='';
-  document.getElementById('templateMediaHelp').textContent=format
+  const defaultMediaUrl=template?DEFAULT_TEMPLATE_MEDIA_URLS[template.name]||'':'';
+  document.getElementById('templateImageUrl').value=defaultMediaUrl;
+  document.getElementById('templateMediaHelp').textContent=defaultMediaUrl
+    ? `PureLeven-hosted ${format} selected. You can replace it with another direct public ${format} URL.`
+    : format
     ? `Leave blank to use the approved Meta ${format}. Only add a direct public ${format} URL—not a Google Drive sharing page.`
     : '';
   const issue=template?templateCompatibility(template):'';
