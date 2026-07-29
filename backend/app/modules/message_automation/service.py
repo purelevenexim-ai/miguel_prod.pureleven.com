@@ -2135,11 +2135,12 @@ async def _send_meta_template(settings_row: Any, *, phone: str, template_info: d
         provider_message_id = (payload.get("messages") or [{}])[0].get("id")
         return {
             "success": True,
-            "message": "Template sent successfully",
+            "message": "Template accepted by Meta for delivery",
             "provider_message_id": provider_message_id,
             "raw_response": payload,
             "via": "meta_template",
             "template_name": template_info["name"],
+            "provider_acceptance_only": True,
         }
 
     error_message = payload.get("error", {}).get("message") or payload.get("message") or str(payload)

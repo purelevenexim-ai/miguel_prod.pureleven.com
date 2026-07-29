@@ -246,7 +246,8 @@ body.retarget-has-nav{padding-left:240px}
         <div class="field"><label>Approved template *</label><select id="bulkTemplate" onchange="handleTemplateChange()"><option value="">Loading templates…</option></select></div>
         <div class="field"><label>Message language *</label><select id="bulkLanguage"><option value="en">English</option><option value="ml">Malayalam</option></select></div>
       </div>
-      <div class="field" id="templateImageField" style="display:none;margin-top:12px"><label id="templateImageLabel">Public header media URL *</label><input id="templateImageUrl" type="url" placeholder="https://…/pureleven-products.jpg" oninput="rememberTemplateImage()"></div>
+      <div class="field" id="templatePhoneField" style="display:none;margin-top:12px"><label>Send to WhatsApp number *</label><select id="templateRecipientPhone"></select><div class="muted">Choose the customer’s primary or alternate number.</div></div>
+      <div class="field" id="templateImageField" style="display:none;margin-top:12px"><label id="templateImageLabel">Custom header media URL (optional)</label><input id="templateImageUrl" type="url" placeholder="https://…/pureleven-products.jpg"><div class="muted" id="templateMediaHelp">Leave blank to use the media approved with the Meta template.</div></div>
       <div class="template-warning" id="templateWarning"></div>
       <div class="template-note"><strong>Safe bulk send:</strong> this queues messages only for the customers you selected. Missing numbers and customers who opted out are skipped and recorded.</div>
       <label class="consent-check"><input type="checkbox" id="templateConsent"><span>I confirm these customers permitted Pureleven to contact them on WhatsApp and that this approved template is appropriate for them.</span></label>
@@ -423,6 +424,7 @@ const CAMPAIGN_STATUS_STYLE={
 };
 function campaignStatusBadge(status,deliveryStatus){
   const effective=deliveryStatus||status;
+  if(effective==='sent')return '<span class="status-pill" style="background:#e8f0fe;color:#174ea6">META ACCEPTED</span>';
   const [label,bg,fg]=CAMPAIGN_STATUS_STYLE[effective]||[String(effective||'—').toUpperCase(),'#f1f3f4','#5f6368'];
   return `<span class="status-pill" style="background:${bg};color:${fg}">${esc(label)}</span>`;
 }
@@ -461,7 +463,7 @@ function campaignOverviewHtml(data){
   const stats=[
     ['Campaigns',summary.campaign_count||0],
     ['Recipients',summary.recipient_count||0],
-    ['Sent',summary.sent_count||0],
+    ['Meta accepted',summary.sent_count||0],
     ['Failed',summary.failed_count||0],
     ['Success rate',(summary.success_rate||0)+'%']
   ];
@@ -469,7 +471,7 @@ function campaignOverviewHtml(data){
     <td><strong>${dateOnly(day.date+'T00:00:00')}</strong></td>
     <td>${Number(day.campaign_count).toLocaleString('en-IN')}</td>
     <td>${Number(day.recipient_count).toLocaleString('en-IN')}</td>
-    <td style="color:#137333;font-weight:750">${Number(day.sent_count).toLocaleString('en-IN')}</td>
+    <td style="color:#174ea6;font-weight:750">${Number(day.sent_count).toLocaleString('en-IN')}</td>
     <td style="color:${day.failed_count?'#a50e0e':'inherit'};font-weight:750">${Number(day.failed_count).toLocaleString('en-IN')}</td>
     <td>${Number(day.pending_count).toLocaleString('en-IN')}</td>
     <td><div class="daily-rate"><div class="daily-rate-track"><div class="daily-rate-fill" style="width:${Math.max(0,Math.min(100,Number(day.success_rate)||0))}%"></div></div><strong>${Number(day.success_rate||0).toFixed(1)}%</strong></div></td>
@@ -478,10 +480,10 @@ function campaignOverviewHtml(data){
     <div class="campaign-summary">${stats.map(([label,value])=>`<div class="campaign-stat"><div class="campaign-stat-value">${esc(value)}</div><div class="campaign-stat-label">${esc(label)}</div></div>`).join('')}</div>
     <section class="campaign-section">
       <div class="campaign-section-head"><div><div class="campaign-section-title">Results by day</div><div class="campaign-section-copy">${esc(filters.date_from||'')} to ${esc(filters.date_to||'')} · India time</div></div></div>
-      <div class="table-wrap"><table style="min-width:760px"><thead><tr><th>Date</th><th>Campaigns</th><th>Recipients</th><th>Sent</th><th>Failed</th><th>Pending</th><th>Success rate</th></tr></thead><tbody>${dailyRows||'<tr><td colspan="7" class="muted" style="padding:22px;text-align:center">No campaign activity in this date range.</td></tr>'}</tbody></table></div>
+      <div class="table-wrap"><table style="min-width:760px"><thead><tr><th>Date</th><th>Campaigns</th><th>Recipients</th><th>Meta accepted</th><th>Failed</th><th>Pending</th><th>Acceptance rate</th></tr></thead><tbody>${dailyRows||'<tr><td colspan="7" class="muted" style="padding:22px;text-align:center">No campaign activity in this date range.</td></tr>'}</tbody></table></div>
     </section>
     <section class="campaign-section">
-      <div class="campaign-section-head"><div><div class="campaign-section-title">All campaign messages</div><div class="campaign-section-copy">Every recipient message in this date range, across all campaigns.</div></div><select class="message-status-filter" id="campaignMessageStatus" onchange="changeCampaignMessageStatus(this.value)"><option value="all">All statuses</option><option value="sent">Sent</option><option value="failed">Failed</option><option value="pending">Pending</option><option value="skipped">Skipped</option><option value="cancelled">Cancelled</option></select></div>
+      <div class="campaign-section-head"><div><div class="campaign-section-title">All campaign messages</div><div class="campaign-section-copy">Every recipient message in this date range, across all campaigns.</div></div><select class="message-status-filter" id="campaignMessageStatus" onchange="changeCampaignMessageStatus(this.value)"><option value="all">All statuses</option><option value="sent">Meta accepted</option><option value="failed">Failed</option><option value="pending">Pending</option><option value="skipped">Skipped</option><option value="cancelled">Cancelled</option></select></div>
       <div id="campaignMessagesBody"><div class="loading">Loading all messages…</div></div>
     </section>
     <section class="campaign-section">
@@ -494,7 +496,7 @@ function changeCampaignMessageStatus(status){
   loadCampaignMessages(1);
 }
 function campaignMessageDetails(message){
-  const image=message.header_image_url?`<a href="${esc(message.header_image_url)}" target="_blank" rel="noopener"><img class="message-detail-image" src="${esc(message.header_image_url)}" alt="Template header"></a>`:'<span class="muted">No header image</span>';
+  const image=message.header_image_url?`<a href="${esc(message.header_image_url)}" target="_blank" rel="noopener">Open custom header media ↗</a>`:'<span class="muted">Approved template media</span>';
   return `<details class="message-details"><summary>View details</summary><div class="message-detail">
     <div class="message-detail-row"><strong>Task:</strong> <span class="mono">${esc(message.id)}</span></div>
     <div class="message-detail-row"><strong>Campaign:</strong> <span class="mono">${esc(message.batch_id||'—')}</span></div>
@@ -520,7 +522,7 @@ async function loadCampaignMessages(page=1){
   try{
     const data=await api(`/api/customer-retarget/whatsapp/messages?page=${campaignMessagePage}&limit=50&status=${encodeURIComponent(campaignMessageStatus)}&date_from=${encodeURIComponent(dateFrom)}&date_to=${encodeURIComponent(dateTo)}`);
     const rowsHtml=(data.messages||[]).map(message=>`<tr>
-      <td><strong>${dateTime(message.sent_at||message.created_at)}</strong><div class="muted">${message.sent_at?'Sent':'Created / queued'}</div></td>
+      <td><strong>${dateTime(message.sent_at||message.created_at)}</strong><div class="muted">${message.sent_at?'Accepted by Meta':'Created / queued'}</div></td>
       <td><strong>${esc(message.customer_name||'—')}</strong><div class="mono muted">${esc(message.phone||'—')}</div></td>
       <td><strong>${esc(message.template_name||'—')}</strong><div class="muted">${esc(message.language_code||'—')}</div></td>
       <td>${campaignStatusBadge(message.task_status,message.delivery_status)}${message.read_at?'<div class="muted">Read '+dateTime(message.read_at)+'</div>':''}</td>
@@ -569,7 +571,7 @@ async function loadCampaignDetail(batchId,page){
   body.innerHTML='<div class="loading">Loading…</div>';
   try{
     const d=await api(`/api/customer-retarget/whatsapp/campaigns/${encodeURIComponent(batchId)}?page=${campaignDetailPage}&limit=25`);
-    const noteHtml=d.read_receipts_tracked?'':'<div class="template-note" style="margin:0 20px 12px">Read-receipt tracking ("Read") is not wired up yet for this WhatsApp integration, so that column shows "Not tracked" — this is a real gap, not a placeholder. Status and Replied below are live data.</div>';
+    const noteHtml=d.read_receipts_tracked?'':'<div class="template-note" style="margin:0 20px 12px"><strong>Delivery tracking is not configured:</strong> “Meta accepted” means Meta accepted the API request; it does not prove the customer received the message. Configure the Meta status webhook and App Secret to receive delivered, read, and failed updates.</div>';
     const rowsHtml=d.recipients.map(r=>`
       <tr>
         <td>${esc(r.name||'—')}</td>
@@ -580,7 +582,7 @@ async function loadCampaignDetail(batchId,page){
       </tr>`).join('');
     const totalPages=Math.max(1,Math.ceil((d.total_recipients||0)/(d.limit||25)));
     const pagerHtml=totalPages>1?`<div class="pagination"><button class="btn btn-sm" ${campaignDetailPage<=1?'disabled':''} onclick="loadCampaignDetail('${esc(batchId)}',${campaignDetailPage-1})">← Previous</button><span>Page ${campaignDetailPage} of ${totalPages}</span><button class="btn btn-sm" ${campaignDetailPage>=totalPages?'disabled':''} onclick="loadCampaignDetail('${esc(batchId)}',${campaignDetailPage+1})">Next →</button></div>`:'';
-    body.innerHTML=`<div style="padding:14px 20px"><strong>${esc(d.template_name)}</strong><div class="muted">${esc(d.language_code)} · Sent ${dateTime(d.sent_at)} · ${d.total_recipients} recipient${d.total_recipients!==1?'s':''}</div></div>${noteHtml}<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Phone</th><th>Status</th><th>Read</th><th>Replied</th></tr></thead><tbody>${rowsHtml||'<tr><td colspan="5" class="muted" style="padding:20px;text-align:center">No recipients in this batch</td></tr>'}</tbody></table></div>${pagerHtml}`;
+    body.innerHTML=`<div style="padding:14px 20px"><strong>${esc(d.template_name)}</strong><div class="muted">${esc(d.language_code)} · Submitted ${dateTime(d.sent_at)} · ${d.total_recipients} recipient${d.total_recipients!==1?'s':''}</div></div>${noteHtml}<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Phone</th><th>Status</th><th>Read</th><th>Replied</th></tr></thead><tbody>${rowsHtml||'<tr><td colspan="5" class="muted" style="padding:20px;text-align:center">No recipients in this batch</td></tr>'}</tbody></table></div>${pagerHtml}`;
   }catch(e){
     body.innerHTML=`<div class="error-state">Could not load campaign details.<br><small>${esc(e.message)}</small></div>`;
   }
@@ -699,6 +701,13 @@ async function openTemplateModal(customerIds=null){
   document.getElementById('templateRecipientCopy').textContent=templateOpenedFromWorkspace&&currentCustomerProfile
     ?`Choose an approved template for ${currentCustomerProfile.name}.`
     :`Choose a template for ${templateRecipientIds.length} selected customer${templateRecipientIds.length===1?'':'s'} in the ${currentView==='interested'?'Interested':currentView==='not_interested'?'Not Interested':'current'} audience.`;
+  const phoneField=document.getElementById('templatePhoneField');
+  const phoneSelect=document.getElementById('templateRecipientPhone');
+  const workspacePhones=templateOpenedFromWorkspace&&currentCustomerProfile
+    ?[currentCustomerProfile.phone,currentCustomerProfile.alternate_phone].filter(Boolean)
+    :[];
+  phoneField.style.display=workspacePhones.length?'flex':'none';
+  phoneSelect.innerHTML=workspacePhones.map((phone,index)=>`<option value="${esc(phone)}">${index===0?'Primary':'Alternate'} · ${esc(phone)}</option>`).join('');
   document.getElementById('sendTemplateBtn').textContent=templateRecipientIds.length===1?'Queue WhatsApp message':'Queue WhatsApp messages';
   document.getElementById('templateConsent').checked=false;
   document.getElementById('templateResult').className='template-result';
@@ -752,7 +761,7 @@ function selectedTemplateOption(){
   const value=document.getElementById('bulkTemplate').value;
   return value===''?null:templateOptions[Number(value)];
 }
-const MEDIA_LABELS={image:'Public header image URL *',video:'Public header video URL *',document:'Public header document URL *'};
+const MEDIA_LABELS={image:'Custom header image URL (optional)',video:'Custom header video URL (optional)',document:'Custom header document URL (optional)'};
 const MEDIA_PLACEHOLDERS={image:'https://…/pureleven-products.jpg',video:'https://…/pureleven-video.mp4',document:'https://…/pureleven-catalog.pdf'};
 function handleTemplateChange(){
   const template=selectedTemplateOption();
@@ -760,11 +769,12 @@ function handleTemplateChange(){
   const warning=document.getElementById('templateWarning');
   const format=template?.header_format||null;
   imageField.style.display=format?'flex':'none';
-  document.getElementById('templateImageLabel').textContent=MEDIA_LABELS[format]||'Public header media URL *';
+  document.getElementById('templateImageLabel').textContent=MEDIA_LABELS[format]||'Custom header media URL (optional)';
   document.getElementById('templateImageUrl').placeholder=MEDIA_PLACEHOLDERS[format]||'https://…';
-  if(format&&!document.getElementById('templateImageUrl').value){
-    document.getElementById('templateImageUrl').value=localStorage.getItem(`retarget_template_media_url_${format}`)||'';
-  }
+  document.getElementById('templateImageUrl').value='';
+  document.getElementById('templateMediaHelp').textContent=format
+    ? `Leave blank to use the approved Meta ${format}. Only add a direct public ${format} URL—not a Google Drive sharing page.`
+    : '';
   const issue=template?templateCompatibility(template):'';
   warning.style.display=issue?'block':'none';
   warning.textContent=issue;
@@ -772,12 +782,6 @@ function handleTemplateChange(){
     const primary=String(template.language).toLowerCase().split(/[_-]/)[0];
     if(['en','ml'].includes(primary))document.getElementById('bulkLanguage').value=primary;
   }
-}
-function rememberTemplateImage(){
-  const template=selectedTemplateOption();
-  const format=template?.header_format;
-  const url=document.getElementById('templateImageUrl').value.trim();
-  if(format&&url.startsWith('https://'))localStorage.setItem(`retarget_template_media_url_${format}`,url);
 }
 async function sendBulkTemplate(){
   const template=selectedTemplateOption();
@@ -787,7 +791,6 @@ async function sendBulkTemplate(){
   if(issue){resultEl.className='template-result error';resultEl.textContent=issue;return}
   if(!document.getElementById('templateConsent').checked){resultEl.className='template-result error';resultEl.textContent='Confirm WhatsApp permission before sending.';return}
   const imageUrl=document.getElementById('templateImageUrl').value.trim();
-  if(template.header_format&&!imageUrl){resultEl.className='template-result error';resultEl.textContent=`Add the public HTTPS ${template.header_format} URL required by this template.`;return}
   const button=document.getElementById('sendTemplateBtn');
   button.disabled=true;button.textContent='Queueing messages…';
   try{
@@ -796,6 +799,7 @@ async function sendBulkTemplate(){
       template_name:template.name,
       language_code:document.getElementById('bulkLanguage').value,
       header_image_url:imageUrl||null,
+      recipient_phone_override:templateOpenedFromWorkspace?(document.getElementById('templateRecipientPhone').value||null):null,
       consent_confirmed:true
     })});
     resultEl.className='template-result success';

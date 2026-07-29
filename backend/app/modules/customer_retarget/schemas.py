@@ -69,6 +69,10 @@ class RetargetTemplateBulkSend(BaseModel):
     template_name: str = Field(min_length=1, max_length=255)
     language_code: str = Field(default="en", min_length=2, max_length=20)
     header_image_url: Optional[str] = Field(default=None, max_length=2000)
+    recipient_phone_override: Optional[str] = Field(
+        default=None,
+        max_length=20,
+    )
     consent_confirmed: bool = False
 
     @model_validator(mode="after")
@@ -77,9 +81,16 @@ class RetargetTemplateBulkSend(BaseModel):
         self.template_name = self.template_name.strip()
         self.language_code = self.language_code.strip()
         self.header_image_url = (self.header_image_url or "").strip() or None
+        self.recipient_phone_override = (
+            (self.recipient_phone_override or "").strip() or None
+        )
 
         if not self.consent_confirmed:
             raise ValueError("Confirm that the selected customers permitted WhatsApp messages")
+        if self.recipient_phone_override and len(self.customer_ids) != 1:
+            raise ValueError(
+                "A phone override can only be used for one customer"
+            )
         if self.header_image_url and not self.header_image_url.startswith("https://"):
             raise ValueError("Header image URL must use HTTPS")
         return self

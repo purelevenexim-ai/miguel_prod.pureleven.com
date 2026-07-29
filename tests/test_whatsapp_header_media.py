@@ -11,6 +11,11 @@ omitted the header component when sending — Meta rejected the send with
 
 import unittest
 
+from fastapi import HTTPException
+
+from app.modules.customer_retarget.service import (
+    _validate_custom_header_media_url,
+)
 from app.modules.message_automation.service import (
     _header_component_from_template,
     _template_has_media_header,
@@ -128,6 +133,33 @@ class HeaderComponentBuildingTests(unittest.TestCase):
             NO_HEADER_TEMPLATE, media_url="https://cdn.example/unused.jpg"
         )
         self.assertIsNone(component)
+
+
+class RetargetHeaderMediaSafetyTests(unittest.TestCase):
+    def test_drive_sharing_page_is_rejected(self):
+        with self.assertRaises(HTTPException) as context:
+            _validate_custom_header_media_url(
+                "https://drive.google.com/file/d/example/view?usp=sharing",
+                "video",
+            )
+        self.assertIn("sharing pages", context.exception.detail)
+
+    def test_wrong_direct_media_type_is_rejected(self):
+        with self.assertRaises(HTTPException) as context:
+            _validate_custom_header_media_url(
+                "https://cdn.example/header.jpg",
+                "video",
+            )
+        self.assertIn("requires video", context.exception.detail)
+
+    def test_template_media_fallback_needs_no_custom_url(self):
+        _validate_custom_header_media_url(None, "video")
+
+    def test_matching_direct_media_type_is_allowed(self):
+        _validate_custom_header_media_url(
+            "https://cdn.example/header.mp4",
+            "video",
+        )
 
 
 if __name__ == "__main__":

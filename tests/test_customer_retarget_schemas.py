@@ -113,6 +113,24 @@ class RetargetTemplateValidationTests(unittest.TestCase):
             ],
         )
 
+    def test_phone_override_is_only_allowed_for_one_customer(self):
+        customer_id = uuid4()
+        request = RetargetTemplateBulkSend(
+            customer_ids=[customer_id],
+            template_name="customer_product_greeting_v1",
+            recipient_phone_override="8075519571",
+            consent_confirmed=True,
+        )
+        self.assertEqual(request.recipient_phone_override, "8075519571")
+
+        with self.assertRaises(ValidationError):
+            RetargetTemplateBulkSend(
+                customer_ids=[customer_id, uuid4()],
+                template_name="customer_product_greeting_v1",
+                recipient_phone_override="8075519571",
+                consent_confirmed=True,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

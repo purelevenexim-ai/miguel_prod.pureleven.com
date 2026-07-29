@@ -187,6 +187,30 @@ class CampaignMessageLedgerContractTests(unittest.TestCase):
         ]:
             self.assertIn(marker, source)
 
+    def test_meta_acceptance_is_not_presented_as_confirmed_delivery(self):
+        service_source = (
+            ROOT
+            / "backend"
+            / "app"
+            / "modules"
+            / "message_automation"
+            / "service.py"
+        ).read_text()
+        page_source = (
+            ROOT / "frontend" / "customer-retarget.html"
+        ).read_text()
+        self.assertIn(
+            '"message": "Template accepted by Meta for delivery"',
+            service_source,
+        )
+        for marker in [
+            "META ACCEPTED",
+            "Meta accepted",
+            "does not prove the customer received",
+            "Leave blank to use the approved Meta",
+        ]:
+            self.assertIn(marker, page_source)
+
 
 class MetaStatusWebhookSecurityContractTests(unittest.TestCase):
     """

@@ -146,6 +146,7 @@ class CustomerRetargetContractTests(unittest.TestCase):
         for marker in [
             "class RetargetManualCustomerCreate",
             "is_test_customer: bool = False",
+            "recipient_phone_override: Optional[str]",
         ]:
             self.assertIn(marker, schema_source)
         for marker in [
@@ -163,6 +164,8 @@ class CustomerRetargetContractTests(unittest.TestCase):
             "saveManualCustomer(event)",
             "/api/customer-retarget/manual-customers",
             "TEST CUSTOMER · PRIORITY",
+            'id="templateRecipientPhone"',
+            "recipient_phone_override:",
         ]:
             self.assertIn(marker, html)
 

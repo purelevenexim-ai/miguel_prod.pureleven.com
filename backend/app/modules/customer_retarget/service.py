@@ -2,6 +2,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 import re
 from typing import Optional
+from urllib.parse import urlparse
 from uuid import UUID, uuid4
 from zoneinfo import ZoneInfo
 
@@ -101,6 +102,48 @@ def _phone_key(value: Optional[str]) -> str:
     if len(digits) > 10:
         return digits[-10:]
     return digits
+
+
+def _validate_custom_header_media_url(
+    media_url: Optional[str],
+    header_format: Optional[str],
+) -> None:
+    if not media_url or not header_format:
+        return
+    parsed = urlparse(media_url)
+    host = parsed.netloc.lower()
+    path = parsed.path.lower()
+    if host == "drive.google.com" and "/file/d/" in path:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                "Google Drive sharing pages cannot be used as WhatsApp "
+                "header media. Leave this field blank to use the media "
+                "approved with the Meta template."
+            ),
+        )
+
+    extensions = {
+        "image": {".jpg", ".jpeg", ".png", ".webp"},
+        "video": {".mp4", ".3gp"},
+        "document": {".pdf"},
+    }
+    known_extensions = set().union(*extensions.values())
+    actual_extension = next(
+        (extension for extension in known_extensions if path.endswith(extension)),
+        None,
+    )
+    if actual_extension and actual_extension not in extensions.get(
+        header_format,
+        set(),
+    ):
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                f"This template requires {header_format} header media, "
+                f"but the custom URL points to {actual_extension}."
+            ),
+        )
 
 
 def _old_customer_ids_query(db: Session, tenant_id: UUID):
@@ -405,11 +448,10 @@ async def queue_retarget_template(
         )
 
     header_format = message_automation_service._template_header_format(template_json)
-    if header_format and not data.header_image_url:
-        raise HTTPException(
-            status_code=422,
-            detail=f"This template requires a public HTTPS header {header_format} URL",
-        )
+    _validate_custom_header_media_url(
+        data.header_image_url,
+        header_format,
+    )
 
     customers = (
         db.query(Customer)
@@ -420,13 +462,49 @@ async def queue_retarget_template(
         .all()
     )
     customers_by_id = {customer.id: customer for customer in customers}
+    override_phone = message_automation_service.normalize_phone_e164(
+        data.recipient_phone_override
+    )
+    override_customer_id = (
+        data.customer_ids[0] if override_phone and data.customer_ids else None
+    )
+    if override_customer_id:
+        override_customer = customers_by_id.get(override_customer_id)
+        allowed_phones = {
+            message_automation_service.normalize_phone_e164(value)
+            for value in (
+                override_customer.phone if override_customer else None,
+                (
+                    override_customer.alternate_phone
+                    if override_customer
+                    else None
+                ),
+            )
+            if value
+        }
+        if override_phone not in allowed_phones:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "The selected WhatsApp number must be the customer's "
+                    "primary or alternate phone"
+                ),
+            )
     batch_id = uuid4()
     queued = []
     skipped = []
     normalized_phones = {
         phone
         for customer in customers
-        if (phone := message_automation_service.normalize_phone_e164(customer.phone))
+        if (
+            phone := (
+                override_phone
+                if customer.id == override_customer_id
+                else message_automation_service.normalize_phone_e164(
+                    customer.phone
+                )
+            )
+        )
     }
     blocked_phones = {
         preference.phone_e164
@@ -457,7 +535,13 @@ async def queue_retarget_template(
             skipped.append({"customer_id": str(customer_id), "reason": "Customer not found"})
             continue
 
-        phone = message_automation_service.normalize_phone_e164(customer.phone)
+        phone = (
+            override_phone
+            if customer.id == override_customer_id
+            else message_automation_service.normalize_phone_e164(
+                customer.phone
+            )
+        )
         if not phone:
             skipped.append(
                 {"customer_id": str(customer.id), "name": customer.name, "reason": "Missing valid phone"}
