@@ -33,6 +33,22 @@ log = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/wa", tags=["WhatsApp Engine"])
 
 
+def _safe_meta_status_diagnostics(statuses: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Return a bounded, content-free summary for rejected status callbacks."""
+    diagnostics: List[Dict[str, Any]] = []
+    for entry in statuses[:20]:
+        errors = entry.get("errors") if isinstance(entry, dict) else []
+        error = errors[0] if isinstance(errors, list) and errors and isinstance(errors[0], dict) else {}
+        provider_id = str(entry.get("id") or "") if isinstance(entry, dict) else ""
+        diagnostics.append({
+            "provider_id_suffix": provider_id[-16:],
+            "status": str(entry.get("status") or "")[:24] if isinstance(entry, dict) else "",
+            "error_code": str(error.get("code") or "")[:24],
+            "error_title": str(error.get("title") or error.get("message") or "")[:240],
+        })
+    return diagnostics
+
+
 # ─────────────────────────────────────────────────────────────
 # Settings
 # ─────────────────────────────────────────────────────────────
@@ -1313,11 +1329,18 @@ async def inbound_webhook(
         if not row.meta_app_secret:
             log.warning(
                 "Inbound webhook: Meta status callback for tenant %s but no meta_app_secret "
-                "is configured — skipping. Configure it in WA Settings to enable read receipts.",
+                "is configured — skipping. Configure it in WA Settings to enable read receipts. "
+                "Unverified diagnostics=%s",
                 tenant_id,
+                _safe_meta_status_diagnostics(status_entries),
             )
         elif not MetaProvider.verify_signature(body_bytes, x_hub_signature_256, row.meta_app_secret):
-            log.warning("Inbound webhook: invalid Meta signature for tenant %s status callback", tenant_id)
+            log.warning(
+                "Inbound webhook: invalid Meta signature for tenant %s status callback. "
+                "Unverified diagnostics=%s",
+                tenant_id,
+                _safe_meta_status_diagnostics(status_entries),
+            )
         else:
             try:
                 updated = service.apply_meta_status_update(db, tenant_id, status_entries)
