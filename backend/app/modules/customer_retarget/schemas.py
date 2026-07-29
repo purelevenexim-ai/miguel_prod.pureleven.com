@@ -65,7 +65,7 @@ class UnlinkedResolveRequest(BaseModel):
 
 
 class RetargetTemplateBulkSend(BaseModel):
-    customer_ids: list[UUID] = Field(min_length=1, max_length=50)
+    customer_ids: list[UUID] = Field(min_length=1, max_length=5000)
     template_name: str = Field(min_length=1, max_length=255)
     language_code: str = Field(default="en", min_length=2, max_length=20)
     header_image_url: Optional[str] = Field(default=None, max_length=2000)

@@ -22,7 +22,10 @@ from app.models.customer_retarget import (
     RetargetOutcome,
 )
 from app.models.employee import Employee
-from app.models.message_automation import MessageAutomationTask
+from app.models.message_automation import (
+    CustomerMessagePreference,
+    MessageAutomationTask,
+)
 from app.models.order import Order, OrderStatus
 from app.models.shopify_order import ShopifyOrder, ShopifyOrderStatus
 from app.models.wa_engine import (
@@ -74,6 +77,7 @@ RETARGET_TEMPLATE_VARIABLES = {
     "website_url",
     "whatsapp_link",
 }
+MAX_RETARGET_BULK_RECIPIENTS = 5000
 
 
 def _phone_key(value: Optional[str]) -> str:
@@ -186,6 +190,33 @@ async def queue_retarget_template(
     batch_id = uuid4()
     queued = []
     skipped = []
+    normalized_phones = {
+        phone
+        for customer in customers
+        if (phone := message_automation_service.normalize_phone_e164(customer.phone))
+    }
+    blocked_phones = {
+        preference.phone_e164
+        for preference in db.query(CustomerMessagePreference)
+        .filter(
+            CustomerMessagePreference.tenant_id == current_user.tenant_id,
+            CustomerMessagePreference.phone_e164.in_(normalized_phones),
+            or_(
+                CustomerMessagePreference.automation_paused.is_(True),
+                CustomerMessagePreference.whatsapp_opted_out.is_(True),
+            ),
+        )
+        .all()
+    } if normalized_phones else set()
+    automation_settings = message_automation_service.get_or_create_settings(
+        db,
+        current_user.tenant_id,
+    )
+    if not automation_settings.is_enabled:
+        raise HTTPException(status_code=422, detail="Messaging automation is disabled")
+    links = message_automation_service.tenant_links(db, current_user.tenant_id)
+    scheduled_at = message_automation_service.now_utc()
+    tasks_to_add: list[MessageAutomationTask] = []
 
     for customer_id in data.customer_ids:
         customer = customers_by_id.get(customer_id)
@@ -199,32 +230,46 @@ async def queue_retarget_template(
                 {"customer_id": str(customer.id), "name": customer.name, "reason": "Missing valid phone"}
             )
             continue
-        if message_automation_service.preference_blocks(
-            db,
-            current_user.tenant_id,
-            phone,
-            "whatsapp",
-        ):
+        if phone in blocked_phones:
             skipped.append(
                 {"customer_id": str(customer.id), "name": customer.name, "reason": "WhatsApp opted out"}
             )
             continue
 
-        task = message_automation_service.queue_manual_retarget_template(
-            db,
-            tenant_id=current_user.tenant_id,
-            customer=customer,
-            template_name=data.template_name,
-            language_code=data.language_code,
-            header_image_url=data.header_image_url,
-            employee_id=current_user.id,
-            batch_id=batch_id,
+        customer_name = (customer.name or "").strip() or (
+            "സുഹൃത്തേ"
+            if message_automation_service._language_matches("ml", data.language_code)
+            else "Customer"
         )
-        if task is None:
-            skipped.append(
-                {"customer_id": str(customer.id), "name": customer.name, "reason": "Messaging automation unavailable"}
-            )
-            continue
+        task = MessageAutomationTask(
+            id=uuid4(),
+            tenant_id=current_user.tenant_id,
+            customer_id=customer.id,
+            channel="whatsapp",
+            template_key=message_automation_service.RETARGET_MANUAL_TEMPLATE_KEY,
+            event_type="customer_retarget_manual",
+            status=message_automation_service.PENDING,
+            recipient_phone_e164=phone,
+            recipient_name=customer_name,
+            body=f"WhatsApp template: {data.template_name}",
+            payload={
+                "manual_template_name": data.template_name,
+                "manual_language_code": data.language_code,
+                "manual_header_image_url": data.header_image_url,
+                "manual_employee_id": str(current_user.id),
+                "manual_batch_id": str(batch_id),
+                "customer_name": customer_name,
+                "name": customer_name,
+                "phone": phone,
+                **links,
+            },
+            dedupe_key=(
+                f"customer-retarget:{batch_id}:{customer.id}:"
+                f"{data.template_name}:{data.language_code}"
+            ),
+            scheduled_at=scheduled_at,
+        )
+        tasks_to_add.append(task)
         queued.append(
             {
                 "task_id": str(task.id),
@@ -234,6 +279,8 @@ async def queue_retarget_template(
             }
         )
 
+    if tasks_to_add:
+        db.add_all(tasks_to_add)
     db.commit()
     return {
         "batch_id": str(batch_id),
@@ -1481,6 +1528,53 @@ def get_queue(
         "page": page,
         "limit": limit,
         "data": _serialize_linked_rows(db, tenant_id, rows, offset),
+    }
+
+
+def get_queue_selection(
+    db: Session,
+    current_user: Employee,
+    *,
+    view: str,
+    search: Optional[str],
+    repeat_only: bool,
+) -> dict:
+    """
+    Return selectable customer IDs for the complete active queue audience.
+
+    This deliberately reuses get_queue so bulk targeting follows exactly the
+    same tenant, outcome, search, repeat-buyer, old-customer, and value rules
+    as the visible table. Unlinked buyers and customers without a phone remain
+    visible in coverage but are not selectable for WhatsApp.
+    """
+    queue = get_queue(
+        db,
+        current_user,
+        view=view,
+        search=search,
+        repeat_only=repeat_only,
+        page=1,
+        limit=MAX_RETARGET_BULK_RECIPIENTS,
+    )
+    customer_ids: list[str] = []
+    seen: set[str] = set()
+    for row in queue["data"]:
+        customer_id = str(row.get("customer_id") or "")
+        if (
+            row.get("kind") == "customer"
+            and customer_id
+            and row.get("phone")
+            and customer_id not in seen
+        ):
+            seen.add(customer_id)
+            customer_ids.append(customer_id)
+
+    return {
+        "customer_ids": customer_ids,
+        "selectable_total": len(customer_ids),
+        "matching_total": queue["total"],
+        "selection_limit": MAX_RETARGET_BULK_RECIPIENTS,
+        "truncated": queue["total"] > MAX_RETARGET_BULK_RECIPIENTS,
     }
 
 

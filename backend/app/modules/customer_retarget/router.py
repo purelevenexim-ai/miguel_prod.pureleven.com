@@ -44,6 +44,23 @@ def get_queue(
     )
 
 
+@router.get("/selection")
+def get_queue_selection(
+    view: str = Query("to_contact"),
+    search: Optional[str] = Query(None, max_length=120),
+    repeat_only: bool = Query(False),
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(retarget_roles),
+):
+    return service.get_queue_selection(
+        db,
+        current_user,
+        view=view,
+        search=search,
+        repeat_only=repeat_only,
+    )
+
+
 @router.post("/unlinked/{shopify_order_id}/resolve")
 def resolve_unlinked_buyer(
     shopify_order_id: UUID,

@@ -119,7 +119,7 @@ body.retarget-has-nav{padding-left:240px}
 .status-pill{display:inline-flex;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
 #campaignPanel select{height:38px;border:1px solid #dfe4ec;border-radius:10px;padding:0 10px;background:#fff;font-size:12px;max-width:320px}
 #campaignBody .table-wrap{min-height:0}
-.bulk-bar{display:none;align-items:center;justify-content:space-between;gap:14px;margin:0 20px 12px;padding:11px 12px 11px 15px;border:1px solid #cbdcfb;border-radius:11px;background:linear-gradient(135deg,#f5f9ff,#edf4ff);box-shadow:0 5px 16px rgba(37,99,235,.07)}.bulk-bar.open{display:flex}.bulk-count{font-size:12px;font-weight:800;color:#1748b5}.bulk-copy{font-size:10px;color:var(--rt-sub);margin-top:2px}.select-cell{width:42px;text-align:center}.row-select{width:17px;height:17px;accent-color:var(--rt-brand);cursor:pointer}.row-select:disabled{cursor:not-allowed;opacity:.35}
+.bulk-bar{display:none;align-items:center;justify-content:space-between;gap:14px;margin:0 20px 12px;padding:11px 12px 11px 15px;border:1px solid #cbdcfb;border-radius:11px;background:linear-gradient(135deg,#f5f9ff,#edf4ff);box-shadow:0 5px 16px rgba(37,99,235,.07)}.bulk-bar.open{display:flex}.bulk-count{font-size:12px;font-weight:800;color:#1748b5}.bulk-copy{font-size:10px;color:var(--rt-sub);margin-top:2px}.bulk-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.select-cell{width:42px;text-align:center}.row-select{width:17px;height:17px;accent-color:var(--rt-brand);cursor:pointer}.row-select:disabled{cursor:not-allowed;opacity:.35}
 .template-overlay{display:none;position:fixed;inset:0;z-index:450;background:rgba(20,29,48,.52);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:18px}.template-overlay.open{display:flex}.template-modal{width:min(620px,100%);max-height:min(760px,92vh);overflow:auto;border:1px solid #dce3ee;border-radius:18px;background:#fff;box-shadow:0 26px 70px rgba(15,23,42,.28)}.template-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 22px;border-bottom:1px solid var(--rt-line)}.template-modal-head h2{margin:0;font-size:19px;letter-spacing:-.02em}.template-modal-head p{margin:5px 0 0;font-size:11px;color:var(--rt-sub)}.template-modal-body{padding:20px 22px}.template-grid{display:grid;grid-template-columns:1fr 180px;gap:12px}.template-note{margin-top:12px;padding:11px 12px;border:1px solid #e5eaf2;border-radius:10px;background:#f8fafc;color:#526071;font-size:11px;line-height:1.5}.template-warning{display:none;margin-top:10px;padding:10px 12px;border:1px solid #f3d3a1;border-radius:9px;background:#fff8e8;color:#8a4b08;font-size:11px}.consent-check{display:flex;align-items:flex-start;gap:9px;margin-top:15px;padding:12px;border:1px solid #dce3ee;border-radius:10px;background:#fff}.consent-check input{width:17px;height:17px;margin-top:1px;accent-color:var(--rt-brand)}.consent-check span{font-size:11px;line-height:1.45;color:#475467}.template-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.template-result{display:none;margin-top:12px;padding:11px 12px;border-radius:9px;font-size:11px}.template-result.success{display:block;background:#edf9f2;color:#116b46;border:1px solid #bde4cc}.template-result.error{display:block;background:#fff1f0;color:#a52a24;border:1px solid #f4c7c3}
 @media(max-width:1180px){.page-intro{grid-template-columns:1fr 260px}.summary{grid-template-columns:repeat(2,1fr)}.workspace-grid{grid-template-columns:1fr 320px}}
 @media(max-width:839px){body.retarget-has-nav{padding-left:72px}.topbar{padding:0 16px}.shell{padding:18px 16px 90px}.page-intro{grid-template-columns:1fr}.coverage-card{max-width:420px}.drawer{width:calc(100vw - 72px)}.workspace-grid{grid-template-columns:1fr}.workspace-side{position:static}.summary{grid-template-columns:repeat(2,1fr)}}
@@ -199,7 +199,7 @@ body.retarget-has-nav{padding-left:240px}
     </div>
     <div class="bulk-bar" id="bulkBar">
       <div><div class="bulk-count" id="bulkCount">0 customers selected</div><div class="bulk-copy" id="bulkCopy">Only selected customers with valid WhatsApp numbers will be queued.</div></div>
-      <button class="btn btn-sm btn-primary" id="bulkSendBtn" onclick="openTemplateModal()">💬 Choose template &amp; send</button>
+      <div class="bulk-actions"><button class="btn btn-sm" id="selectAllMatchingBtn" onclick="selectAllMatching()" style="display:none">Select all matching customers</button><button class="btn btn-sm btn-primary" id="bulkSendBtn" onclick="openTemplateModal()">💬 Choose template &amp; send</button></div>
     </div>
     <div class="tabs" id="tabs"></div>
     <div class="table-meta"><span id="tableMeta">Loading queue…</span><span>Oldest latest purchase first</span></div>
@@ -277,6 +277,7 @@ let currentView='to_contact', currentPage=1, total=0, rows=[], searchTimer=null,
 let currentCustomerProfile=null, currentWorkspaceOrders=[];
 let selectedCustomerIds=new Set(), templateOptions=[], templateRecipientIds=[], templateOpenedFromWorkspace=false;
 let currentRetargetPage='queue',campaignsLoaded=false;
+let matchingSelectableTotal=null,selectionLoading=false;
 const PAGE_SIZE=50;
 
 function logout(){
@@ -319,8 +320,8 @@ function refreshRetargetPage(){
   if(currentRetargetPage==='campaigns'){loadRetargetCampaigns(true);return}
   loadQueue();
 }
-function setView(view){setRetargetPage('queue');currentView=view;currentPage=1;renderTabs();loadQueue()}
-function resetAndLoad(){currentPage=1;loadQueue()}
+function setView(view){setRetargetPage('queue');clearSelection();currentView=view;currentPage=1;renderTabs();loadQueue()}
+function resetAndLoad(){clearSelection();currentPage=1;loadQueue()}
 function debouncedLoad(){clearTimeout(searchTimer);searchTimer=setTimeout(resetAndLoad,350)}
 
 function renderSummary(s={}){
@@ -340,7 +341,7 @@ function renderSummary(s={}){
   document.getElementById('coverageFill').style.width=coverage+'%';
   document.getElementById('coverageCopy').textContent=`${Number(s.contacted)||0} of ${Number(s.total_eligible)||0} customers contacted`;
 }
-function startNextCustomer(){if(currentRetargetPage!=='queue')setRetargetPage('queue');const next=rows.find(r=>r.kind==='customer');if(next){openRow(next);return}if(currentView!=='to_contact'){currentView='to_contact';currentPage=1;renderTabs();loadQueue({openNext:true});return}showToast('No callable customer on this page',true)}
+function startNextCustomer(){if(currentRetargetPage!=='queue')setRetargetPage('queue');const next=rows.find(r=>r.kind==='customer');if(next){openRow(next);return}if(currentView!=='to_contact'){clearSelection();currentView='to_contact';currentPage=1;renderTabs();loadQueue({openNext:true});return}showToast('No callable customer on this page',true)}
 
 let campaignList=[],campaignDetailPage=1;
 const CAMPAIGN_STATUS_STYLE={
@@ -414,7 +415,6 @@ async function loadQueue(options={}){
   }
   const search=document.getElementById('searchInput').value.trim();
   const repeat=document.getElementById('repeatOnly').checked;
-  clearSelection();
   let url=`/api/customer-retarget/queue?view=${encodeURIComponent(currentView)}&page=${currentPage}&limit=${PAGE_SIZE}&repeat_only=${repeat}`;
   if(search)url+=`&search=${encodeURIComponent(search)}`;
   document.getElementById('tableWrap').innerHTML='<div class="loading">Loading queue…</div>';
@@ -452,7 +452,7 @@ function rowHtml(r){
   </tr>`;
 }
 function selectableRows(){return rows.filter(r=>r.kind==='customer'&&r.customer_id&&r.phone)}
-function clearSelection(){selectedCustomerIds.clear();syncSelectionUi()}
+function clearSelection(){selectedCustomerIds.clear();matchingSelectableTotal=null;syncSelectionUi()}
 function toggleCustomerSelection(customerId,checked){
   if(!customerId)return;
   if(checked)selectedCustomerIds.add(customerId);else selectedCustomerIds.delete(customerId);
@@ -478,6 +478,31 @@ function syncSelectionUi(){
   if(copyEl)copyEl.textContent=`${campaignLabel} audience · only selected customers with valid WhatsApp numbers will be queued.`;
   const sendEl=document.getElementById('bulkSendBtn');
   if(sendEl)sendEl.textContent=`💬 Send ${campaignLabel} template`;
+  const allButton=document.getElementById('selectAllMatchingBtn');
+  if(allButton){
+    const allMatchingSelected=matchingSelectableTotal!==null&&count>=matchingSelectableTotal;
+    allButton.style.display=count>0&&total>eligible.length&&!allMatchingSelected?'':'none';
+    allButton.disabled=selectionLoading;
+    allButton.textContent=selectionLoading?'Selecting all matching customers…':`Select all ${total.toLocaleString('en-IN')} matching`;
+  }
+}
+async function selectAllMatching(){
+  if(selectionLoading)return;
+  selectionLoading=true;syncSelectionUi();
+  const search=document.getElementById('searchInput').value.trim();
+  const repeat=document.getElementById('repeatOnly').checked;
+  let url=`/api/customer-retarget/selection?view=${encodeURIComponent(currentView)}&repeat_only=${repeat}`;
+  if(search)url+=`&search=${encodeURIComponent(search)}`;
+  try{
+    const data=await api(url);
+    selectedCustomerIds.clear();
+    (data.customer_ids||[]).forEach(id=>selectedCustomerIds.add(String(id)));
+    matchingSelectableTotal=Number(data.selectable_total)||selectedCustomerIds.size;
+    const skipped=Math.max(0,(Number(data.matching_total)||0)-matchingSelectableTotal);
+    showToast(`${matchingSelectableTotal.toLocaleString('en-IN')} customers selected across all pages${skipped?` · ${skipped} without a usable phone excluded`:''}`);
+    if(data.truncated)showToast(`Selection limited to the first ${Number(data.selection_limit).toLocaleString('en-IN')} customers`,true);
+  }catch(e){showToast(e.message,true)}
+  finally{selectionLoading=false;syncSelectionUi()}
 }
 function renderPagination(){
   const pages=Math.ceil(total/PAGE_SIZE);const el=document.getElementById('pagination');

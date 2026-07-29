@@ -12,6 +12,7 @@ ORDERS_PAGE = ROOT / "frontend" / "orders.html"
 SERVICE = ROOT / "backend" / "app" / "modules" / "customer_retarget" / "service.py"
 IMPORTER = ROOT / "backend" / "scripts" / "import_old_whatsapp_customers.py"
 ROUTER = ROOT / "backend" / "app" / "modules" / "customer_retarget" / "router.py"
+SCHEMAS = ROOT / "backend" / "app" / "modules" / "customer_retarget" / "schemas.py"
 MODEL = ROOT / "backend" / "app" / "models" / "customer_retarget.py"
 MIGRATION = (
     ROOT
@@ -36,6 +37,7 @@ class CustomerRetargetContractTests(unittest.TestCase):
     def test_api_contract_is_present(self):
         source = ROUTER.read_text()
         self.assertIn('@router.get("/queue")', source)
+        self.assertIn('@router.get("/selection")', source)
         self.assertIn(
             '@router.post("/unlinked/{shopify_order_id}/resolve")',
             source,
@@ -89,12 +91,40 @@ class CustomerRetargetContractTests(unittest.TestCase):
         for marker in [
             "queue_retarget_template",
             "Customer.tenant_id == current_user.tenant_id",
-            "preference_blocks",
-            "queue_manual_retarget_template",
+            "CustomerMessagePreference.tenant_id == current_user.tenant_id",
+            "CustomerMessagePreference.whatsapp_opted_out.is_(True)",
+            "db.add_all(tasks_to_add)",
             "current_user.id",
             "db.commit()",
         ]:
             self.assertIn(marker, source)
+
+    def test_bulk_selection_can_cover_all_matching_pages(self):
+        service_source = SERVICE.read_text()
+        schema_source = SCHEMAS.read_text()
+        html = PAGE.read_text()
+        for marker in [
+            "MAX_RETARGET_BULK_RECIPIENTS = 5000",
+            "def get_queue_selection(",
+            "limit=MAX_RETARGET_BULK_RECIPIENTS",
+            '"selectable_total": len(customer_ids)',
+            '"truncated": queue["total"] > MAX_RETARGET_BULK_RECIPIENTS',
+        ]:
+            self.assertIn(marker, service_source)
+        self.assertIn("max_length=5000", schema_source)
+        for marker in [
+            "Select all matching customers",
+            "selectAllMatching()",
+            "/api/customer-retarget/selection",
+            "matchingSelectableTotal",
+        ]:
+            self.assertIn(marker, html)
+
+        load_queue_source = html[
+            html.index("async function loadQueue("):
+            html.index("function renderTable(")
+        ]
+        self.assertNotIn("clearSelection();", load_queue_source)
 
     def test_premium_and_high_value_queue_filters_are_present(self):
         source = SERVICE.read_text()
