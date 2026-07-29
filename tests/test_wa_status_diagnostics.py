@@ -16,7 +16,7 @@ def test_safe_meta_status_diagnostics_keeps_only_delivery_metadata():
     ])
 
     assert result == [{
-        "provider_id_suffix": "ider-message-id",
+        "provider_id_suffix": "vider-message-id",
         "status": "failed",
         "error_code": "131049",
         "error_title": "This message was not delivered",
