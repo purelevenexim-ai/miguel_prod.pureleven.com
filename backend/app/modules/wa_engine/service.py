@@ -586,21 +586,31 @@ async def start_campaign(
 
     workflow_url = campaign.workflow_url_override
     payload_tpl: Dict[str, Any] = campaign.payload_template_override or {}
+    meta_template_name: Optional[str] = None
+    meta_template_lang: str = "en"
 
-    if not workflow_url and campaign.campaign_type_id:
+    if campaign.campaign_type_id:
         ct = db.query(WaCampaignType).filter(WaCampaignType.id == campaign.campaign_type_id).first()
         if ct:
-            workflow_url = ct.wabis_workflow_url
+            if not workflow_url:
+                workflow_url = ct.wabis_workflow_url
+            meta_template_name = ct.meta_template_name
+            meta_template_lang = ct.meta_template_lang or "en"
             if ct.payload_template and not payload_tpl:
                 payload_tpl = ct.payload_template
 
-    if not workflow_url:
+    settings = get_or_create_settings(db, tenant_id)
+    provider  = _provider(settings)
+
+    if settings.provider == WaProvider.meta:
+        if not meta_template_name:
+            raise ValueError(
+                "No Meta template name configured — set meta_template_name in Campaign Type"
+            )
+    elif not workflow_url:
         raise ValueError(
             "No workflow URL found — configure it in Campaign Type or set workflow_url_override"
         )
-
-    settings = get_or_create_settings(db, tenant_id)
-    provider  = _provider(settings)
 
     campaign.status     = WaCampaignStatus.running
     campaign.started_at = _now()
@@ -624,13 +634,22 @@ async def start_campaign(
             skipped += 1
             continue
 
-        payload = _render_payload(payload_tpl, recip)
+        rendered = _render_payload(payload_tpl, recip)
+
+        if settings.provider == WaProvider.meta:
+            send_payload: Dict[str, Any] = {
+                "template_name": meta_template_name,
+                "language_code": meta_template_lang,
+                "components": _build_meta_body_components(rendered),
+            }
+        else:
+            send_payload = rendered
 
         try:
             result = await provider.send_template(
                 phone=phone,
-                workflow_url=workflow_url,
-                payload=payload,
+                workflow_url=workflow_url or "",
+                payload=send_payload,
             )
             if result.success:
                 recip.status           = WaRecipientStatus.sent
@@ -680,6 +699,14 @@ def _render_payload_dict(
     return json.loads(raw)
 
 
+def _build_meta_body_components(variables: Dict[str, Any]) -> list:
+    """Convert a variables dict to Meta template body components (positional parameters)."""
+    if not variables:
+        return []
+    params = [{"type": "text", "text": str(v or "")} for v in variables.values()]
+    return [{"type": "body", "parameters": params}]
+
+
 # ─────────────────────────────────────────────────────────────
 # Direct Send  (chat inbox → WABIS /api/v1/whatsapp/send)
 # ─────────────────────────────────────────────────────────────
@@ -699,17 +726,17 @@ async def send_direct_message(
     try:
         settings = get_or_create_settings(db, tenant_id)
         
-        # Validate WABIS is configured
-        if settings.provider != WaProvider.wabis:
-            return {
-                "success": False,
-                "message": "WABIS provider not configured",
-                "wa_message_id": None,
-                "subscriber_id": None,
-                "raw_response": {"error": "Provider not set to WABIS"},
-            }
-        
-        if not settings.wabis_api_token or not settings.wabis_phone_number_id:
+        # Validate provider credentials
+        if settings.provider == WaProvider.meta:
+            if not settings.meta_phone_number_id or not settings.meta_access_token:
+                return {
+                    "success": False,
+                    "message": "Meta Phone Number ID or Access Token not configured in Settings",
+                    "wa_message_id": None,
+                    "subscriber_id": None,
+                    "raw_response": {"error": "Missing Meta credentials"},
+                }
+        elif not settings.wabis_api_token or not settings.wabis_phone_number_id:
             return {
                 "success": False,
                 "message": "WABIS API Token or Phone Number ID not configured in Settings",
@@ -833,12 +860,44 @@ async def send_notification(
     variables: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
-    Send a single outbound WhatsApp message via WABIS workflow URL.
-    Used for both auto-triggered (order events) and manual sends.
+    Send a single outbound WhatsApp message.
+    For Meta provider: fires a template via Graph API using the campaign type's meta_template_name.
+    For WABIS provider: POSTs to the campaign type's wabis_workflow_url.
     """
     settings = get_or_create_settings(db, tenant_id)
     provider = _provider(settings)
 
+    # ── Meta provider path ──────────────────────────────────────────────────
+    if settings.provider == WaProvider.meta:
+        if not campaign_type_id:
+            return {"success": False, "message": "campaign_type_id required for Meta provider sends"}
+        ct = (
+            db.query(WaCampaignType)
+            .filter(
+                WaCampaignType.id == campaign_type_id,
+                WaCampaignType.tenant_id == tenant_id,
+                WaCampaignType.is_active.is_(True),
+            )
+            .first()
+        )
+        if ct is None:
+            return {"success": False, "message": "Campaign type not found or inactive"}
+        if not ct.meta_template_name:
+            return {"success": False, "message": f"Campaign type '{ct.name}' has no Meta template name configured"}
+        meta_payload: Dict[str, Any] = {
+            "template_name": ct.meta_template_name,
+            "language_code": ct.meta_template_lang or "en",
+            "components": _build_meta_body_components(variables or {}),
+        }
+        result = await provider.send_template(phone=phone, workflow_url="", payload=meta_payload)
+        return {
+            "success": result.success,
+            "message": "Sent successfully" if result.success else (result.error or "Send failed"),
+            "provider_message_id": result.provider_message_id,
+            "raw_response": result.raw_response,
+        }
+
+    # ── WABIS provider path ─────────────────────────────────────────────────
     payload_template: Dict[str, Any] = {}
     used_url = workflow_url
 
@@ -860,7 +919,6 @@ async def send_notification(
     if not used_url:
         return {"success": False, "message": "No workflow URL configured for this message type"}
 
-    # Build payload from template + variables
     payload = _render_payload_dict(payload_template, variables or {})
     payload.setdefault("phone", phone)
     payload.setdefault("phone_number", phone)
@@ -909,22 +967,29 @@ async def send_order_notification(
         log.debug("No active campaign type for trigger_event=%s tenant=%s", trigger_event, tenant_id)
         return None
 
-    # Decide which URL to use:
-    # - use_utility_fallback=True → use utility_workflow_url (outside 24h window)
-    # - use_utility_fallback=False → use wabis_workflow_url (within 24h window)
-    # If utility URL is set but regular URL is not, always use utility URL.
+    # For Meta provider: check meta_template_name; no workflow URL needed.
+    settings = get_or_create_settings(db, tenant_id)
     workflow_url = None
-    if use_utility_fallback and ct.utility_workflow_url:
-        workflow_url = ct.utility_workflow_url
-        log.info("Using utility_workflow_url for %s (outside 24h window)", ct.name)
-    elif ct.wabis_workflow_url:
-        workflow_url = ct.wabis_workflow_url
-    elif ct.utility_workflow_url:
-        workflow_url = ct.utility_workflow_url
-        log.info("No regular workflow URL — falling back to utility_workflow_url for %s", ct.name)
+    if settings.provider == WaProvider.meta:
+        if not ct.meta_template_name:
+            log.debug(
+                "Campaign type '%s' has no meta_template_name — skipping for Meta provider",
+                ct.name,
+            )
+            return None
     else:
-        log.warning("Campaign type '%s' has no workflow URL — skipping", ct.name)
-        return None
+        # WABIS: decide which workflow URL to use.
+        if use_utility_fallback and ct.utility_workflow_url:
+            workflow_url = ct.utility_workflow_url
+            log.info("Using utility_workflow_url for %s (outside 24h window)", ct.name)
+        elif ct.wabis_workflow_url:
+            workflow_url = ct.wabis_workflow_url
+        elif ct.utility_workflow_url:
+            workflow_url = ct.utility_workflow_url
+            log.info("No regular workflow URL — falling back to utility_workflow_url for %s", ct.name)
+        else:
+            log.warning("Campaign type '%s' has no workflow URL — skipping", ct.name)
+            return None
 
     result = await send_notification(
         db=db,

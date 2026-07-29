@@ -92,6 +92,7 @@ class MetaProvider(WaProviderBase):
         *,
         phone: str,
         text:  str,
+        name:  str = "",        # accepted for API compatibility with WabisProvider; unused by Meta
     ) -> SendResult:
         if not self._phone_id or not self._token:
             return SendResult(success=False, error="meta_phone_number_id or access_token not configured")
