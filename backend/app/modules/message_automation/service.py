@@ -291,7 +291,7 @@ def _template_text_example(parameter_name: str) -> str:
         "order_number": "PRN-260523-325",
         "items_summary": "Premium cardamom 250g",
         "total_amount": "799.00",
-        "website_url": "https://purelevenexim.com",
+        "website_url": "https://www.pureleven.com",
         "courier_name": "India Post",
         "tracking_number": "TESTTRACK123",
         "status_text": "In transit",
@@ -475,9 +475,13 @@ def _derive_links(db: Session, tenant_id: uuid.UUID, settings_row: Optional[Mess
             .first()
         )
         if primary_store:
-            website_url = _normalize_url(primary_store.store_url)
+            store_website_url = _normalize_url(primary_store.store_url)
+            # The internal *.myshopify.com host is an integration endpoint,
+            # not necessarily the customer-facing storefront domain.
+            if ".myshopify.com" not in store_website_url.lower():
+                website_url = store_website_url
     if not website_url:
-        website_url = "https://purelevenexim.com"
+        website_url = "https://www.pureleven.com"
 
     google_review_url = _normalize_url(settings_row.google_review_url if settings_row else None)
     if not google_review_url:
