@@ -120,11 +120,12 @@ body.retarget-has-nav{padding-left:240px}
 .status-pill{display:inline-flex;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
 #campaignPanel select{height:38px;border:1px solid #dfe4ec;border-radius:10px;padding:0 10px;background:#fff;font-size:12px;max-width:320px}
 #campaignBody .table-wrap{min-height:0}
+.campaign-filters{display:flex;align-items:end;justify-content:space-between;gap:14px;padding:13px 20px;border-top:1px solid var(--rt-line);border-bottom:1px solid var(--rt-line);background:#fafbfd}.campaign-quick-ranges{display:flex;gap:7px;flex-wrap:wrap}.range-btn{min-height:36px;padding:7px 12px;border:1px solid #dfe4ec;border-radius:9px;background:#fff;color:#536073;font:inherit;font-size:11px;font-weight:800;cursor:pointer}.range-btn.active{border-color:#9bbafb;background:#eaf2ff;color:#1748b5}.campaign-custom-range{display:flex;align-items:end;gap:8px;flex-wrap:wrap}.campaign-custom-range label{display:flex;flex-direction:column;gap:4px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#7b8494}.campaign-custom-range input{height:36px;border:1px solid #dfe4ec;border-radius:9px;background:#fff;padding:0 9px;color:#273248}.campaign-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:18px 20px 10px}.campaign-stat{padding:13px 14px;border:1px solid #e4e9f1;border-radius:12px;background:#fff}.campaign-stat-value{font-size:21px;font-weight:850;letter-spacing:-.02em}.campaign-stat-label{margin-top:4px;color:#7b8494;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.campaign-section{margin:10px 20px 18px;border:1px solid #e4e9f1;border-radius:13px;overflow:hidden;background:#fff}.campaign-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-bottom:1px solid #e8ecf2}.campaign-section-title{font-size:13px;font-weight:820}.campaign-section-copy{font-size:10px;color:var(--rt-sub);margin-top:3px}.daily-rate{display:flex;align-items:center;gap:8px;min-width:130px}.daily-rate-track{width:72px;height:6px;border-radius:99px;background:#e8edf4;overflow:hidden}.daily-rate-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#2563eb,#18a173)}
 .bulk-bar{display:none;align-items:center;justify-content:space-between;gap:14px;margin:0 20px 12px;padding:11px 12px 11px 15px;border:1px solid #cbdcfb;border-radius:11px;background:linear-gradient(135deg,#f5f9ff,#edf4ff);box-shadow:0 5px 16px rgba(37,99,235,.07)}.bulk-bar.open{display:flex}.bulk-count{font-size:12px;font-weight:800;color:#1748b5}.bulk-copy{font-size:10px;color:var(--rt-sub);margin-top:2px}.bulk-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.select-cell{width:42px;text-align:center}.row-select{width:17px;height:17px;accent-color:var(--rt-brand);cursor:pointer}.row-select:disabled{cursor:not-allowed;opacity:.35}
 .template-overlay{display:none;position:fixed;inset:0;z-index:450;background:rgba(20,29,48,.52);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:18px}.template-overlay.open{display:flex}.template-modal{width:min(620px,100%);max-height:min(760px,92vh);overflow:auto;border:1px solid #dce3ee;border-radius:18px;background:#fff;box-shadow:0 26px 70px rgba(15,23,42,.28)}.template-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 22px;border-bottom:1px solid var(--rt-line)}.template-modal-head h2{margin:0;font-size:19px;letter-spacing:-.02em}.template-modal-head p{margin:5px 0 0;font-size:11px;color:var(--rt-sub)}.template-modal-body{padding:20px 22px}.template-grid{display:grid;grid-template-columns:1fr 180px;gap:12px}.template-note{margin-top:12px;padding:11px 12px;border:1px solid #e5eaf2;border-radius:10px;background:#f8fafc;color:#526071;font-size:11px;line-height:1.5}.template-warning{display:none;margin-top:10px;padding:10px 12px;border:1px solid #f3d3a1;border-radius:9px;background:#fff8e8;color:#8a4b08;font-size:11px}.consent-check{display:flex;align-items:flex-start;gap:9px;margin-top:15px;padding:12px;border:1px solid #dce3ee;border-radius:10px;background:#fff}.consent-check input{width:17px;height:17px;margin-top:1px;accent-color:var(--rt-brand)}.consent-check span{font-size:11px;line-height:1.45;color:#475467}.template-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.template-result{display:none;margin-top:12px;padding:11px 12px;border-radius:9px;font-size:11px}.template-result.success{display:block;background:#edf9f2;color:#116b46;border:1px solid #bde4cc}.template-result.error{display:block;background:#fff1f0;color:#a52a24;border:1px solid #f4c7c3}
 @media(max-width:1180px){.page-intro{grid-template-columns:1fr 260px}.summary{grid-template-columns:repeat(2,1fr)}.workspace-grid{grid-template-columns:1fr 320px}}
 @media(max-width:839px){body.retarget-has-nav{padding-left:72px}.topbar{padding:0 16px}.shell{padding:18px 16px 90px}.page-intro{grid-template-columns:1fr}.coverage-card{max-width:420px}.drawer{width:calc(100vw - 72px)}.workspace-grid{grid-template-columns:1fr}.workspace-side{position:static}.summary{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:599px){body.retarget-has-nav{padding-left:0}.topbar{height:56px}.topbar .subtitle,.topbar .tenant,.topbar .secondary-action{display:none}.shell{padding:12px 10px 90px}.page-intro{padding:20px;border-radius:16px}.page-intro h1{font-size:23px}.coverage-card{display:none}.retarget-page-nav{width:100%}.retarget-page-tab{flex:1;justify-content:center}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:12px;min-height:84px}.metric-value{font-size:20px}.queue-head{align-items:flex-start;padding:15px 14px 9px}.queue-head-actions{display:none}.toolbar{padding:8px 14px 12px}.search{min-width:100%}.check{width:100%;justify-content:center}.tabs{padding:9px 12px}.table-meta{padding:10px 14px}.drawer{width:100vw!important;height:94vh!important;max-height:94vh!important}.drawer-body{padding:12px}.hero{padding:16px}.hero-name{font-size:18px}.profile-grid{grid-template-columns:1fr}.outcomes{grid-template-columns:1fr 1fr}.top-actions .btn-primary{padding:8px 10px;font-size:11px}.bulk-bar{margin:0 12px 10px;align-items:flex-start;flex-direction:column}.bulk-bar .btn{width:100%}.template-grid{grid-template-columns:1fr}.template-modal-body,.template-modal-head{padding:16px}.template-actions{flex-direction:column-reverse}.template-actions .btn{width:100%}}
+@media(max-width:599px){body.retarget-has-nav{padding-left:0}.topbar{height:56px}.topbar .subtitle,.topbar .tenant,.topbar .secondary-action{display:none}.shell{padding:12px 10px 90px}.page-intro{padding:20px;border-radius:16px}.page-intro h1{font-size:23px}.coverage-card{display:none}.retarget-page-nav{width:100%}.retarget-page-tab{flex:1;justify-content:center}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:12px;min-height:84px}.metric-value{font-size:20px}.queue-head{align-items:flex-start;padding:15px 14px 9px}.queue-head-actions{display:none}.toolbar{padding:8px 14px 12px}.search{min-width:100%}.check{width:100%;justify-content:center}.tabs{padding:9px 12px}.table-meta{padding:10px 14px}.drawer{width:100vw!important;height:94vh!important;max-height:94vh!important}.drawer-body{padding:12px}.hero{padding:16px}.hero-name{font-size:18px}.profile-grid{grid-template-columns:1fr}.outcomes{grid-template-columns:1fr 1fr}.top-actions .btn-primary{padding:8px 10px;font-size:11px}.bulk-bar{margin:0 12px 10px;align-items:flex-start;flex-direction:column}.bulk-bar .btn{width:100%}.template-grid{grid-template-columns:1fr}.template-modal-body,.template-modal-head{padding:16px}.template-actions{flex-direction:column-reverse}.template-actions .btn{width:100%}.campaign-filters{align-items:stretch;flex-direction:column;padding:12px 14px}.campaign-quick-ranges{display:grid;grid-template-columns:repeat(3,1fr)}.campaign-custom-range{display:grid;grid-template-columns:1fr 1fr}.campaign-custom-range .btn{grid-column:1/-1}.campaign-summary{grid-template-columns:repeat(2,1fr);padding:14px}.campaign-section{margin:8px 14px 14px}#campaignPanel .queue-head{flex-direction:column}#campaignPanel .queue-head-actions{display:flex;width:100%;flex-wrap:wrap}#campaignPanel .queue-head-actions select{max-width:none;flex:1}}
 </style>
   <link rel="stylesheet" href="/styles/shadcn-app.css?v=20260728b">
 </head>
@@ -214,6 +215,18 @@ body.retarget-has-nav{padding-left:240px}
       <div class="queue-head">
         <div><div class="queue-title">WhatsApp campaign results</div><div class="queue-subtitle" id="campaignSubtitle">Review real send, read and reply results for each retarget campaign.</div></div>
         <div class="queue-head-actions"><button class="btn btn-sm" onclick="loadRetargetCampaigns(true)">↻ Refresh results</button><select id="campaignSelect" style="display:none" onchange="loadCampaignDetail(this.value,1)"></select></div>
+      </div>
+      <div class="campaign-filters">
+        <div class="campaign-quick-ranges" aria-label="Campaign date ranges">
+          <button class="range-btn" id="campaignRange1" type="button" onclick="setCampaignRange(1)">1 day</button>
+          <button class="range-btn" id="campaignRange3" type="button" onclick="setCampaignRange(3)">3 days</button>
+          <button class="range-btn active" id="campaignRange7" type="button" onclick="setCampaignRange(7)">7 days</button>
+        </div>
+        <div class="campaign-custom-range">
+          <label>From<input id="campaignDateFrom" type="date" onchange="markCampaignCustomRange()"></label>
+          <label>To<input id="campaignDateTo" type="date" onchange="markCampaignCustomRange()"></label>
+          <button class="btn btn-sm" type="button" onclick="applyCampaignCustomRange()">Apply dates</button>
+        </div>
       </div>
       <div id="campaignBody"><div class="loading">Open this page to load campaign results.</div></div>
     </section>
@@ -398,7 +411,7 @@ function renderSummary(s={}){
 }
 function startNextCustomer(){if(currentRetargetPage!=='queue')setRetargetPage('queue');const next=rows.find(r=>r.kind==='customer');if(next){openRow(next);return}if(currentView!=='to_contact'){clearSelection();currentView='to_contact';currentPage=1;renderTabs();loadQueue({openNext:true});return}showToast('No callable customer on this page',true)}
 
-let campaignList=[],campaignDetailPage=1;
+let campaignList=[],campaignDetailPage=1,campaignRangeDays=7;
 const CAMPAIGN_STATUS_STYLE={
   sent:['SENT','#e8f0fe','#174ea6'],
   delivered:['DELIVERED','#e6f4ea','#137333'],
@@ -413,6 +426,65 @@ function campaignStatusBadge(status,deliveryStatus){
   const [label,bg,fg]=CAMPAIGN_STATUS_STYLE[effective]||[String(effective||'—').toUpperCase(),'#f1f3f4','#5f6368'];
   return `<span class="status-pill" style="background:${bg};color:${fg}">${esc(label)}</span>`;
 }
+function localDateValue(date){
+  const copy=new Date(date.getTime()-date.getTimezoneOffset()*60000);
+  return copy.toISOString().slice(0,10);
+}
+function setCampaignRange(days,options={}){
+  campaignRangeDays=days;
+  const end=new Date();
+  const start=new Date(end);
+  start.setDate(start.getDate()-days+1);
+  document.getElementById('campaignDateFrom').value=localDateValue(start);
+  document.getElementById('campaignDateTo').value=localDateValue(end);
+  [1,3,7].forEach(value=>document.getElementById(`campaignRange${value}`).classList.toggle('active',value===days));
+  campaignsLoaded=false;
+  if(options.load!==false)loadRetargetCampaigns(true);
+}
+function markCampaignCustomRange(){
+  campaignRangeDays=null;
+  [1,3,7].forEach(value=>document.getElementById(`campaignRange${value}`).classList.remove('active'));
+}
+function applyCampaignCustomRange(){
+  const from=document.getElementById('campaignDateFrom').value;
+  const to=document.getElementById('campaignDateTo').value;
+  if(!from||!to){showToast('Choose both start and end dates',true);return}
+  if(from>to){showToast('Start date must be before end date',true);return}
+  markCampaignCustomRange();
+  campaignsLoaded=false;
+  loadRetargetCampaigns(true);
+}
+function campaignOverviewHtml(data){
+  const summary=data.summary||{};
+  const daily=data.daily_results||[];
+  const filters=data.filters||{};
+  const stats=[
+    ['Campaigns',summary.campaign_count||0],
+    ['Recipients',summary.recipient_count||0],
+    ['Sent',summary.sent_count||0],
+    ['Failed',summary.failed_count||0],
+    ['Success rate',(summary.success_rate||0)+'%']
+  ];
+  const dailyRows=daily.map(day=>`<tr>
+    <td><strong>${dateOnly(day.date+'T00:00:00')}</strong></td>
+    <td>${Number(day.campaign_count).toLocaleString('en-IN')}</td>
+    <td>${Number(day.recipient_count).toLocaleString('en-IN')}</td>
+    <td style="color:#137333;font-weight:750">${Number(day.sent_count).toLocaleString('en-IN')}</td>
+    <td style="color:${day.failed_count?'#a50e0e':'inherit'};font-weight:750">${Number(day.failed_count).toLocaleString('en-IN')}</td>
+    <td>${Number(day.pending_count).toLocaleString('en-IN')}</td>
+    <td><div class="daily-rate"><div class="daily-rate-track"><div class="daily-rate-fill" style="width:${Math.max(0,Math.min(100,Number(day.success_rate)||0))}%"></div></div><strong>${Number(day.success_rate||0).toFixed(1)}%</strong></div></td>
+  </tr>`).join('');
+  return `
+    <div class="campaign-summary">${stats.map(([label,value])=>`<div class="campaign-stat"><div class="campaign-stat-value">${esc(value)}</div><div class="campaign-stat-label">${esc(label)}</div></div>`).join('')}</div>
+    <section class="campaign-section">
+      <div class="campaign-section-head"><div><div class="campaign-section-title">Results by day</div><div class="campaign-section-copy">${esc(filters.date_from||'')} to ${esc(filters.date_to||'')} · India time</div></div></div>
+      <div class="table-wrap"><table style="min-width:760px"><thead><tr><th>Date</th><th>Campaigns</th><th>Recipients</th><th>Sent</th><th>Failed</th><th>Pending</th><th>Success rate</th></tr></thead><tbody>${dailyRows||'<tr><td colspan="7" class="muted" style="padding:22px;text-align:center">No campaign activity in this date range.</td></tr>'}</tbody></table></div>
+    </section>
+    <section class="campaign-section">
+      <div class="campaign-section-head"><div><div class="campaign-section-title">Individual campaign details</div><div class="campaign-section-copy">Choose a campaign above to inspect every recipient and Meta result.</div></div></div>
+      <div id="campaignDetailBody"><div class="loading">Select a campaign to view recipient results.</div></div>
+    </section>`;
+}
 async function loadRetargetCampaigns(force=false){
   if(campaignsLoaded&&!force)return;
   campaignsLoaded=true;
@@ -420,15 +492,18 @@ async function loadRetargetCampaigns(force=false){
   const select=document.getElementById('campaignSelect');
   body.innerHTML='<div class="loading">Loading campaign results…</div>';
   try{
-    const data=await api('/api/customer-retarget/whatsapp/campaigns');
+    const dateFrom=document.getElementById('campaignDateFrom').value;
+    const dateTo=document.getElementById('campaignDateTo').value;
+    const data=await api(`/api/customer-retarget/whatsapp/campaigns?limit=200&date_from=${encodeURIComponent(dateFrom)}&date_to=${encodeURIComponent(dateTo)}`);
     campaignList=data.campaigns||data;
+    body.innerHTML=campaignOverviewHtml(data);
+    document.getElementById('campaignSubtitle').textContent=`Daily results from ${dateOnly(data.filters.date_from+'T00:00:00')} to ${dateOnly(data.filters.date_to+'T00:00:00')} · India time`;
     if(!campaignList.length){
-      document.getElementById('campaignSubtitle').textContent='No WhatsApp campaigns sent yet';
       select.style.display='none';
-      body.innerHTML='<div class="empty-inline">Send a WhatsApp template from the queue below to see delivery, read and reply results here.</div>';
+      document.getElementById('campaignDetailBody').innerHTML='<div class="empty-inline" style="margin:15px">No individual campaigns in this range.</div>';
       return;
     }
-    select.style.display=campaignList.length>1?'':'none';
+    select.style.display='';
     select.innerHTML=campaignList.map(c=>`<option value="${esc(c.batch_id)}">${esc(c.template_name)} · ${dateTime(c.sent_at)} (${c.recipient_count})</option>`).join('');
     campaignDetailPage=1;
     await loadCampaignDetail(campaignList[0].batch_id);
@@ -441,11 +516,10 @@ async function loadRetargetCampaigns(force=false){
 async function loadCampaignDetail(batchId,page){
   campaignDetailPage=page||campaignDetailPage||1;
   document.getElementById('campaignSelect').value=batchId;
-  const body=document.getElementById('campaignBody');
+  const body=document.getElementById('campaignDetailBody')||document.getElementById('campaignBody');
   body.innerHTML='<div class="loading">Loading…</div>';
   try{
     const d=await api(`/api/customer-retarget/whatsapp/campaigns/${encodeURIComponent(batchId)}?page=${campaignDetailPage}&limit=25`);
-    document.getElementById('campaignSubtitle').textContent=`${esc(d.template_name)} (${esc(d.language_code)}) · Sent ${dateTime(d.sent_at)} · ${d.total_recipients} recipient${d.total_recipients!==1?'s':''}`;
     const noteHtml=d.read_receipts_tracked?'':'<div class="template-note" style="margin:0 20px 12px">Read-receipt tracking ("Read") is not wired up yet for this WhatsApp integration, so that column shows "Not tracked" — this is a real gap, not a placeholder. Status and Replied below are live data.</div>';
     const rowsHtml=d.recipients.map(r=>`
       <tr>
@@ -457,7 +531,7 @@ async function loadCampaignDetail(batchId,page){
       </tr>`).join('');
     const totalPages=Math.max(1,Math.ceil((d.total_recipients||0)/(d.limit||25)));
     const pagerHtml=totalPages>1?`<div class="pagination"><button class="btn btn-sm" ${campaignDetailPage<=1?'disabled':''} onclick="loadCampaignDetail('${esc(batchId)}',${campaignDetailPage-1})">← Previous</button><span>Page ${campaignDetailPage} of ${totalPages}</span><button class="btn btn-sm" ${campaignDetailPage>=totalPages?'disabled':''} onclick="loadCampaignDetail('${esc(batchId)}',${campaignDetailPage+1})">Next →</button></div>`:'';
-    body.innerHTML=`${noteHtml}<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Phone</th><th>Status</th><th>Read</th><th>Replied</th></tr></thead><tbody>${rowsHtml||'<tr><td colspan="5" class="muted" style="padding:20px;text-align:center">No recipients in this batch</td></tr>'}</tbody></table></div>${pagerHtml}`;
+    body.innerHTML=`<div style="padding:14px 20px"><strong>${esc(d.template_name)}</strong><div class="muted">${esc(d.language_code)} · Sent ${dateTime(d.sent_at)} · ${d.total_recipients} recipient${d.total_recipients!==1?'s':''}</div></div>${noteHtml}<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Phone</th><th>Status</th><th>Read</th><th>Replied</th></tr></thead><tbody>${rowsHtml||'<tr><td colspan="5" class="muted" style="padding:20px;text-align:center">No recipients in this batch</td></tr>'}</tbody></table></div>${pagerHtml}`;
   }catch(e){
     body.innerHTML=`<div class="error-state">Could not load campaign details.<br><small>${esc(e.message)}</small></div>`;
   }
@@ -792,6 +866,7 @@ async function createFromUnlinked(event,orderId){
 
 renderTabs();
 loadQueue();
+setCampaignRange(7,{load:false});
 setRetargetPage(location.hash==='#campaign-results'?'campaigns':'queue',{updateUrl:false});
 window.addEventListener('popstate',()=>setRetargetPage(location.hash==='#campaign-results'?'campaigns':'queue',{updateUrl:false}));
 </script>

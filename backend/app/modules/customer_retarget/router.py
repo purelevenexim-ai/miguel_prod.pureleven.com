@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
+from datetime import date
 from typing import Optional
 from uuid import UUID
+
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
 
 from app.core.auth.tenant import require_roles
 from app.database.session import get_db
@@ -103,10 +105,19 @@ async def send_retarget_template(
 def list_retarget_campaigns(
     page: int = Query(1, ge=1),
     limit: int = Query(25, ge=1, le=200),
+    date_from: Optional[date] = Query(None),
+    date_to: Optional[date] = Query(None),
     db: Session = Depends(get_db),
     current_user: Employee = Depends(retarget_roles),
 ):
-    return service.list_retarget_campaigns(db, current_user, page=page, limit=limit)
+    return service.list_retarget_campaigns(
+        db,
+        current_user,
+        page=page,
+        limit=limit,
+        date_from=date_from,
+        date_to=date_to,
+    )
 
 
 @router.get("/whatsapp/campaigns/{batch_id}")

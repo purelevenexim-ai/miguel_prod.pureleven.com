@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 import re
 from typing import Optional
 from uuid import UUID, uuid4
+from zoneinfo import ZoneInfo
 
 from fastapi import HTTPException
 from sqlalchemy import and_, case, exists, func, or_
@@ -81,6 +82,8 @@ RETARGET_TEMPLATE_VARIABLES = {
     "whatsapp_link",
 }
 MAX_RETARGET_BULK_RECIPIENTS = 5000
+CAMPAIGN_REPORT_TIMEZONE = "Asia/Kolkata"
+MAX_CAMPAIGN_REPORT_DAYS = 366
 
 
 def _phone_key(value: Optional[str]) -> str:
@@ -529,6 +532,8 @@ def list_retarget_campaigns(
     *,
     page: int = 1,
     limit: int = 25,
+    date_from: Optional[date] = None,
+    date_to: Optional[date] = None,
 ) -> dict:
     """
     Discover WhatsApp Customer Retarget bulk-send batches.
@@ -540,7 +545,39 @@ def list_retarget_campaigns(
     batch_col = _retarget_batch_column()
     template_col = MessageAutomationTask.payload["manual_template_name"].astext
     language_col = MessageAutomationTask.payload["manual_language_code"].astext
+    report_timezone = ZoneInfo(CAMPAIGN_REPORT_TIMEZONE)
+    today = datetime.now(report_timezone).date()
+    selected_to = date_to or today
+    selected_from = date_from or (selected_to - timedelta(days=6))
+    if selected_from > selected_to:
+        raise HTTPException(
+            status_code=422,
+            detail="Start date must be on or before end date",
+        )
+    if (selected_to - selected_from).days + 1 > MAX_CAMPAIGN_REPORT_DAYS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Campaign report range cannot exceed {MAX_CAMPAIGN_REPORT_DAYS} days",
+        )
+    range_start = datetime.combine(
+        selected_from,
+        time.min,
+        tzinfo=report_timezone,
+    ).astimezone(timezone.utc)
+    range_end = datetime.combine(
+        selected_to + timedelta(days=1),
+        time.min,
+        tzinfo=report_timezone,
+    ).astimezone(timezone.utc)
 
+    task_filters = (
+        MessageAutomationTask.tenant_id == current_user.tenant_id,
+        MessageAutomationTask.template_key
+        == message_automation_service.RETARGET_MANUAL_TEMPLATE_KEY,
+        batch_col.isnot(None),
+        MessageAutomationTask.created_at >= range_start,
+        MessageAutomationTask.created_at < range_end,
+    )
     base_query = (
         db.query(
             batch_col.label("batch_id"),
@@ -552,14 +589,54 @@ def list_retarget_campaigns(
             func.sum(case((MessageAutomationTask.status == "failed", 1), else_=0)).label("failed_count"),
             func.sum(case((MessageAutomationTask.status == "pending", 1), else_=0)).label("pending_count"),
         )
-        .filter(
-            MessageAutomationTask.tenant_id == current_user.tenant_id,
-            MessageAutomationTask.template_key == message_automation_service.RETARGET_MANUAL_TEMPLATE_KEY,
-            batch_col.isnot(None),
-        )
+        .filter(*task_filters)
         .group_by(batch_col)
     )
     total = base_query.count()
+
+    summary = (
+        db.query(
+            func.count(func.distinct(batch_col)).label("campaign_count"),
+            func.count(MessageAutomationTask.id).label("recipient_count"),
+            func.sum(
+                case((MessageAutomationTask.status == "sent", 1), else_=0)
+            ).label("sent_count"),
+            func.sum(
+                case((MessageAutomationTask.status == "failed", 1), else_=0)
+            ).label("failed_count"),
+            func.sum(
+                case((MessageAutomationTask.status == "pending", 1), else_=0)
+            ).label("pending_count"),
+        )
+        .filter(*task_filters)
+        .first()
+    )
+    local_day = func.date(
+        func.timezone(
+            CAMPAIGN_REPORT_TIMEZONE,
+            MessageAutomationTask.created_at,
+        )
+    )
+    daily_rows = (
+        db.query(
+            local_day.label("result_date"),
+            func.count(func.distinct(batch_col)).label("campaign_count"),
+            func.count(MessageAutomationTask.id).label("recipient_count"),
+            func.sum(
+                case((MessageAutomationTask.status == "sent", 1), else_=0)
+            ).label("sent_count"),
+            func.sum(
+                case((MessageAutomationTask.status == "failed", 1), else_=0)
+            ).label("failed_count"),
+            func.sum(
+                case((MessageAutomationTask.status == "pending", 1), else_=0)
+            ).label("pending_count"),
+        )
+        .filter(*task_filters)
+        .group_by(local_day)
+        .order_by(local_day.desc())
+        .all()
+    )
 
     page = max(1, page)
     limit = max(1, min(limit, 200))
@@ -569,6 +646,28 @@ def list_retarget_campaigns(
         .limit(limit)
         .all()
     )
+    daily_by_date = {row.result_date: row for row in daily_rows}
+    daily_results = []
+    result_date = selected_to
+    while result_date >= selected_from:
+        row = daily_by_date.get(result_date)
+        recipient_count = int(row.recipient_count or 0) if row else 0
+        sent_count = int(row.sent_count or 0) if row else 0
+        daily_results.append(
+            {
+                "date": result_date.isoformat(),
+                "campaign_count": int(row.campaign_count or 0) if row else 0,
+                "recipient_count": recipient_count,
+                "sent_count": sent_count,
+                "failed_count": int(row.failed_count or 0) if row else 0,
+                "pending_count": int(row.pending_count or 0) if row else 0,
+                "success_rate": round(
+                    (sent_count / (recipient_count or 1)) * 100,
+                    1,
+                ),
+            }
+        )
+        result_date -= timedelta(days=1)
     return {
         "campaigns": [
             {
@@ -586,6 +685,24 @@ def list_retarget_campaigns(
         "page": page,
         "limit": limit,
         "total": total,
+        "filters": {
+            "date_from": selected_from.isoformat(),
+            "date_to": selected_to.isoformat(),
+            "timezone": CAMPAIGN_REPORT_TIMEZONE,
+        },
+        "summary": {
+            "campaign_count": int(summary.campaign_count or 0),
+            "recipient_count": int(summary.recipient_count or 0),
+            "sent_count": int(summary.sent_count or 0),
+            "failed_count": int(summary.failed_count or 0),
+            "pending_count": int(summary.pending_count or 0),
+            "success_rate": round(
+                (int(summary.sent_count or 0) / int(summary.recipient_count or 1))
+                * 100,
+                1,
+            ),
+        },
+        "daily_results": daily_results,
     }
 
 

@@ -118,6 +118,42 @@ class CampaignTrackerPaginationContractTests(unittest.TestCase):
         self.assertIn("total_recipients", source)
 
 
+class CampaignDailyReportingContractTests(unittest.TestCase):
+    def test_router_accepts_specific_date_range(self):
+        source = ROUTER.read_text()
+        self.assertIn("date_from: Optional[date] = Query(None)", source)
+        self.assertIn("date_to: Optional[date] = Query(None)", source)
+
+    def test_daily_results_use_india_local_dates_and_include_zero_days(self):
+        source = SERVICE.read_text()
+        for marker in [
+            'CAMPAIGN_REPORT_TIMEZONE = "Asia/Kolkata"',
+            "MAX_CAMPAIGN_REPORT_DAYS = 366",
+            "MessageAutomationTask.created_at >= range_start",
+            "MessageAutomationTask.created_at < range_end",
+            "daily_by_date =",
+            "while result_date >= selected_from:",
+            '"daily_results": daily_results',
+        ]:
+            self.assertIn(marker, source)
+
+    def test_frontend_has_quick_and_custom_date_filters(self):
+        source = (
+            ROOT / "frontend" / "customer-retarget.html"
+        ).read_text()
+        for marker in [
+            "setCampaignRange(1)",
+            "setCampaignRange(3)",
+            "setCampaignRange(7)",
+            'id="campaignDateFrom"',
+            'id="campaignDateTo"',
+            "applyCampaignCustomRange()",
+            "Results by day",
+            "daily_results",
+        ]:
+            self.assertIn(marker, source)
+
+
 class MetaStatusWebhookSecurityContractTests(unittest.TestCase):
     """
     A message-status callback (delivered/read/failed) must never be applied
