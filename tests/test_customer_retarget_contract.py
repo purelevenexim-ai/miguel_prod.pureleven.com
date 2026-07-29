@@ -25,7 +25,7 @@ MIGRATION = (
 
 class CustomerRetargetContractTests(unittest.TestCase):
     def test_python_sources_parse(self):
-        for path in [SERVICE, ROUTER, MODEL, MIGRATION, IMPORTER]:
+        for path in [SERVICE, ROUTER, SCHEMAS, MODEL, MIGRATION, IMPORTER]:
             ast.parse(path.read_text(), filename=str(path))
 
     def test_migration_is_based_on_production_head(self):
@@ -38,6 +38,7 @@ class CustomerRetargetContractTests(unittest.TestCase):
         source = ROUTER.read_text()
         self.assertIn('@router.get("/queue")', source)
         self.assertIn('@router.get("/selection")', source)
+        self.assertIn('@router.post("/manual-customers"', source)
         self.assertIn(
             '@router.post("/unlinked/{shopify_order_id}/resolve")',
             source,
@@ -137,6 +138,33 @@ class CustomerRetargetContractTests(unittest.TestCase):
             'aggregate.c.lifetime_value > Decimal("1500")',
         ]:
             self.assertIn(marker, source)
+
+    def test_manual_customer_addition_and_test_priority_are_present(self):
+        service_source = SERVICE.read_text()
+        schema_source = SCHEMAS.read_text()
+        html = PAGE.read_text()
+        for marker in [
+            "class RetargetManualCustomerCreate",
+            "is_test_customer: bool = False",
+        ]:
+            self.assertIn(marker, schema_source)
+        for marker in [
+            "def add_manual_retarget_customer(",
+            'MANUAL_RETARGET_TAG = "Customer Retarget"',
+            'TEST_CUSTOMER_TAG = "Test Customer"',
+            "generate_customer_code",
+            "0-test:",
+            '"is_test_customer":',
+        ]:
+            self.assertIn(marker, service_source)
+        for marker in [
+            "＋ Add customer",
+            'id="addCustomerOverlay"',
+            "saveManualCustomer(event)",
+            "/api/customer-retarget/manual-customers",
+            "TEST CUSTOMER · PRIORITY",
+        ]:
+            self.assertIn(marker, html)
 
     def test_interested_campaign_audiences_are_separate(self):
         source = SERVICE.read_text()

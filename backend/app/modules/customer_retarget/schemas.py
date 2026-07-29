@@ -83,3 +83,21 @@ class RetargetTemplateBulkSend(BaseModel):
         if self.header_image_url and not self.header_image_url.startswith("https://"):
             raise ValueError("Header image URL must use HTTPS")
         return self
+
+
+class RetargetManualCustomerCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+    phone: str = Field(min_length=10, max_length=20)
+    alternate_phone: Optional[str] = Field(default=None, max_length=20)
+    notes: Optional[str] = Field(default=None, max_length=5000)
+    is_test_customer: bool = False
+
+    @model_validator(mode="after")
+    def normalize_contact(self):
+        self.name = self.name.strip()
+        self.phone = self.phone.strip()
+        self.alternate_phone = (
+            (self.alternate_phone or "").strip() or None
+        )
+        self.notes = (self.notes or "").strip() or None
+        return self

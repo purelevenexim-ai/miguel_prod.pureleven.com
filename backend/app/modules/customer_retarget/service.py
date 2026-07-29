@@ -36,6 +36,7 @@ from app.models.wa_engine import (
 )
 from app.modules.customer_retarget.schemas import (
     RetargetCallCreate,
+    RetargetManualCustomerCreate,
     RetargetTemplateBulkSend,
     UnlinkedResolveRequest,
 )
@@ -70,6 +71,8 @@ VALID_VIEWS = {
     "all",
 }
 OLD_CUSTOMERS_TAG = "Old Customers"
+MANUAL_RETARGET_TAG = "Customer Retarget"
+TEST_CUSTOMER_TAG = "Test Customer"
 RETARGET_TEMPLATE_VARIABLES = {
     "customer_name",
     "name",
@@ -90,13 +93,27 @@ def _phone_key(value: Optional[str]) -> str:
 
 
 def _old_customer_ids_query(db: Session, tenant_id: UUID):
+    return _tagged_customer_ids_query(
+        db,
+        tenant_id,
+        [OLD_CUSTOMERS_TAG],
+    )
+
+
+def _tagged_customer_ids_query(
+    db: Session,
+    tenant_id: UUID,
+    tag_names: list[str],
+):
     return (
         db.query(CustomerTagMap.customer_id)
         .join(CustomerTag, CustomerTag.id == CustomerTagMap.tag_id)
         .filter(
             CustomerTagMap.tenant_id == tenant_id,
             CustomerTag.tenant_id == tenant_id,
-            func.lower(CustomerTag.name) == OLD_CUSTOMERS_TAG.lower(),
+            func.lower(CustomerTag.name).in_(
+                [name.lower() for name in tag_names]
+            ),
         )
     )
 
@@ -104,6 +121,40 @@ def _old_customer_ids_query(db: Session, tenant_id: UUID):
 def _is_old_customer(db: Session, tenant_id: UUID, customer_id: UUID) -> bool:
     return (
         _old_customer_ids_query(db, tenant_id)
+        .filter(CustomerTagMap.customer_id == customer_id)
+        .first()
+        is not None
+    )
+
+
+def _is_manual_retarget_customer(
+    db: Session,
+    tenant_id: UUID,
+    customer_id: UUID,
+) -> bool:
+    return (
+        _tagged_customer_ids_query(
+            db,
+            tenant_id,
+            [MANUAL_RETARGET_TAG],
+        )
+        .filter(CustomerTagMap.customer_id == customer_id)
+        .first()
+        is not None
+    )
+
+
+def _is_test_customer(
+    db: Session,
+    tenant_id: UUID,
+    customer_id: UUID,
+) -> bool:
+    return (
+        _tagged_customer_ids_query(
+            db,
+            tenant_id,
+            [TEST_CUSTOMER_TAG],
+        )
         .filter(CustomerTagMap.customer_id == customer_id)
         .first()
         is not None
@@ -126,6 +177,177 @@ def _missing_fields(customer: Customer) -> list[str]:
     if not (customer.pincode or "").strip():
         missing.append("pincode")
     return missing
+
+
+def _ensure_customer_tag(
+    db: Session,
+    tenant_id: UUID,
+    customer_id: UUID,
+    tag_name: str,
+) -> None:
+    tag = (
+        db.query(CustomerTag)
+        .filter(
+            CustomerTag.tenant_id == tenant_id,
+            func.lower(CustomerTag.name) == tag_name.lower(),
+        )
+        .first()
+    )
+    if tag is None:
+        tag = CustomerTag(tenant_id=tenant_id, name=tag_name)
+        db.add(tag)
+        db.flush()
+    exists_map = (
+        db.query(CustomerTagMap.id)
+        .filter(
+            CustomerTagMap.tenant_id == tenant_id,
+            CustomerTagMap.customer_id == customer_id,
+            CustomerTagMap.tag_id == tag.id,
+        )
+        .first()
+    )
+    if exists_map is None:
+        db.add(
+            CustomerTagMap(
+                tenant_id=tenant_id,
+                customer_id=customer_id,
+                tag_id=tag.id,
+            )
+        )
+
+
+def add_manual_retarget_customer(
+    db: Session,
+    current_user: Employee,
+    data: RetargetManualCustomerCreate,
+) -> dict:
+    tenant_id = current_user.tenant_id
+    primary_key = _phone_key(data.phone)
+    alternate_key = _phone_key(data.alternate_phone)
+    if len(primary_key) != 10:
+        raise HTTPException(
+            status_code=422,
+            detail="Enter a valid 10-digit primary phone number",
+        )
+    if alternate_key and len(alternate_key) != 10:
+        raise HTTPException(
+            status_code=422,
+            detail="Enter a valid 10-digit alternate phone number",
+        )
+    if alternate_key and alternate_key == primary_key:
+        raise HTTPException(
+            status_code=422,
+            detail="Primary and alternate phone numbers must be different",
+        )
+
+    customer_phone = func.right(
+        func.regexp_replace(func.coalesce(Customer.phone, ""), r"\D", "", "g"),
+        10,
+    )
+    alternate_phone = func.right(
+        func.regexp_replace(
+            func.coalesce(Customer.alternate_phone, ""),
+            r"\D",
+            "",
+            "g",
+        ),
+        10,
+    )
+    match_keys = [primary_key] + ([alternate_key] if alternate_key else [])
+    matches = (
+        db.query(Customer)
+        .filter(
+            Customer.tenant_id == tenant_id,
+            or_(
+                customer_phone.in_(match_keys),
+                alternate_phone.in_(match_keys),
+            ),
+        )
+        .order_by(Customer.is_active.desc(), Customer.created_at.asc())
+        .all()
+    )
+    customer = next(
+        (
+            item
+            for item in matches
+            if _phone_key(item.phone) == primary_key
+            or _phone_key(item.alternate_phone) == primary_key
+        ),
+        None,
+    )
+    created = customer is None
+    if customer is None:
+        customer = Customer(
+            tenant_id=tenant_id,
+            unique_customer_code=generate_customer_code(db, tenant_id),
+            name=data.name,
+            phone=primary_key,
+            alternate_phone=alternate_key or None,
+            country="India",
+            customer_type=CustomerType.retail,
+            source=SourceType.manual,
+            lead_status=LeadStatus.new,
+            created_by_employee_id=current_user.id,
+            notes=data.notes or "Manually added from Customer Retarget",
+            is_active=True,
+        )
+        db.add(customer)
+        db.flush()
+    else:
+        if _phone_key(customer.phone) == primary_key:
+            customer.phone = primary_key
+        if alternate_key:
+            conflicting = next(
+                (item for item in matches if item.id != customer.id),
+                None,
+            )
+            if conflicting is not None:
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "The alternate phone belongs to another customer: "
+                        f"{conflicting.name}"
+                    ),
+                )
+            customer.alternate_phone = alternate_key
+        if not (customer.name or "").strip() or customer.name.lower() in {
+            "unknown",
+            "customer",
+        }:
+            customer.name = data.name
+        if data.notes:
+            customer.notes = data.notes
+        customer.is_active = True
+
+    _ensure_customer_tag(
+        db,
+        tenant_id,
+        customer.id,
+        MANUAL_RETARGET_TAG,
+    )
+    if data.is_test_customer:
+        _ensure_customer_tag(
+            db,
+            tenant_id,
+            customer.id,
+            TEST_CUSTOMER_TAG,
+        )
+    db.commit()
+    db.refresh(customer)
+    return {
+        "customer_id": str(customer.id),
+        "customer_code": customer.unique_customer_code,
+        "name": customer.name,
+        "phone": customer.phone,
+        "alternate_phone": customer.alternate_phone,
+        "created": created,
+        "is_test_customer": data.is_test_customer,
+        "message": (
+            "Customer created and added to Customer Retarget"
+            if created
+            else "Existing customer added to Customer Retarget"
+        ),
+    }
 
 
 async def queue_retarget_template(
@@ -933,6 +1155,16 @@ def _serialize_linked_rows(
         .filter(CustomerTagMap.customer_id.in_(customer_ids))
         .all()
     } if customer_ids else set()
+    test_customer_ids = {
+        row[0]
+        for row in _tagged_customer_ids_query(
+            db,
+            tenant_id,
+            [TEST_CUSTOMER_TAG],
+        )
+        .filter(CustomerTagMap.customer_id.in_(customer_ids))
+        .all()
+    } if customer_ids else set()
     employee_ids = {
         row[6].last_employee_id
         for row in rows
@@ -1037,6 +1269,7 @@ def _serialize_linked_rows(
                 ),
                 "missing_fields": _missing_fields(customer),
                 "is_old_customer": customer.id in old_customer_ids,
+                "is_test_customer": customer.id in test_customer_ids,
             }
         )
     return items
@@ -1049,21 +1282,6 @@ def _old_customers_without_orders_query(
 ):
     query = (
         db.query(Customer, CustomerRetargetState)
-        .join(
-            CustomerTagMap,
-            and_(
-                CustomerTagMap.customer_id == Customer.id,
-                CustomerTagMap.tenant_id == tenant_id,
-            ),
-        )
-        .join(
-            CustomerTag,
-            and_(
-                CustomerTag.id == CustomerTagMap.tag_id,
-                CustomerTag.tenant_id == tenant_id,
-                func.lower(CustomerTag.name) == OLD_CUSTOMERS_TAG.lower(),
-            ),
-        )
         .outerjoin(
             CustomerRetargetState,
             and_(
@@ -1073,6 +1291,20 @@ def _old_customers_without_orders_query(
         )
         .filter(
             Customer.tenant_id == tenant_id,
+            exists().where(
+                and_(
+                    CustomerTagMap.tenant_id == tenant_id,
+                    CustomerTagMap.customer_id == Customer.id,
+                    CustomerTag.id == CustomerTagMap.tag_id,
+                    CustomerTag.tenant_id == tenant_id,
+                    func.lower(CustomerTag.name).in_(
+                        [
+                            OLD_CUSTOMERS_TAG.lower(),
+                            MANUAL_RETARGET_TAG.lower(),
+                        ]
+                    ),
+                )
+            ),
             ~exists().where(
                 and_(
                     Order.tenant_id == tenant_id,
@@ -1106,6 +1338,27 @@ def _serialize_old_customer_rows(
     rows: list,
     offset: int,
 ) -> list[dict]:
+    customer_ids = [customer.id for customer, _ in rows]
+    old_customer_ids = {
+        row[0]
+        for row in _tagged_customer_ids_query(
+            db,
+            tenant_id,
+            [OLD_CUSTOMERS_TAG],
+        )
+        .filter(CustomerTagMap.customer_id.in_(customer_ids))
+        .all()
+    } if customer_ids else set()
+    test_customer_ids = {
+        row[0]
+        for row in _tagged_customer_ids_query(
+            db,
+            tenant_id,
+            [TEST_CUSTOMER_TAG],
+        )
+        .filter(CustomerTagMap.customer_id.in_(customer_ids))
+        .all()
+    } if customer_ids else set()
     employee_ids = {
         state.last_employee_id
         for _, state in rows
@@ -1142,7 +1395,15 @@ def _serialize_old_customer_rows(
                 "pincode": customer.pincode or "",
                 "first_order_date": None,
                 "latest_order_date": None,
-                "latest_order_number": "Old WhatsApp contact",
+                "latest_order_number": (
+                    "Test contact"
+                    if customer.id in test_customer_ids
+                    else (
+                        "Old WhatsApp contact"
+                        if customer.id in old_customer_ids
+                        else "Manually added contact"
+                    )
+                ),
                 "latest_order_status": "Purchase history unavailable",
                 "latest_products": [],
                 "order_count": 0,
@@ -1164,7 +1425,8 @@ def _serialize_old_customer_rows(
                     else ""
                 ),
                 "missing_fields": list(dict.fromkeys(missing)),
-                "is_old_customer": True,
+                "is_old_customer": customer.id in old_customer_ids,
+                "is_test_customer": customer.id in test_customer_ids,
             }
         )
     return result
@@ -1309,19 +1571,51 @@ def get_queue(
             )
             .all()
         } if pending_ordered else set()
+        pending_customer_ids = [
+            entry[0].id for entry in pending_ordered
+        ] + [
+            entry[0].id for entry in pending_old_without_orders
+        ]
+        test_customer_ids = {
+            row[0]
+            for row in _tagged_customer_ids_query(
+                db,
+                tenant_id,
+                [TEST_CUSTOMER_TAG],
+            )
+            .filter(CustomerTagMap.customer_id.in_(pending_customer_ids))
+            .all()
+        } if pending_customer_ids else set()
         oldest = datetime.min.replace(tzinfo=timezone.utc)
         mixed = [
             (
                 oldest,
-                f"old:{row[0].id}",
+                (
+                    f"0-test:{row[0].id}"
+                    if row[0].id in test_customer_ids
+                    else f"1-old:{row[0].id}"
+                ),
                 "old",
                 row,
             )
             for row in pending_old_without_orders
         ] + [
             (
-                oldest if row[0].id in tagged_ordered_ids else row[5],
-                f"customer:{row[0].id}",
+                (
+                    oldest
+                    if row[0].id in tagged_ordered_ids
+                    or row[0].id in test_customer_ids
+                    else row[5]
+                ),
+                (
+                    f"0-test:{row[0].id}"
+                    if row[0].id in test_customer_ids
+                    else (
+                        f"1-old:{row[0].id}"
+                        if row[0].id in tagged_ordered_ids
+                        else f"2-customer:{row[0].id}"
+                    )
+                ),
                 "customer",
                 row,
             )
@@ -1613,7 +1907,17 @@ def get_customer_workspace(
         current_user.tenant_id,
         customer.id,
     )
-    if not has_order and not is_old_customer:
+    is_manual_retarget_customer = _is_manual_retarget_customer(
+        db,
+        current_user.tenant_id,
+        customer.id,
+    )
+    is_test_customer = _is_test_customer(
+        db,
+        current_user.tenant_id,
+        customer.id,
+    )
+    if not has_order and not is_old_customer and not is_manual_retarget_customer:
         raise HTTPException(
             status_code=404,
             detail="Customer has no orders and is not in the retarget queue",
@@ -1657,6 +1961,7 @@ def get_customer_workspace(
             "notes": customer.notes or "",
             "missing_fields": _missing_fields(customer),
             "is_old_customer": is_old_customer,
+            "is_test_customer": is_test_customer,
         },
         "state": {
             "outcome": state.current_outcome.value if state else "pending",
@@ -1730,10 +2035,15 @@ def log_customer_call(
         current_user.tenant_id,
         customer.id,
     )
-    if not has_order and not is_old_customer:
+    is_manual_retarget_customer = _is_manual_retarget_customer(
+        db,
+        current_user.tenant_id,
+        customer.id,
+    )
+    if not has_order and not is_old_customer and not is_manual_retarget_customer:
         raise HTTPException(
             status_code=400,
-            detail="Only ordered or tagged old customers can be retargeted",
+            detail="Only ordered or manually queued customers can be retargeted",
         )
 
     called_at = datetime.now(timezone.utc)

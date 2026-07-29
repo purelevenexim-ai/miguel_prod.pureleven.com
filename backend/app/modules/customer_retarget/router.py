@@ -9,6 +9,7 @@ from app.models.employee import Employee, RoleEnum
 from app.modules.customer_retarget import service
 from app.modules.customer_retarget.schemas import (
     RetargetCallCreate,
+    RetargetManualCustomerCreate,
     RetargetTemplateBulkSend,
     UnlinkedResolveRequest,
 )
@@ -59,6 +60,15 @@ def get_queue_selection(
         search=search,
         repeat_only=repeat_only,
     )
+
+
+@router.post("/manual-customers", status_code=201)
+def add_manual_retarget_customer(
+    data: RetargetManualCustomerCreate,
+    db: Session = Depends(get_db),
+    current_user: Employee = Depends(retarget_roles),
+):
+    return service.add_manual_retarget_customer(db, current_user, data)
 
 
 @router.post("/unlinked/{shopify_order_id}/resolve")

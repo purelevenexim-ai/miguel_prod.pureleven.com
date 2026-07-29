@@ -49,6 +49,7 @@ tbody tr{cursor:pointer}tbody tr:hover td{background:#f8faff}
 .phone-actions{display:flex;gap:5px;margin-top:5px}.icon-btn{width:28px;height:26px;padding:0;border:1px solid var(--bdr);background:var(--surf);border-radius:6px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
 .value{font-weight:800}.repeat{color:#7c3aed;font-size:10px;font-weight:700;margin-top:3px}
 .old-tag{display:inline-flex;margin-top:4px;padding:2px 6px;border-radius:99px;background:#e6f4ea;color:#137333;border:1px solid #b7dfbe;font-size:9px;font-weight:800;letter-spacing:.04em}
+.test-tag{display:inline-flex;margin-top:4px;padding:2px 6px;border-radius:99px;background:#f0eaff;color:#6236c7;border:1px solid #d8c8ff;font-size:9px;font-weight:800;letter-spacing:.04em}
 .products{max-width:220px;font-size:11px;color:var(--g-700);line-height:1.5}
 .chip{display:inline-flex;align-items:center;padding:3px 7px;border-radius:99px;font-size:10px;font-weight:750;white-space:nowrap;background:var(--g-100);color:var(--g-700)}
 .chip.pending{background:#eef2f7;color:#475569}.chip.no_answer,.chip.callback{background:#fff3cd;color:#855d00}.chip.interested{background:#e6f4ea;color:#137333}.chip.purchased_again{background:#d7f8e1;color:#0d652d}.chip.not_interested,.chip.purchased_elsewhere{background:#f1f3f4;color:#5f6368}.chip.invalid_number,.chip.risk{background:#fce8e6;color:#a50e0e}.chip.unlinked{background:#f3e8fd;color:#7627bb}
@@ -108,7 +109,7 @@ body.retarget-has-nav{padding-left:240px}
 .panel{border-color:var(--rt-line);border-radius:18px;box-shadow:0 10px 30px rgba(33,52,86,.06)}.queue-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px 13px}.queue-title{font-size:17px;font-weight:820;letter-spacing:-.02em}.queue-subtitle{font-size:11px;color:var(--rt-sub);margin-top:4px}.queue-head-actions{display:flex;align-items:center;gap:8px}
 .toolbar{padding:10px 20px 14px;border-bottom:0}.search{max-width:600px}.search input{height:42px;border-color:#dfe4ec;background:#f9fbfd;border-radius:11px;padding-left:39px}.search input:focus{outline:0;border-color:#8fb2f5;box-shadow:0 0 0 3px rgba(37,99,235,.09);background:#fff}.search span{top:10px;font-size:17px}.check{height:42px;padding:0 12px;border:1px solid #dfe4ec;border-radius:10px;background:#fff}
 .tabs{gap:7px;padding:11px 20px;background:#fafbfd;border-top:1px solid #eef1f5;border-bottom-color:var(--rt-line)}.tab{padding:8px 12px;border-radius:9px;font-weight:700}.tab.active{background:#fff;color:var(--rt-brand);border-color:#cbdcfb;box-shadow:0 3px 10px rgba(37,99,235,.08)}
-.table-meta{padding:11px 20px;background:#fff;border-color:var(--rt-line)}.table-wrap{min-height:440px}table{min-width:1040px}th{padding:11px 16px;background:#f7f9fc;border-color:var(--rt-line);color:#7b8494}td{padding:15px 16px;border-color:#edf0f4;vertical-align:middle}tbody tr{transition:background .14s ease,box-shadow .14s ease}tbody tr:hover td{background:#f8fbff}.priority-old td:first-child{box-shadow:inset 3px 0 0 #1f9d6a}
+.table-meta{padding:11px 20px;background:#fff;border-color:var(--rt-line)}.table-wrap{min-height:440px}table{min-width:1040px}th{padding:11px 16px;background:#f7f9fc;border-color:var(--rt-line);color:#7b8494}td{padding:15px 16px;border-color:#edf0f4;vertical-align:middle}tbody tr{transition:background .14s ease,box-shadow .14s ease}tbody tr:hover td{background:#f8fbff}.priority-old td:first-child{box-shadow:inset 3px 0 0 #1f9d6a}.priority-test td{background:#fcfaff}.priority-test td:first-child{box-shadow:inset 4px 0 0 #7c3aed}
 .customer{align-items:center}.avatar{width:40px;height:40px;background:linear-gradient(145deg,#eaf1ff,#dbe8ff);color:#2457b5}.customer-name{font-size:13px;max-width:230px}.old-tag{margin-top:5px}.contact-number{font-weight:760;color:#253047}.purchase-title{font-size:12px;font-weight:750;color:#273248}.purchase-products{font-size:11px;line-height:1.5;color:var(--rt-sub);margin-top:5px;max-width:310px}.value{font-size:14px}.status-stack{display:flex;flex-direction:column;align-items:flex-start;gap:5px}.missing{max-width:240px}.phone-actions{margin-top:6px}.icon-btn{width:31px;height:30px;border-radius:8px}.row-action{white-space:nowrap}
 .pagination{padding:15px 18px;background:#fafbfd}
 .drawer{width:min(980px,calc(100vw - 80px));background:#f5f7fb;box-shadow:-24px 0 60px rgba(23,32,51,.2)}.drawer-head{height:72px;padding:0 22px;background:#fff;border-color:var(--rt-line)}.drawer-title-wrap{display:flex;flex-direction:column}.drawer-eyebrow{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--rt-brand)}.drawer-title{font-size:17px;margin-top:3px}.drawer-body{padding:18px 20px 36px}.overlay{background:rgba(20,29,48,.48);backdrop-filter:blur(2px)}
@@ -196,6 +197,7 @@ body.retarget-has-nav{padding-left:240px}
     <div class="toolbar">
       <div class="search"><span>⌕</span><input id="searchInput" placeholder="Search customer, phone, order or code…" oninput="debouncedLoad()"></div>
       <label class="check"><input type="checkbox" id="repeatOnly" onchange="resetAndLoad()"> Repeat buyers only</label>
+      <button class="btn btn-sm" type="button" onclick="openAddCustomerModal()">＋ Add customer</button>
     </div>
     <div class="bulk-bar" id="bulkBar">
       <div><div class="bulk-count" id="bulkCount">0 customers selected</div><div class="bulk-copy" id="bulkCopy">Only selected customers with valid WhatsApp numbers will be queued.</div></div>
@@ -238,6 +240,22 @@ body.retarget-has-nav{padding-left:240px}
       <div class="template-result" id="templateResult"></div>
       <div class="template-actions"><button class="btn" onclick="closeTemplateModal()">Cancel</button><button class="btn btn-primary" id="sendTemplateBtn" onclick="sendBulkTemplate()">Queue WhatsApp messages</button></div>
     </div>
+  </section>
+</div>
+<div class="template-overlay" id="addCustomerOverlay" onclick="if(event.target===this)closeAddCustomerModal()">
+  <section class="template-modal" role="dialog" aria-modal="true" aria-labelledby="addCustomerModalTitle">
+    <div class="template-modal-head"><div><h2 id="addCustomerModalTitle">Add customer to retargeting</h2><p>Add a contact even when they do not have an order yet. Existing phone matches are updated instead of duplicated.</p></div><button class="icon-btn" type="button" onclick="closeAddCustomerModal()" aria-label="Close">✕</button></div>
+    <form class="template-modal-body" id="addCustomerForm" onsubmit="saveManualCustomer(event)">
+      <div class="template-grid">
+        <div class="field"><label>Customer name *</label><input id="manualCustomerName" maxlength="255" autocomplete="name" required placeholder="Customer name"></div>
+        <div class="field"><label>Primary phone *</label><input id="manualCustomerPhone" inputmode="numeric" maxlength="20" autocomplete="tel" required placeholder="10-digit number"></div>
+      </div>
+      <div class="field" style="margin-top:12px"><label>Alternate phone</label><input id="manualCustomerAlternate" inputmode="numeric" maxlength="20" placeholder="Optional second number"></div>
+      <div class="field" style="margin-top:12px"><label>Notes</label><textarea id="manualCustomerNotes" maxlength="5000" placeholder="Why this customer was added or what to test"></textarea></div>
+      <label class="consent-check"><input type="checkbox" id="manualCustomerTest"><span><strong>Priority test customer</strong><br>Keep this customer at the top of To Contact and show a clear test label.</span></label>
+      <div class="template-result" id="manualCustomerResult"></div>
+      <div class="template-actions"><button class="btn" type="button" onclick="closeAddCustomerModal()">Cancel</button><button class="btn btn-primary" id="addCustomerBtn" type="submit">Add to Customer Retarget</button></div>
+    </form>
   </section>
 </div>
 <div class="toast" id="toast"></div>
@@ -292,6 +310,43 @@ function dateTime(v){if(!v)return '—';return new Date(v).toLocaleString('en-IN
 function outcomeLabel(v){return OUTCOME_LABELS[v]||String(v||'').replaceAll('_',' ')}
 function showToast(message,isError=false){const el=document.getElementById('toast');el.textContent=message;el.className='toast'+(isError?' error':'');el.style.display='block';setTimeout(()=>el.style.display='none',3200)}
 async function api(url,options={}){const r=await fetch(url,{...options,headers:{...H,...(options.headers||{})}});if(!r.ok){let msg='Request failed';try{const e=await r.json();msg=e.detail||JSON.stringify(e)}catch(_){msg=await r.text()}throw new Error(msg)}return r.status===204?null:r.json()}
+function openAddCustomerModal(){
+  const result=document.getElementById('manualCustomerResult');
+  result.className='template-result';result.textContent='';
+  document.getElementById('addCustomerOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('manualCustomerName').focus(),0);
+}
+function closeAddCustomerModal(){
+  document.getElementById('addCustomerOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+async function saveManualCustomer(event){
+  event.preventDefault();
+  const button=document.getElementById('addCustomerBtn');
+  const result=document.getElementById('manualCustomerResult');
+  const payload={
+    name:document.getElementById('manualCustomerName').value.trim(),
+    phone:document.getElementById('manualCustomerPhone').value.trim(),
+    alternate_phone:document.getElementById('manualCustomerAlternate').value.trim()||null,
+    notes:document.getElementById('manualCustomerNotes').value.trim()||null,
+    is_test_customer:document.getElementById('manualCustomerTest').checked
+  };
+  button.disabled=true;button.textContent='Adding…';
+  try{
+    const data=await api('/api/customer-retarget/manual-customers',{method:'POST',body:JSON.stringify(payload)});
+    result.className='template-result success';result.textContent=data.message;
+    showToast(data.message);
+    document.getElementById('addCustomerForm').reset();
+    currentView='to_contact';currentPage=1;clearSelection();renderTabs();
+    await loadQueue();
+    setTimeout(closeAddCustomerModal,900);
+  }catch(e){
+    result.className='template-result error';result.textContent=e.message;
+  }finally{
+    button.disabled=false;button.textContent='Add to Customer Retarget';
+  }
+}
 
 function renderTabs(){
   document.getElementById('tabs').innerHTML=VIEWS.map(([id,label,icon])=>`<button class="tab ${id===currentView?'active':''}" onclick="setView('${id}')"><span>${icon}</span> ${esc(label)}</button>`).join('');
@@ -441,10 +496,10 @@ function rowHtml(r){
   const products=(r.latest_products||[]).map(esc).join(' · ');
   const selectable=r.kind==='customer'&&Boolean(r.customer_id)&&Boolean(r.phone);
   const selectionId=selectable?String(r.customer_id):'';
-  return `<tr class="${r.is_old_customer?'priority-old':''}" onclick="openRowById('${esc(r.id)}')">
+  return `<tr class="${r.is_test_customer?'priority-test':(r.is_old_customer?'priority-old':'')}" onclick="openRowById('${esc(r.id)}')">
     <td class="select-cell" onclick="event.stopPropagation()"><input class="row-select" type="checkbox" data-customer-id="${esc(selectionId)}" ${selectable?'':`disabled title="${r.kind==='unlinked'?'Resolve this buyer before messaging':'A valid phone number is required'}"`} onchange="toggleCustomerSelection('${esc(selectionId)}',this.checked)" aria-label="Select ${esc(r.name||'customer')}"></td>
     <td class="position">${r.queue_position||''}</td>
-    <td><div class="customer"><div class="avatar">${esc(initials(r.name))}</div><div><div class="customer-name">${esc(r.name||'Unknown customer')}</div><div class="muted mono">${esc(r.customer_code||r.latest_order_number||'')}</div><div class="contact-number">${esc(r.phone||'No phone')}</div>${r.alternate_phone?`<div class="muted">${esc(r.alternate_phone)}</div>`:''}${r.is_old_customer?'<div class="old-tag">OLD CUSTOMERS</div>':''}${r.kind==='unlinked'?'<div class="muted" style="color:#7627bb">Shopify buyer not linked</div>':''}<div class="phone-actions" onclick="event.stopPropagation()">${r.phone?`<a class="icon-btn" href="tel:${esc(r.phone)}" title="Call">☎</a><button class="icon-btn" onclick="copyPhone('${esc(r.phone)}')" title="Copy phone">⧉</button>`:''}</div></div></div></td>
+    <td><div class="customer"><div class="avatar">${esc(initials(r.name))}</div><div><div class="customer-name">${esc(r.name||'Unknown customer')}</div><div class="muted mono">${esc(r.customer_code||r.latest_order_number||'')}</div><div class="contact-number">${esc(r.phone||'No phone')}</div>${r.alternate_phone?`<div class="muted">${esc(r.alternate_phone)}</div>`:''}${r.is_test_customer?'<div class="test-tag">TEST CUSTOMER · PRIORITY</div>':''}${r.is_old_customer?'<div class="old-tag">OLD CUSTOMERS</div>':''}${r.kind==='unlinked'?'<div class="muted" style="color:#7627bb">Shopify buyer not linked</div>':''}<div class="phone-actions" onclick="event.stopPropagation()">${r.phone?`<a class="icon-btn" href="tel:${esc(r.phone)}" title="Call">☎</a><button class="icon-btn" onclick="copyPhone('${esc(r.phone)}')" title="Copy phone">⧉</button>`:''}</div></div></div></td>
     <td><div class="purchase-title">${r.latest_order_date?dateOnly(r.latest_order_date):'Purchase history unavailable'}</div><div class="muted mono">${esc(r.latest_order_number||'')}</div><div class="purchase-products">${products||'No product history available'}</div></td>
     <td><div class="value">${money(r.lifetime_value)}</div><div class="muted">${Number(r.successful_order_count)||0} successful · ${Number(r.order_count)||0} total</div>${repeat?'<div class="repeat">★ Repeat buyer</div>':''}</td>
     <td><div class="status-stack"><span class="chip ${esc(r.outcome)}">${esc(outcomeLabel(r.outcome))}</span>${r.next_callback_at?`<div class="muted">↻ ${dateTime(r.next_callback_at)}</div>`:''}${r.last_employee_name?`<div class="muted">Owner: ${esc(r.last_employee_name)}</div>`:''}<div class="missing">${missing.length?missing.slice(0,4).map(v=>`<span>${esc(v)}</span>`).join(''):'<span style="background:#e6f4ea;color:#137333;border-color:#b7dfbe">Details complete</span>'}</div></div></td>
@@ -652,7 +707,7 @@ function renderWorkspace(d){
   const address=[c.address,c.city,c.state,c.pincode].filter(Boolean).join(', ');
   const missing=c.missing_fields||[];
   document.getElementById('drawerBody').innerHTML=`
-    <div class="hero"><div class="avatar">${esc(initials(c.name))}</div><div><div class="hero-name">${esc(c.name)} ${c.is_old_customer?'<span class="chip interested">Old Customers</span>':''}</div><div class="hero-meta">${esc(c.customer_code)} · ${esc(c.phone||'No phone')}</div><div class="hero-meta">${orders.length} previous order${orders.length===1?'':'s'} · Current outcome: ${esc(outcomeLabel(s.outcome))}${s.next_callback_at?' · Callback '+dateTime(s.next_callback_at):''}</div><div class="workspace-actions"><a class="btn btn-sm" href="tel:${esc(c.phone)}">☎ Call customer</a>${c.phone?'<button class="btn btn-sm" onclick="openWorkspaceTemplate()">💬 Send WhatsApp template</button>':''}<button class="btn btn-sm" onclick="viewCustomer()">View full customer</button>${CAN_CREATE_ORDER?'<button class="btn btn-sm btn-primary" onclick="startOrder()">Open full order form →</button>':''}</div></div></div>
+    <div class="hero"><div class="avatar">${esc(initials(c.name))}</div><div><div class="hero-name">${esc(c.name)} ${c.is_test_customer?'<span class="chip" style="background:#efe8ff;color:#6135c5">Test Customer · Priority</span>':''} ${c.is_old_customer?'<span class="chip interested">Old Customers</span>':''}</div><div class="hero-meta">${esc(c.customer_code)} · ${esc(c.phone||'No phone')}</div><div class="hero-meta">${orders.length} previous order${orders.length===1?'':'s'} · Current outcome: ${esc(outcomeLabel(s.outcome))}${s.next_callback_at?' · Callback '+dateTime(s.next_callback_at):''}</div><div class="workspace-actions"><a class="btn btn-sm" href="tel:${esc(c.phone)}">☎ Call customer</a>${c.phone?'<button class="btn btn-sm" onclick="openWorkspaceTemplate()">💬 Send WhatsApp template</button>':''}<button class="btn btn-sm" onclick="viewCustomer()">View full customer</button>${CAN_CREATE_ORDER?'<button class="btn btn-sm btn-primary" onclick="startOrder()">Open full order form →</button>':''}</div></div></div>
     <div class="workspace-grid">
       <div class="workspace-main">
         <section class="section"><div class="section-head"><div><div class="section-kicker">Confirm before ordering</div>Saved delivery address</div>${missing.length?`<span class="chip no_answer">${missing.length} missing</span>`:'<span class="chip interested">Complete</span>'}</div><div class="section-body"><div class="address-card"><strong>${esc(c.name)}</strong><div class="address-lines">${address?esc(address):'No saved address. Edit the customer details before confirming an order.'}</div><div class="muted">${esc(c.phone||'No phone')}${c.alternate_phone?' · '+esc(c.alternate_phone):''}</div></div></div></section>
